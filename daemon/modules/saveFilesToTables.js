@@ -1,7 +1,3 @@
-/* * * * * */
-/* DATABASE */
-/* * */
-
 /* * */
 /* IMPORTS */
 const fs = require('fs');

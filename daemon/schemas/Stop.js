@@ -1,7 +1,3 @@
-/* * * * * */
-/* MODEL: STOP */
-/* * */
-
 /* * */
 /* IMPORTS */
 const { mongoose } = require('mongoose');

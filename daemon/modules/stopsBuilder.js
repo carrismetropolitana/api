@@ -1,7 +1,3 @@
-/* * * * * */
-/* DATABASE */
-/* * */
-
 /* * */
 /* IMPORTS */
 const GTFSParseDB = require('../databases/gtfsparsedb');

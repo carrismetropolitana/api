@@ -1,7 +1,3 @@
-/* * * * * */
-/* MODEL: ROUTE */
-/* * */
-
 /* * */
 /* IMPORTS */
 const { mongoose } = require('mongoose');
