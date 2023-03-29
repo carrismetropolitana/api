@@ -85,26 +85,6 @@ services:
     networks:
       - backend-network
 
-  # dashboard:
-  #   build: ./config/
-  #   restart: unless-stopped
-  #   logging:
-  #     options:
-  #       max-size: '1m'
-  #       max-file: '1'
-  #   depends_on:
-  #     - nginx
-  #   networks:
-  #     - backend-network
-  #   ports:
-  #     - $CONFIG_PORT
-  #   env_file: ./.env
-  #   environment:
-  #     - SETTINGSDB_HOST=$SETTINGSDB_HOST
-  #     - SETTINGSDB_USER=$SETTINGSDB_USER
-  #     - SETTINGSDB_PASSWORD=$SETTINGSDB_PASSWORD
-  #     - SETTINGSDB_NAME=$SETTINGSDB_NAME
-
   settingsdb:
     image: mongo
     restart: unless-stopped
@@ -156,21 +136,3 @@ services:
       - backend-network
     ports:
       - 3306
-
-  # phpmyadmin:
-  #   image: phpmyadmin
-  #   restart: unless-stopped
-  #   logging:
-  #     options:
-  #       max-size: '1m'
-  #       max-file: '1'
-  #   depends_on:
-  #     - settingsdb
-  #     - gtfsapidb
-  #     - gtfsparsedb
-  #   networks:
-  #     - backend-network
-  #   ports:
-  #     - 8080:80
-  #   environment:
-  #     - PMA_ARBITRARY=1
