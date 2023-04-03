@@ -198,7 +198,9 @@ module.exports = {
                     stop_lon: stopInfo.stop_lon,
                     stop_lat: stopInfo.stop_lat,
                     arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
+                    arrival_time_operation: currentStopTime.arrival_time.replace(':', ''),
                     departure_time: `${departure_time_hours}:${departure_time_minutes}:${departure_time_seconds}`,
+                    departure_time_operation: currentStopTime.departure_time.replace(':', ''),
                     shape_dist_traveled: currentStopTime.shape_dist_traveled,
                   };
                 })
@@ -212,7 +214,7 @@ module.exports = {
             }
           }
           // Sort trips by departure_time ASC
-          currentDirection.trips.sort((a, b) => (a.schedule[0]?.departure_time > b.schedule[0]?.departure_time ? 1 : -1));
+          currentDirection.trips.sort((a, b) => (a.schedule[0]?.departure_time_operation > b.schedule[0]?.departure_time_operation ? 1 : -1));
           // Save the modified object
           return currentDirection;
           //
@@ -248,6 +250,9 @@ module.exports = {
       { $match: { route_id: { $eq: '$lowestPrefix' } } },
       { $project: { _id: 0, route_id: '$lowestPrefix', route_short_name: '$_id' } },
     ]);
+
+    console.log('Dump: ', allRouteIdsWithLowestSuffix);
+    console.log('Count: ', allRouteIdsWithLowestSuffix.length);
 
     for (const baseVariantOfRoute of allRouteIdsWithLowestSuffix) {
       await GTFSAPIDB.RouteSummary.findOneAndUpdate(

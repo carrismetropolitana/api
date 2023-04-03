@@ -111,7 +111,15 @@ module.exports = new mongoose.Schema(
                   type: String,
                   maxlength: 100,
                 },
+                arrival_time_operation: {
+                  type: String,
+                  maxlength: 100,
+                },
                 departure_time: {
+                  type: String,
+                  maxlength: 100,
+                },
+                departure_time_operation: {
                   type: String,
                   maxlength: 100,
                 },
