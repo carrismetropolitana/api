@@ -157,15 +157,23 @@ module.exports = {
                   // Format arrival_time
                   const arrival_time_array = currentStopTime.arrival_time.split(':');
                   let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
-                  //   arrival_time_hours = Number(arrival_time_hours) > 24 ? String(Number(arrival_time_hours) - 24).padStart(2, '0') : arrival_time_hours;
+                  if (arrival_time_hours && Number(arrival_time_hours) > 23) {
+                    const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
+                    arrival_time_hours = String(arrival_time_hours_adjusted);
+                  }
                   const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
                   const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
+
                   // Format departure_time
                   const departure_time_array = currentStopTime.departure_time.split(':');
                   let departure_time_hours = departure_time_array[0].padStart(2, '0');
-                  //   departure_time_hours = Number(departure_time_hours) >= 24 ? String(Number(departure_time_hours) - 24).padStart(2, '0') : departure_time_hours;
+                  if (departure_time_hours && Number(departure_time_hours) > 23) {
+                    const departure_time_hours_adjusted = Number(departure_time_hours) - 24;
+                    departure_time_hours = String(departure_time_hours_adjusted);
+                  }
                   const departure_time_minutes = departure_time_array[1].padStart(2, '0');
                   const departure_time_seconds = departure_time_array[2].padStart(2, '0');
+
                   // Find out which municipalities this route serves
                   // using the first two digits of stop_id
                   const municipalityId = stopInfo.stop_id?.substr(0, 2);
