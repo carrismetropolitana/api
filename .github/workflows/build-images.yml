@@ -14,9 +14,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - context: ./api
+          - name: api
+            context: ./api
             image: ghcr.io/carrismetropolitana/schedules-api-api
-          - context: ./daemon
+          - name: daemon
+            context: ./daemon
             image: ghcr.io/carrismetropolitana/schedules-api-daemon
     permissions:
       contents: read
@@ -45,4 +47,4 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.context }}/Dockerfile
           push: true
-          tags: user/app:latest
+          tags: carrismetropolitana/schedules-api-${{ matrix.name }}:latest
