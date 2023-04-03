@@ -198,9 +198,9 @@ module.exports = {
                     stop_lon: stopInfo.stop_lon,
                     stop_lat: stopInfo.stop_lat,
                     arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
-                    arrival_time_operation: currentStopTime.arrival_time.replace(':', ''),
+                    arrival_time_operation: currentStopTime.arrival_time,
                     departure_time: `${departure_time_hours}:${departure_time_minutes}:${departure_time_seconds}`,
-                    departure_time_operation: currentStopTime.departure_time.replace(':', ''),
+                    departure_time_operation: currentStopTime.departure_time,
                     shape_dist_traveled: currentStopTime.shape_dist_traveled,
                   };
                 })
