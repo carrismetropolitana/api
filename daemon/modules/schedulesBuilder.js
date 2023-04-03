@@ -159,7 +159,7 @@ module.exports = {
                   let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
                   if (arrival_time_hours && Number(arrival_time_hours) > 23) {
                     const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
-                    arrival_time_hours = String(arrival_time_hours_adjusted);
+                    arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
                   }
                   const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
                   const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
@@ -169,7 +169,7 @@ module.exports = {
                   let departure_time_hours = departure_time_array[0].padStart(2, '0');
                   if (departure_time_hours && Number(departure_time_hours) > 23) {
                     const departure_time_hours_adjusted = Number(departure_time_hours) - 24;
-                    departure_time_hours = String(departure_time_hours_adjusted);
+                    departure_time_hours = String(departure_time_hours_adjusted).padStart(2, '0');
                   }
                   const departure_time_minutes = departure_time_array[1].padStart(2, '0');
                   const departure_time_seconds = departure_time_array[2].padStart(2, '0');
