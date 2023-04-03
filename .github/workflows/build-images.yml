@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./api/Dockerfile
+          - context: ./api
             image: ghcr.io/carrismetropolitana/schedules-api-api
-          - dockerfile: ./daemon/Dockerfile
+          - context: ./daemon
             image: ghcr.io/carrismetropolitana/schedules-api-daemon
     permissions:
       contents: read
@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -42,7 +42,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/Dockerfile
           push: true
           tags: user/app:latest
