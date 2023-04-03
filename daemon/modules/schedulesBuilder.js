@@ -224,24 +224,6 @@ module.exports = {
       const elapsedTime = timeCalc.getElapsedTime(startTime);
       console.log(`⤷ [${counter}/${allRoutes_raw.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
 
-      if (formattedRoute.route_id.endsWith('_0')) {
-        await GTFSAPIDB.RouteSummary.findOneAndUpdate(
-          { route_id: formattedRoute.route_id },
-          {
-            route_id: formattedRoute.route_id,
-            route_short_name: formattedRoute.route_short_name,
-            route_long_name: formattedRoute.route_long_name,
-            route_color: formattedRoute.route_color,
-            route_text_color: formattedRoute.route_text_color,
-            municipalities: formattedRoute.municipalities,
-          },
-          {
-            upsert: true,
-          }
-        );
-        console.log(`⤷ Saved route summary ${formattedRoute.route_id} to API Database.`);
-      }
-
       allUpdatedRouteIds.push(formattedRoute.route_id);
 
       //
@@ -258,6 +240,31 @@ module.exports = {
         await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
         console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
       }
+    }
+
+    // FETCH ONLY ROUTES WITH THE LOWEST SUFFIX IN ROUTE_ID (ex: 2722_1, if there is no 2722_0)
+    const allRouteIdsWithLowestSuffix = await GTFSAPIDB.Route.aggregate([
+      { $group: { _id: '$route_short_name', lowestPrefix: { $min: '$route_id' } } },
+      { $match: { route_id: { $eq: '$lowestPrefix' } } },
+      { $project: { _id: 0, route_id: '$lowestPrefix', route_short_name: '$_id' } },
+    ]);
+
+    for (const baseVariantOfRoute of allRouteIdsWithLowestSuffix) {
+      await GTFSAPIDB.RouteSummary.findOneAndUpdate(
+        { route_id: baseVariantOfRoute.route_id },
+        {
+          route_id: baseVariantOfRoute.route_id,
+          route_short_name: baseVariantOfRoute.route_short_name,
+          route_long_name: baseVariantOfRoute.route_long_name,
+          route_color: baseVariantOfRoute.route_color,
+          route_text_color: baseVariantOfRoute.route_text_color,
+          municipalities: baseVariantOfRoute.municipalities,
+        },
+        {
+          upsert: true,
+        }
+      );
+      console.log(`⤷ Saved route summary ${formattedRoute.route_id} to API Database.`);
     }
 
     // DELETE FROM ROUTES SUMMARY DB IF NOT IN ARRAY OF UPDATED IDS
