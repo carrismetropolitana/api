@@ -136,8 +136,10 @@ module.exports = {
       // For each direction
       await Promise.all(
         formattedRoute.directions.map(async (currentDirection) => {
-          // Get shape for this direction
-          currentDirection.shape = await getShape(currentDirection.shape_id);
+          // Get shape for this direction and sort it
+          const shape_raw = await getShape(currentDirection.shape_id);
+          const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+          currentDirection.shape = shape_raw.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
           // Initiate the
           currentDirection.trips = [];
           // iusdh
