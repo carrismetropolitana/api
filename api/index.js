@@ -139,8 +139,8 @@ app.get('/api/stops/:stop_id', async (req, res) => {
 });
 
 // set port, listen for requests
-const PORT = process.env.API_PORT;
-app.listen(PORT, async () => {
+const PORT = 5050;
+app.listen(5050, async () => {
   console.log(`GTFS API listening on port ${PORT}...`);
   await GTFSAPIDB.connect();
   console.log();

@@ -44,12 +44,8 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    depends_on:
-      - nginx
     networks:
       - backend-network
-    ports:
-      - $API_PORT
     env_file: ./.env
     environment:
       - SETTINGSDB_HOST=$SETTINGSDB_HOST
@@ -129,10 +125,7 @@ services:
       - ./data-temp/:/data-temp
     env_file: ./.env
     environment:
-      # - MYSQL_HOST=$GTFSAPIDB_USER
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=$GTFSPARSEDB_NAME
     networks:
       - backend-network
-    ports:
-      - 3306
