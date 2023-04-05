@@ -2,8 +2,8 @@ version: '3.9'
 
 volumes:
   certbotdata:
-  gtfsapidb:
-  settingsdb:
+  gtfsapidb-live:
+  gtfsapidb-next:
 
 networks:
   backend-network:
@@ -45,7 +45,7 @@ services:
       - certbotdata:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
-  api:
+  api-live:
     image: ghcr.io/carrismetropolitana/schedules-api-api:latest
     restart: unless-stopped
     logging:
@@ -55,16 +55,27 @@ services:
     networks:
       - backend-network
     environment:
-      - SETTINGSDB_HOST=$SETTINGSDB_HOST
-      - SETTINGSDB_USER=$SETTINGSDB_USER
-      - SETTINGSDB_PASSWORD=$SETTINGSDB_PASSWORD
-      - SETTINGSDB_NAME=$SETTINGSDB_NAME
-      - GTFSAPIDB_HOST=GTFSAPIdb
-      - GTFSAPIDB_USER=$GTFSAPIDB_USER
-      - GTFSAPIDB_PASSWORD=$GTFSAPIDB_PASSWORD
-      - GTFSAPIDB_NAME=$GTFSAPIDB_NAME
+      - GTFSAPIDB_HOST=gtfsapidb-live
+      - GTFSAPIDB_USER=gtfsapidbuser
+      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
+      - GTFSAPIDB_NAME=gtfsapidbname
 
-  daemon:
+  api-next:
+    image: ghcr.io/carrismetropolitana/schedules-api-api:latest
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    networks:
+      - backend-network
+    environment:
+      - GTFSAPIDB_HOST=gtfsapidb-next
+      - GTFSAPIDB_USER=gtfsapidbuser
+      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
+      - GTFSAPIDB_NAME=gtfsapidbname
+
+  daemon-live:
     image: ghcr.io/carrismetropolitana/schedules-api-daemon:latest
     restart: unless-stopped
     logging:
@@ -74,20 +85,35 @@ services:
     volumes:
       - ./data-temp/:/data-temp
     environment:
-      - SETTINGSDB_HOST=$SETTINGSDB_HOST
-      - SETTINGSDB_USER=$SETTINGSDB_USER
-      - SETTINGSDB_PASSWORD=$SETTINGSDB_PASSWORD
-      - SETTINGSDB_NAME=$SETTINGSDB_NAME
-      - GTFSAPIDB_HOST=$GTFSAPIDB_HOST
-      - GTFSAPIDB_USER=$GTFSAPIDB_USER
-      - GTFSAPIDB_PASSWORD=$GTFSAPIDB_PASSWORD
-      - GTFSAPIDB_NAME=$GTFSAPIDB_NAME
-      - GTFSPARSEDB_HOST=$GTFSPARSEDB_HOST
-      - GTFSPARSEDB_USER=root
+      - GTFSAPIDB_HOST=gtfsapidb-live
+      - GTFSAPIDB_USER=gtfsapidbuser
+      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
+      - GTFSAPIDB_NAME=gtfsapidbname
+      - GTFSPARSEDB_HOST=gtfsparsedb-live
+      - GTFSPARSEDB_USER=gtfsparsedbuser
     networks:
       - backend-network
 
-  settingsdb:
+  daemon-next:
+    image: ghcr.io/carrismetropolitana/schedules-api-daemon:latest
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - ./data-temp-next/:/data-temp
+    environment:
+      - GTFSAPIDB_HOST=gtfsapidb-next
+      - GTFSAPIDB_USER=gtfsapidbuser
+      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
+      - GTFSAPIDB_NAME=gtfsapidbname
+      - GTFSPARSEDB_HOST=gtfsparsedb-next
+      - GTFSPARSEDB_USER=gtfsparsedbuser
+    networks:
+      - backend-network
+
+  gtfsapidb-live:
     image: mongo
     restart: unless-stopped
     logging:
@@ -95,14 +121,14 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - settingsdb:/data/db
+      - gtfsapidb-live:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$SETTINGSDB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$SETTINGSDB_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=gtfsapidbuser
+      - MONGO_INITDB_ROOT_PASSWORD=gtfsapidbpassword
     networks:
       - backend-network
 
-  gtfsapidb:
+  gtfsapidb-next:
     image: mongo
     restart: unless-stopped
     logging:
@@ -110,14 +136,14 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - gtfsapidb:/data/db
+      - gtfsapidb-next:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=$GTFSAPIDB_USER
-      - MONGO_INITDB_ROOT_PASSWORD=$GTFSAPIDB_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=gtfsapidbuser
+      - MONGO_INITDB_ROOT_PASSWORD=gtfsapidbpassword
     networks:
       - backend-network
 
-  gtfsparsedb:
+  gtfsparsedb-live:
     image: mysql
     restart: unless-stopped
     logging:
@@ -129,6 +155,22 @@ services:
       - ./data-temp/:/data-temp
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=$GTFSPARSEDB_NAME
+      - MYSQL_DATABASE=gtfsparsedbname
+    networks:
+      - backend-network
+
+  gtfsparsedb-next:
+    image: mysql
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - ./options/gtfsparsedb/:/etc/mysql/conf.d/
+      - ./data-temp/:/data-temp
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=gtfsparsedbname
     networks:
       - backend-network

@@ -8,7 +8,6 @@
 /* * */
 /* IMPORTS */
 const crontab = require('node-cron');
-const SettingsDB = require('./databases/settingsdb');
 const GTFSParseDB = require('./databases/gtfsparsedb');
 const GTFSAPIDB = require('./databases/gtfsapidb');
 
@@ -45,7 +44,6 @@ async function appInitPoint() {
     // Verify connection to databases
     console.log();
     console.log('STEP 1: Connect to databases...');
-    await SettingsDB.connect();
     await GTFSParseDB.connect();
     await GTFSAPIDB.connect();
 
@@ -82,7 +80,6 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 10: Disconnect from databases...');
-    await SettingsDB.disconnect();
     await GTFSParseDB.disconnect();
     await GTFSAPIDB.disconnect();
 
