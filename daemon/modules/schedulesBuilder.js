@@ -186,7 +186,7 @@ module.exports = {
     const allRoutes_raw2 = await getAllRoutes();
 
     for (const currentRoute of allRoutes_raw2) {
-      const test = getRouteInfo(currentRoute);
+      const test = await getRouteInfo(currentRoute);
     }
 
     for (const currentRoute of allRoutes_raw) {
