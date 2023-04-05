@@ -27,8 +27,7 @@ const getMunicipalities = async () => {
 const getAllRoutes = async () => {
   try {
     const [rows, fields] = await GTFSParseDB.connection.execute('SELECT route_id FROM routes');
-    console.log(rows);
-    return rows;
+    return rows.map((r) => r.route_id);
   } catch (err) {
     console.log('Error at getAllRoutes()', err);
   }
