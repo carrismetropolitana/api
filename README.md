@@ -79,7 +79,7 @@ _Please avoid using this endpoint, and if you must do so responsibly. It returns
         ],
       },
     ],
-  }
+  },
   ...
 ]
 ```
