@@ -3,10 +3,6 @@ on:
   push:
     branches: production
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -14,12 +10,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: nginx
+            context: ./nginx
           - name: api
             context: ./api
-            image: ghcr.io/carrismetropolitana/schedules-api-api
           - name: daemon
             context: ./daemon
-            image: ghcr.io/carrismetropolitana/schedules-api-daemon
     permissions:
       contents: read
       packages: write
@@ -35,7 +31,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and Push Images
         uses: docker/build-push-action@v4
         with:
           context: ${{ matrix.context }}
