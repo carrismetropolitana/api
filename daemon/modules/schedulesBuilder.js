@@ -187,6 +187,8 @@ module.exports = {
 
     for (const currentRoute of allRoutes_raw2) {
       const test = await getRouteInfo(currentRoute);
+      console.log(test);
+      return;
     }
 
     for (const currentRoute of allRoutes_raw) {
