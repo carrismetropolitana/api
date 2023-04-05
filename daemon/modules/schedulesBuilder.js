@@ -186,9 +186,6 @@ module.exports = {
         municipalities: [],
       };
 
-      allUpdatedRouteIds.push(formattedRoute.route_id);
-      continue;
-
       // Get all trips associated with this route
       const allTrips_raw = await getTrips(currentRoute.route_id);
 
