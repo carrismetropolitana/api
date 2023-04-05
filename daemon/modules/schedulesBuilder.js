@@ -9,112 +9,151 @@ const timeCalc = require('./timeCalc');
  * @async
  * @returns {Array} Array of municipalities
  */
-const getMunicipalities = async () => {
-  try {
-    const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
-    if (response.ok) return response.json();
-  } catch (err) {
-    console.log('Error at getMunicipalities()', err);
-  }
-};
+async function getMunicipalities() {
+  const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
+  if (response.ok) return response.json();
+  else throw Error('Could not fetch municipalities.', response);
+}
 
 //
 //
 //
 
 /**
- * Retrieve all routes from SQL database
+ * Retrieve all routes from 'routes' table
  * @async
  * @returns {Array} Array of route objects
  */
-const getRoutes = async () => {
-  try {
-    return await GTFSParseDB.connection.execute(`
-        SELECT
-            route_id,
-            route_short_name,
-            route_long_name,
-            route_color,
-            route_text_color,
-            route_type
-        FROM
-            routes
-    `);
-  } catch (err) {
-    console.log('Error at getRoutes()', err);
-  }
-};
+async function getRoutes() {
+  const [rows, fields] = await GTFSParseDB.connection.execute(`
+    SELECT
+        route_id,
+        route_short_name,
+        route_long_name,
+        route_color,
+        route_text_color,
+        route_type
+    FROM
+        routes
+  `);
+  return rows;
+}
 
 //
 //
 //
 
 /**
- * Retrieve all routes from SQL database
+ * Retrieve trips matching the provided route_id
  * @async
- * @returns {Array} Array of route objects
+ * @param {String} route_id The route_id related to the trip
+ * @returns {Array} Array of trip objects
  */
-const getTrips = async (routeId) => {
-  try {
-    return await GTFSParseDB.connection.execute(
-      `
+async function getTrips(route_id) {
+  const [rows, fields] = await GTFSParseDB.connection.execute(
+    `
         SELECT
-            *
+            direction_id,
+            trip_headsign,
+            shape_id
         FROM
             trips
         WHERE
             route_id = ?
     `,
-      [routeId]
-    );
-  } catch (err) {
-    console.log('Error at getTrips()', err);
-  }
-};
-
-//
-//
-//
-
-const getShape = async (shapeId) => {
-  try {
-    const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM shapes WHERE shape_id = ?', [shapeId]);
-    return rows;
-  } catch (err) {
-    console.log('Error at getShape()', err);
-  }
-};
-
-//
-//
-//
-
-const getPath = async (tripId) => {
-  try {
-    const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM stop_times WHERE trip_id = ?', [tripId]);
-    return rows;
-  } catch (err) {
-    console.log('Error at getPath()', err);
-  }
-};
-
-//
-//
-//
-
-const getStop = async (stopId) => {
-  const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM stops WHERE stop_id = ?', [stopId]);
-  return rows[0];
-};
-
-//
-//
-//
-
-const getDates = async (serviceId) => {
-  const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM calendar_dates WHERE service_id = ? AND exception_type = 1', [serviceId]);
+    [route_id]
+  );
   return rows;
-};
+}
+
+//
+//
+//
+
+/**
+ * Retrieve shape matching the provided shape_id
+ * @async
+ * @param {String} shape_id The shape_id to retrieve
+ * @returns {Array} Array of shape points
+ */
+async function getShape(shape_id) {
+  const [rows, fields] = await GTFSParseDB.connection.execute(
+    `
+        SELECT
+            shape_pt_lat,
+            shape_pt_lon,
+            shape_pt_sequence,
+            shape_dist_traveled
+        FROM
+            shapes
+        WHERE
+            shape_id = ?
+    `,
+    [shape_id]
+  );
+  return rows;
+}
+
+//
+//
+//
+
+/**
+ * Retrieve the dates matching the provided service_id
+ * @async
+ * @param {String} service_id The service_id to retrieve
+ * @returns {Array} Array of date strings
+ */
+async function getDates(service_id) {
+  const [rows, fields] = await GTFSParseDB.connection.execute(
+    `
+        SELECT
+            date
+        FROM
+            calendar_dates
+        WHERE
+            service_id = ?
+        AND
+            exception_type = 1
+    `,
+    [service_id]
+  );
+  return rows;
+}
+
+//
+//
+//
+
+/**
+ * Retrieve stops for the given trip_id
+ * @async
+ * @param {String} trip_id The trip_id to retrieve from stop_times
+ * @returns {Array} Array of stops objects
+ */
+async function getStopTimes(trip_id) {
+  const [rows, fields] = await GTFSParseDB.connection.execute(
+    `
+        SELECT
+            st.stop_id,
+            st.stop_sequence,
+            st.arrival_time,
+            st.departure_time,
+            s.stop_name,
+            s.stop_lat,
+            s.stop_lon,
+        FROM
+            stop_times st
+            INNER JOIN stops s ON st.stop_id = s.stop_id
+        WHERE
+            st.trip_id = ?
+        ORDER BY
+            st.stop_sequence
+    `,
+    [trip_id]
+  );
+  return rows;
+}
 
 //
 //
@@ -126,25 +165,24 @@ module.exports = {
   start: async () => {
     //
 
-    /* * DEBUG * */
-    let counter = 0;
-    /* * DEBUG * */
-
     // OVERVIEW OF THIS FUNCTION
     // Lorem ipsum
 
-    // Fetch Municipalities API
-    const allMunicipalities = await getMunicipalities();
+    /* * DEBUG * */
+    let counter = 0;
+    /* * DEBUG * */
 
     // Setup a counter that holds all processed route_ids.
     // This will be used at the end to remove stale data from the database.
     let allUpdatedRouteIds = [];
 
-    // Get all routes from GTFS table (routes.txt)
-    const allRoutes_raw = await getRoutes();
-    console.log(allRoutes_raw);
+    // Fetch Municipalities API
+    const allMunicipalities = await getMunicipalities();
 
-    for (const currentRoute of allRoutes_raw) {
+    // Get all routes from GTFS table (routes.txt)
+    const allRoutes = await getRoutes();
+
+    for (const currentRoute of allRoutes) {
       //
 
       /* * DEBUG * */
@@ -161,116 +199,130 @@ module.exports = {
         route_color: `#${currentRoute.route_color || 'FA3250'}`,
         route_text_color: `#${currentRoute.route_text_color || 'FFFFFF'}`,
         municipalities: [],
+        directions: [],
       };
 
       // Get all trips associated with this route
       const allTrips_raw = await getTrips(currentRoute.route_id);
 
       // Simplify trips array by combining common attributes
-      const allTrips_simplified = allTrips_raw.map((item) => {
-        return { direction_id: item.direction_id, headsign: item.trip_headsign, shape_id: item.shape_id };
+      const allTrips_simplified = allTrips_raw.map((trip) => {
+        return { direction_id: trip.direction_id, headsign: trip.trip_headsign, shape_id: trip.shape_id };
       });
 
       // Deduplicate simplified trips array to keep only common attributes.
       // This essentially results in an array of 'directions'. Save it to the route object.
-      formattedRoute.directions = allTrips_simplified.filter((value, index, array) => {
+      const allDirections = allTrips_simplified.filter((value, index, array) => {
         return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
       });
 
       // For each direction
-      await Promise.all(
-        formattedRoute.directions.map(async (currentDirection) => {
-          // Get shape for this direction and sort it
-          const shape_raw = await getShape(currentDirection.shape_id);
-          const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-          currentDirection.shape = shape_raw.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
-          // Initiate the
-          currentDirection.trips = [];
-          // iusdh
-          for (const currentTrip of allTrips_raw) {
-            // For all trips matching the current direction_id
-            if (currentTrip.direction_id === currentDirection.direction_id) {
-              // Get dates in the YYYYMMDD format (GTFS Standard format)
-              const allDates_raw = await getDates(currentTrip.service_id);
-              const allDates_formatted = allDates_raw.map((item) => item.date);
-              // Get stop times for each trip
-              const allStopTimes_raw = await getPath(currentTrip.trip_id);
-              const allStopTimes_formatted = await Promise.all(
-                allStopTimes_raw.map(async (currentStopTime) => {
-                  const stopInfo = await getStop(currentStopTime.stop_id);
-                  if (!stopInfo) return console.log('⚠️ Error in stop:', stopInfo);
+      for (const currentDirection of allDirections) {
+        //
 
-                  // Format arrival_time
-                  const arrival_time_array = currentStopTime.arrival_time.split(':');
-                  let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
-                  if (arrival_time_hours && Number(arrival_time_hours) > 23) {
-                    const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
-                    arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
-                  }
-                  const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
-                  const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
+        // Initiate the formatted route object
+        // with the direct values taken from the GTFS table.
+        let formattedDirection = {
+          direction_id: currentDirection.direction_id,
+          headsign: currentDirection.trip_headsign,
+          shape: [],
+          trips: [],
+        };
 
-                  // Format departure_time
-                  const departure_time_array = currentStopTime.departure_time.split(':');
-                  let departure_time_hours = departure_time_array[0].padStart(2, '0');
-                  if (departure_time_hours && Number(departure_time_hours) > 23) {
-                    const departure_time_hours_adjusted = Number(departure_time_hours) - 24;
-                    departure_time_hours = String(departure_time_hours_adjusted).padStart(2, '0');
-                  }
-                  const departure_time_minutes = departure_time_array[1].padStart(2, '0');
-                  const departure_time_seconds = departure_time_array[2].padStart(2, '0');
+        // Get shape for this direction and sort it by 'shape_pt_sequence'
+        const shape_raw = await getShape(currentDirection.shape_id);
+        const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+        formattedDirection.shape = shape_raw.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
 
-                  // Find out which municipalities this route serves
-                  // using the first two digits of stop_id
-                  const municipalityId = stopInfo.stop_id?.substr(0, 2);
-                  // Check if this municipaliy is already in the route
-                  const alreadyHasMunicipality = formattedRoute.municipalities?.findIndex((item) => {
-                    return municipalityId === item.id;
-                  });
-                  // Add the municipality if it is still not added
-                  if (alreadyHasMunicipality < 0) {
-                    const stopMunicipality = allMunicipalities.filter((item) => {
-                      return municipalityId === item.id;
-                    });
-                    if (stopMunicipality.length) {
-                      formattedRoute.municipalities.push(stopMunicipality[0]);
-                    }
-                  }
-                  // Return formatted stop_time
-                  return {
-                    stop_sequence: currentStopTime.stop_sequence,
-                    stop_id: currentStopTime.stop_id,
-                    stop_name: stopInfo.stop_name,
-                    stop_lon: stopInfo.stop_lon,
-                    stop_lat: stopInfo.stop_lat,
-                    arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
-                    arrival_time_operation: currentStopTime.arrival_time,
-                    departure_time: `${departure_time_hours}:${departure_time_minutes}:${departure_time_seconds}`,
-                    departure_time_operation: currentStopTime.departure_time,
-                    shape_dist_traveled: currentStopTime.shape_dist_traveled,
-                  };
-                })
-              );
-              // Save trip object to trips array
-              currentDirection.trips.push({
-                trip_id: currentTrip.trip_id,
-                dates: allDates_formatted,
-                schedule: allStopTimes_formatted,
-              });
-            }
-          }
-          // Sort trips by departure_time ASC
-          currentDirection.trips.sort((a, b) => (a.schedule[0]?.departure_time_operation > b.schedule[0]?.departure_time_operation ? 1 : -1));
-          // Save the modified object
-          return currentDirection;
+        //
+        for (const currentTrip of allTrips_raw) {
           //
-        })
-      );
+          // For all trips matching the current direction_id
+          if (currentTrip.direction_id !== currentDirection.direction_id) continue;
+
+          // Initiate the formatted route object
+          // with the direct values taken from the GTFS table.
+          let formattedTrip = {
+            trip_id: currentTrip.trip_id,
+            dates: [],
+            schedule: [],
+          };
+
+          // Get dates in the YYYYMMDD format (GTFS Standard format)
+          const allDates_raw = await getDates(currentTrip.service_id);
+          formattedTrip.dates = allDates_raw.map((item) => item.date);
+
+          // Get stop times for each trip
+          const allStopTimes_raw = await getStopTimes(currentTrip.trip_id);
+
+          //
+          for (const currentStopTime of allStopTimes_raw) {
+            //
+            // Format arrival_time
+            const arrival_time_array = currentStopTime.arrival_time.split(':');
+            let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
+            if (arrival_time_hours && Number(arrival_time_hours) > 23) {
+              const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
+              arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
+            }
+            const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
+            const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
+
+            // Format departure_time
+            const departure_time_array = currentStopTime.departure_time.split(':');
+            let departure_time_hours = departure_time_array[0].padStart(2, '0');
+            if (departure_time_hours && Number(departure_time_hours) > 23) {
+              const departure_time_hours_adjusted = Number(departure_time_hours) - 24;
+              departure_time_hours = String(departure_time_hours_adjusted).padStart(2, '0');
+            }
+            const departure_time_minutes = departure_time_array[1].padStart(2, '0');
+            const departure_time_seconds = departure_time_array[2].padStart(2, '0');
+
+            // Find out which municipalities this route serves
+            // using the first two digits of stop_id
+            const municipalityId = currentStopTime.stop_id?.substr(0, 2);
+            // Check if this municipaliy is already in the route
+            const alreadyHasMunicipality = formattedRoute.municipalities?.findIndex((item) => {
+              return municipalityId === item.id;
+            });
+            // Add the municipality if it is still not added
+            if (alreadyHasMunicipality < 0) {
+              const stopMunicipality = allMunicipalities.filter((item) => {
+                return municipalityId === item.id;
+              });
+              if (stopMunicipality.length) {
+                formattedRoute.municipalities.push(stopMunicipality[0]);
+              }
+            }
+            // Return formatted stop_time
+            formattedTrip.schedule.push({
+              stop_sequence: currentStopTime.stop_sequence,
+              stop_id: currentStopTime.stop_id,
+              stop_name: currentStopTime.stop_name,
+              stop_lon: currentStopTime.stop_lon,
+              stop_lat: currentStopTime.stop_lat,
+              arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
+              arrival_time_operation: currentStopTime.arrival_time,
+              departure_time: `${departure_time_hours}:${departure_time_minutes}:${departure_time_seconds}`,
+              departure_time_operation: currentStopTime.departure_time,
+              shape_dist_traveled: currentStopTime.shape_dist_traveled,
+            });
+          }
+
+          // Save trip object to trips array
+          formattedDirection.trips.push(formattedTrip);
+        }
+        // Sort trips by departure_time ASC
+        formattedDirection.trips.sort((a, b) => (a.schedule[0]?.departure_time_operation > b.schedule[0]?.departure_time_operation ? 1 : -1));
+
+        // Save this direction in formattedRoutes
+        formattedRoute.directions.push(formattedDirection);
+      }
 
       await GTFSAPIDB.Route.findOneAndUpdate({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
 
       const elapsedTime = timeCalc.getElapsedTime(startTime);
-      console.log(`⤷ [${counter}/${allRoutes_raw.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
+      console.log(`⤷ [${counter}/${allRoutes.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
 
       allUpdatedRouteIds.push(formattedRoute.route_id);
 
