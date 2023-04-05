@@ -45,38 +45,39 @@ const getAllRoutes = async () => {
 const getRouteInfo = async (routeId) => {
   const [rows, fields] = await GTFSParseDB.connection.execute(
     `
-      SELECT
-          r.route_id,
-          r.route_short_name,
-          r.route_long_name,
-          r.route_color,
-          r.route_text_color,
-          s.stop_sequence,
-          s.stop_id,
-          s.stop_name,
-          s.stop_lat,
-          s.stop_lon,
-          st.arrival_time,
-          st.departure_time,
-          st.shape_dist_traveled,
-          t.trip_id,
-          t.service_id,
-          t.direction_id,
-          t.shape_id,
-          t.trip_headsign,
-          s.shape_pt_lat,
-          s.shape_pt_lon,
-          s.shape_pt_sequence
-      FROM
-          routes r
-          INNER JOIN trips t ON r.route_id = t.route_id
-          INNER JOIN stop_times st ON t.trip_id = st.trip_id
-          INNER JOIN stops s ON st.stop_id = s.stop_id
-      WHERE
-          r.route_id = ?
-      ORDER BY
-          t.trip_id, s.stop_sequence
-      `,
+        SELECT
+            r.route_id,
+            r.route_short_name,
+            r.route_long_name,
+            r.route_color,
+            r.route_text_color,
+            st.stop_id,
+            st.stop_sequence,
+            st.arrival_time,
+            st.departure_time,
+            st.shape_dist_traveled,
+            s.stop_name,
+            s.stop_lat,
+            s.stop_lon,
+            t.trip_id,
+            t.service_id,
+            t.direction_id,
+            t.shape_id,
+            t.trip_headsign,
+            sh.shape_pt_lat,
+            sh.shape_pt_lon,
+            sh.shape_pt_sequence
+        FROM
+            routes r
+            INNER JOIN trips t ON r.route_id = t.route_id
+            INNER JOIN stop_times st ON t.trip_id = st.trip_id
+            INNER JOIN stops s ON st.stop_id = s.stop_id
+            INNER JOIN shapes sh ON t.shape_id = sh.shape_id
+        WHERE
+            r.route_id = ?
+        ORDER BY
+            t.trip_id, st.stop_sequence
+    `,
     [routeId]
   );
   console.log(rows);
