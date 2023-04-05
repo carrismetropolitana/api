@@ -22,14 +22,27 @@ const getMunicipalities = async () => {
 //
 //
 
-//
-// Download file from URL
-const getAllRoutes = async () => {
+/**
+ * Retrieve all routes from SQL database
+ * @async
+ * @returns {Array} Array of route objects
+ */
+const getRoutes = async () => {
   try {
-    const [rows, fields] = await GTFSParseDB.connection.execute('SELECT route_id FROM routes');
-    return rows.map((r) => r.route_id);
+    return await GTFSParseDB.connection.execute(`
+        SELECT
+            route_id,
+            route_short_name,
+            route_long_name,
+            route_color,
+            route_text_color,
+            route_type,
+            circular
+        FROM
+            routes
+    `);
   } catch (err) {
-    console.log('Error at getAllRoutes()', err);
+    console.log('Error at getRoutes()', err);
   }
 };
 
@@ -38,100 +51,31 @@ const getAllRoutes = async () => {
 //
 
 /**
- * Query SQL for route information
+ * Retrieve all routes from SQL database
  * @async
- * @returns {Array} Array of municipalities
+ * @returns {Array} Array of route objects
  */
-const getRouteInfo = async (routeId) => {
-  const [rows, fields] = await GTFSParseDB.connection.execute(
-    `
-        SELECT
-            r.route_id,
-            r.route_short_name,
-            r.route_long_name,
-            r.route_color,
-            r.route_text_color,
-            st.stop_id,
-            st.stop_sequence,
-            st.arrival_time,
-            st.departure_time,
-            s.stop_name,
-            s.stop_lat,
-            s.stop_lon,
-            t.trip_id,
-            t.service_id,
-            t.direction_id,
-            t.shape_id,
-            t.trip_headsign,
-            sh.shape_pt_lat,
-            sh.shape_pt_lon,
-            sh.shape_pt_sequence,
-            sh.shape_dist_traveled
-        FROM
-            routes r
-            INNER JOIN trips t ON r.route_id = t.route_id
-            INNER JOIN stop_times st ON t.trip_id = st.trip_id
-            INNER JOIN stops s ON st.stop_id = s.stop_id
-            INNER JOIN shapes sh ON t.shape_id = sh.shape_id
-        WHERE
-            r.route_id = ?
-        ORDER BY
-            t.trip_id, st.stop_sequence
-    `,
-    [routeId]
-  );
-  console.log(rows);
-  return rows;
-};
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-//
-// Download file from URL
-const getRoutes = async () => {
-  try {
-    const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM routes');
-    return rows.map((r) => {
-      return {
-        route_id: r.route_id,
-        route_short_name: r.route_short_name,
-        route_long_name: r.route_long_name,
-        route_color: r.route_color,
-        route_text_color: r.route_text_color,
-        route_type: r.route_type,
-        circular: r.circular,
-      };
-    });
-  } catch (err) {
-    console.log('Error at buildRoutes()', err);
-  }
-};
-
 const getTrips = async (routeId) => {
   try {
-    const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM trips WHERE route_id = ?', [routeId]);
-    return rows;
+    return await GTFSParseDB.connection.execute(
+      `
+        SELECT
+            *
+        FROM
+            trips
+        WHERE
+            route_id = ?
+    `,
+      [routeId]
+    );
   } catch (err) {
     console.log('Error at getTrips()', err);
   }
 };
+
+//
+//
+//
 
 const getShape = async (shapeId) => {
   try {
@@ -142,6 +86,10 @@ const getShape = async (shapeId) => {
   }
 };
 
+//
+//
+//
+
 const getPath = async (tripId) => {
   try {
     const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM stop_times WHERE trip_id = ?', [tripId]);
@@ -151,15 +99,27 @@ const getPath = async (tripId) => {
   }
 };
 
+//
+//
+//
+
 const getStop = async (stopId) => {
   const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM stops WHERE stop_id = ?', [stopId]);
   return rows[0];
 };
 
+//
+//
+//
+
 const getDates = async (serviceId) => {
   const [rows, fields] = await GTFSParseDB.connection.execute('SELECT * FROM calendar_dates WHERE service_id = ? AND exception_type = 1', [serviceId]);
   return rows;
 };
+
+//
+//
+//
 
 //
 // Export functions from this module
@@ -183,13 +143,6 @@ module.exports = {
 
     // Get all routes from GTFS table (routes.txt)
     const allRoutes_raw = await getRoutes();
-    const allRoutes_raw2 = await getAllRoutes();
-
-    for (const currentRoute of allRoutes_raw2) {
-      const test = await getRouteInfo(currentRoute);
-      console.log(test);
-      return;
-    }
 
     for (const currentRoute of allRoutes_raw) {
       //
