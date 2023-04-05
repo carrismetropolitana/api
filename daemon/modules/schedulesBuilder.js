@@ -80,6 +80,7 @@ const getRouteInfo = async (routeId) => {
       `,
     [routeId]
   );
+  console.log(rows);
   return rows;
 };
 
@@ -183,6 +184,10 @@ module.exports = {
     // Get all routes from GTFS table (routes.txt)
     const allRoutes_raw = await getRoutes();
     const allRoutes_raw2 = await getAllRoutes();
+
+    for (const currentRoute of allRoutes_raw2) {
+      const test = getRouteInfo(currentRoute);
+    }
 
     for (const currentRoute of allRoutes_raw) {
       //
