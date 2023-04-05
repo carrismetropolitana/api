@@ -58,7 +58,7 @@ services:
       - GTFSAPIDB_HOST=gtfsapidb-live
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidbname
+      - GTFSAPIDB_NAME=gtfsapidb
 
   api-next:
     image: ghcr.io/carrismetropolitana/schedules-api-api:latest
@@ -73,7 +73,7 @@ services:
       - GTFSAPIDB_HOST=gtfsapidb-next
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidbname
+      - GTFSAPIDB_NAME=gtfsapidb
 
   daemon-live:
     image: ghcr.io/carrismetropolitana/schedules-api-daemon:latest
@@ -83,14 +83,16 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./data-temp/:/data-temp
+      - ./data-temp/live/:/data-temp
     environment:
+      - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
       - GTFSAPIDB_HOST=gtfsapidb-live
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidbname
+      - GTFSAPIDB_NAME=gtfsapidb
       - GTFSPARSEDB_HOST=gtfsparsedb-live
-      - GTFSPARSEDB_USER=gtfsparsedbuser
+      - GTFSPARSEDB_NAME=gtfsparsedb
+      - GTFSPARSEDB_USER=root
     networks:
       - backend-network
 
@@ -102,14 +104,16 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./data-temp-next/:/data-temp
+      - ./data-temp/next/:/data-temp
     environment:
+      - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/next/CarrisMetropolitana.zip
       - GTFSAPIDB_HOST=gtfsapidb-next
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidbname
+      - GTFSAPIDB_NAME=gtfsapidb
       - GTFSPARSEDB_HOST=gtfsparsedb-next
-      - GTFSPARSEDB_USER=gtfsparsedbuser
+      - GTFSPARSEDB_NAME=gtfsparsedb
+      - GTFSPARSEDB_USER=root
     networks:
       - backend-network
 
@@ -152,10 +156,10 @@ services:
         max-file: '1'
     volumes:
       - ./options/gtfsparsedb/:/etc/mysql/conf.d/
-      - ./data-temp/:/data-temp
+      - ./data-temp/live/:/data-temp
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=gtfsparsedbname
+      - MYSQL_DATABASE=gtfsparsedb
     networks:
       - backend-network
 
@@ -168,9 +172,9 @@ services:
         max-file: '1'
     volumes:
       - ./options/gtfsparsedb/:/etc/mysql/conf.d/
-      - ./data-temp/:/data-temp
+      - ./data-temp/next/:/data-temp
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=gtfsparsedbname
+      - MYSQL_DATABASE=gtfsparsedb
     networks:
       - backend-network
