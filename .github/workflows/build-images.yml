@@ -1,21 +1,19 @@
-name: Build & publish Docker images
+name: Build & Publish Docker images
+
 on:
   push:
     branches: production
 
 jobs:
-  build-and-push-image:
+  run:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: nginx
-            context: ./nginx
           - name: api
-            context: ./api
           - name: daemon
-            context: ./daemon
     permissions:
       contents: read
       packages: write
@@ -34,7 +32,7 @@ jobs:
       - name: Build and Push Images
         uses: docker/build-push-action@v4
         with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.context }}/Dockerfile
+          context: ./${{ matrix.name }}
+          file: ./${{ matrix.name }}/Dockerfile
           push: true
           tags: ghcr.io/carrismetropolitana/schedules-api-${{ matrix.name }}:latest
