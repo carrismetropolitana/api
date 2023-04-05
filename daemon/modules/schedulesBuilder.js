@@ -36,8 +36,7 @@ const getRoutes = async () => {
             route_long_name,
             route_color,
             route_text_color,
-            route_type,
-            circular
+            route_type
         FROM
             routes
     `);
