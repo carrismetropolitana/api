@@ -11,15 +11,24 @@ networks:
 
 services:
   #
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=30
+      - WATCHTOWER_CLEANUP=TRUE
+      - WATCHTOWER_INCLUDE_STOPPED=TRUE
+      - WATCHTOWER_REVIVE_STOPPED=TRUE
+
   nginx:
-    image: nginx:stable
+    image: ghcr.io/carrismetropolitana/schedules-api-nginx:latest
     restart: unless-stopped
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./options/nginx:/etc/nginx/conf.d
       - ./options/letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     networks:
@@ -27,7 +36,6 @@ services:
     ports:
       - 80:80
       - 443:443
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   certbot:
     image: certbot/certbot
@@ -38,7 +46,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   api:
-    build: ./api/
+    image: ghcr.io/carrismetropolitana/schedules-api-api:latest
     restart: unless-stopped
     logging:
       options:
@@ -46,7 +54,6 @@ services:
         max-file: '1'
     networks:
       - backend-network
-    env_file: ./.env
     environment:
       - SETTINGSDB_HOST=$SETTINGSDB_HOST
       - SETTINGSDB_USER=$SETTINGSDB_USER
@@ -58,7 +65,7 @@ services:
       - GTFSAPIDB_NAME=$GTFSAPIDB_NAME
 
   daemon:
-    build: ./daemon/
+    image: ghcr.io/carrismetropolitana/schedules-api-daemon:latest
     restart: unless-stopped
     logging:
       options:
@@ -66,7 +73,6 @@ services:
         max-file: '1'
     volumes:
       - ./data-temp/:/data-temp
-    env_file: ./.env
     environment:
       - SETTINGSDB_HOST=$SETTINGSDB_HOST
       - SETTINGSDB_USER=$SETTINGSDB_USER
@@ -90,7 +96,6 @@ services:
         max-file: '1'
     volumes:
       - settingsdb:/data/db
-    env_file: ./.env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$SETTINGSDB_USER
       - MONGO_INITDB_ROOT_PASSWORD=$SETTINGSDB_PASSWORD
@@ -106,7 +111,6 @@ services:
         max-file: '1'
     volumes:
       - gtfsapidb:/data/db
-    env_file: ./.env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$GTFSAPIDB_USER
       - MONGO_INITDB_ROOT_PASSWORD=$GTFSAPIDB_PASSWORD
@@ -123,7 +127,6 @@ services:
     volumes:
       - ./options/gtfsparsedb/:/etc/mysql/conf.d/
       - ./data-temp/:/data-temp
-    env_file: ./.env
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=$GTFSPARSEDB_NAME
