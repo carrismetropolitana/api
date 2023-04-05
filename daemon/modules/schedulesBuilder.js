@@ -65,8 +65,8 @@ const getRouteInfo = async (routeId) => {
             t.trip_headsign,
             sh.shape_pt_lat,
             sh.shape_pt_lon,
-            sh.shape_pt_sequence
-            sh.shape_dist_traveled,
+            sh.shape_pt_sequence,
+            sh.shape_dist_traveled
         FROM
             routes r
             INNER JOIN trips t ON r.route_id = t.route_id
