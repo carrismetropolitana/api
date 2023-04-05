@@ -4,19 +4,87 @@ const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
 
-//
-// Download file from URL
+/**
+ * Fetch municipalities from www
+ * @async
+ * @returns {Array} Array of municipalities
+ */
 const getMunicipalities = async () => {
   try {
     const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
-    if (response.ok) {
-      const data = response.json();
-      return data;
-    }
+    if (response.ok) return response.json();
   } catch (err) {
-    console.log('Error at buildRoutes()', err);
+    console.log('Error at getMunicipalities()', err);
   }
 };
+
+//
+//
+//
+
+/**
+ * Query SQL for route information
+ * @async
+ * @returns {Array} Array of municipalities
+ */
+const getRouteInfo = async (routeId) => {
+  const [rows, fields] = await GTFSParseDB.connection.execute(
+    `
+      SELECT
+          r.route_id,
+          r.route_short_name,
+          r.route_long_name,
+          r.route_color,
+          r.route_text_color,
+          s.stop_sequence,
+          s.stop_id,
+          s.stop_name,
+          s.stop_lat,
+          s.stop_lon,
+          st.arrival_time,
+          st.departure_time,
+          st.shape_dist_traveled,
+          t.trip_id,
+          t.service_id,
+          t.direction_id,
+          t.shape_id,
+          t.trip_headsign,
+          s.shape_pt_lat,
+          s.shape_pt_lon,
+          s.shape_pt_sequence
+      FROM
+          routes r
+          INNER JOIN trips t ON r.route_id = t.route_id
+          INNER JOIN stop_times st ON t.trip_id = st.trip_id
+          INNER JOIN stops s ON st.stop_id = s.stop_id
+      WHERE
+          r.route_id = ?
+      ORDER BY
+          t.trip_id, s.stop_sequence
+      `,
+    [routeId]
+  );
+  return rows;
+};
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 //
 // Download file from URL
@@ -83,7 +151,6 @@ module.exports = {
     //
 
     /* * DEBUG * */
-    const ROUTE_PARSE_LIMIT = 5000;
     let counter = 0;
     /* * DEBUG * */
 
@@ -118,6 +185,9 @@ module.exports = {
         route_text_color: `#${currentRoute.route_text_color || 'FFFFFF'}`,
         municipalities: [],
       };
+
+      allUpdatedRouteIds.push(formattedRoute.route_id);
+      continue;
 
       // Get all trips associated with this route
       const allTrips_raw = await getTrips(currentRoute.route_id);
@@ -234,6 +304,7 @@ module.exports = {
     }
 
     // DELETE FROM ROUTES DB IF NOT IN ARRAY OF UPDATED IDS
+    let updatedRouteSummaryIds = [];
     const allRouteIdsInDatabase = await GTFSAPIDB.Route.distinct('route_id');
     for (const existingRouteId of allRouteIdsInDatabase) {
       // Check if this route_id in the big database
@@ -243,35 +314,31 @@ module.exports = {
       if (!isStillValidRouteId) {
         await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
         console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
-      }
-    }
-
-    // FETCH ONLY ROUTES WITH THE LOWEST SUFFIX IN ROUTE_ID (ex: 2722_1, if there is no 2722_0)
-    const allRouteIdsWithLowestSuffix = await GTFSAPIDB.Route.aggregate([
-      { $group: { _id: '$route_short_name', lowestPrefix: { $min: '$route_id' } } },
-      { $match: { route_id: { $eq: '$lowestPrefix' } } },
-      { $project: { _id: 0, route_id: '$lowestPrefix', route_short_name: '$_id' } },
-    ]);
-
-    console.log('Dump: ', allRouteIdsWithLowestSuffix);
-    console.log('Count: ', allRouteIdsWithLowestSuffix.length);
-
-    for (const baseVariantOfRoute of allRouteIdsWithLowestSuffix) {
-      await GTFSAPIDB.RouteSummary.findOneAndUpdate(
-        { route_id: baseVariantOfRoute.route_id },
-        {
-          route_id: baseVariantOfRoute.route_id,
-          route_short_name: baseVariantOfRoute.route_short_name,
-          route_long_name: baseVariantOfRoute.route_long_name,
-          route_color: baseVariantOfRoute.route_color,
-          route_text_color: baseVariantOfRoute.route_text_color,
-          municipalities: baseVariantOfRoute.municipalities,
-        },
-        {
-          upsert: true,
+      } else {
+        const routeShortNameForRouteId = existingRouteId.substring(0, 4);
+        const allVariantsForRouteShortName = await GTFSAPIDB.Route.find({ route_short_name: routeShortNameForRouteId });
+        const allVariantsForRouteShortName_sorted = allVariantsForRouteShortName.sort((a, b) => {
+          return a.route_id < b.route_id;
+        });
+        if (allVariantsForRouteShortName_sorted.length) {
+          await GTFSAPIDB.RouteSummary.findOneAndUpdate(
+            { route_id: allVariantsForRouteShortName_sorted[0].route_id },
+            {
+              route_id: allVariantsForRouteShortName_sorted[0].route_id,
+              route_short_name: allVariantsForRouteShortName_sorted[0].route_short_name,
+              route_long_name: allVariantsForRouteShortName_sorted[0].route_long_name,
+              route_color: allVariantsForRouteShortName_sorted[0].route_color,
+              route_text_color: allVariantsForRouteShortName_sorted[0].route_text_color,
+              municipalities: allVariantsForRouteShortName_sorted[0].municipalities,
+            },
+            {
+              upsert: true,
+            }
+          );
+          updatedRouteSummaryIds.push(allVariantsForRouteShortName_sorted[0].route_id);
+          console.log(`⤷ Saved route summary ${allVariantsForRouteShortName_sorted[0].route_id} to API Database.`);
         }
-      );
-      console.log(`⤷ Saved route summary ${formattedRoute.route_id} to API Database.`);
+      }
     }
 
     // DELETE FROM ROUTES SUMMARY DB IF NOT IN ARRAY OF UPDATED IDS
@@ -279,7 +346,7 @@ module.exports = {
     for (const existingRouteSummaryId of allRouteSummaryIdsInDatabase) {
       // Check if this route_id in the summary database
       // is in the array of newly updated route_ids
-      const isStillValidRouteSummaryId = allUpdatedRouteIds.includes(existingRouteSummaryId);
+      const isStillValidRouteSummaryId = updatedRouteSummaryIds.includes(existingRouteSummaryId);
       // If the route_id is not valid, delete it from the database
       if (!isStillValidRouteSummaryId) {
         await GTFSAPIDB.RouteSummary.deleteOne({ route_id: existingRouteSummaryId });

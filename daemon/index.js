@@ -51,23 +51,23 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 2: Fetching latest GTFS archive...');
-    await filemanager.downloadFromUrl('https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip');
+    // await filemanager.downloadFromUrl('https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip');
 
     console.log();
     console.log('STEP 3: Extracting downloaded archive...');
-    await filemanager.extractArchive();
+    // await filemanager.extractArchive();
 
     console.log();
     console.log('STEP 4: Create SQL Tables to store the files...');
-    await setupSqlTables.createAllTables();
+    // await setupSqlTables.createAllTables();
 
     console.log();
     console.log('STEP 5: Import extracted files into created tables...');
-    await saveFilesToTables.saveAllFiles();
+    // await saveFilesToTables.saveAllFiles();
 
     console.log();
     console.log('STEP 6: Cleanup temp files...');
-    await filemanager.removeTempDirectory();
+    // await filemanager.removeTempDirectory();
 
     console.log();
     console.log('STEP 7: Build Schedules...');
@@ -75,7 +75,7 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 8: Build Stops...');
-    await stopsBuilder.start();
+    // await stopsBuilder.start();
 
     console.log();
     console.log('STEP 9: Build APEX (not implemented)...');
