@@ -142,6 +142,7 @@ module.exports = {
 
     // Get all routes from GTFS table (routes.txt)
     const allRoutes_raw = await getRoutes();
+    console.log(allRoutes_raw);
 
     for (const currentRoute of allRoutes_raw) {
       //
