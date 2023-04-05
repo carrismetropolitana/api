@@ -22,6 +22,22 @@ const getMunicipalities = async () => {
 //
 //
 
+//
+// Download file from URL
+const getAllRoutes = async () => {
+  try {
+    const [rows, fields] = await GTFSParseDB.connection.execute('SELECT route_id FROM routes');
+    console.log(rows);
+    return rows;
+  } catch (err) {
+    console.log('Error at getAllRoutes()', err);
+  }
+};
+
+//
+//
+//
+
 /**
  * Query SQL for route information
  * @async
@@ -166,6 +182,7 @@ module.exports = {
 
     // Get all routes from GTFS table (routes.txt)
     const allRoutes_raw = await getRoutes();
+    const allRoutes_raw2 = await getAllRoutes();
 
     for (const currentRoute of allRoutes_raw) {
       //
