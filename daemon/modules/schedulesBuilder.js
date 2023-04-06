@@ -381,6 +381,8 @@ module.exports = {
       },
     ]);
 
+    console.log(allRouteBasesInDatabase);
+
     // Update the database with the new group of route bases
     const routeSummaryUpdateResult = await GTFSAPIDB.RouteSummary.updateMany({}, { $set: allRouteBasesInDatabase }, { upsert: true });
     console.log(`⤷ Updated ${routeSummaryUpdateResult.modifiedCount} route bases.`);
