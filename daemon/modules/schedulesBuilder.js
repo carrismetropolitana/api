@@ -352,18 +352,9 @@ module.exports = {
       //
     }
 
-    // Retrieve all saved routes. Ask for only the route_id field to be returned.
-    const allRouteIdsInDatabase = await GTFSAPIDB.Route.distinct('route_id');
-    for (const existingRouteId of allRouteIdsInDatabase) {
-      // Check if this route_id in the big database
-      // is in the array of newly updated route_ids
-      const isStillValidRouteId = allProcessedRouteIds.includes(existingRouteId);
-      // If the route_id is not valid, delete it from the database
-      if (!isStillValidRouteId) {
-        await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
-        console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
-      }
-    }
+    // Delete all documents with route_ids not present in the new GTFS version
+    const deletedStaleRoutes = await GTFSAPIDB.Route.deleteMany({ route_id: { $nin: allProcessedRouteIds } });
+    console.log('deletedStaleRoutes', deletedStaleRoutes);
 
     // Retrieve all distinct route_short_names and iterate on each one.
     const allRouteBasesInDatabase = await GTFSAPIDB.Route.aggregate([
@@ -390,7 +381,26 @@ module.exports = {
       },
     ]);
 
-    console.log(allRouteBasesInDatabase);
+    // Update the database with the new group of route bases
+    await GTFSAPIDB.RouteSummary.updateMany({}, { $set: allRouteBasesInDatabase }, { upsert: true });
+
+    // Delete all route bases not present in the last update
+    const allProcessedBaseRouteIds = allRouteBasesInDatabase.map((item) => item.route_id);
+    const deletedStaleRouteBases = await GTFSAPIDB.RouteSummary.deleteMany({ route_id: { $nin: allProcessedBaseRouteIds } });
+    console.log('deletedStaleRouteBases', deletedStaleRouteBases);
+
+    // Retrieve all saved routes. Ask for only the route_id field to be returned.
+    // const allRouteIdsInDatabase = await GTFSAPIDB.Route.distinct('route_id');
+    // for (const existingRouteId of allRouteIdsInDatabase) {
+    //   // Check if this route_id in the big database
+    //   // is in the array of newly updated route_ids
+    //   const isStillValidRouteId = allProcessedRouteIds.includes(existingRouteId);
+    //   // If the route_id is not valid, delete it from the database
+    //   if (!isStillValidRouteId) {
+    //     await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
+    //     console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
+    //   }
+    // }
 
     // distinct('route_id')
 
@@ -431,17 +441,17 @@ module.exports = {
     // }
 
     // DELETE FROM ROUTES SUMMARY DB IF NOT IN ARRAY OF UPDATED IDS
-    const allRouteSummaryIdsInDatabase = await GTFSAPIDB.RouteSummary.distinct('route_id');
-    for (const existingRouteSummaryId of allRouteSummaryIdsInDatabase) {
-      // Check if this route_id in the summary database
-      // is in the array of newly updated route_ids
-      const isStillValidRouteSummaryId = updatedRouteSummaryIds.includes(existingRouteSummaryId);
-      // If the route_id is not valid, delete it from the database
-      if (!isStillValidRouteSummaryId) {
-        await GTFSAPIDB.RouteSummary.deleteOne({ route_id: existingRouteSummaryId });
-        console.log(`⤷ Deleted stale ${existingRouteSummaryId} summary from API Database.`);
-      }
-    }
+    // const allRouteSummaryIdsInDatabase = await GTFSAPIDB.RouteSummary.distinct('route_id');
+    // for (const existingRouteSummaryId of allRouteSummaryIdsInDatabase) {
+    //   // Check if this route_id in the summary database
+    //   // is in the array of newly updated route_ids
+    //   const isStillValidRouteSummaryId = updatedRouteSummaryIds.includes(existingRouteSummaryId);
+    //   // If the route_id is not valid, delete it from the database
+    //   if (!isStillValidRouteSummaryId) {
+    //     await GTFSAPIDB.RouteSummary.deleteOne({ route_id: existingRouteSummaryId });
+    //     console.log(`⤷ Deleted stale ${existingRouteSummaryId} summary from API Database.`);
+    //   }
+    // }
 
     //
   },
