@@ -24,11 +24,11 @@ app.use(function (req, res, next) {
 //
 app.get('/api/routes/', async (req, res) => {
   try {
-    const foundDocuments = await GTFSAPIDB.Route.find({});
-    if (foundDocuments.length > 0) {
-      foundDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
-      console.log('🟢 → Request for "/api/routes/[all]": %s Found', foundDocuments.length);
-      res.send(foundDocuments);
+    const foundManyDocuments = await GTFSAPIDB.Route.find({});
+    if (foundManyDocuments.length > 0) {
+      foundManyDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
+      console.log('🟢 → Request for "/api/routes/[all]": %s Found', foundManyDocuments.length);
+      res.send(foundManyDocuments);
     } else {
       console.log('🟡 → Request for "/api/routes/[all]": Not Found');
       res.status(404).send([]);
@@ -42,11 +42,11 @@ app.get('/api/routes/', async (req, res) => {
 //
 app.get('/api/routes/summary', async (req, res) => {
   try {
-    const foundDocuments = await GTFSAPIDB.RouteSummary.find({});
-    if (foundDocuments.length > 0) {
-      foundDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
-      console.log('🟢 → Request for "/api/routes/summary": %s Found', foundDocuments.length);
-      res.send(foundDocuments);
+    const foundManyDocuments = await GTFSAPIDB.RouteSummary.find({});
+    if (foundManyDocuments.length > 0) {
+      foundManyDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
+      console.log('🟢 → Request for "/api/routes/summary": %s Found', foundManyDocuments.length);
+      res.send(foundManyDocuments);
     } else {
       console.log('🟡 → Request for "/api/routes/summary": Not Found');
       res.status(404).send([]);
@@ -60,10 +60,10 @@ app.get('/api/routes/summary', async (req, res) => {
 //
 app.get('/api/routes/route_id/:route_id', async (req, res) => {
   try {
-    const foundDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
-    if (foundDocument) {
+    const foundOneDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
+    if (foundOneDocument) {
       console.log('🟢 → Request for "/api/routes/route_id/%s": 1 Found', req.params.route_id);
-      res.send(foundDocument);
+      res.send(foundOneDocument);
     } else {
       console.log('🟡 → Request for "/api/routes/route_id/%s": Not Found', req.params.route_id);
       res.status(404).send({});
@@ -77,10 +77,10 @@ app.get('/api/routes/route_id/:route_id', async (req, res) => {
 //
 app.get('/api/routes/route_short_name/:route_short_name', async (req, res) => {
   try {
-    const foundDocuments = await GTFSAPIDB.Route.find({ route_id: { $regex: `^${req.params.route_short_name}` } });
-    if (foundDocuments.length > 0) {
-      console.log('🟢 → Request for "/api/routes/route_short_name/%s": %s Found', req.params.route_short_name, foundDocuments.length);
-      res.send(foundDocuments);
+    const foundManyDocuments = await GTFSAPIDB.Route.find({ route_id: { $regex: `^${req.params.route_short_name}` } });
+    if (foundManyDocuments.length > 0) {
+      console.log('🟢 → Request for "/api/routes/route_short_name/%s": %s Found', req.params.route_short_name, foundManyDocuments.length);
+      res.send(foundManyDocuments);
     } else {
       console.log('🟡 → Request for "/api/routes/route_short_name/%s": Not Found', req.params.route_short_name);
       res.status(404).send([]);
@@ -94,11 +94,11 @@ app.get('/api/routes/route_short_name/:route_short_name', async (req, res) => {
 //
 app.get('/api/stops', async (req, res) => {
   try {
-    const foundDocuments = await GTFSAPIDB.Stop.find({});
-    if (foundDocuments.length > 0) {
-      foundDocuments.sort((a, b) => (a.stop_id > b.stop_id ? 1 : -1));
-      console.log('🟢 → Request for "/api/stops/[all]": %s Found', foundDocuments.length);
-      res.send(foundDocuments);
+    const foundManyDocuments = await GTFSAPIDB.Stop.find({});
+    if (foundManyDocuments.length > 0) {
+      foundManyDocuments.sort((a, b) => (a.stop_id > b.stop_id ? 1 : -1));
+      console.log('🟢 → Request for "/api/stops/[all]": %s Found', foundManyDocuments.length);
+      res.send(foundManyDocuments);
     } else {
       console.log('🟡 → Request for "/api/stops/[all]": Not Found');
       res.status(404).send([]);
@@ -112,10 +112,10 @@ app.get('/api/stops', async (req, res) => {
 //
 app.get('/api/stops/:stop_id', async (req, res) => {
   try {
-    const foundDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
-    if (foundDocument) {
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
+    if (foundOneDocument) {
       console.log('🟢 → Request for "/api/stops/%s": 1 Found', req.params.stop_id);
-      res.send(foundDocument);
+      res.send(foundOneDocument);
     } else {
       console.log('🟡 → Request for "/api/stops/%s": Not Found', req.params.stop_id);
       res.status(404).send({});
