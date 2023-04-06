@@ -75,7 +75,7 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 8: Build Stops...');
-    await stopsBuilder.start();
+    // await stopsBuilder.start();
 
     console.log();
     console.log('STEP 9: Build APEX (not implemented)...');
