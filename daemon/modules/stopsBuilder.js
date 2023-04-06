@@ -52,7 +52,7 @@ module.exports = {
 
     // Setup a counter that holds all processed stop_ids.
     // This will be used at the end to remove stale data from the database.
-    let allUpdatedStopIds = [];
+    let allProcessedStopIds = [];
 
     // Get all stops from GTFS table (stops.txt)
     const allStopsWithRoutes = await getUniqueRouteShortNamesAtEachStop();
@@ -87,23 +87,14 @@ module.exports = {
       const elapsedTime = timeCalc.getElapsedTime(startTime);
       console.log(`⤷ [${counter}/${allStopsWithRoutes.length}] Saved stop ${formattedStop.stop_id} to API Database in ${elapsedTime}.`);
 
-      allUpdatedStopIds.push(formattedStop.stop_id);
+      allProcessedStopIds.push(formattedStop.stop_id);
 
       //
     }
 
-    // DELETE FROM STOPS DB IF NOT IN ARRAY OF UPDATED IDS
-    const allStopIdsInDatabase = await GTFSAPIDB.Stop.distinct('stop_id');
-    for (const existingStopId of allStopIdsInDatabase) {
-      // Check if this stop_id from the big database
-      // is in the array of newly updated stop_ids
-      const isStillValidStopId = allUpdatedStopIds.includes(existingStopId);
-      // If the stop_id is not valid, delete it from the database
-      if (!isStillValidStopId) {
-        await GTFSAPIDB.Stop.deleteOne({ stop_id: existingStopId });
-        console.log(`⤷ Deleted stale stop ${existingStopId} from API Database.`);
-      }
-    }
+    // Delete all stops not present in the last update
+    const deletedStaleStops = await GTFSAPIDB.Stop.deleteMany({ stop_id: { $nin: allProcessedStopIds } });
+    console.log(`⤷ Deleted ${deletedStaleStops.deletedCount} stale stops.`);
 
     //
   },
