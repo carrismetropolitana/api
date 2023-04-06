@@ -78,10 +78,7 @@ async function appInitPoint() {
     // await stopsBuilder.start();
 
     console.log();
-    console.log('STEP 9: Build APEX (not implemented)...');
-
-    console.log();
-    console.log('STEP 10: Disconnect from databases...');
+    console.log('STEP 9: Disconnect from databases...');
     await GTFSParseDB.disconnect();
     await GTFSAPIDB.disconnect();
 
