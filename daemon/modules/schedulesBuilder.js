@@ -382,7 +382,7 @@ module.exports = {
     ]);
 
     // Update the database with the new group of route bases
-    const routeSummaryUpdateResult = await GTFSAPIDB.RouteSummary.updateMany({}, allRouteBasesInDatabase, { upsert: true });
+    const routeSummaryUpdateResult = await GTFSAPIDB.RouteSummary.updateMany({}, { $set: allRouteBasesInDatabase }, { upsert: true });
     console.log(`⤷ Updated ${routeSummaryUpdateResult.modifiedCount} route bases.`);
 
     // Delete all route bases not present in the last update
