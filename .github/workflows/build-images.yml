@@ -2,7 +2,9 @@ name: Build & Publish Docker images
 
 on:
   push:
-    branches: production
+    branches:
+      - production
+      - staging
 
 jobs:
   run:
