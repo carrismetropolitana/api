@@ -381,14 +381,16 @@ module.exports = {
       },
     ]);
 
+    const testPartialRouteBases = allRouteBasesInDatabase.slice(200, 300);
+
     // Update the database with the new group of route bases
-    for (const routeBase of allRouteBasesInDatabase) {
+    for (const routeBase of testPartialRouteBases) {
       await GTFSAPIDB.RouteSummary.findOneAndUpdate({ route_id: routeBase.route_id }, routeBase, { upsert: true });
       console.log(`⤷ Saved route base ${routeBase.route_id} to API Database.`);
     }
 
     // Delete all route bases not present in the last update
-    const allProcessedBaseRouteIds = allRouteBasesInDatabase.map((item) => item.route_id);
+    const allProcessedBaseRouteIds = testPartialRouteBases.map((item) => item.route_id);
     const deletedStaleRouteBases = await GTFSAPIDB.RouteSummary.deleteMany({ route_id: { $nin: allProcessedBaseRouteIds } });
     console.log(`⤷ Deleted ${deletedStaleRouteBases.deletedCount} stale route bases.`);
 
