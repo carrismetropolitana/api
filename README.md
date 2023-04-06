@@ -74,11 +74,13 @@ _Please avoid using this endpoint, and if you must do so responsibly. It returns
                 departure_time: "06:20:00"
               },
               ...
-            ],
+            ]
           },
-        ],
+          ...
+        ]
       },
-    ],
+      ...
+    ]
   },
   ...
 ]
@@ -106,7 +108,7 @@ Returns all routes with the same `route_short_name`, effectively a list of lines
         value: "Amadora",
       },
       ...
-    ],
+    ]
   },
   ...
 ]
@@ -167,11 +169,13 @@ Returns route and schedule info for the provided `route_id`.
               departure_time: "06:20:00"
             },
             ...
-          ],
+          ]
         },
-      ],
+        ...
+      ]
     },
-  ],
+    ...
+  ]
 }
 ```
 
@@ -231,11 +235,13 @@ Returns route and schedule info for all routes matching the provided `route_shor
                 departure_time: "06:20:00"
               },
               ...
-            ],
+            ]
           },
-        ],
+          ...
+        ]
       },
-    ],
+      ...
+    ]
   }
   ...
 ]
