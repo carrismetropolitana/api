@@ -214,6 +214,7 @@ module.exports = {
 
       // Add this route to the counter
       allProcessedRouteIds.push(currentRoute.route_id);
+      continue;
 
       // Initiate the formatted route object
       let formattedRoute = {
@@ -367,10 +368,25 @@ module.exports = {
     // Retrieve all distinct route_short_names and iterate on each one.
     const allRouteBasesInDatabase = await GTFSAPIDB.Route.aggregate([
       {
-        $group: { _id: '$route_short_name', route_id: { $min: '$route_id' } },
+        $group: {
+          _id: '$route_short_name',
+          route_id: { $min: '$route_id' },
+          route_long_name: { $first: '$route_long_name' },
+          route_color: { $first: '$route_color' },
+          route_text_color: { $first: '$route_text_color' },
+          municipalities: { $first: '$municipalities' },
+        },
       },
       {
-        $project: { _id: 0, route_id: 1, route_short_name: '$_id' },
+        $project: {
+          _id: 0,
+          route_id: 1,
+          route_short_name: '$_id',
+          route_long_name: 1,
+          route_color: 1,
+          route_text_color: 1,
+          municipalities: 1,
+        },
       },
     ]);
 
