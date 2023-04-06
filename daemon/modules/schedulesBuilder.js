@@ -56,6 +56,7 @@ async function getTrips(route_id) {
             trip_id,
             direction_id,
             trip_headsign,
+            service_id,
             shape_id
         FROM
             trips
