@@ -1,7 +1,7 @@
 #!/bin/bash
 
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
-domain=schedules-test.carrismetropolitana.pt
+domain=schedules.carrismetropolitana.pt
 email="carrismetropolitana@gmail.com" # Adding a valid address is strongly recommended
 
 
