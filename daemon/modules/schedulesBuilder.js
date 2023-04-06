@@ -214,6 +214,7 @@ module.exports = {
 
       // Add this route to the counter
       allProcessedRouteIds.push(currentRoute.route_id);
+      continue;
 
       // Initiate the formatted route object
       let formattedRoute = {
