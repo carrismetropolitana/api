@@ -35,4 +35,4 @@ jobs:
           push: true
           context: ./${{ matrix.name }}
           file: ./${{ matrix.name }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/schedules-api-${{ matrix.name }}:latest
+          tags: ghcr.io/carrismetropolitana/schedules-api-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
