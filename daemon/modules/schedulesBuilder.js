@@ -381,11 +381,11 @@ module.exports = {
       },
     ]);
 
-    console.log(allRouteBasesInDatabase);
-
     // Update the database with the new group of route bases
-    const routeSummaryUpdateResult = await GTFSAPIDB.RouteSummary.updateMany({}, { $set: allRouteBasesInDatabase }, { upsert: true });
-    console.log(`⤷ Updated ${routeSummaryUpdateResult.modifiedCount} route bases.`);
+    for (const routeBase of allRouteBasesInDatabase) {
+      await GTFSAPIDB.RouteSummary.findOneAndUpdate({ route_id: routeBase.route_id }, routeBase, { upsert: true });
+      console.log(`⤷ Saved route base ${routeBase.route_id} to API Database.`);
+    }
 
     // Delete all route bases not present in the last update
     const allProcessedBaseRouteIds = allRouteBasesInDatabase.map((item) => item.route_id);
