@@ -1,10 +1,9 @@
 {
-    "name": "@carrismetropolitana/gtfs-updater",
+    "name": "@carrismetropolitana/schedules-api-daemon",
     "version": "2023.2.1",
     "private": true,
     "main": "index.js",
     "scripts": {
-        "test": "jest --watch-all --verbose",
         "start": "node index.js"
     },
     "dependencies": {
@@ -14,8 +13,5 @@
         "mongoose": "^7.0.3",
         "csv-parse": "^5.3.6",
         "csv-stringify": "^6.3.0"
-    },
-    "devDependencies": {
-        "jest": "^29.5.0"
     }
 }

@@ -1,18 +1,14 @@
 {
-    "name": "@carrismetropolitana/gtfs-api",
+    "name": "@carrismetropolitana/schedules-api-api",
     "version": "2023.1.1",
     "private": true,
     "main": "index.js",
     "scripts": {
-        "test": "jest --watch-all --verbose",
         "start": "node index.js"
     },
     "dependencies": {
         "express": "^4.18.2",
         "express-rate-limit": "^6.7.0",
         "mongoose": "^7.0.3"
-    },
-    "devDependencies": {
-        "jest": "^29.5.0"
     }
 }
