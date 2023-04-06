@@ -22,7 +22,7 @@ app.use(function (req, res, next) {
 });
 
 //
-app.get('routes', async (req, res) => {
+app.get('/routes', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Route.find({});
     if (foundManyDocuments.length > 0) {
@@ -40,7 +40,7 @@ app.get('routes', async (req, res) => {
 });
 
 //
-app.get('routes/summary', async (req, res) => {
+app.get('/routes/summary', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.RouteSummary.find({});
     if (foundManyDocuments.length > 0) {
@@ -58,7 +58,7 @@ app.get('routes/summary', async (req, res) => {
 });
 
 //
-app.get('routes/route_id/:route_id', async (req, res) => {
+app.get('/routes/route_id/:route_id', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
     if (foundOneDocument) {
@@ -75,7 +75,7 @@ app.get('routes/route_id/:route_id', async (req, res) => {
 });
 
 //
-app.get('routes/route_short_name/:route_short_name', async (req, res) => {
+app.get('/routes/route_short_name/:route_short_name', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Route.find({ route_id: { $regex: `^${req.params.route_short_name}` } });
     if (foundManyDocuments.length > 0) {
@@ -92,7 +92,7 @@ app.get('routes/route_short_name/:route_short_name', async (req, res) => {
 });
 
 //
-app.get('stops', async (req, res) => {
+app.get('/stops', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Stop.find({});
     if (foundManyDocuments.length > 0) {
@@ -110,7 +110,7 @@ app.get('stops', async (req, res) => {
 });
 
 //
-app.get('stops/:stop_id', async (req, res) => {
+app.get('/stops/:stop_id', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
     if (foundOneDocument) {
