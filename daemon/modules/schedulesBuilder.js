@@ -143,7 +143,7 @@ async function getStopTimes(trip_id) {
             st.departure_time,
             s.stop_name,
             s.stop_lat,
-            s.stop_lon,
+            s.stop_lon
         FROM
             stop_times st
             INNER JOIN stops s ON st.stop_id = s.stop_id
