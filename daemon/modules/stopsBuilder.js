@@ -4,48 +4,46 @@ const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
 
-//
-const getUniqueRouteShortNamesAtEachStop = async () => {
-  try {
-    const startTime = process.hrtime();
-    console.log(`⤷ Querying database...`);
-    const [rows, fields] = await GTFSParseDB.connection.execute(`
-    SELECT 
-        stops.stop_id, 
-        stops.stop_name, 
-        stops.stop_lat, 
-        stops.stop_lon, 
-        GROUP_CONCAT(DISTINCT routes.route_short_name ORDER BY routes.route_short_name SEPARATOR ',') as routes 
-    FROM 
-        stops 
-        JOIN stop_times ON stops.stop_id = stop_times.stop_id 
-        JOIN trips ON stop_times.trip_id = trips.trip_id 
-        JOIN routes ON trips.route_id = routes.route_id 
-    GROUP BY 
-        stops.stop_id, 
-        stops.stop_name, 
-        stops.stop_lat, 
-        stops.stop_lon 
-    ORDER BY 
-        stops.stop_id;
-    `);
-    const elapsedTime = timeCalc.getElapsedTime(startTime);
-    console.log(`⤷ Done querying the database in ${elapsedTime}.`);
-    return rows;
-  } catch (err) {
-    console.log('Error at getUniqueRouteShortNamesAtEachStop()', err);
-  }
-};
+/**
+ * Retrieve all stops with service.
+ * @async
+ * @returns {Array} Array of stops objects
+ */
+async function getUniqueRouteShortNamesAtEachStop() {
+  const startTime = process.hrtime();
+  console.log(`⤷ Querying database...`);
+  const [rows, fields] = await GTFSParseDB.connection.execute(
+    `
+        SELECT 
+            stops.stop_id, 
+            stops.stop_name, 
+            stops.stop_lat, 
+            stops.stop_lon, 
+            GROUP_CONCAT(DISTINCT routes.route_short_name ORDER BY routes.route_short_name SEPARATOR ',') as routes 
+        FROM 
+            stops 
+            JOIN stop_times ON stops.stop_id = stop_times.stop_id 
+            JOIN trips ON stop_times.trip_id = trips.trip_id 
+            JOIN routes ON trips.route_id = routes.route_id 
+        GROUP BY 
+            stops.stop_id, 
+            stops.stop_name, 
+            stops.stop_lat, 
+            stops.stop_lon 
+        ORDER BY 
+            stops.stop_id;
+    `
+  );
+  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  console.log(`⤷ Done querying the database in ${elapsedTime}.`);
+  return rows;
+}
 
 //
 // Export functions from this module
 module.exports = {
   start: async () => {
     //
-
-    /* * DEBUG * */
-    let counter = 0;
-    /* * DEBUG * */
 
     // OVERVIEW OF THIS FUNCTION
     // Lorem ipsum
@@ -59,11 +57,11 @@ module.exports = {
 
     for (const currentStop of allStopsWithRoutes) {
       //
-
-      /* * DEBUG * */
-      counter++;
+      // Record the start time to later calculate duration
       const startTime = process.hrtime();
-      /* * DEBUG * */
+
+      // Add this stop to the counter
+      allProcessedStopIds.push(currentStop.stop_id);
 
       // Initiate the formatted route object
       // with the direct values taken from the GTFS table.
@@ -85,9 +83,7 @@ module.exports = {
       await GTFSAPIDB.Stop.findOneAndUpdate({ stop_id: formattedStop.stop_id }, formattedStop, { upsert: true });
 
       const elapsedTime = timeCalc.getElapsedTime(startTime);
-      console.log(`⤷ [${counter}/${allStopsWithRoutes.length}] Saved stop ${formattedStop.stop_id} to API Database in ${elapsedTime}.`);
-
-      allProcessedStopIds.push(formattedStop.stop_id);
+      console.log(`⤷ [${allProcessedStopIds.length}/${allStopsWithRoutes.length}] Saved stop ${formattedStop.stop_id} to API Database in ${elapsedTime}.`);
 
       //
     }
