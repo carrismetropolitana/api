@@ -20,6 +20,7 @@ services:
       - WATCHTOWER_CLEANUP=TRUE
       - WATCHTOWER_INCLUDE_STOPPED=TRUE
       - WATCHTOWER_REVIVE_STOPPED=TRUE
+      - WATCHTOWER_ROLLING_RESTART=TRUE
 
   nginx:
     image: ghcr.io/carrismetropolitana/schedules-api-nginx:production
