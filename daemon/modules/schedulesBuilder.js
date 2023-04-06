@@ -53,6 +53,7 @@ async function getTrips(route_id) {
   const [rows, fields] = await GTFSParseDB.connection.execute(
     `
         SELECT
+            trip_id,
             direction_id,
             trip_headsign,
             shape_id
@@ -165,33 +166,55 @@ module.exports = {
   start: async () => {
     //
 
-    // OVERVIEW OF THIS FUNCTION
-    // Lorem ipsum
+    /* * */
 
-    /* * DEBUG * */
-    let counter = 0;
-    /* * DEBUG * */
+    // This function builds a JSON 'route' object by stiching information
+    // available in the several GTFS standard files. These files were previously
+    // imported to MySQL tables with corresponding names.
+    // This 'route' object is composed of general route information, served municipalities
+    // and directions. Each direction has an ID, a destination (headsign) a shape representation
+    // and a collection of trips. Each trip in the same direction has an ID, a collection
+    // of dates (calendar days) where the trip will happen, and a schedule. The schedule is
+    // asequence of stops, each with its own info and arrival and departure times.
+
+    // The building of these route objects happen sequentially, with four nested loops:
+    //   1. The main loop, for all the routes in the database;
+    //      2. All the directions for the same route (no more than 2);
+    //         3. All the trips for the same direction;
+    //            4. All the stops for the same trip;
+
+    // At the end of each iteration of the first loop, each JSON route object is saved
+    // to the MongoDB API database. If the route already existed, then it is updated.
+    // Several routes can have the same route_short_name. This means that for the same 'line'
+    // there is at least one 'base' and optionally serveral 'variants'. The base is always
+    // the route_id with the lowest suffix (ex: 1234_0, or 1234_1 if no _0 exists) for all routes
+    // with the same 'route_short_name'. After all individual routes are saved in the database,
+    // further processing happens to find out the base for each line. These routes are saved
+    // in the RouteSummary collection in MongoDB.
+
+    /* * */
 
     // Setup a counter that holds all processed route_ids.
-    // This will be used at the end to remove stale data from the database.
-    let allUpdatedRouteIds = [];
+    // This is used at the end to remove stale data from the database.
+    let allProcessedRouteIds = [];
 
-    // Fetch Municipalities API
+    // Fetch municipalities from www
     const allMunicipalities = await getMunicipalities();
+    console.log(`⤷ Done fetching municipalities.`);
 
     // Get all routes from GTFS table (routes.txt)
     const allRoutes = await getRoutes();
 
+    // LOOP 1 — Routes
     for (const currentRoute of allRoutes) {
       //
-
-      /* * DEBUG * */
+      // Record the start time to later calculate duration
       const startTime = process.hrtime();
-      counter++;
-      /* * DEBUG * */
+
+      // Add this route to the counter
+      allProcessedRouteIds.push(currentRoute.route_id);
 
       // Initiate the formatted route object
-      // with the direct values taken from the GTFS table.
       let formattedRoute = {
         route_id: currentRoute.route_id,
         route_short_name: currentRoute.route_short_name,
@@ -205,7 +228,7 @@ module.exports = {
       // Get all trips associated with this route
       const allTrips_raw = await getTrips(currentRoute.route_id);
 
-      // Simplify trips array by combining common attributes
+      // Simplify trips array by removing non-common attributes
       const allTrips_simplified = allTrips_raw.map((trip) => {
         return { direction_id: trip.direction_id, headsign: trip.trip_headsign, shape_id: trip.shape_id };
       });
@@ -216,12 +239,10 @@ module.exports = {
         return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
       });
 
-      // For each direction
+      // LOOP 2 — Directions
       for (const currentDirection of allDirections) {
         //
-
-        // Initiate the formatted route object
-        // with the direct values taken from the GTFS table.
+        // Initiate the formatted direction object
         let formattedDirection = {
           direction_id: currentDirection.direction_id,
           headsign: currentDirection.trip_headsign,
@@ -230,18 +251,18 @@ module.exports = {
         };
 
         // Get shape for this direction and sort it by 'shape_pt_sequence'
+        // The use of collator here is to ensure 'natural sorting' on numeric strings: https://stackoverflow.com/questions/2802341/natural-sort-of-alphanumerical-strings-in-javascript
         const shape_raw = await getShape(currentDirection.shape_id);
         const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
         formattedDirection.shape = shape_raw.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
 
-        //
+        // LOOP 3 - Trips
         for (const currentTrip of allTrips_raw) {
           //
-          // For all trips matching the current direction_id
+          // Skip all trips that do not belong to the current direction
           if (currentTrip.direction_id !== currentDirection.direction_id) continue;
 
-          // Initiate the formatted route object
-          // with the direct values taken from the GTFS table.
+          // Initiate the formatted trip object
           let formattedTrip = {
             trip_id: currentTrip.trip_id,
             dates: [],
@@ -252,10 +273,10 @@ module.exports = {
           const allDates_raw = await getDates(currentTrip.service_id);
           formattedTrip.dates = allDates_raw.map((item) => item.date);
 
-          // Get stop times for each trip
+          // Get stop times for this trip
           const allStopTimes_raw = await getStopTimes(currentTrip.trip_id);
 
-          //
+          // LOOP 4 - Stop Times
           for (const currentStopTime of allStopTimes_raw) {
             //
             // Format arrival_time
@@ -294,7 +315,7 @@ module.exports = {
                 formattedRoute.municipalities.push(stopMunicipality[0]);
               }
             }
-            // Return formatted stop_time
+            // Save formatted stop time
             formattedTrip.schedule.push({
               stop_sequence: currentStopTime.stop_sequence,
               stop_id: currentStopTime.stop_id,
@@ -312,6 +333,7 @@ module.exports = {
           // Save trip object to trips array
           formattedDirection.trips.push(formattedTrip);
         }
+
         // Sort trips by departure_time ASC
         formattedDirection.trips.sort((a, b) => (a.schedule[0]?.departure_time_operation > b.schedule[0]?.departure_time_operation ? 1 : -1));
 
@@ -319,53 +341,77 @@ module.exports = {
         formattedRoute.directions.push(formattedDirection);
       }
 
+      // Save route to MongoDB
       await GTFSAPIDB.Route.findOneAndUpdate({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
 
       const elapsedTime = timeCalc.getElapsedTime(startTime);
-      console.log(`⤷ [${counter}/${allRoutes.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
-
-      allUpdatedRouteIds.push(formattedRoute.route_id);
+      console.log(`⤷ [${allProcessedRouteIds.length}/${allRoutes.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
 
       //
     }
 
-    // DELETE FROM ROUTES DB IF NOT IN ARRAY OF UPDATED IDS
-    let updatedRouteSummaryIds = [];
+    // Retrieve all saved routes. Ask for only the route_id field to be returned.
     const allRouteIdsInDatabase = await GTFSAPIDB.Route.distinct('route_id');
     for (const existingRouteId of allRouteIdsInDatabase) {
       // Check if this route_id in the big database
       // is in the array of newly updated route_ids
-      const isStillValidRouteId = allUpdatedRouteIds.includes(existingRouteId);
+      const isStillValidRouteId = allProcessedRouteIds.includes(existingRouteId);
       // If the route_id is not valid, delete it from the database
       if (!isStillValidRouteId) {
         await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
         console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
-      } else {
-        const routeShortNameForRouteId = existingRouteId.substring(0, 4);
-        const allVariantsForRouteShortName = await GTFSAPIDB.Route.find({ route_short_name: routeShortNameForRouteId });
-        const allVariantsForRouteShortName_sorted = allVariantsForRouteShortName.sort((a, b) => {
-          return a.route_id < b.route_id;
-        });
-        if (allVariantsForRouteShortName_sorted.length) {
-          await GTFSAPIDB.RouteSummary.findOneAndUpdate(
-            { route_id: allVariantsForRouteShortName_sorted[0].route_id },
-            {
-              route_id: allVariantsForRouteShortName_sorted[0].route_id,
-              route_short_name: allVariantsForRouteShortName_sorted[0].route_short_name,
-              route_long_name: allVariantsForRouteShortName_sorted[0].route_long_name,
-              route_color: allVariantsForRouteShortName_sorted[0].route_color,
-              route_text_color: allVariantsForRouteShortName_sorted[0].route_text_color,
-              municipalities: allVariantsForRouteShortName_sorted[0].municipalities,
-            },
-            {
-              upsert: true,
-            }
-          );
-          updatedRouteSummaryIds.push(allVariantsForRouteShortName_sorted[0].route_id);
-          console.log(`⤷ Saved route summary ${allVariantsForRouteShortName_sorted[0].route_id} to API Database.`);
-        }
       }
     }
+
+    // Retrieve all distinct route_short_names and iterate on each one.
+    const allRouteBasesInDatabase = await GTFSAPIDB.Route.aggregate([
+      {
+        $group: { _id: '$route_short_name', route_id: { $min: '$route_id' } },
+      },
+      {
+        $project: { _id: 0, route_id: 1, route_short_name: '$_id' },
+      },
+    ]);
+
+    console.log(allRouteBasesInDatabase);
+
+    // distinct('route_id')
+
+    // let updatedRouteSummaryIds = [];
+    // for (const existingRouteId of allRouteIdsInDatabase) {
+    //   // Check if this route_id in the big database
+    //   // is in the array of newly updated route_ids
+    //   const isStillValidRouteId = allProcessedRouteIds.includes(existingRouteId);
+    //   // If the route_id is not valid, delete it from the database
+    //   if (!isStillValidRouteId) {
+    //     await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
+    //     console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
+    //   } else {
+    //     const routeShortNameForRouteId = existingRouteId.substring(0, 4);
+    //     const allVariantsForRouteShortName = await GTFSAPIDB.Route.find({ route_short_name: routeShortNameForRouteId });
+    //     const allVariantsForRouteShortName_sorted = allVariantsForRouteShortName.sort((a, b) => {
+    //       return a.route_id < b.route_id;
+    //     });
+    //     if (allVariantsForRouteShortName_sorted.length) {
+    //       await GTFSAPIDB.RouteSummary.findOneAndUpdate(
+    //         { route_id: allVariantsForRouteShortName_sorted[0].route_id },
+    //         {
+    //           route_id: allVariantsForRouteShortName_sorted[0].route_id,
+    //           route_short_name: allVariantsForRouteShortName_sorted[0].route_short_name,
+    //           route_long_name: allVariantsForRouteShortName_sorted[0].route_long_name,
+    //           route_color: allVariantsForRouteShortName_sorted[0].route_color,
+    //           route_text_color: allVariantsForRouteShortName_sorted[0].route_text_color,
+    //           municipalities: allVariantsForRouteShortName_sorted[0].municipalities,
+    //         },
+    //         {
+    //           upsert: true,
+    //         }
+    //       );
+    //       updatedRouteSummaryIds.push(allVariantsForRouteShortName_sorted[0].route_id);
+    //       console.log(`⤷ Saved route summary ${allVariantsForRouteShortName_sorted[0].route_id} to API Database.`);
+    //     }
+    //   }
+    // }
 
     // DELETE FROM ROUTES SUMMARY DB IF NOT IN ARRAY OF UPDATED IDS
     const allRouteSummaryIdsInDatabase = await GTFSAPIDB.RouteSummary.distinct('route_id');
