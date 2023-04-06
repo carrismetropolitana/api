@@ -60,10 +60,10 @@ app.get('/api/routes/summary', async (req, res) => {
 //
 app.get('/api/routes/route_id/:route_id', async (req, res) => {
   try {
-    const foundDocuments = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
-    if (foundDocuments.length > 0) {
-      console.log('🟢 → Request for "/api/routes/route_id/%s": %s Found', req.params.route_id, foundDocuments.length);
-      res.send(foundDocuments[0]);
+    const foundDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
+    if (foundDocument) {
+      console.log('🟢 → Request for "/api/routes/route_id/%s": 1 Found', req.params.route_id);
+      res.send(foundDocument);
     } else {
       console.log('🟡 → Request for "/api/routes/route_id/%s": Not Found', req.params.route_id);
       res.status(404).send({});
@@ -112,10 +112,10 @@ app.get('/api/stops', async (req, res) => {
 //
 app.get('/api/stops/:stop_id', async (req, res) => {
   try {
-    const foundDocuments = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
-    if (foundDocuments.length > 0) {
-      console.log('🟢 → Request for "/api/stops/%s": %s Found', req.params.stop_id, foundDocuments.length);
-      res.send(foundDocuments[0]);
+    const foundDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
+    if (foundDocument) {
+      console.log('🟢 → Request for "/api/stops/%s": 1 Found', req.params.stop_id);
+      res.send(foundDocument);
     } else {
       console.log('🟡 → Request for "/api/stops/%s": Not Found', req.params.stop_id);
       res.status(404).send({});
@@ -129,7 +129,7 @@ app.get('/api/stops/:stop_id', async (req, res) => {
 // set port, listen for requests
 const PORT = 5050;
 app.listen(5050, async () => {
-  console.log(`GTFS API listening on port ${PORT}...`);
+  console.log('GTFS API listening on port %s...', PORT);
   await GTFSAPIDB.connect();
   console.log();
 });
