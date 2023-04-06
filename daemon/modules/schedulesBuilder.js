@@ -353,7 +353,7 @@ module.exports = {
 
     // Delete all documents with route_ids not present in the new GTFS version
     const deletedStaleRoutes = await GTFSAPIDB.Route.deleteMany({ route_id: { $nin: allProcessedRouteIds } });
-    console.log('deletedStaleRoutes', deletedStaleRoutes);
+    console.log(`⤷ Deleted ${deletedStaleRoutes.deletedCount} stale routes.`);
 
     // Retrieve all distinct route_short_names and iterate on each one.
     const allRouteBasesInDatabase = await GTFSAPIDB.Route.aggregate([
@@ -386,71 +386,7 @@ module.exports = {
     // Delete all route bases not present in the last update
     const allProcessedBaseRouteIds = allRouteBasesInDatabase.map((item) => item.route_id);
     const deletedStaleRouteBases = await GTFSAPIDB.RouteSummary.deleteMany({ route_id: { $nin: allProcessedBaseRouteIds } });
-    console.log('deletedStaleRouteBases', deletedStaleRouteBases);
-
-    // Retrieve all saved routes. Ask for only the route_id field to be returned.
-    // const allRouteIdsInDatabase = await GTFSAPIDB.Route.distinct('route_id');
-    // for (const existingRouteId of allRouteIdsInDatabase) {
-    //   // Check if this route_id in the big database
-    //   // is in the array of newly updated route_ids
-    //   const isStillValidRouteId = allProcessedRouteIds.includes(existingRouteId);
-    //   // If the route_id is not valid, delete it from the database
-    //   if (!isStillValidRouteId) {
-    //     await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
-    //     console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
-    //   }
-    // }
-
-    // distinct('route_id')
-
-    // let updatedRouteSummaryIds = [];
-    // for (const existingRouteId of allRouteIdsInDatabase) {
-    //   // Check if this route_id in the big database
-    //   // is in the array of newly updated route_ids
-    //   const isStillValidRouteId = allProcessedRouteIds.includes(existingRouteId);
-    //   // If the route_id is not valid, delete it from the database
-    //   if (!isStillValidRouteId) {
-    //     await GTFSAPIDB.Route.deleteOne({ route_id: existingRouteId });
-    //     console.log(`⤷ Deleted stale ${existingRouteId} from API Database.`);
-    //   } else {
-    //     const routeShortNameForRouteId = existingRouteId.substring(0, 4);
-    //     const allVariantsForRouteShortName = await GTFSAPIDB.Route.find({ route_short_name: routeShortNameForRouteId });
-    //     const allVariantsForRouteShortName_sorted = allVariantsForRouteShortName.sort((a, b) => {
-    //       return a.route_id < b.route_id;
-    //     });
-    //     if (allVariantsForRouteShortName_sorted.length) {
-    //       await GTFSAPIDB.RouteSummary.findOneAndUpdate(
-    //         { route_id: allVariantsForRouteShortName_sorted[0].route_id },
-    //         {
-    //           route_id: allVariantsForRouteShortName_sorted[0].route_id,
-    //           route_short_name: allVariantsForRouteShortName_sorted[0].route_short_name,
-    //           route_long_name: allVariantsForRouteShortName_sorted[0].route_long_name,
-    //           route_color: allVariantsForRouteShortName_sorted[0].route_color,
-    //           route_text_color: allVariantsForRouteShortName_sorted[0].route_text_color,
-    //           municipalities: allVariantsForRouteShortName_sorted[0].municipalities,
-    //         },
-    //         {
-    //           upsert: true,
-    //         }
-    //       );
-    //       updatedRouteSummaryIds.push(allVariantsForRouteShortName_sorted[0].route_id);
-    //       console.log(`⤷ Saved route summary ${allVariantsForRouteShortName_sorted[0].route_id} to API Database.`);
-    //     }
-    //   }
-    // }
-
-    // DELETE FROM ROUTES SUMMARY DB IF NOT IN ARRAY OF UPDATED IDS
-    // const allRouteSummaryIdsInDatabase = await GTFSAPIDB.RouteSummary.distinct('route_id');
-    // for (const existingRouteSummaryId of allRouteSummaryIdsInDatabase) {
-    //   // Check if this route_id in the summary database
-    //   // is in the array of newly updated route_ids
-    //   const isStillValidRouteSummaryId = updatedRouteSummaryIds.includes(existingRouteSummaryId);
-    //   // If the route_id is not valid, delete it from the database
-    //   if (!isStillValidRouteSummaryId) {
-    //     await GTFSAPIDB.RouteSummary.deleteOne({ route_id: existingRouteSummaryId });
-    //     console.log(`⤷ Deleted stale ${existingRouteSummaryId} summary from API Database.`);
-    //   }
-    // }
+    console.log(`⤷ Deleted ${deletedStaleRouteBases.deletedCount} stale route bases.`);
 
     //
   },
