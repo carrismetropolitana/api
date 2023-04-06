@@ -1,11 +1,4 @@
 /* * */
-/* * */
-/* * * * * */
-/* GTFS UPDATE */
-/* * */
-/* * */
-
-/* * */
 /* IMPORTS */
 const crontab = require('node-cron');
 const GTFSParseDB = require('./databases/gtfsparsedb');
