@@ -246,7 +246,7 @@ module.exports = {
         // Initiate the formatted direction object
         let formattedDirection = {
           direction_id: currentDirection.direction_id,
-          headsign: currentDirection.trip_headsign,
+          headsign: currentDirection.headsign,
           shape: [],
           trips: [],
         };
