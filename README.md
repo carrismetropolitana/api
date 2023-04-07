@@ -1,6 +1,6 @@
 # Schedules API
 
-[![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/ogvq.svg)](https://betteruptime.com/?utm_source=status_badge)
+[![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/ogvq.svg)](https://status.carrismetropolitana.pt)
 
 Welcome to the Schedules API, an open-source mini-program that provides planned services in JSON format by reading and converting the [official Carris Metropolitana GTFS file](https://github.com/carrismetropolitana/gtfs). This API covers bus transit
 data for 15 of the 18 municipalities comprising the Lisbon metropolitan area. This is the same set of endpoints used by [carrismetropolitana.pt](https://www.carrismetropolitana.pt). With this API, developers can easily build applications that provide
