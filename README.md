@@ -1,3 +1,5 @@
+[![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/ogvq.svg)](https://betteruptime.com/?utm_source=status_badge)
+
 # Schedules API
 
 Welcome to the Schedules API, an open-source mini-program that provides planned services in JSON format by reading and converting the [official Carris Metropolitana GTFS file](https://github.com/carrismetropolitana/gtfs). This API covers bus transit
