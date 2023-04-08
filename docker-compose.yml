@@ -23,13 +23,14 @@ services:
       - WATCHTOWER_ROLLING_RESTART=TRUE
 
   nginx:
-    image: ghcr.io/carrismetropolitana/schedules-api-nginx:production
+    image: nginx:stable
     restart: unless-stopped
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     volumes:
+      - ./options/nginx:/etc/nginx
       - ./options/letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     networks:
@@ -37,6 +38,7 @@ services:
     ports:
       - 80:80
       - 443:443
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   certbot:
     image: certbot/certbot
