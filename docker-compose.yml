@@ -30,7 +30,7 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./options/nginx:/etc/nginx
+      - ./options/nginx:/etc/nginx/conf.d
       - ./options/letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     networks:
