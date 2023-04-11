@@ -240,6 +240,14 @@ module.exports = {
         return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
       });
 
+      // Deduplicate simplified trips array to keep only common attributes.
+      // This essentially results in an array of 'directions'. Save it to the route object.
+      const allDirections_simplified = allDirections.filter((value, index, array) => {
+        return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
+      });
+
+      console.log('allDirections_simplified', allDirections_simplified.length);
+
       // LOOP 2 — Directions
       for (const currentDirection of allDirections) {
         //
