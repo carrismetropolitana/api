@@ -240,8 +240,13 @@ module.exports = {
         return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
       });
 
+      // Deduplicate directions array to keep only common attributes.
+      const allDirections_simplified = allDirections.filter((value, index, array) => {
+        return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
+      });
+
       // LOOP 2 — Directions
-      for (const currentDirection of allDirections) {
+      for (const currentDirection of allDirections_simplified) {
         //
         // Initiate the formatted direction object
         let formattedDirection = {
