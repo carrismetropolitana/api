@@ -3,7 +3,6 @@ version: '3.9'
 volumes:
   certbotdata:
   gtfsapidb-production:
-  gtfsapidb-staging:
 
 networks:
   backend-network:
@@ -63,21 +62,6 @@ services:
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
       - GTFSAPIDB_NAME=gtfsapidb
 
-  api-staging:
-    image: ghcr.io/carrismetropolitana/schedules-api-api:staging
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    networks:
-      - backend-network
-    environment:
-      - GTFSAPIDB_HOST=gtfsapidb-staging
-      - GTFSAPIDB_USER=gtfsapidbuser
-      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidb
-
   daemon-production:
     image: ghcr.io/carrismetropolitana/schedules-api-daemon:production
     restart: unless-stopped
@@ -99,27 +83,6 @@ services:
     networks:
       - backend-network
 
-  daemon-staging:
-    image: ghcr.io/carrismetropolitana/schedules-api-daemon:staging
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - ./data-temp/staging/:/data-temp
-    environment:
-      - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/next/CarrisMetropolitana.zip
-      - GTFSAPIDB_HOST=gtfsapidb-staging
-      - GTFSAPIDB_USER=gtfsapidbuser
-      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidb
-      - GTFSPARSEDB_HOST=gtfsparsedb-staging
-      - GTFSPARSEDB_NAME=gtfsparsedb
-      - GTFSPARSEDB_USER=root
-    networks:
-      - backend-network
-
   gtfsapidb-production:
     image: mongo
     restart: unless-stopped
@@ -129,21 +92,6 @@ services:
         max-file: '1'
     volumes:
       - gtfsapidb-production:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=gtfsapidbuser
-      - MONGO_INITDB_ROOT_PASSWORD=gtfsapidbpassword
-    networks:
-      - backend-network
-
-  gtfsapidb-staging:
-    image: mongo
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - gtfsapidb-staging:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=gtfsapidbuser
       - MONGO_INITDB_ROOT_PASSWORD=gtfsapidbpassword
@@ -160,22 +108,6 @@ services:
     volumes:
       - ./options/gtfsparsedb/:/etc/mysql/conf.d/
       - ./data-temp/production/:/data-temp
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=gtfsparsedb
-    networks:
-      - backend-network
-
-  gtfsparsedb-staging:
-    image: mysql
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - ./options/gtfsparsedb/:/etc/mysql/conf.d/
-      - ./data-temp/staging/:/data-temp
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=gtfsparsedb
