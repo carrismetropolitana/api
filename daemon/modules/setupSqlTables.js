@@ -14,10 +14,7 @@ module.exports = {
 
     await GTFSParseDB.connection.execute(`CREATE TABLE temp_calendar_dates (
         service_id VARCHAR(255),
-        date VARCHAR(8),
-        period SMALLINT,
-        day_type SMALLINT,
-        exception_type SMALLINT
+        date VARCHAR(8)
     );`);
     await GTFSParseDB.connection.execute('ALTER TABLE temp_calendar_dates ADD KEY `service_id` (`service_id`);');
     console.log('⤷ Created SQL table "temp_calendar_dates".');

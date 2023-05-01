@@ -115,8 +115,6 @@ async function getDates(service_id) {
             calendar_dates
         WHERE
             service_id = ?
-        AND
-            exception_type = 1
     `,
     [service_id]
   );
