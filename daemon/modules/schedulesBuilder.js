@@ -358,7 +358,13 @@ module.exports = {
       {
         $group: {
           _id: '$route_short_name',
-          route_id: { $min: '$route_id' },
+          minRouteIdSuffix: {
+            $min: {
+              $toInt: {
+                $arrayElemAt: [{ $split: ['$route_id', '_'] }, -1],
+              },
+            },
+          },
           route_long_name: { $first: '$route_long_name' },
           route_color: { $first: '$route_color' },
           route_text_color: { $first: '$route_text_color' },
@@ -368,7 +374,9 @@ module.exports = {
       {
         $project: {
           _id: 0,
-          route_id: 1,
+          route_id: {
+            $concat: ['$_id', '_', { $toString: '$minRouteIdSuffix' }],
+          },
           route_short_name: '$_id',
           route_long_name: 1,
           route_color: 1,
