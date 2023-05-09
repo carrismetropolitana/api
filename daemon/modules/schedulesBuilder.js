@@ -356,15 +356,10 @@ module.exports = {
     // Retrieve all distinct route_short_names and iterate on each one.
     const allRouteBasesInDatabase = await GTFSAPIDB.Route.aggregate([
       {
+        $sort: { route_id: 1 },
         $group: {
           _id: '$route_short_name',
-          minRouteIdSuffix: {
-            $min: {
-              $toInt: {
-                $arrayElemAt: [{ $split: ['$route_id', '_'] }, -1],
-              },
-            },
-          },
+          route_id: { $first: '$route_id' },
           route_long_name: { $first: '$route_long_name' },
           route_color: { $first: '$route_color' },
           route_text_color: { $first: '$route_text_color' },
@@ -374,9 +369,7 @@ module.exports = {
       {
         $project: {
           _id: 0,
-          route_id: {
-            $concat: ['$_id', '_', { $toString: '$minRouteIdSuffix' }],
-          },
+          route_id: 1,
           route_short_name: '$_id',
           route_long_name: 1,
           route_color: 1,
