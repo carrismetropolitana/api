@@ -82,6 +82,7 @@ async function getShape(shape_id) {
   const [rows, fields] = await GTFSParseDB.connection.execute(
     `
         SELECT
+            shape_id,
             shape_pt_lat,
             shape_pt_lon,
             shape_pt_sequence,
