@@ -265,6 +265,7 @@ module.exports = {
           // Initiate the formatted trip object
           let formattedTrip = {
             trip_id: currentTrip.trip_id,
+            service_id: currentTrip.service_id,
             dates: [],
             schedule: [],
           };

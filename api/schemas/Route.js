@@ -79,6 +79,10 @@ module.exports = new mongoose.Schema(
               type: String,
               maxlength: 100,
             },
+            service_id: {
+              type: String,
+              maxlength: 100,
+            },
             dates: [
               {
                 type: String,
