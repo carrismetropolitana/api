@@ -2,7 +2,7 @@ version: '3.9'
 
 volumes:
   certbotdata:
-  gtfsapidb-production:
+  gtfsapidb:
 
 networks:
   backend-network:
@@ -47,8 +47,8 @@ services:
       - certbotdata:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
-  api-production:
-    image: ghcr.io/carrismetropolitana/schedules-api-api:production
+  api:
+    image: ghcr.io/carrismetropolitana/schedules-api-api:v2
     restart: unless-stopped
     logging:
       options:
@@ -57,33 +57,32 @@ services:
     networks:
       - backend-network
     environment:
-      - GTFSAPIDB_HOST=gtfsapidb-production
+      - GTFSAPIDB_HOST=gtfsapidb
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
       - GTFSAPIDB_NAME=gtfsapidb
 
-  daemon-production:
-    image: ghcr.io/carrismetropolitana/schedules-api-daemon:production
+  daemon:
+    image: ghcr.io/carrismetropolitana/schedules-api-daemon:v2
     restart: unless-stopped
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./data-temp/production/:/data-temp
+      - ./data-temp/:/data-temp
     environment:
       - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
-      - GTFSAPIDB_HOST=gtfsapidb-production
+      - GTFSAPIDB_HOST=gtfsapidb
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
       - GTFSAPIDB_NAME=gtfsapidb
-      - GTFSPARSEDB_HOST=gtfsparsedb-production
-      - GTFSPARSEDB_NAME=gtfsparsedb
-      - GTFSPARSEDB_USER=root
+      - GTFSPARSEDB_HOST=gtfsparsedb
+      - GTFSPARSEDB_PASSWORD=gtfsparsedbpassword
     networks:
       - backend-network
 
-  gtfsapidb-production:
+  gtfsapidb:
     image: mongo
     restart: unless-stopped
     logging:
@@ -91,25 +90,24 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - gtfsapidb-production:/data/db
+      - gtfsapidb:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=gtfsapidbuser
       - MONGO_INITDB_ROOT_PASSWORD=gtfsapidbpassword
     networks:
       - backend-network
 
-  gtfsparsedb-production:
-    image: mysql
+  gtfsparsedb:
+    image: postgres
     restart: unless-stopped
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./options/gtfsparsedb/:/etc/mysql/conf.d/
-      - ./data-temp/production/:/data-temp
+      - ./options/gtfsparsedb/:/etc/postgresql/
+      - ./data-temp/:/data-temp
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=gtfsparsedb
+      - POSTGRES_PASSWORD=gtfsparsedbpassword
     networks:
       - backend-network
