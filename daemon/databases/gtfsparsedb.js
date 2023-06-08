@@ -1,12 +1,12 @@
 /* * */
 /* IMPORTS */
 const mysql = require('mysql2/promise');
-import { Client } from 'pg';
+const pg = require('pg');
 const { GTFSPARSEDB_HOST, GTFSPARSEDB_USER, GTFSPARSEDB_PASSWORD, GTFSPARSEDB_NAME } = process.env;
 
 class GTFSParseDB {
   async connect() {
-    this.connection = new Client({
+    this.connection = new pg.Client({
       password: GTFSPARSEDB_PASSWORD,
       host: GTFSPARSEDB_HOST,
     });
