@@ -27,13 +27,6 @@ module.exports = {
     await importFileToTable('stops');
     await importFileToTable('trips');
 
-    await promoteTempTableToProduction('calendar_dates');
-    await promoteTempTableToProduction('routes');
-    await promoteTempTableToProduction('shapes');
-    await promoteTempTableToProduction('stop_times');
-    await promoteTempTableToProduction('stops');
-    await promoteTempTableToProduction('trips');
-
     //
   },
 };
@@ -66,29 +59,4 @@ async function importFileToTable(filename) {
   await GTFSParseDB.connection.query(`LOAD DATA INFILE '/data-temp/gtfs/prepared/${filename}.txt' INTO TABLE temp_${filename} FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;`);
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Saved "/data-temp/gtfs/prepared/${filename}.txt" to "temp_${filename}" table in ${elapsedTime}.`);
-}
-
-//
-async function promoteTempTableToProduction(tableName) {
-  // Drop previous 'old_' table
-  let dropPreviousOldTable = `DROP TABLE IF EXISTS old_${tableName};`;
-  await GTFSParseDB.connection.execute(dropPreviousOldTable);
-  console.log(`⤷ Dropped previous SQL table old_${tableName}.`);
-  // Rename production table to 'old_'
-  let checkIfProductionTableExists = `SELECT COUNT(*) AS tableExists FROM information_schema.tables WHERE table_name = '${tableName}'`;
-  const [rows, fields] = await GTFSParseDB.connection.execute(checkIfProductionTableExists);
-  if (rows[0].tableExists) {
-    let renameProductionTableToOld = `ALTER TABLE ${tableName} RENAME TO old_${tableName}`;
-    await GTFSParseDB.connection.execute(renameProductionTableToOld);
-    console.log(`⤷ Demoted SQL table from "${tableName}" to "old_${tableName}".`);
-  }
-  // Rename 'temp_' table to production
-  let renameTempTableToProduction = `ALTER TABLE temp_${tableName} RENAME TO ${tableName};`;
-  await GTFSParseDB.connection.execute(renameTempTableToProduction);
-  console.log(`⤷ Promoted SQL table "temp_${tableName}" to "${tableName}".`);
-  // Drop current 'old_' and 'temp_' table
-  let dropOldTable = `DROP TABLE IF EXISTS old_${tableName}, temp_${tableName};`;
-  await GTFSParseDB.connection.execute(dropOldTable);
-  console.log(`⤷ Dropped SQL tables old_${tableName} and temp_${tableName}.`);
-  //
 }
