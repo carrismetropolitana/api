@@ -3,7 +3,7 @@
 const { mongoose } = require('mongoose');
 
 /* * */
-/* Schema for MongoDB ["Stop"] Object */
+/* Schema for MongoDB ["Shape"] Object */
 module.exports = new mongoose.Schema(
   {
     code: {
