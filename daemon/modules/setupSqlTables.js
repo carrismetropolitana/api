@@ -65,7 +65,7 @@ module.exports = {
         service_id VARCHAR(255),
         trip_id VARCHAR(255),
         trip_headsign VARCHAR(255),
-        direction_id TINYINT,
+        direction_id BOOLEAN,
         shape_id VARCHAR(255)
     );`);
     await GTFSParseDB.connection.query('CREATE INDEX trips_route_id_idx ON trips ("route_id");');
