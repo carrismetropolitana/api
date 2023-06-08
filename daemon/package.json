@@ -8,10 +8,11 @@
     },
     "dependencies": {
         "adm-zip": "^0.5.10",
+        "csv-parse": "^5.4.0",
+        "csv-stringify": "^6.4.0",
+        "mongoose": "^7.2.2",
         "mysql2": "^3.3.3",
         "node-cron": "^3.0.2",
-        "mongoose": "^7.2.2",
-        "csv-parse": "^5.4.0",
-        "csv-stringify": "^6.4.0"
+        "pg": "^8.11.0"
     }
 }
