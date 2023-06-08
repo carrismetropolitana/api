@@ -16,7 +16,7 @@ module.exports = {
         service_id VARCHAR(255),
         date VARCHAR(8)
     );`);
-    await GTFSParseDB.connection.query('ALTER TABLE temp_calendar_dates ADD KEY `service_id` (`service_id`);');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_calendar_dates ADD KEY "service_id" ("service_id");');
     console.log('⤷ Created SQL table "temp_calendar_dates".');
 
     await GTFSParseDB.connection.query(`CREATE TABLE temp_routes (
@@ -27,7 +27,7 @@ module.exports = {
         route_color VARCHAR(6),
         route_text_color VARCHAR(6)
     );`);
-    await GTFSParseDB.connection.query('ALTER TABLE temp_routes ADD KEY `route_id` (`route_id`);');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_routes ADD KEY "route_id" ("route_id");');
     console.log('⤷ Created SQL table "temp_routes".');
 
     await GTFSParseDB.connection.query(`CREATE TABLE temp_shapes (
@@ -37,7 +37,7 @@ module.exports = {
         shape_pt_sequence SMALLINT,
         shape_dist_traveled FLOAT(6)
     );`);
-    await GTFSParseDB.connection.query('ALTER TABLE temp_shapes ADD KEY `shape_id` (`shape_id`);');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_shapes ADD KEY "shape_id" ("shape_id");');
     console.log('⤷ Created SQL table "temp_shapes".');
 
     await GTFSParseDB.connection.query(`CREATE TABLE temp_stop_times (
@@ -47,8 +47,8 @@ module.exports = {
         stop_id VARCHAR(6),
         stop_sequence SMALLINT
     );`);
-    await GTFSParseDB.connection.query('ALTER TABLE temp_stop_times ADD KEY `trip_id` (`trip_id`);');
-    await GTFSParseDB.connection.query('ALTER TABLE temp_stop_times ADD KEY `stop_id` (`stop_id`);');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_stop_times ADD KEY "trip_id" ("trip_id");');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_stop_times ADD KEY "stop_id" ("stop_id");');
     console.log('⤷ Created SQL table "temp_stop_times".');
 
     await GTFSParseDB.connection.query(`CREATE TABLE temp_stops (
@@ -57,7 +57,7 @@ module.exports = {
         stop_lat VARCHAR(10),
         stop_lon VARCHAR(10)
     );`);
-    await GTFSParseDB.connection.query('ALTER TABLE temp_stops ADD KEY `stop_id` (`stop_id`);');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_stops ADD KEY "stop_id" ("stop_id");');
     console.log('⤷ Created SQL table "temp_stops".');
 
     await GTFSParseDB.connection.query(`CREATE TABLE temp_trips (
@@ -68,8 +68,8 @@ module.exports = {
         direction_id TINYINT,
         shape_id VARCHAR(255)
     );`);
-    await GTFSParseDB.connection.query('ALTER TABLE temp_trips ADD KEY `route_id` (`route_id`);');
-    await GTFSParseDB.connection.query('ALTER TABLE temp_trips ADD KEY `route_id_service_id` (`route_id`, `service_id`);');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_trips ADD KEY "route_id" ("route_id");');
+    await GTFSParseDB.connection.query('ALTER TABLE temp_trips ADD KEY "route_id_service_id" ("route_id", "service_id");');
     console.log('⤷ Created SQL table "temp_trips".');
 
     console.log('⤷ All SQL tables created.');
