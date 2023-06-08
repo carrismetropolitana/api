@@ -25,7 +25,7 @@ async function getMunicipalities() {
  * @returns {Array} Array of route objects
  */
 async function getRoutes() {
-  const [rows, fields] = await GTFSParseDB.connection.execute(`
+  const [rows, fields] = await GTFSParseDB.connection.query(`
     SELECT
         route_id,
         route_short_name,
@@ -50,7 +50,7 @@ async function getRoutes() {
  * @returns {Array} Array of trip objects
  */
 async function getTrips(route_id) {
-  const [rows, fields] = await GTFSParseDB.connection.execute(
+  const [rows, fields] = await GTFSParseDB.connection.query(
     `
         SELECT
             trip_id,
@@ -79,7 +79,7 @@ async function getTrips(route_id) {
  * @returns {Array} Array of shape points
  */
 async function getShape(shape_id) {
-  const [rows, fields] = await GTFSParseDB.connection.execute(
+  const [rows, fields] = await GTFSParseDB.connection.query(
     `
         SELECT
             shape_id,
@@ -108,7 +108,7 @@ async function getShape(shape_id) {
  * @returns {Array} Array of date strings
  */
 async function getDates(service_id) {
-  const [rows, fields] = await GTFSParseDB.connection.execute(
+  const [rows, fields] = await GTFSParseDB.connection.query(
     `
         SELECT
             date
@@ -133,7 +133,7 @@ async function getDates(service_id) {
  * @returns {Array} Array of stops objects
  */
 async function getStopTimes(trip_id) {
-  const [rows, fields] = await GTFSParseDB.connection.execute(
+  const [rows, fields] = await GTFSParseDB.connection.query(
     `
         SELECT
             st.stop_id,

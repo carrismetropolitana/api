@@ -12,7 +12,7 @@ const timeCalc = require('./timeCalc');
 async function getUniqueRouteShortNamesAtEachStop() {
   const startTime = process.hrtime();
   console.log(`⤷ Querying database...`);
-  const [rows, fields] = await GTFSParseDB.connection.execute(
+  const [rows, fields] = await GTFSParseDB.connection.query(
     `
         SELECT 
             stops.stop_id, 
