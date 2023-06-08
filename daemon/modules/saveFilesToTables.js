@@ -55,8 +55,10 @@ async function prepareFileImport(filename, headers) {
 // LOAD files into the database
 async function importFileToTable(filename) {
   const startTime = process.hrtime();
-  console.log(`⤷ Importing "/data-temp/gtfs/prepared/${filename}.txt" to "temp_${filename}" table...`);
-  await GTFSParseDB.connection.query(`LOAD DATA INFILE '/data-temp/gtfs/prepared/${filename}.txt' INTO TABLE temp_${filename} FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;`);
+  console.log(`⤷ Importing "/data-temp/gtfs/prepared/${filename}.txt" to "${filename}" table...`);
+  const query = `COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`;
+  const fileStream = fs.createReadStream(`/data-temp/gtfs/prepared/${filename}.txt`);
+  const { rowCount } = await GTFSParseDB.connection.copyFrom(query, fileStream);
   const elapsedTime = timeCalc.getElapsedTime(startTime);
-  console.log(`⤷ Saved "/data-temp/gtfs/prepared/${filename}.txt" to "temp_${filename}" table in ${elapsedTime}.`);
+  console.log(`⤷ Saved "/data-temp/gtfs/prepared/${filename}.txt" to "${filename}" table. ${rowCount} rows in ${elapsedTime}.`);
 }
