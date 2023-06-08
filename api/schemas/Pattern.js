@@ -18,15 +18,15 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    shape: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Shape',
+    shape_code: {
+      type: String,
+      maxlength: 50,
     },
     path: [
       {
-        stop: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Stop',
+        stop_code: {
+          type: String,
+          maxlength: 6,
         },
         allow_pickup: {
           type: Boolean,
@@ -78,5 +78,26 @@ module.exports = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    virtuals: {
+      shape: {
+        options: {
+          ref: 'Shape',
+          localField: 'shape_code',
+          foreignField: 'code',
+          justOne: true,
+        },
+      },
+      'path.stop': {
+        options: {
+          ref: 'Stop',
+          localField: 'path.stop_code',
+          foreignField: 'code',
+          justOne: true,
+        },
+      },
+    },
+  }
 );

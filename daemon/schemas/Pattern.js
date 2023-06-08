@@ -18,14 +18,13 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    shape: {
+    shape_code: {
       type: String,
-      ref: 'Shape',
-      path: 'code',
+      maxlength: 50,
     },
     path: [
       {
-        stop: {
+        stop_code: {
           type: String,
           maxlength: 6,
         },
@@ -85,8 +84,8 @@ module.exports = new mongoose.Schema(
     virtuals: {
       shape: {
         options: {
-          ref: 'Pattern',
-          localField: 'shape',
+          ref: 'Shape',
+          localField: 'shape_code',
           foreignField: 'code',
           justOne: true,
         },
@@ -94,7 +93,7 @@ module.exports = new mongoose.Schema(
       'path.stop': {
         options: {
           ref: 'Stop',
-          localField: 'path.stop',
+          localField: 'path.stop_code',
           foreignField: 'code',
           justOne: true,
         },
