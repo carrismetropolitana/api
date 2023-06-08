@@ -3,40 +3,40 @@
 const { mongoose } = require('mongoose');
 
 /* * */
-/* Schema for MongoDB ["RouteSummary"] Object */
+/* Schema for MongoDB ["Line"] Object */
 module.exports = new mongoose.Schema(
   {
-    route_id: {
+    code: {
       type: String,
       maxlength: 100,
       unique: true,
     },
-    route_short_name: {
+    short_name: {
       type: String,
       maxlength: 100,
     },
-    route_long_name: {
+    long_name: {
       type: String,
       maxlength: 100,
     },
-    route_color: {
+    color: {
       type: String,
       maxlength: 100,
     },
-    route_text_color: {
+    text_color: {
       type: String,
       maxlength: 100,
     },
     municipalities: [
       {
-        id: {
-          type: String,
-          maxlength: 100,
-        },
-        value: {
-          type: String,
-          maxlength: 100,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Municipality',
+      },
+    ],
+    patterns: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Pattern',
       },
     ],
   },

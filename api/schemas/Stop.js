@@ -6,47 +6,131 @@ const { mongoose } = require('mongoose');
 /* Schema for MongoDB ["Stop"] Object */
 module.exports = new mongoose.Schema(
   {
-    stop_id: {
+    //
+    // General
+
+    code: {
       type: String,
-      maxlength: 100,
+      maxlength: 6,
       unique: true,
     },
-    stop_name: {
+    name: {
       type: String,
       maxlength: 100,
     },
-    stop_lat: {
+    short_name: {
       type: String,
       maxlength: 100,
     },
-    stop_lon: {
+    tts_name: {
       type: String,
       maxlength: 100,
     },
-    routes: [
-      {
-        route_id: {
-          type: String,
-          maxlength: 100,
-        },
-        route_short_name: {
-          type: String,
-          maxlength: 100,
-        },
-        route_long_name: {
-          type: String,
-          maxlength: 100,
-        },
-        route_color: {
-          type: String,
-          maxlength: 100,
-        },
-        route_text_color: {
-          type: String,
-          maxlength: 100,
+    latitude: {
+      type: Number,
+      required: true,
+    },
+    longitude: {
+      type: Number,
+      required: true,
+    },
+
+    //
+    // Administrative
+
+    municipality: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Municipality',
+    },
+    parish: {
+      type: String,
+      maxlength: 100,
+    },
+    locality: {
+      type: String,
+      maxlength: 100,
+    },
+
+    //
+    // Accessibility
+
+    wheelchair_boarding: {
+      type: String,
+      maxlength: 100,
+    },
+
+    //
+    // Services
+
+    near_health_clinic: {
+      type: Boolean,
+    },
+    near_hospital: {
+      type: Boolean,
+    },
+    near_university: {
+      type: Boolean,
+    },
+    near_school: {
+      type: Boolean,
+    },
+    near_police_station: {
+      type: Boolean,
+    },
+    near_fire_station: {
+      type: Boolean,
+    },
+    near_shopping: {
+      type: Boolean,
+    },
+    near_historic_building: {
+      type: Boolean,
+    },
+    near_transit_office: {
+      type: Boolean,
+    },
+
+    //
+    // Intermodal Connections
+
+    subway: {
+      type: Boolean,
+    },
+    light_rail: {
+      type: Boolean,
+    },
+    train: {
+      type: Boolean,
+    },
+    boat: {
+      type: Boolean,
+    },
+    airport: {
+      type: Boolean,
+    },
+    bike_sharing: {
+      type: Boolean,
+    },
+    bike_parking: {
+      type: Boolean,
+    },
+    car_parking: {
+      type: Boolean,
+    },
+
+    //
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    virtuals: {
+      patterns: {
+        options: {
+          ref: 'Pattern',
+          localField: 'code',
+          foreignField: 'pattern.stop',
         },
       },
-    ],
-  },
-  { timestamps: true }
+    },
+  }
 );
