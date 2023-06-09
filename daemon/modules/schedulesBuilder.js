@@ -3,17 +3,7 @@
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
-
-/**
- * Fetch municipalities from www
- * @async
- * @returns {Array} Array of municipalities
- */
-async function getMunicipalities() {
-  const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
-  if (response.ok) return response.json();
-  else throw Error('Could not fetch municipalities.', response);
-}
+const turfLineString = require('@turf/lineString');
 
 //
 //
@@ -160,6 +150,143 @@ async function getStopTimes(trip_id) {
 //
 //
 
+/**
+ * UPDATE MUNICIPALITIES
+ * Fetch Municipalities from www,
+ * parse them and save them to MongoDB.
+ * @async
+ * @returns {Array} Array of route objects
+ */
+async function updateMunicipalities() {
+  // Record the start time to later calculate operation duration
+  const startTime = process.hrtime();
+  // Fetch all Municipalities from www
+  const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
+  const allMunicipalities = await response.json();
+  // Initate a temporary variable to hold updated Municipalities
+  let updatedMunicipalityIds = [];
+  // For each municipality, update its entry in the database
+  for (const municipality of allMunicipalities) {
+    const updatedDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: municipality.id }, { name: municipality.value }, { new: true, upsert: true });
+    updatedMunicipalityIds.push(updatedDocument._id);
+  }
+  // Log count of updated Municipalities
+  console.log(`⤷ Updated ${updatedMunicipalityIds.length} Municipalities.`);
+  // Delete all Municipalities not present in the current update
+  const deletedStaleMunicipalities = await GTFSAPIDB.Municipality.deleteMany({ _id: { $nin: updatedMunicipalityIds } });
+  console.log(`⤷ Deleted ${deletedStaleMunicipalities.deletedCount} stale Municipalities.`);
+  // Log elapsed time in the current operation
+  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  console.log(`⤷ Done updating Municipalities (${elapsedTime}).`);
+  //
+}
+
+//
+//
+//
+
+/**
+ * UPDATE SHAPES
+ * Query 'shapes' table to get all unique shapes already pre-formatted
+ * to the final schema. For each result, create it's GeoJson representation
+ * and save it to MongoDB.
+ * @async
+ */
+async function updateShapes() {
+  // Record the start time to later calculate operation duration
+  const startTime = process.hrtime();
+  // Query Postgres for all unique shapes by shape_id
+  const allShapes = await GTFSParseDB.connection.query(`
+        SELECT
+            shape_id AS code,
+            ARRAY_AGG(
+                JSON_BUILD_OBJECT(
+                    'shape_pt_lat', shape_pt_lat,
+                    'shape_pt_lon', shape_pt_lon,
+                    'shape_pt_sequence', shape_pt_sequence,
+                    'shape_dist_traveled', shape_dist_traveled
+                )
+            ) AS points
+        FROM
+            shapes
+        GROUP BY
+            shape_id
+    `);
+  // Initate a temporary variable to hold updated Shapes
+  let updatedShapeIds = [];
+  // For each shape, update its entry in the database
+  for (const shape of allShapes.rows) {
+    // Initiate a variable to hold the parsed shape
+    let parsedShape = { ...shape };
+    // Sort points to match sequence
+    parsedShape.points.sort((a, b) => a.shape_pt_sequence - b.shape_pt_sequence);
+    // Create geojson feature using turf
+    parsedShape.geojson = turfLineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
+    // Update or create new document
+    const updatedDocument = await GTFSAPIDB.Shape.findOneAndUpdate({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+    updatedShapeIds.push(updatedDocument._id);
+  }
+  // Log count of updated Shapes
+  console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
+  // Delete all Shapes not present in the current update
+  const deletedStaleShapes = await GTFSAPIDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
+  console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
+  // Log elapsed time in the current operation
+  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  console.log(`⤷ Done updating Shapes (${elapsedTime}).`);
+  //
+}
+
+//
+//
+//
+
+/**
+ * UPDATE STOPS
+ * Query 'stops' table to get all unique stops.
+ * Save each result in MongoDB.
+ * @async
+ */
+async function updateStops() {
+  // Record the start time to later calculate operation duration
+  const startTime = process.hrtime();
+  // Query Postgres for all unique stops by stop_id
+  const allStops = await GTFSParseDB.connection.query('SELECT * FROM stops');
+  // Initate a temporary variable to hold updated Stops
+  let updatedStopIds = [];
+  // For each stop, update its entry in the database
+  for (const stop of allStops.rows) {
+    // Initiate a variable to hold the parsed stop
+    let parsedStop = {
+      // Save all properties with the same key
+      ...stop,
+      // Save properties with different key
+      code: stop.stop_id,
+      name: stop.stop_name,
+      short_name: stop.stop_short_name,
+      tts_name: stop.tts_stop_name,
+      latitude: stop.stop_lat,
+      longitude: stop.stop_lon,
+    };
+    // Update or create new document
+    const updatedDocument = await GTFSAPIDB.Stop.findOneAndUpdate({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
+    updatedStopIds.push(updatedDocument._id);
+  }
+  // Log count of updated Stops
+  console.log(`⤷ Updated ${updatedStopIds.length} Stops.`);
+  // Delete all Stops not present in the current update
+  const deletedStaleStops = await GTFSAPIDB.Stop.deleteMany({ _id: { $nin: updatedStopIds } });
+  console.log(`⤷ Deleted ${deletedStaleStops.deletedCount} stale Stops.`);
+  // Log elapsed time in the current operation
+  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  console.log(`⤷ Done updating Stops (${elapsedTime}).`);
+  //
+}
+
+//
+//
+//
+
 //
 // Export functions from this module
 module.exports = {
@@ -194,13 +321,24 @@ module.exports = {
 
     /* * */
 
+    //
+    // MUNICIPALITIES
+    // Fetch Municipalities from www and save them to MongoDB
+    await updateMunicipalities();
+
+    //
+    // SHAPES
+    // Fetch Shapes from Postgres and save them to MongoDB
+    await updateShapes();
+
+    //
+    // STOPS
+    // Fetch Stops from Postgres and save them to MongoDB
+    await updateStops();
+
     // Setup a counter that holds all processed route_ids.
     // This is used at the end to remove stale data from the database.
     let allProcessedRouteIds = [];
-
-    // Fetch municipalities from www
-    const allMunicipalities = await getMunicipalities();
-    console.log(`⤷ Done fetching municipalities.`);
 
     // Get all routes from GTFS table (routes.txt)
     const allRoutes = await getRoutes();
