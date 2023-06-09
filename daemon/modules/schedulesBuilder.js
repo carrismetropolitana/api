@@ -3,7 +3,7 @@
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
-const turfLineString = require('@turf/lineString');
+const turf = require('@turf/turf');
 
 //
 //
@@ -221,7 +221,7 @@ async function updateShapes() {
     // Sort points to match sequence
     parsedShape.points.sort((a, b) => a.shape_pt_sequence - b.shape_pt_sequence);
     // Create geojson feature using turf
-    parsedShape.geojson = turfLineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
+    parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
     // Update or create new document
     const updatedDocument = await GTFSAPIDB.Shape.findOneAndUpdate({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
     updatedShapeIds.push(updatedDocument._id);
