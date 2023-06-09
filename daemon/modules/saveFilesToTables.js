@@ -58,7 +58,7 @@ async function importFileToTable(filename) {
   const startTime = process.hrtime();
   console.log(`⤷ Importing "/data-temp/gtfs/prepared/${filename}.txt" to "${filename}" table...`);
   // Setup the query and a filesystem connection using 'pg-copy-streams' and 'fs'
-  const stream = client.query(copyFrom(`COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
+  const stream = GTFSParseDB.connection.query(copyFrom(`COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
   const fileStream = fs.createReadStream(`/data-temp/gtfs/prepared/${filename}.txt`);
   // Pipe the contents of the file into the pg-copy-stream function
   const { rowCount } = await new Promise((resolve, reject) => {
