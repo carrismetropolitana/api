@@ -155,7 +155,6 @@ async function getStopTimes(trip_id) {
  * Fetch Municipalities from www,
  * parse them and save them to MongoDB.
  * @async
- * @returns {Array} Array of route objects
  */
 async function updateMunicipalities() {
   // Record the start time to later calculate operation duration
