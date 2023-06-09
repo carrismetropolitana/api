@@ -1,6 +1,7 @@
 /* * */
 /* IMPORTS */
 const fs = require('fs');
+const copyFrom = require('pg-copy-streams').from;
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
@@ -56,9 +57,16 @@ async function prepareFileImport(filename, headers) {
 async function importFileToTable(filename) {
   const startTime = process.hrtime();
   console.log(`⤷ Importing "/data-temp/gtfs/prepared/${filename}.txt" to "${filename}" table...`);
-  const query = `COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`;
+  // Setup the query and a filesystem connection using 'pg-copy-streams' and 'fs'
+  const stream = client.query(copyFrom(`COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
   const fileStream = fs.createReadStream(`/data-temp/gtfs/prepared/${filename}.txt`);
-  const { rowCount } = await GTFSParseDB.connection.copyFrom(query, fileStream);
+  // Pipe the contents of the file into the pg-copy-stream function
+  const { rowCount } = await new Promise((resolve, reject) => {
+    fileStream
+      .pipe(stream)
+      .on('finish', () => resolve(stream))
+      .on('error', reject);
+  });
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Saved "/data-temp/gtfs/prepared/${filename}.txt" to "${filename}" table. ${rowCount} rows in ${elapsedTime}.`);
 }
