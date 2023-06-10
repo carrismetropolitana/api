@@ -320,13 +320,10 @@ module.exports = {
 
     //
 
-    console.log(allLines);
-
-    //
-
     for (const line of allLines) {
       //
       // Prepare each trip
+      if (line.code === '1206') console.log(line);
       //
       // Save the line
       //
