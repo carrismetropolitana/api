@@ -10,30 +10,6 @@ const turf = require('@turf/helpers');
 //
 
 /**
- * Retrieve all routes from 'routes' table
- * @async
- * @returns {Array} Array of route objects
- */
-async function getRoutes() {
-  const [rows, fields] = await GTFSParseDB.connection.query(`
-    SELECT
-        route_id,
-        route_short_name,
-        route_long_name,
-        route_color,
-        route_text_color,
-        route_type
-    FROM
-        routes
-  `);
-  return rows;
-}
-
-//
-//
-//
-
-/**
  * Retrieve trips matching the provided route_id
  * @async
  * @param {String} route_id The route_id related to the trip
@@ -54,35 +30,6 @@ async function getTrips(route_id) {
             route_id = ?
     `,
     [route_id]
-  );
-  return rows;
-}
-
-//
-//
-//
-
-/**
- * Retrieve shape matching the provided shape_id
- * @async
- * @param {String} shape_id The shape_id to retrieve
- * @returns {Array} Array of shape points
- */
-async function getShape(shape_id) {
-  const [rows, fields] = await GTFSParseDB.connection.query(
-    `
-        SELECT
-            shape_id,
-            shape_pt_lat,
-            shape_pt_lon,
-            shape_pt_sequence,
-            shape_dist_traveled
-        FROM
-            shapes
-        WHERE
-            shape_id = ?
-    `,
-    [shape_id]
   );
   return rows;
 }
@@ -158,6 +105,7 @@ async function getStopTimes(trip_id) {
  */
 async function updateMunicipalities() {
   // Record the start time to later calculate operation duration
+  console.log(`⤷ Updating Municipalities...`);
   const startTime = process.hrtime();
   // Fetch all Municipalities from www
   const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
@@ -193,6 +141,7 @@ async function updateMunicipalities() {
  */
 async function updateShapes() {
   // Record the start time to later calculate operation duration
+  console.log(`⤷ Updating Shapes...`);
   const startTime = process.hrtime();
   // Query Postgres for all unique shapes by shape_id
   const allShapes = await GTFSParseDB.connection.query(`
@@ -218,7 +167,8 @@ async function updateShapes() {
     // Initiate a variable to hold the parsed shape
     let parsedShape = { ...shape };
     // Sort points to match sequence
-    parsedShape.points.sort((a, b) => a.shape_pt_sequence - b.shape_pt_sequence);
+    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+    parsedShape.points.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
     // Create geojson feature using turf
     parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
     // Update or create new document
@@ -248,6 +198,7 @@ async function updateShapes() {
  */
 async function updateStops() {
   // Record the start time to later calculate operation duration
+  console.log(`⤷ Updating Stops...`);
   const startTime = process.hrtime();
   // Query Postgres for all unique stops by stop_id
   const allStops = await GTFSParseDB.connection.query('SELECT * FROM stops');
@@ -340,10 +291,60 @@ module.exports = {
     let allProcessedRouteIds = [];
 
     // Get all routes from GTFS table (routes.txt)
-    const allRoutes = await getRoutes();
+    const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
+
+    // Sort allRoutes array by each routes 'route_id' property ascending
+    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+    allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
+
+    // Group all routes into lines by route_short_name
+    const allLines = allRoutes.rows.reduce((result, route) => {
+      // Check if the route_short_name already exists as a line
+      const existingLine = result.find((line) => line.route_short_name === route.route_short_name);
+      // Add the route to the existing line
+      if (existingLine) existingLine.routes.push(route);
+      // Create a new line with the route
+      else {
+        result.push({
+          code: route.route_short_name,
+          short_name: route.route_short_name,
+          long_name: route.route_long_name,
+          color: route.route_color,
+          text_color: route.route_text_color,
+          routes: [route],
+        });
+      }
+      // Return result for the next iteration
+      return result;
+    }, []);
+
+    //
+
+    console.log(allLines);
+
+    //
+
+    for (const line of allLines) {
+      //
+      // Prepare each trip
+      //
+      // Save the line
+      //
+    }
+
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
+    //
 
     // LOOP 1 — Routes
-    for (const currentRoute of allRoutes) {
+    for (const currentRoute of allRoutes.rows) {
       //
       // Record the start time to later calculate duration
       const startTime = process.hrtime();
