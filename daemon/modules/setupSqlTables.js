@@ -54,8 +54,31 @@ module.exports = {
     await GTFSParseDB.connection.query(`CREATE TABLE stops (
         stop_id VARCHAR(6),
         stop_name VARCHAR(255),
+        stop_short_name VARCHAR(255),
+        tts_stop_name VARCHAR(255),
         stop_lat VARCHAR(10),
-        stop_lon VARCHAR(10)
+        stop_lon VARCHAR(10),
+        municipality VARCHAR(255),
+        parish VARCHAR(255),
+        locality VARCHAR(255),
+        wheelchair_boarding VARCHAR(1),
+        near_health_clinic VARCHAR(1),
+        near_hospital VARCHAR(1),
+        near_university VARCHAR(1),
+        near_school VARCHAR(1),
+        near_police_station VARCHAR(1),
+        near_fire_station VARCHAR(1),
+        near_shopping VARCHAR(1),
+        near_historic_building VARCHAR(1),
+        near_transit_office VARCHAR(1),
+        light_rail VARCHAR(1),
+        subway VARCHAR(1),
+        train VARCHAR(1),
+        boat VARCHAR(1),
+        airport VARCHAR(1),
+        bike_sharing VARCHAR(1),
+        bike_parking VARCHAR(1),
+        car_parking VARCHAR(1)
     );`);
     await GTFSParseDB.connection.query('CREATE INDEX stops_stop_id_idx ON stops ("stop_id");');
     console.log('⤷ Created SQL table "stops".');
