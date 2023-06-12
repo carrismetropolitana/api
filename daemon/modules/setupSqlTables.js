@@ -12,6 +12,16 @@ module.exports = {
 
     // Create tables
 
+    await GTFSParseDB.connection.query(`CREATE TABLE municipalities (
+        dico VARCHAR(4),
+        name VARCHAR(255),
+        prefix VARCHAR(2),
+        district VARCHAR(255),
+        nuts_iii VARCHAR(255)
+    );`);
+    await GTFSParseDB.connection.query('CREATE INDEX municipalities_dico_idx ON municipalities ("dico");');
+    console.log('⤷ Created SQL table "municipalities".');
+
     await GTFSParseDB.connection.query(`CREATE TABLE calendar_dates (
         service_id VARCHAR(255),
         date VARCHAR(8)

@@ -138,13 +138,12 @@ async function updateMunicipalities() {
   console.log(`⤷ Updating Municipalities...`);
   const startTime = process.hrtime();
   // Fetch all Municipalities from www
-  const response = await fetch('https://www.carrismetropolitana.pt/?api=municipalities');
-  const allMunicipalities = await response.json();
+  const allMunicipalities = await GTFSParseDB.connection.query('SELECT * FROM municipalities');
   // Initate a temporary variable to hold updated Municipalities
   let updatedMunicipalityIds = [];
   // For each municipality, update its entry in the database
-  for (const municipality of allMunicipalities) {
-    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: municipality.id }, { name: municipality.value }, { new: true, upsert: true });
+  for (const municipality of allMunicipalities.rows) {
+    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ dico: municipality.dico }, municipality, { new: true, upsert: true });
     updatedMunicipalityIds.push(updatedMunicipalityDocument._id);
   }
   // Log count of updated Municipalities
@@ -236,6 +235,8 @@ async function updateStops() {
   let updatedStopIds = [];
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
+    // Find out which municipality belongs to this stop
+    const municipalityId = await GTFSAPIDB.Municipality.findOne({ code: '' }, '_id');
     // Initiate a variable to hold the parsed stop
     let parsedStop = {
       // Save all properties with the same key
