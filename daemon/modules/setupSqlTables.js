@@ -6,7 +6,7 @@ module.exports = {
   createAllTables: async () => {
     //
 
-    let dropExistingTables = 'DROP TABLE IF EXISTS calendar_dates, routes, shapes, stop_times, stops, trips;';
+    let dropExistingTables = 'DROP TABLE IF EXISTS municipalities, calendar_dates, routes, shapes, stop_times, stops, trips;';
     await GTFSParseDB.connection.query(dropExistingTables);
     console.log('⤷ Dropped existing SQL tables.');
 
