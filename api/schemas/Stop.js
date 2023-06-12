@@ -128,7 +128,7 @@ module.exports = new mongoose.Schema(
       patterns: {
         options: {
           ref: 'Pattern',
-          localField: 'code',
+          localField: '_id',
           foreignField: 'trips.schedule.stop',
         },
       },
