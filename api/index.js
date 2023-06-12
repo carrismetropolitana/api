@@ -24,7 +24,7 @@ app.use(function (req, res, next) {
 //
 app.get('/lines', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Line.find({}, '-_id -__v');
+    const foundManyDocuments = await GTFSAPIDB.Line.find({}, '-_id');
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
@@ -77,7 +77,7 @@ app.get('/shapes/:code', async (req, res) => {
 //
 app.get('/stops', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Stop.find({}, '-_id -__v code name latitude longitude tts_name');
+    const foundManyDocuments = await GTFSAPIDB.Stop.find({}, '-_id code name latitude longitude tts_name');
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
