@@ -100,7 +100,6 @@ async function getTripSchedule(trip_id) {
     // Get existing stop _id from database
     const existingStopDocument = await GTFSAPIDB.Stop.findOne({ code: currentStopTime.stop_id }, '_id');
     // Calculate distance delta and update variable
-    console.log(currentStopTime.shape_dist_traveled);
     const currentDistanceDelta = Number(currentStopTime.shape_dist_traveled) - prevTravelDistance;
     prevTravelDistance = Number(currentStopTime.shape_dist_traveled);
     // Format arrival_time
@@ -113,7 +112,7 @@ async function getTripSchedule(trip_id) {
       stop: existingStopDocument._id,
       allow_pickup: currentStopTime.pickup_type ? false : true,
       allow_drop_off: currentStopTime.drop_off_type ? false : true,
-      distance_delta: 0,
+      distance_delta: currentDistanceDelta,
       arrival_time: arrivalTimeFormatted,
       arrival_time_operation: currentStopTime.arrival_time,
       travel_time: currentTravelTime,
