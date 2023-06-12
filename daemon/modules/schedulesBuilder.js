@@ -64,6 +64,23 @@ function calculateTimeDifference(time1, time2) {
 //
 //
 
+function formatArrivalTime(arrival_time) {
+  const arrival_time_array = arrival_time.split(':');
+  let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
+  if (arrival_time_hours && Number(arrival_time_hours) > 23) {
+    const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
+    arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
+  }
+  const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
+  const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
+  // Return formatted string
+  return `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`;
+}
+
+//
+//
+//
+
 /**
  * Retrieve stops for the given trip_id
  * @async
@@ -83,8 +100,8 @@ async function getTripSchedule(trip_id) {
     // Get existing stop _id from database
     const existingStopDocument = await GTFSAPIDB.Stop.findOne({ code: currentStopTime.stop_id }, '_id');
     // Calculate distance delta and update variable
-    const currentDistanceDelta = currentStopTime.shape_dist_traveled - prevTravelDistance;
-    prevTravelDistance = currentStopTime.shape_dist_traveled;
+    const currentDistanceDelta = Number(currentStopTime.shape_dist_traveled) - prevTravelDistance;
+    prevTravelDistance = Number(currentStopTime.shape_dist_traveled);
     // Format arrival_time
     const arrivalTimeFormatted = formatArrivalTime(currentStopTime.arrival_time);
     // Calculate travel time
@@ -104,23 +121,6 @@ async function getTripSchedule(trip_id) {
   // Return result array
   return formattedSchedule;
   //
-}
-
-//
-//
-//
-
-async function formatArrivalTime(arrival_time) {
-  const arrival_time_array = arrival_time.split(':');
-  let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
-  if (arrival_time_hours && Number(arrival_time_hours) > 23) {
-    const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
-    arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
-  }
-  const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
-  const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
-  // Return formatted string
-  return `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`;
 }
 
 //
