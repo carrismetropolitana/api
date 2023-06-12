@@ -18,34 +18,21 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    shape_code: {
-      type: String,
-      maxlength: 50,
+    parent_line: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Line',
     },
-    path: [
-      {
-        stop_code: {
-          type: String,
-          maxlength: 6,
-        },
-        allow_pickup: {
-          type: Boolean,
-        },
-        allow_drop_off: {
-          type: Boolean,
-        },
-        distance_delta: {
-          type: Number,
-        },
-      },
-    ],
     trips: [
       {
-        trip_id: {
+        trip_code: {
           type: String,
           maxlength: 50,
         },
-        service_id: {
+        calendar_code: {
+          type: String,
+          maxlength: 50,
+        },
+        shape_code: {
           type: String,
           maxlength: 50,
         },
@@ -57,9 +44,18 @@ module.exports = new mongoose.Schema(
         ],
         schedule: [
           {
-            stop_code: {
-              type: String,
-              maxlength: 6,
+            stop: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: 'Stop',
+            },
+            allow_pickup: {
+              type: Boolean,
+            },
+            allow_drop_off: {
+              type: Boolean,
+            },
+            distance_delta: {
+              type: Number,
             },
             arrival_time: {
               type: String,
@@ -78,26 +74,5 @@ module.exports = new mongoose.Schema(
       },
     ],
   },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    virtuals: {
-      shape: {
-        options: {
-          ref: 'Shape',
-          localField: 'shape_code',
-          foreignField: 'code',
-          justOne: true,
-        },
-      },
-      'path.stop': {
-        options: {
-          ref: 'Stop',
-          localField: 'path.stop_code',
-          foreignField: 'code',
-          justOne: true,
-        },
-      },
-    },
-  }
+  { timestamps: true }
 );
