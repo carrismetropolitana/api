@@ -17,7 +17,7 @@ const turf = require('@turf/helpers');
  */
 async function getTripDates(service_id) {
   // Get dates in the YYYYMMDD format (GTFS Standard format)
-  const allDates = await GTFSParseDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = ${service_id}`);
+  const allDates = await GTFSParseDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = '${service_id}'`);
   return allDates.rows.map((item) => item.date);
 }
 
@@ -72,7 +72,7 @@ function calculateTimeDifference(time1, time2) {
  */
 async function getTripSchedule(trip_id) {
   // Get path for trip from database
-  const allStopTimes = await GTFSParseDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = ${trip_id} ORDER BY stop_sequence`);
+  const allStopTimes = await GTFSParseDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip_id}' ORDER BY stop_sequence`);
   // Setup temp result variable
   let formattedSchedule = [];
   // Initiate variables to keep track of distance and travel duration
@@ -312,7 +312,7 @@ async function updateLinesAndPatterns() {
     // Iterate on each route for this line
     for (const route of line.routes) {
       // Get all trips associated with this route
-      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = ${route.route_id}`);
+      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
       // Process all trips to create an array of patterns
       const uniquePatterns = allTrips.rows.reduce(async (result, trip) => {
         // Setup a temporary key with the distinguishable values for each trip
