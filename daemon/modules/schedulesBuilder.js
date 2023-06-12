@@ -350,7 +350,7 @@ async function updateLinesAndPatterns() {
         updatedPatternIds.push(updatedPatternDocument._id);
       }
       // Log count of updated Patterns
-      console.log(`⤷ Updated ${updatedPatternIds.length} Patterns for route ${route.route_id}.`);
+      console.log(`⤷ Updated ${uniquePatterns.length} Patterns for route ${route.route_id}.`);
       //
     }
   }
