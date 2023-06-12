@@ -67,11 +67,7 @@ async function appInitPoint() {
     await schedulesBuilder.start();
 
     console.log();
-    console.log('STEP 8: Build Stops...');
-    await stopsBuilder.start();
-
-    console.log();
-    console.log('STEP 9: Disconnect from databases...');
+    console.log('STEP 8: Disconnect from databases...');
     await GTFSParseDB.disconnect();
     await GTFSAPIDB.disconnect();
 
