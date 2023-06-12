@@ -302,8 +302,9 @@ async function updateLinesAndPatterns() {
     // Return result for the next iteration
     return result;
   }, []);
-  // Initate a temporary variable to hold updated Lines
+  // Initate temporary variables to hold updated Lines and Patterns
   let updatedLineIds = [];
+  let updatedPatternIds = [];
   // For each route in each line, save the corresponding trip
   for (const line of allLines) {
     // Save this line to MongoDB and hold on to the returned _id value
@@ -342,8 +343,7 @@ async function updateLinesAndPatterns() {
           });
         }
       }
-      // Initate a temporary variable to hold updated Patterns
-      let updatedPatternIds = [];
+
       // Update patterns in Database
       for (const pattern of uniquePatterns) {
         const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndUpdate({ code: pattern.code }, pattern, { new: true, upsert: true });
@@ -351,9 +351,6 @@ async function updateLinesAndPatterns() {
       }
       // Log count of updated Patterns
       console.log(`⤷ Updated ${updatedPatternIds.length} Patterns for route ${route.route_id}.`);
-      // Delete all Patterns not present in the current update
-      const deletedStalePatterns = await GTFSAPIDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
-      console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns for route ${route.route_id}.`);
       //
     }
   }
@@ -362,6 +359,9 @@ async function updateLinesAndPatterns() {
   // Delete all Lines not present in the current update
   const deletedStaleLines = await GTFSAPIDB.Line.deleteMany({ _id: { $nin: updatedLineIds } });
   console.log(`⤷ Deleted ${deletedStaleLines.deletedCount} stale Lines.`);
+  // Delete all Patterns not present in the current update
+  const deletedStalePatterns = await GTFSAPIDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
+  console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns for route ${route.route_id}.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Lines (${elapsedTime}).`);
