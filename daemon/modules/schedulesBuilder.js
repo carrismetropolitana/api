@@ -313,8 +313,10 @@ async function updateLinesAndPatterns() {
     for (const route of line.routes) {
       // Get all trips associated with this route
       const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      // Define built patterns to save to the database
+      let uniquePatterns = [];
       // Process all trips to create an array of patterns
-      const uniquePatterns = allTrips.rows.reduce(async (result, trip) => {
+      for (const trip of allTrips.rows) {
         // Setup a temporary key with the distinguishable values for each trip
         const uniquePatternCode = `${trip.route_id}_${trip.direction}`;
         // Parse trip
@@ -326,12 +328,12 @@ async function updateLinesAndPatterns() {
           schedule: await getTripSchedule(trip.trip_id),
         };
         // Check if the pattern code already exists as a pattern
-        const existingPattern = result.find((pattern) => pattern.code === uniquePatternCode);
+        const existingPattern = uniquePatterns.find((pattern) => pattern.code === uniquePatternCode);
         // If pattern already exists, add this trip to the trips array
         if (existingPattern) existingPattern.trips.push(parsedTrip);
         // Create a new pattern with the trip
         else {
-          result.push({
+          uniquePatterns.push({
             code: uniquePatternCode,
             headsign: trip.trip_headsign,
             direction: trip.direction,
@@ -339,9 +341,7 @@ async function updateLinesAndPatterns() {
             trips: [parsedTrip],
           });
         }
-        // Return result for the next iteration
-        return result;
-      }, []);
+      }
       // Initate a temporary variable to hold updated Patterns
       let updatedPatternIds = [];
       // Update patterns in Database
