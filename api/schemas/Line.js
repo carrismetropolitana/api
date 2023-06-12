@@ -33,12 +33,18 @@ module.exports = new mongoose.Schema(
         ref: 'Municipality',
       },
     ],
-    patterns: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Pattern',
-      },
-    ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    virtuals: {
+      patterns: {
+        options: {
+          ref: 'Pattern',
+          localField: '_id',
+          foreignField: 'parent_line',
+        },
+      },
+    },
+  }
 );
