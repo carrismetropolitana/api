@@ -10,28 +10,15 @@ const turf = require('@turf/helpers');
 //
 
 /**
- * Retrieve trips matching the provided route_id
+ * Retrieve the dates matching the provided service_id
  * @async
- * @param {String} route_id The route_id related to the trip
- * @returns {Array} Array of trip objects
+ * @param {String} service_id The service_id to retrieve
+ * @returns {Array} Array of date strings
  */
-async function getTrips(route_id) {
-  const [rows, fields] = await GTFSParseDB.connection.query(
-    `
-        SELECT
-            trip_id,
-            direction_id,
-            trip_headsign,
-            service_id,
-            shape_id
-        FROM
-            trips
-        WHERE
-            route_id = ?
-    `,
-    [route_id]
-  );
-  return rows;
+async function getTripDates(service_id) {
+  // Get dates in the YYYYMMDD format (GTFS Standard format)
+  const allDates = await GTFSParseDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = ${service_id}`);
+  return allDates.rows.map((item) => item.date);
 }
 
 //
@@ -39,24 +26,38 @@ async function getTrips(route_id) {
 //
 
 /**
- * Retrieve the dates matching the provided service_id
+ * Calculate time difference
  * @async
  * @param {String} service_id The service_id to retrieve
  * @returns {Array} Array of date strings
  */
-async function getDates(service_id) {
-  const [rows, fields] = await GTFSParseDB.connection.query(
-    `
-        SELECT
-            date
-        FROM
-            calendar_dates
-        WHERE
-            service_id = ?
-    `,
-    [service_id]
-  );
-  return rows;
+function calculateTimeDifference(time1, time2) {
+  // Handle the case where time1 is zero
+  if (!time1) return 0;
+  // Convert time strings to seconds
+  const [h1, m1, s1] = time1.split(':').map(Number);
+  const [h2, m2, s2] = time2.split(':').map(Number);
+  let totalSeconds1 = h1 * 3600 + m1 * 60 + s1;
+  let totalSeconds2 = h2 * 3600 + m2 * 60 + s2;
+
+  // Take modulus of total seconds to handle cases exceeding 24 hours
+  totalSeconds1 %= 86400;
+  totalSeconds2 %= 86400;
+
+  // Calculate time difference
+  let timeDifference = totalSeconds2 - totalSeconds1;
+
+  // Handle negative time difference
+  if (timeDifference < 0) {
+    timeDifference += 86400;
+  }
+
+  // Convert time difference back to "HH:MM:SS" format
+  const hours = Math.floor(timeDifference / 3600);
+  const minutes = Math.floor((timeDifference % 3600) / 60);
+  const seconds = timeDifference % 60;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
 //
@@ -69,28 +70,57 @@ async function getDates(service_id) {
  * @param {String} trip_id The trip_id to retrieve from stop_times
  * @returns {Array} Array of stops objects
  */
-async function getStopTimes(trip_id) {
-  const [rows, fields] = await GTFSParseDB.connection.query(
-    `
-        SELECT
-            st.stop_id,
-            st.stop_sequence,
-            st.arrival_time,
-            st.departure_time,
-            s.stop_name,
-            s.stop_lat,
-            s.stop_lon
-        FROM
-            stop_times st
-            INNER JOIN stops s ON st.stop_id = s.stop_id
-        WHERE
-            st.trip_id = ?
-        ORDER BY
-            st.stop_sequence
-    `,
-    [trip_id]
-  );
-  return rows;
+async function getTripSchedule(trip_id) {
+  // Get path for trip from database
+  const allStopTimes = await GTFSParseDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = ${trip_id} ORDER BY stop_sequence`);
+  // Setup temp result variable
+  let formattedSchedule = [];
+  // Initiate variables to keep track of distance and travel duration
+  let prevTravelDistance = 0;
+  let prevArrivalTime = 0;
+  // For each path sequence
+  for (const currentStopTime of allStopTimes.rows) {
+    // Get existing stop _id from database
+    const existingStopDocument = await GTFSAPIDB.Stop.findOne({ code: currentStopTime.stop_id }, '_id');
+    // Calculate distance delta and update variable
+    const currentDistanceDelta = currentStopTime.shape_dist_traveled - prevTravelDistance;
+    prevTravelDistance = currentStopTime.shape_dist_traveled;
+    // Format arrival_time
+    const arrivalTimeFormatted = formatArrivalTime(currentStopTime.arrival_time);
+    // Calculate travel time
+    const currentTravelTime = calculateTimeDifference(prevArrivalTime, currentStopTime.arrival_time);
+    prevArrivalTime = currentStopTime.arrival_time;
+    // Save formatted stop time
+    formattedSchedule.push({
+      stop: existingStopDocument._id,
+      allow_pickup: currentStopTime.pickup_type ? false : true,
+      allow_drop_off: currentStopTime.drop_off_type ? false : true,
+      distance_delta: currentDistanceDelta,
+      arrival_time: arrivalTimeFormatted,
+      arrival_time_operation: currentStopTime.arrival_time,
+      travel_time: currentTravelTime,
+    });
+  }
+  // Return result array
+  return formattedSchedule;
+  //
+}
+
+//
+//
+//
+
+async function formatArrivalTime(arrival_time) {
+  const arrival_time_array = arrival_time.split(':');
+  let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
+  if (arrival_time_hours && Number(arrival_time_hours) > 23) {
+    const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
+    arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
+  }
+  const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
+  const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
+  // Return formatted string
+  return `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`;
 }
 
 //
@@ -114,8 +144,8 @@ async function updateMunicipalities() {
   let updatedMunicipalityIds = [];
   // For each municipality, update its entry in the database
   for (const municipality of allMunicipalities) {
-    const updatedDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: municipality.id }, { name: municipality.value }, { new: true, upsert: true });
-    updatedMunicipalityIds.push(updatedDocument._id);
+    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: municipality.id }, { name: municipality.value }, { new: true, upsert: true });
+    updatedMunicipalityIds.push(updatedMunicipalityDocument._id);
   }
   // Log count of updated Municipalities
   console.log(`⤷ Updated ${updatedMunicipalityIds.length} Municipalities.`);
@@ -172,8 +202,8 @@ async function updateShapes() {
     // Create geojson feature using turf
     parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
     // Update or create new document
-    const updatedDocument = await GTFSAPIDB.Shape.findOneAndUpdate({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
-    updatedShapeIds.push(updatedDocument._id);
+    const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndUpdate({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+    updatedShapeIds.push(updatedShapeDocument._id);
   }
   // Log count of updated Shapes
   console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
@@ -219,8 +249,8 @@ async function updateStops() {
       longitude: stop.stop_lon,
     };
     // Update or create new document
-    const updatedDocument = await GTFSAPIDB.Stop.findOneAndUpdate({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
-    updatedStopIds.push(updatedDocument._id);
+    const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndUpdate({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
+    updatedStopIds.push(updatedStopDocument._id);
   }
   // Log count of updated Stops
   console.log(`⤷ Updated ${updatedStopIds.length} Stops.`);
@@ -230,6 +260,111 @@ async function updateStops() {
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Stops (${elapsedTime}).`);
+  //
+}
+
+//
+//
+//
+
+/**
+ * UPDATE LINES AND PATTERNS
+ * Query 'routes' table to get all unique routes.
+ * Save each result in MongoDB.
+ * @async
+ */
+async function updateLinesAndPatterns() {
+  // Record the start time to later calculate operation duration
+  console.log(`⤷ Updating Lines and Patterns...`);
+  const startTime = process.hrtime();
+  // Query Postgres for all unique routes
+  const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
+  // Sort allRoutes array by each routes 'route_id' property ascending
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
+  // Group all routes into lines by route_short_name
+  const allLines = allRoutes.rows.reduce((result, route) => {
+    // Check if the route_short_name already exists as a line
+    const existingLine = result.find((line) => line.route_short_name === route.route_short_name);
+    // Add the route to the existing line
+    if (existingLine) existingLine.routes.push(route);
+    // Create a new line with the route
+    else {
+      result.push({
+        code: route.route_short_name,
+        short_name: route.route_short_name,
+        long_name: route.route_long_name,
+        color: route.route_color,
+        text_color: route.route_text_color,
+        routes: [route],
+      });
+    }
+    // Return result for the next iteration
+    return result;
+  }, []);
+  // Initate a temporary variable to hold updated Lines
+  let updatedLineIds = [];
+  // For each route in each line, save the corresponding trip
+  for (const line of allLines) {
+    // Save this line to MongoDB and hold on to the returned _id value
+    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndUpdate({ code: line.code }, line, { new: true, upsert: true });
+    updatedLineIds.push(updatedLineDocument._id);
+    // Iterate on each route for this line
+    for (const route of line.routes) {
+      // Get all trips associated with this route
+      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = ${route.route_id}`);
+      // Process all trips to create an array of patterns
+      const uniquePatterns = allTrips.rows.reduce(async (result, trip) => {
+        // Setup a temporary key with the distinguishable values for each trip
+        const uniquePatternCode = `${trip.route_id}_${trip.direction}`;
+        // Parse trip
+        const parsedTrip = {
+          trip_code: trip.trip_id,
+          calendar_code: trip.service_id,
+          shape_code: trip.shape_id,
+          dates: await getTripDates(trip.service_id),
+          schedule: await getTripSchedule(trip.trip_id),
+        };
+        // Check if the pattern code already exists as a pattern
+        const existingPattern = result.find((pattern) => pattern.code === uniquePatternCode);
+        // If pattern already exists, add this trip to the trips array
+        if (existingPattern) existingPattern.trips.push(parsedTrip);
+        // Create a new pattern with the trip
+        else {
+          result.push({
+            code: uniquePatternCode,
+            headsign: trip.trip_headsign,
+            direction: trip.direction,
+            parent_line: updatedLineDocument._id,
+            trips: [parsedTrip],
+          });
+        }
+        // Return result for the next iteration
+        return result;
+      }, []);
+      // Initate a temporary variable to hold updated Patterns
+      let updatedPatternIds = [];
+      // Update patterns in Database
+      for (const pattern of uniquePatterns) {
+        const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndUpdate({ code: pattern.code }, pattern, { new: true, upsert: true });
+        updatedPatternIds.push(updatedPatternDocument._id);
+      }
+      // Log count of updated Patterns
+      console.log(`⤷ Updated ${updatedPatternIds.length} Patterns for route ${route.route_id}.`);
+      // Delete all Patterns not present in the current update
+      const deletedStalePatterns = await GTFSAPIDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
+      console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns for route ${route.route_id}.`);
+      //
+    }
+  }
+  // Log count of updated Lines
+  console.log(`⤷ Updated ${updatedLineIds.length} Lines.`);
+  // Delete all Lines not present in the current update
+  const deletedStaleLines = await GTFSAPIDB.Line.deleteMany({ _id: { $nin: updatedLineIds } });
+  console.log(`⤷ Deleted ${deletedStaleLines.deletedCount} stale Lines.`);
+  // Log elapsed time in the current operation
+  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  console.log(`⤷ Done updating Lines (${elapsedTime}).`);
   //
 }
 
@@ -286,250 +421,10 @@ module.exports = {
     // Fetch Stops from Postgres and save them to MongoDB
     await updateStops();
 
-    // Setup a counter that holds all processed route_ids.
-    // This is used at the end to remove stale data from the database.
-    let allProcessedRouteIds = [];
-
-    // Get all routes from GTFS table (routes.txt)
-    const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
-
-    // Sort allRoutes array by each routes 'route_id' property ascending
-    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-    allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
-
-    // Group all routes into lines by route_short_name
-    const allLines = allRoutes.rows.reduce((result, route) => {
-      // Check if the route_short_name already exists as a line
-      const existingLine = result.find((line) => line.route_short_name === route.route_short_name);
-      // Add the route to the existing line
-      if (existingLine) existingLine.routes.push(route);
-      // Create a new line with the route
-      else {
-        result.push({
-          code: route.route_short_name,
-          short_name: route.route_short_name,
-          long_name: route.route_long_name,
-          color: route.route_color,
-          text_color: route.route_text_color,
-          routes: [route],
-        });
-      }
-      // Return result for the next iteration
-      return result;
-    }, []);
-
     //
-
-    for (const line of allLines) {
-      //
-      // Prepare each trip
-      if (line.code === '1206') console.log(line);
-      //
-      // Save the line
-      //
-    }
-
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-
-    // LOOP 1 — Routes
-    for (const currentRoute of allRoutes.rows) {
-      //
-      // Record the start time to later calculate duration
-      const startTime = process.hrtime();
-
-      // Add this route to the counter
-      allProcessedRouteIds.push(currentRoute.route_id);
-
-      // Initiate the formatted route object
-      let formattedRoute = {
-        route_id: currentRoute.route_id,
-        route_short_name: currentRoute.route_short_name,
-        route_long_name: currentRoute.route_long_name,
-        route_color: `#${currentRoute.route_color || 'FA3250'}`,
-        route_text_color: `#${currentRoute.route_text_color || 'FFFFFF'}`,
-        municipalities: [],
-        directions: [],
-      };
-
-      // Get all trips associated with this route
-      const allTrips_raw = await getTrips(currentRoute.route_id);
-
-      // Simplify trips array by removing non-common attributes
-      const allTrips_simplified = allTrips_raw.map((trip) => {
-        return { direction_id: trip.direction_id, headsign: trip.trip_headsign, shape_id: trip.shape_id };
-      });
-
-      // Deduplicate simplified trips array to keep only common attributes.
-      // This essentially results in an array of 'directions'. Save it to the route object.
-      const allDirections = allTrips_simplified.filter((value, index, array) => {
-        return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
-      });
-
-      // LOOP 2 — Directions
-      for (const currentDirection of allDirections) {
-        //
-        // Initiate the formatted direction object
-        let formattedDirection = {
-          direction_id: currentDirection.direction_id,
-          headsign: currentDirection.headsign,
-          shape: [],
-          trips: [],
-        };
-
-        // Get shape for this direction and sort it by 'shape_pt_sequence'
-        // The use of collator here is to ensure 'natural sorting' on numeric strings: https://stackoverflow.com/questions/2802341/natural-sort-of-alphanumerical-strings-in-javascript
-        const shape_raw = await getShape(currentDirection.shape_id);
-        const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-        formattedDirection.shape = shape_raw.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
-
-        // LOOP 3 - Trips
-        for (const currentTrip of allTrips_raw) {
-          //
-          // Skip all trips that do not belong to the current direction
-          if (currentTrip.direction_id !== currentDirection.direction_id) continue;
-
-          // Initiate the formatted trip object
-          let formattedTrip = {
-            trip_id: currentTrip.trip_id,
-            service_id: currentTrip.service_id,
-            dates: [],
-            schedule: [],
-          };
-
-          // Get dates in the YYYYMMDD format (GTFS Standard format)
-          const allDates_raw = await getDates(currentTrip.service_id);
-          formattedTrip.dates = allDates_raw.map((item) => item.date);
-
-          // Get stop times for this trip
-          const allStopTimes_raw = await getStopTimes(currentTrip.trip_id);
-
-          // LOOP 4 - Stop Times
-          for (const currentStopTime of allStopTimes_raw) {
-            //
-            // Format arrival_time
-            const arrival_time_array = currentStopTime.arrival_time.split(':');
-            let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
-            if (arrival_time_hours && Number(arrival_time_hours) > 23) {
-              const arrival_time_hours_adjusted = Number(arrival_time_hours) - 24;
-              arrival_time_hours = String(arrival_time_hours_adjusted).padStart(2, '0');
-            }
-            const arrival_time_minutes = arrival_time_array[1].padStart(2, '0');
-            const arrival_time_seconds = arrival_time_array[2].padStart(2, '0');
-
-            // Format departure_time
-            const departure_time_array = currentStopTime.departure_time.split(':');
-            let departure_time_hours = departure_time_array[0].padStart(2, '0');
-            if (departure_time_hours && Number(departure_time_hours) > 23) {
-              const departure_time_hours_adjusted = Number(departure_time_hours) - 24;
-              departure_time_hours = String(departure_time_hours_adjusted).padStart(2, '0');
-            }
-            const departure_time_minutes = departure_time_array[1].padStart(2, '0');
-            const departure_time_seconds = departure_time_array[2].padStart(2, '0');
-
-            // Find out which municipalities this route serves
-            // using the first two digits of stop_id
-            const municipalityId = currentStopTime.stop_id?.substr(0, 2);
-            // Check if this municipaliy is already in the route
-            const alreadyHasMunicipality = formattedRoute.municipalities?.findIndex((item) => {
-              return municipalityId === item.id;
-            });
-            // Add the municipality if it is still not added
-            if (alreadyHasMunicipality < 0) {
-              const stopMunicipality = allMunicipalities.filter((item) => {
-                return municipalityId === item.id;
-              });
-              if (stopMunicipality.length) {
-                formattedRoute.municipalities.push(stopMunicipality[0]);
-              }
-            }
-            // Save formatted stop time
-            formattedTrip.schedule.push({
-              stop_sequence: currentStopTime.stop_sequence,
-              stop_id: currentStopTime.stop_id,
-              stop_name: currentStopTime.stop_name,
-              stop_lon: currentStopTime.stop_lon,
-              stop_lat: currentStopTime.stop_lat,
-              arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
-              arrival_time_operation: currentStopTime.arrival_time,
-              departure_time: `${departure_time_hours}:${departure_time_minutes}:${departure_time_seconds}`,
-              departure_time_operation: currentStopTime.departure_time,
-              shape_dist_traveled: currentStopTime.shape_dist_traveled,
-            });
-          }
-
-          // Save trip object to trips array
-          formattedDirection.trips.push(formattedTrip);
-        }
-
-        // Sort trips by departure_time ASC
-        formattedDirection.trips.sort((a, b) => (a.schedule[0]?.departure_time_operation > b.schedule[0]?.departure_time_operation ? 1 : -1));
-
-        // Save this direction in formattedRoutes
-        formattedRoute.directions.push(formattedDirection);
-      }
-
-      // Save route to MongoDB
-      await GTFSAPIDB.Route.findOneAndUpdate({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
-
-      const elapsedTime = timeCalc.getElapsedTime(startTime);
-      console.log(`⤷ [${allProcessedRouteIds.length}/${allRoutes.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
-
-      //
-    }
-
-    // Delete all documents with route_ids not present in the new GTFS version
-    const deletedStaleRoutes = await GTFSAPIDB.Route.deleteMany({ route_id: { $nin: allProcessedRouteIds } });
-    console.log(`⤷ Deleted ${deletedStaleRoutes.deletedCount} stale routes.`);
-
-    // Retrieve all distinct route_short_names and iterate on each one.
-    const allRouteBasesInDatabase = await GTFSAPIDB.Route.aggregate([
-      {
-        $sort: {
-          route_id: 1,
-        },
-      },
-      {
-        $group: {
-          _id: '$route_short_name',
-          route_id: { $first: '$route_id' },
-          route_long_name: { $first: '$route_long_name' },
-          route_color: { $first: '$route_color' },
-          route_text_color: { $first: '$route_text_color' },
-          municipalities: { $first: '$municipalities' },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          route_id: 1,
-          route_short_name: '$_id',
-          route_long_name: 1,
-          route_color: 1,
-          route_text_color: 1,
-          municipalities: 1,
-        },
-      },
-    ]);
-
-    // Update the database with the new group of route bases
-    for (const routeBase of allRouteBasesInDatabase) {
-      await GTFSAPIDB.RouteSummary.findOneAndUpdate({ route_id: routeBase.route_id }, routeBase, { upsert: true });
-      console.log(`⤷ Saved route base ${routeBase.route_id} to API Database.`);
-    }
-
-    // Delete all route bases not present in the last update
-    const allProcessedBaseRouteIds = allRouteBasesInDatabase.map((item) => item.route_id);
-    const deletedStaleRouteBases = await GTFSAPIDB.RouteSummary.deleteMany({ route_id: { $nin: allProcessedBaseRouteIds } });
-    console.log(`⤷ Deleted ${deletedStaleRouteBases.deletedCount} stale route bases.`);
+    // LINES AND PATTERNS
+    // Fetch Stops from Postgres and save them to MongoDB
+    await updateLinesAndPatterns();
 
     //
   },
