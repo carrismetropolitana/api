@@ -77,7 +77,7 @@ app.get('/shapes/:code', async (req, res) => {
 //
 app.get('/stops', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Stop.find({});
+    const foundManyDocuments = await GTFSAPIDB.Stop.find({}, 'code name latitude longitude tts_name');
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
@@ -96,7 +96,7 @@ app.get('/stops', async (req, res) => {
 //
 app.get('/stops/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate({ path: 'patterns' });
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate('municipality').populate('patterns');
     if (foundOneDocument) {
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
