@@ -74,5 +74,8 @@ module.exports = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    id: false,
+    timestamps: true,
+  }
 );

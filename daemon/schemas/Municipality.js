@@ -28,5 +28,8 @@ module.exports = new mongoose.Schema(
       maxlength: 50,
     },
   },
-  { timestamps: true }
+  {
+    id: false,
+    timestamps: true,
+  }
 );
