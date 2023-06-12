@@ -236,7 +236,7 @@ async function updateStops() {
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
     // Find out which municipality belongs to this stop
-    const municipalityId = await GTFSAPIDB.Municipality.findOne({ code: '' }, '_id');
+    const municipalityDocument = await GTFSAPIDB.Municipality.findOne({ dico: stop.municipality }, '_id');
     // Initiate a variable to hold the parsed stop
     let parsedStop = {
       // Save all properties with the same key
@@ -248,6 +248,7 @@ async function updateStops() {
       tts_name: stop.tts_stop_name,
       latitude: stop.stop_lat,
       longitude: stop.stop_lon,
+      municipality: municipalityDocument._id,
     };
     // Update or create new document
     const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndUpdate({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
