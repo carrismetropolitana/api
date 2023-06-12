@@ -364,7 +364,7 @@ async function updateLinesAndPatterns() {
   console.log(`⤷ Deleted ${deletedStaleLines.deletedCount} stale Lines.`);
   // Delete all Patterns not present in the current update
   const deletedStalePatterns = await GTFSAPIDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
-  console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns for route ${route.route_id}.`);
+  console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Lines (${elapsedTime}).`);
