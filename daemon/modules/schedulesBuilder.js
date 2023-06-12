@@ -231,12 +231,13 @@ async function updateStops() {
   const startTime = process.hrtime();
   // Query Postgres for all unique stops by stop_id
   const allStops = await GTFSParseDB.connection.query('SELECT * FROM stops');
+  const allMunicipalities = await GTFSAPIDB.Municipality.find({});
   // Initate a temporary variable to hold updated Stops
   let updatedStopIds = [];
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
     // Find out which municipality belongs to this stop
-    const municipalityDocument = await GTFSAPIDB.Municipality.findOne({ dico: stop.municipality }, '_id');
+    const municipalityDocument = allMunicipalities.find((item) => item.dico === stop.municipality);
     // Initiate a variable to hold the parsed stop
     let parsedStop = {
       // Save all properties with the same key
