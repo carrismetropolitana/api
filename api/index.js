@@ -22,72 +22,55 @@ app.use(function (req, res, next) {
 });
 
 //
-app.get('/routes', async (req, res) => {
+app.get('/lines', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Route.find({});
+    const foundManyDocuments = await GTFSAPIDB.Line.find({});
     if (foundManyDocuments.length > 0) {
-      foundManyDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
-      console.log('🟢 → Request for "/routes/[all]": %s Found', foundManyDocuments.length);
+      const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+      foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
+      console.log('🟢 → Request for "/lines/[all]": %s Found', foundManyDocuments.length);
       res.send(foundManyDocuments);
     } else {
-      console.log('🟡 → Request for "/routes/[all]": Not Found');
+      console.log('🟡 → Request for "/lines/[all]": Not Found');
       res.status(404).send([]);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/[all]": Server Error', err);
+    console.log('🔴 → Request for "/lines/[all]": Server Error', err);
     res.status(500).send([]);
   }
 });
 
 //
-app.get('/routes/summary', async (req, res) => {
+app.get('/lines/:code', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.RouteSummary.find({});
-    if (foundManyDocuments.length > 0) {
-      foundManyDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
-      console.log('🟢 → Request for "/routes/summary": %s Found', foundManyDocuments.length);
-      res.send(foundManyDocuments);
-    } else {
-      console.log('🟡 → Request for "/routes/summary": Not Found');
-      res.status(404).send([]);
-    }
-  } catch (err) {
-    console.log('🔴 → Request for "/routes/summary": Server Error', err);
-    res.status(500).send([]);
-  }
-});
-
-//
-app.get('/routes/route_id/:route_id', async (req, res) => {
-  try {
-    const foundOneDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
+    const foundOneDocument = await GTFSAPIDB.Line.findOne({ code: req.params.code }).populate({ path: 'patterns', populate: { path: 'trips.schedule.stop' } });
     if (foundOneDocument) {
-      console.log('🟢 → Request for "/routes/route_id/%s": 1 Found', req.params.route_id);
+      console.log('🟢 → Request for "/lines/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
     } else {
-      console.log('🟡 → Request for "/routes/route_id/%s": Not Found', req.params.route_id);
+      console.log('🟡 → Request for "/lines/%s": Not Found', req.params.code);
       res.status(404).send({});
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/route_id/%s": Server Error', req.params.route_id, err);
+    console.log('🔴 → Request for "/lines/%s": Server Error', req.params.code, err);
     res.status(500).send({});
   }
 });
 
 //
-app.get('/routes/route_short_name/:route_short_name', async (req, res) => {
+app.get('/shapes/:code', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Route.find({ route_id: { $regex: `^${req.params.route_short_name}` } });
-    if (foundManyDocuments.length > 0) {
-      console.log('🟢 → Request for "/routes/route_short_name/%s": %s Found', req.params.route_short_name, foundManyDocuments.length);
-      res.send(foundManyDocuments);
+    const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: req.params.code });
+    if (foundOneDocument) {
+      console.log('🟢 → Request for "/shapes/%s": 1 Found', req.params.code);
+      res.send(foundOneDocument);
     } else {
-      console.log('🟡 → Request for "/routes/route_short_name/%s": Not Found', req.params.route_short_name);
-      res.status(404).send([]);
+      console.log('🟡 → Request for "/shapes/%s": Not Found', req.params.code);
+      res.status(404).send({});
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/route_short_name/%s": Server Error', req.params.route_short_name, err);
-    res.status(500).send([]);
+    console.log('🔴 → Request for "/shapes/%s": Server Error', req.params.code, err);
+    res.status(500).send({});
   }
 });
 
@@ -96,7 +79,8 @@ app.get('/stops', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Stop.find({});
     if (foundManyDocuments.length > 0) {
-      foundManyDocuments.sort((a, b) => (a.stop_id > b.stop_id ? 1 : -1));
+      const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+      foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
       console.log('🟢 → Request for "/stops/[all]": %s Found', foundManyDocuments.length);
       res.send(foundManyDocuments);
     } else {
@@ -110,18 +94,18 @@ app.get('/stops', async (req, res) => {
 });
 
 //
-app.get('/stops/:stop_id', async (req, res) => {
+app.get('/stops/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate({ path: 'patterns' });
     if (foundOneDocument) {
-      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.stop_id);
+      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
     } else {
-      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.stop_id);
+      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.code);
       res.status(404).send({});
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.stop_id, err);
+    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.code, err);
     res.status(500).send({});
   }
 });
