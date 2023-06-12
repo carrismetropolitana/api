@@ -18,6 +18,7 @@ module.exports = {
     await prepareFileImport('calendar_dates', ['service_id', 'date']);
     await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
     await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);
+    await prepareFileImport('trips', ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id']);
     await prepareFileImport('stop_times', ['trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled']);
     await prepareFileImport('stops', [
       'stop_id',
@@ -48,15 +49,14 @@ module.exports = {
       'bike_parking',
       'car_parking',
     ]);
-    await prepareFileImport('trips', ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id']);
 
     await importFileToTable('municipalities');
     await importFileToTable('calendar_dates');
     await importFileToTable('routes');
     await importFileToTable('shapes');
+    await importFileToTable('trips');
     await importFileToTable('stop_times');
     await importFileToTable('stops');
-    await importFileToTable('trips');
 
     //
   },
