@@ -50,6 +50,7 @@ module.exports = {
     ]);
     await prepareFileImport('trips', ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id']);
 
+    await importFileToTable('municipalities');
     await importFileToTable('calendar_dates');
     await importFileToTable('routes');
     await importFileToTable('shapes');
