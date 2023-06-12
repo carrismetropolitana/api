@@ -75,7 +75,8 @@ module.exports = new mongoose.Schema(
     ],
   },
   {
-    id: false,
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );

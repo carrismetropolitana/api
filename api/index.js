@@ -96,7 +96,7 @@ app.get('/stops', async (req, res) => {
 //
 app.get('/stops/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }, '-_id -__v').populate('municipality', '-_id -__v').populate('patterns', '-_id -__v');
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }, '-_id -__v').populate('municipality', '-_id -__v').populate('patterns');
     if (foundOneDocument) {
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
