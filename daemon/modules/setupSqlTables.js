@@ -43,9 +43,9 @@ module.exports = {
     await GTFSParseDB.connection.query(`CREATE TABLE stop_times (
         trip_id VARCHAR(255),
         arrival_time VARCHAR(8),
-        departure_time VARCHAR(8),
         stop_id VARCHAR(6),
-        stop_sequence SMALLINT
+        stop_sequence SMALLINT,
+        shape_dist_traveled VARCHAR(255)
     );`);
     await GTFSParseDB.connection.query('CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");');
     await GTFSParseDB.connection.query('CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");');
