@@ -110,7 +110,7 @@ app.get('/stops/:code', async (req, res) => {
   }
 });
 
-// set port, listen for requests
+// Set port, listen for requests
 const PORT = 5050;
 app.listen(5050, async () => {
   console.log('GTFS API listening on port %s...', PORT);

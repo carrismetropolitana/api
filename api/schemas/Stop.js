@@ -129,7 +129,7 @@ module.exports = new mongoose.Schema(
         options: {
           ref: 'Pattern',
           localField: 'code',
-          foreignField: 'pattern.path.stop_code',
+          foreignField: 'trips.schedule.stop',
         },
       },
     },
