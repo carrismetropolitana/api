@@ -9,7 +9,6 @@ const filemanager = require('./modules/filemanager');
 const setupSqlTables = require('./modules/setupSqlTables');
 const saveFilesToTables = require('./modules/saveFilesToTables');
 const schedulesBuilder = require('./modules/schedulesBuilder');
-const stopsBuilder = require('./modules/stopsBuilder');
 
 const { GTFS_URL } = process.env;
 
