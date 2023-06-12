@@ -21,11 +21,11 @@ module.exports = new mongoose.Schema(
     },
     color: {
       type: String,
-      maxlength: 100,
+      maxlength: 7,
     },
     text_color: {
       type: String,
-      maxlength: 100,
+      maxlength: 7,
     },
     municipalities: [
       {

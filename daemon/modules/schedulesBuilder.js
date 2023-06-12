@@ -294,8 +294,8 @@ async function updateLinesAndPatterns() {
         code: route.route_short_name,
         short_name: route.route_short_name,
         long_name: route.route_long_name,
-        color: route.route_color,
-        text_color: route.route_text_color,
+        color: route.route_color ? `#${route.route_color}` : '#000000',
+        text_color: route.route_text_color ? `#${route.route_text_color}` : '#FFFFFF',
         routes: [route],
       });
     }
@@ -319,7 +319,7 @@ async function updateLinesAndPatterns() {
       // Process all trips to create an array of patterns
       for (const trip of allTrips.rows) {
         // Setup a temporary key with the distinguishable values for each trip
-        const uniquePatternCode = `${trip.route_id}_${trip.direction}`;
+        const uniquePatternCode = `${trip.route_id}_${trip.direction_id}`;
         // Parse trip
         const parsedTrip = {
           trip_code: trip.trip_id,
@@ -337,7 +337,7 @@ async function updateLinesAndPatterns() {
           uniquePatterns.push({
             code: uniquePatternCode,
             headsign: trip.trip_headsign,
-            direction: trip.direction,
+            direction: trip.direction_id,
             parent_line: updatedLineDocument._id,
             trips: [parsedTrip],
           });
