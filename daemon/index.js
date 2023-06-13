@@ -8,7 +8,10 @@ const timeCalc = require('./modules/timeCalc');
 const filemanager = require('./modules/filemanager');
 const setupSqlTables = require('./modules/setupSqlTables');
 const saveFilesToTables = require('./modules/saveFilesToTables');
-const schedulesBuilder = require('./modules/schedulesBuilder');
+const updateMunicipalities = require('./modules/updateMunicipalities');
+const updateStops = require('./modules/updateStops');
+const updateShapes = require('./modules/updateShapes');
+const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
 
 const { GTFS_URL } = process.env;
 
@@ -37,36 +40,49 @@ async function appInitPoint() {
 
     // Verify connection to databases
     console.log();
-    console.log('STEP 1: Connect to databases...');
+    console.log('STEP 1: Connect to databases');
     await GTFSParseDB.connect();
     await GTFSAPIDB.connect();
 
     console.log();
-    console.log('STEP 2: Fetching latest GTFS archive...');
+    console.log('STEP 2: Fetching latest GTFS archive');
     await filemanager.downloadFromUrl(GTFS_URL);
 
     console.log();
-    console.log('STEP 3: Extracting downloaded archive...');
+    console.log('STEP 3: Extracting downloaded archive');
     await filemanager.extractArchive();
 
     console.log();
-    console.log('STEP 4: Create SQL Tables to store the files...');
-    await setupSqlTables.createAllTables();
+    console.log('STEP 4: Setup SQL tables to store the GTFS files');
+    await setupSqlTables();
 
     console.log();
-    console.log('STEP 5: Import extracted files into created tables...');
-    await saveFilesToTables.saveAllFiles();
+    console.log('STEP 5: Import extracted files into created tables');
+    await saveFilesToTables();
 
     console.log();
-    console.log('STEP 6: Cleanup temp files...');
+    console.log('STEP 6: Cleanup temp files');
     await filemanager.removeTempDirectory();
 
     console.log();
-    console.log('STEP 7: Build Schedules...');
+    console.log('STEP 7: Update Municipalities');
+    await updateMunicipalities();
+
+    console.log();
+    console.log('STEP 8: Update Stops');
+    await updateStops();
+
+    console.log();
+    console.log('STEP 9: Update Shapes');
+    await updateShapes();
+
+    console.log();
+    console.log('STEP 10: Update Lines & Patterns');
+    await updateLinesAndPatterns();
     await schedulesBuilder.start();
 
     console.log();
-    console.log('STEP 8: Disconnect from databases...');
+    console.log('STEP 11: Disconnect from databases...');
     await GTFSParseDB.disconnect();
     await GTFSAPIDB.disconnect();
 

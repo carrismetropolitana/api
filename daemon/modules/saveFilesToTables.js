@@ -7,69 +7,68 @@ const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
 const timeCalc = require('./timeCalc');
 
-module.exports = {
-  saveAllFiles: async () => {
-    //
+module.exports.default = async () => {
+  //
 
-    console.log(`⤷ Creating directory "/data-temp/gtfs/prepared/"...`);
-    fs.mkdirSync('/data-temp/gtfs/prepared/');
+  console.log(`⤷ Creating directory "/data-temp/gtfs/prepared/"...`);
+  fs.mkdirSync('/data-temp/gtfs/prepared/');
 
-    await prepareFileImport('municipalities', ['municipality_id', 'municipality_name', 'prefix', 'district', 'nuts_iii']);
-    await prepareFileImport('calendar_dates', ['service_id', 'date']);
-    await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
-    await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);
-    await prepareFileImport('trips', ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id']);
-    await prepareFileImport('stop_times', ['trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled']);
-    await prepareFileImport('stops', [
-      'stop_id',
-      'stop_name',
-      'stop_short_name',
-      'tts_stop_name',
-      'stop_lat',
-      'stop_lon',
-      'municipality',
-      'parish',
-      'locality',
-      'wheelchair_boarding',
-      'near_health_clinic',
-      'near_hospital',
-      'near_university',
-      'near_school',
-      'near_police_station',
-      'near_fire_station',
-      'near_shopping',
-      'near_historic_building',
-      'near_transit_office',
-      'light_rail',
-      'subway',
-      'train',
-      'boat',
-      'airport',
-      'bike_sharing',
-      'bike_parking',
-      'car_parking',
-    ]);
+  await prepareFileImport('municipalities', ['municipality_id', 'municipality_name', 'prefix', 'district', 'nuts_iii']);
+  await prepareFileImport('calendar_dates', ['service_id', 'date']);
+  await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
+  await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);
+  await prepareFileImport('trips', ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id']);
+  await prepareFileImport('stop_times', ['trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled']);
+  await prepareFileImport('stops', [
+    'stop_id',
+    'stop_name',
+    'stop_short_name',
+    'tts_stop_name',
+    'stop_lat',
+    'stop_lon',
+    'municipality',
+    'parish',
+    'locality',
+    'wheelchair_boarding',
+    'near_health_clinic',
+    'near_hospital',
+    'near_university',
+    'near_school',
+    'near_police_station',
+    'near_fire_station',
+    'near_shopping',
+    'near_historic_building',
+    'near_transit_office',
+    'light_rail',
+    'subway',
+    'train',
+    'boat',
+    'airport',
+    'bike_sharing',
+    'bike_parking',
+    'car_parking',
+  ]);
 
-    await importFileToTable('municipalities');
-    await importFileToTable('calendar_dates');
-    await importFileToTable('routes');
-    await importFileToTable('shapes');
-    await importFileToTable('trips');
-    await importFileToTable('stop_times');
-    await importFileToTable('stops');
+  await importFileToTable('municipalities');
+  await importFileToTable('calendar_dates');
+  await importFileToTable('routes');
+  await importFileToTable('shapes');
+  await importFileToTable('trips');
+  await importFileToTable('stop_times');
+  await importFileToTable('stops');
 
-    //
-  },
+  //
 };
 
 // Parse the files first
 async function prepareFileImport(filename, headers) {
+  const startTime = process.hrtime();
   console.log(`⤷ Creating file "/data-temp/gtfs/prepared/${filename}.txt"...`);
   const headersString = headers.join(',');
   fs.writeFileSync(`/data-temp/gtfs/prepared/${filename}.txt`, headersString + '\n');
   console.log(`⤷ Preparing "/data-temp/gtfs/extracted/${filename}.txt" to "/data-temp/gtfs/prepared/${filename}.txt"...`);
   const parserStream = fs.createReadStream(`/data-temp/gtfs/extracted/${filename}.txt`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
-  let counter = 0;
+  let rowCount = 0;
   for await (const rowObject of parserStream) {
     let rowArray = [];
     for (const key of headers) {
@@ -78,9 +77,10 @@ async function prepareFileImport(filename, headers) {
     }
     const rowString = stringify([rowArray], { trim: true });
     fs.appendFileSync(`/data-temp/gtfs/prepared/${filename}.txt`, rowString);
-    counter++;
+    rowCount++;
   }
-  console.log(`⤷ Prepared ${counter} rows in "/data-temp/gtfs/prepared/${filename}.txt".`);
+  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  console.log(`⤷ Prepared "/data-temp/gtfs/prepared/${filename}.txt" ${rowCount} rows in ${elapsedTime}.`);
 }
 
 // LOAD files into the database
