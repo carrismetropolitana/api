@@ -80,6 +80,14 @@ module.exports = new mongoose.Schema(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     virtuals: {
+      line: {
+        options: {
+          ref: 'Line',
+          localField: 'line_code',
+          foreignField: 'code',
+          justOne: true,
+        },
+      },
       'trips.schedule.stop': {
         options: {
           ref: 'Stop',
