@@ -38,9 +38,9 @@ module.exports = new mongoose.Schema(
     //
     // Administrative
 
-    municipality: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Municipality',
+    municipality_code: {
+      type: String,
+      maxlength: 4,
     },
     parish: {
       type: String,
@@ -126,6 +126,14 @@ module.exports = new mongoose.Schema(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     virtuals: {
+      municipality: {
+        options: {
+          ref: 'Municipality',
+          localField: 'municipality_code',
+          foreignField: 'code',
+          justOne: true,
+        },
+      },
       patterns: {
         options: {
           ref: 'Pattern',

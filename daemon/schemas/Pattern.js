@@ -85,6 +85,7 @@ module.exports = new mongoose.Schema(
           ref: 'Stop',
           localField: 'trips.schedule.stop_code',
           foreignField: 'code',
+          justOne: true,
         },
       },
     },

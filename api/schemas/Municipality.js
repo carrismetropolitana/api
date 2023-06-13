@@ -6,7 +6,7 @@ const { mongoose } = require('mongoose');
 /* Schema for MongoDB ["Municipality"] Object */
 module.exports = new mongoose.Schema(
   {
-    dico: {
+    code: {
       type: String,
       maxlength: 4,
       unique: true,

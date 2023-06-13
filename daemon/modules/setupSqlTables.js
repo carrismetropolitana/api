@@ -13,8 +13,8 @@ module.exports = {
     // Create tables
 
     await GTFSParseDB.connection.query(`CREATE TABLE municipalities (
-        dico VARCHAR(4),
-        name VARCHAR(255),
+        municipality_id VARCHAR(4),
+        municipality_name VARCHAR(255),
         prefix VARCHAR(2),
         district VARCHAR(255),
         nuts_iii VARCHAR(255)

@@ -27,14 +27,9 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 7,
     },
-    municipalities: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Municipality',
-      },
-    ],
   },
   {
+    id: false,
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

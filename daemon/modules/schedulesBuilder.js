@@ -143,7 +143,16 @@ async function updateMunicipalities() {
   let updatedMunicipalityIds = [];
   // For each municipality, update its entry in the database
   for (const municipality of allMunicipalities.rows) {
-    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ dico: municipality.dico }, municipality, { new: true, upsert: true });
+    // Parse municipality
+    const parsedMunicipality = {
+      code: municipality.municipality_id,
+      name: municipality.municipality_name,
+      prefix: municipality.prefix,
+      district: municipality.district,
+      nuts_iii: municipality.nuts_iii,
+    };
+    // Save to database
+    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: municipality.municipality_id }, parsedMunicipality, { new: true, upsert: true });
     updatedMunicipalityIds.push(updatedMunicipalityDocument._id);
   }
   // Log count of updated Municipalities
