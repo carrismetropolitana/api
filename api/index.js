@@ -98,7 +98,7 @@ app.get('/stops/:code', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code })
       .populate({ path: 'municipality' })
-      .populate({ path: 'patterns', populate: [{ path: 'parent_line' }, { path: 'trips.schedule.stop', select: { code: 1 } }] });
+      .populate({ path: 'patterns', populate: { path: 'line' } });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
