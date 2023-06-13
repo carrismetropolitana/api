@@ -42,8 +42,8 @@ module.exports = new mongoose.Schema(
       patterns: {
         options: {
           ref: 'Pattern',
-          localField: '_id',
-          foreignField: 'parent_line',
+          localField: 'code',
+          foreignField: 'line_code',
         },
       },
     },

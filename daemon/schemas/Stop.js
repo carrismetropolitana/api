@@ -121,6 +121,7 @@ module.exports = new mongoose.Schema(
     //
   },
   {
+    id: false,
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -128,8 +129,8 @@ module.exports = new mongoose.Schema(
       patterns: {
         options: {
           ref: 'Pattern',
-          localField: '_id',
-          foreignField: 'trips.schedule.stop',
+          localField: 'code',
+          foreignField: 'trips.schedule.stop_code',
         },
       },
     },

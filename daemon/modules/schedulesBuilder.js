@@ -98,7 +98,7 @@ async function getTripSchedule(trip_id) {
   // For each path sequence
   for (const currentStopTime of allStopTimes.rows) {
     // Get existing stop _id from database
-    const existingStopDocument = await GTFSAPIDB.Stop.findOne({ code: currentStopTime.stop_id }, '_id');
+    // const existingStopDocument = await GTFSAPIDB.Stop.findOne({ code: currentStopTime.stop_id }, '_id');
     // Calculate distance delta and update variable
     const currentDistanceDelta = Number(currentStopTime.shape_dist_traveled) - prevTravelDistance;
     prevTravelDistance = Number(currentStopTime.shape_dist_traveled);
@@ -109,7 +109,7 @@ async function getTripSchedule(trip_id) {
     prevArrivalTime = currentStopTime.arrival_time;
     // Save formatted stop time
     formattedSchedule.push({
-      stop: existingStopDocument._id,
+      stop_code: currentStopTime.stop_id,
       allow_pickup: currentStopTime.pickup_type ? false : true,
       allow_drop_off: currentStopTime.drop_off_type ? false : true,
       distance_delta: currentDistanceDelta,
@@ -339,9 +339,9 @@ async function updateLinesAndPatterns() {
         else {
           uniquePatterns.push({
             code: uniquePatternCode,
-            headsign: trip.trip_headsign,
+            line_code: line.code,
             direction: trip.direction_id,
-            parent_line: updatedLineDocument._id,
+            headsign: trip.trip_headsign,
             trips: [parsedTrip],
           });
         }

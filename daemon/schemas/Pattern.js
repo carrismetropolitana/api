@@ -11,16 +11,16 @@ module.exports = new mongoose.Schema(
       maxlength: 100,
       unique: true,
     },
+    line_code: {
+      type: String,
+      maxlength: 4,
+    },
     direction: {
       type: Number,
     },
     headsign: {
       type: String,
       maxlength: 50,
-    },
-    parent_line: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Line',
     },
     trips: [
       {
@@ -44,9 +44,9 @@ module.exports = new mongoose.Schema(
         ],
         schedule: [
           {
-            stop: {
-              type: mongoose.Schema.Types.ObjectId,
-              ref: 'Stop',
+            stop_code: {
+              type: String,
+              maxlength: 6,
             },
             allow_pickup: {
               type: Boolean,
@@ -75,8 +75,18 @@ module.exports = new mongoose.Schema(
     ],
   },
   {
+    id: false,
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    virtuals: {
+      'trips.schedule.stop': {
+        options: {
+          ref: 'Stop',
+          localField: 'trips.schedule.stop_code',
+          foreignField: 'code',
+        },
+      },
+    },
   }
 );
