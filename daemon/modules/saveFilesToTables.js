@@ -7,7 +7,7 @@ const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
 const timeCalc = require('./timeCalc');
 
-module.exports.default = async () => {
+module.exports = async () => {
   //
 
   console.log(`⤷ Creating directory "/data-temp/gtfs/prepared/"...`);

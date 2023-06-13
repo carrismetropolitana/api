@@ -12,7 +12,7 @@ const turf = require('@turf/helpers');
  * and save it to MongoDB.
  * @async
  */
-module.exports.default = async () => {
+module.exports = async () => {
   // Record the start time to later calculate operation duration
   console.log(`⤷ Updating Shapes...`);
   const startTime = process.hrtime();

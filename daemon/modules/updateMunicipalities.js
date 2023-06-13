@@ -10,7 +10,7 @@ const timeCalc = require('./timeCalc');
  * parse them and save them to MongoDB.
  * @async
  */
-module.exports.default = async () => {
+module.exports = async () => {
   // Record the start time to later calculate operation duration
   console.log(`⤷ Updating Municipalities...`);
   const startTime = process.hrtime();

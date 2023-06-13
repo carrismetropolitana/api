@@ -2,7 +2,7 @@
 /* IMPORTS */
 const GTFSParseDB = require('../databases/gtfsparsedb');
 
-module.exports.default = async () => {
+module.exports = async () => {
   //
 
   // Drop existing tables
