@@ -8,8 +8,8 @@ const rateLimit = require('express-rate-limit');
 // Apply rate limiter to all requests: maximum of 50 requests per minute
 app.use(
   rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 50, // Limit each IP to 50 requests per `windowMs` (here, per 1 minute)
+    windowMs: 30000, // 30 seconds
+    max: 100, // Limit each IP to 100 requests per 'windowMs'
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   })
@@ -70,6 +70,23 @@ app.get('/shapes/:code', async (req, res) => {
     }
   } catch (err) {
     console.log('🔴 → Request for "/shapes/%s": Server Error', req.params.code, err);
+    res.status(500).send({});
+  }
+});
+
+//
+app.get('/patterns/:code', async (req, res) => {
+  try {
+    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: req.params.code }).populate({ path: 'trips.schedule.stop' });
+    if (foundOneDocument) {
+      console.log('🟢 → Request for "/patterns/%s": 1 Found', req.params.code);
+      res.send(foundOneDocument);
+    } else {
+      console.log('🟡 → Request for "/patterns/%s": Not Found', req.params.code);
+      res.status(404).send({});
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/patterns/%s": Server Error', req.params.code, err);
     res.status(500).send({});
   }
 });
