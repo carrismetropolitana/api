@@ -79,7 +79,6 @@ async function appInitPoint() {
     console.log();
     console.log('STEP 10: Update Lines & Patterns');
     await updateLinesAndPatterns();
-    await schedulesBuilder.start();
 
     console.log();
     console.log('STEP 11: Disconnect from databases...');
