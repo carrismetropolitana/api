@@ -19,7 +19,7 @@ module.exports = {
         district VARCHAR(255),
         nuts_iii VARCHAR(255)
     );`);
-    await GTFSParseDB.connection.query('CREATE INDEX municipalities_dico_idx ON municipalities ("dico");');
+    await GTFSParseDB.connection.query('CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");');
     console.log('⤷ Created SQL table "municipalities".');
 
     await GTFSParseDB.connection.query(`CREATE TABLE calendar_dates (
