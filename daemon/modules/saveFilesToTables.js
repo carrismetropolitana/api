@@ -13,7 +13,7 @@ module.exports = async () => {
   console.log(`⤷ Creating directory "/data-temp/gtfs/prepared/"...`);
   fs.mkdirSync('/data-temp/gtfs/prepared/');
 
-  await prepareFileImport('municipalities', ['municipality_id', 'municipality_name', 'prefix', 'district', 'nuts_iii']);
+  await prepareFileImport('municipalities', ['municipality_prefix', 'municipality_id', 'municipality_name', 'district_id', 'district_name', 'region_id', 'region_name']);
   await prepareFileImport('calendar_dates', ['service_id', 'date']);
   await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
   await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);

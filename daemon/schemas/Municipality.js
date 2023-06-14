@@ -19,11 +19,19 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 2,
     },
-    district: {
+    district_code: {
       type: String,
       maxlength: 50,
     },
-    nuts_iii: {
+    district_name: {
+      type: String,
+      maxlength: 50,
+    },
+    region_code: {
+      type: String,
+      maxlength: 50,
+    },
+    region_name: {
       type: String,
       maxlength: 50,
     },

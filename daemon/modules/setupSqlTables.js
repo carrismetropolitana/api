@@ -12,11 +12,13 @@ module.exports = async () => {
   // Create tables
 
   await GTFSParseDB.connection.query(`CREATE TABLE municipalities (
+        municipality_prefix VARCHAR(2),
         municipality_id VARCHAR(4),
         municipality_name VARCHAR(255),
-        prefix VARCHAR(2),
-        district VARCHAR(255),
-        nuts_iii VARCHAR(255)
+        district_id VARCHAR(255),
+        district_name VARCHAR(255),
+        region_id VARCHAR(255)
+        region_name VARCHAR(255)
     );`);
   await GTFSParseDB.connection.query('CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");');
   console.log('⤷ Created SQL table "municipalities".');

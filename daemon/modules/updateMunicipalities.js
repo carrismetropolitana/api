@@ -14,7 +14,7 @@ module.exports = async () => {
   // Record the start time to later calculate operation duration
   console.log(`⤷ Updating Municipalities...`);
   const startTime = process.hrtime();
-  // Fetch all Municipalities from www
+  // Fetch all Municipalities from Postgres
   const allMunicipalities = await GTFSParseDB.connection.query('SELECT * FROM municipalities');
   // Initate a temporary variable to hold updated Municipalities
   let updatedMunicipalityIds = [];
@@ -24,9 +24,11 @@ module.exports = async () => {
     const parsedMunicipality = {
       code: municipality.municipality_id,
       name: municipality.municipality_name,
-      prefix: municipality.prefix,
-      district: municipality.district,
-      nuts_iii: municipality.nuts_iii,
+      prefix: municipality.municipality_prefix,
+      district_code: municipality.district_id,
+      district_name: municipality.district_name,
+      region_code: municipality.region_id,
+      region_name: municipality.region_name,
     };
     // Save to database
     const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: municipality.municipality_id }, parsedMunicipality, { new: true, upsert: true });
