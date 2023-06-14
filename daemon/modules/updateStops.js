@@ -20,18 +20,47 @@ module.exports = async () => {
   let updatedStopIds = [];
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
+    // Discover which services this stop is near to
+    let nearServices = [];
+    if (stop.near_health_clinic) nearServices.push('health_clinic');
+    if (stop.near_hospital) nearServices.push('hospital');
+    if (stop.near_university) nearServices.push('university');
+    if (stop.near_school) nearServices.push('school');
+    if (stop.near_police_station) nearServices.push('police_station');
+    if (stop.near_fire_station) nearServices.push('fire_station');
+    if (stop.near_shopping) nearServices.push('shopping');
+    if (stop.near_historic_building) nearServices.push('historic_building');
+    if (stop.near_transit_office) nearServices.push('transit_office');
+    // Discover which modal connections this stop serves
+    let intermodalConnections = [];
+    if (stop.subway) intermodalConnections.push('subway');
+    if (stop.light_rail) intermodalConnections.push('light_rail');
+    if (stop.train) intermodalConnections.push('train');
+    if (stop.boat) intermodalConnections.push('boat');
+    if (stop.airport) intermodalConnections.push('airport');
+    if (stop.bike_sharing) intermodalConnections.push('bike_sharing');
+    if (stop.bike_parking) intermodalConnections.push('bike_parking');
+    if (stop.car_parking) intermodalConnections.push('car_parking');
     // Initiate a variable to hold the parsed stop
     let parsedStop = {
-      // Save all properties with the same key
-      ...stop,
-      // Save properties with different key
       code: stop.stop_id,
       name: stop.stop_name,
       short_name: stop.stop_short_name,
       tts_name: stop.tts_stop_name,
       latitude: stop.stop_lat,
       longitude: stop.stop_lon,
-      municipality_code: stop.municipality,
+      locality: stop.locality,
+      parish_id: stop.parish_id,
+      parish_name: stop.parish_name,
+      municipality_id: stop.municipality_id,
+      municipality_name: stop.municipality_name,
+      district_id: stop.district_id,
+      district_name: stop.district_name,
+      region_id: stop.region_id,
+      region_name: stop.region_name,
+      wheelchair_boarding: stop.wheelchair_boarding,
+      near_services: nearServices,
+      intermodal_connections: intermodalConnections,
     };
     // Update or create new document
     const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndUpdate({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });

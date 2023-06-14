@@ -38,17 +38,41 @@ module.exports = new mongoose.Schema(
     //
     // Administrative
 
-    municipality_code: {
-      type: String,
-      maxlength: 4,
-    },
-    parish: {
-      type: String,
-      maxlength: 100,
-    },
     locality: {
       type: String,
-      maxlength: 100,
+      maxlength: 50,
+    },
+    parish_id: {
+      type: String,
+      maxlength: 50,
+    },
+    parish_name: {
+      type: String,
+      maxlength: 50,
+    },
+    municipality_id: {
+      type: String,
+      maxlength: 50,
+    },
+    municipality_name: {
+      type: String,
+      maxlength: 50,
+    },
+    district_id: {
+      type: String,
+      maxlength: 50,
+    },
+    district_name: {
+      type: String,
+      maxlength: 50,
+    },
+    region_id: {
+      type: String,
+      maxlength: 50,
+    },
+    region_name: {
+      type: String,
+      maxlength: 50,
     },
 
     //
@@ -62,61 +86,22 @@ module.exports = new mongoose.Schema(
     //
     // Services
 
-    near_health_clinic: {
-      type: Boolean,
-    },
-    near_hospital: {
-      type: Boolean,
-    },
-    near_university: {
-      type: Boolean,
-    },
-    near_school: {
-      type: Boolean,
-    },
-    near_police_station: {
-      type: Boolean,
-    },
-    near_fire_station: {
-      type: Boolean,
-    },
-    near_shopping: {
-      type: Boolean,
-    },
-    near_historic_building: {
-      type: Boolean,
-    },
-    near_transit_office: {
-      type: Boolean,
-    },
+    near_services: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
 
     //
-    // Intermodal Connections
+    // Intermodal Conections
 
-    subway: {
-      type: Boolean,
-    },
-    light_rail: {
-      type: Boolean,
-    },
-    train: {
-      type: Boolean,
-    },
-    boat: {
-      type: Boolean,
-    },
-    airport: {
-      type: Boolean,
-    },
-    bike_sharing: {
-      type: Boolean,
-    },
-    bike_parking: {
-      type: Boolean,
-    },
-    car_parking: {
-      type: Boolean,
-    },
+    intermodal_connections: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
 
     //
   },
@@ -126,14 +111,6 @@ module.exports = new mongoose.Schema(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     virtuals: {
-      municipality: {
-        options: {
-          ref: 'Municipality',
-          localField: 'municipality_code',
-          foreignField: 'code',
-          justOne: true,
-        },
-      },
       patterns: {
         options: {
           ref: 'Pattern',

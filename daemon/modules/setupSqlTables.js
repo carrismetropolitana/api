@@ -69,9 +69,15 @@ module.exports = async () => {
         tts_stop_name VARCHAR(255),
         stop_lat VARCHAR(10),
         stop_lon VARCHAR(10),
-        municipality VARCHAR(255),
-        parish VARCHAR(255),
         locality VARCHAR(255),
+        parish_id VARCHAR(255),
+        parish_name VARCHAR(255),
+        municipality_id VARCHAR(255),
+        municipality_name VARCHAR(255),
+        district_id VARCHAR(255),
+        district_name VARCHAR(255),
+        region_id VARCHAR(255)
+        region_name VARCHAR(255)
         wheelchair_boarding VARCHAR(1),
         near_health_clinic VARCHAR(1),
         near_hospital VARCHAR(1),
