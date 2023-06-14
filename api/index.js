@@ -94,7 +94,7 @@ app.get('/patterns/:code', async (req, res) => {
 //
 app.get('/stops', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Stop.find({}, 'code name latitude longitude tts_name').populate({ path: 'patterns', select: 'code' });
+    const foundManyDocuments = await GTFSAPIDB.Stop.find({}, 'code name latitude longitude tts_name');
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
