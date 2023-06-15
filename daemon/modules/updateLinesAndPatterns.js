@@ -144,7 +144,7 @@ module.exports = async () => {
   // Group all routes into lines by route_short_name
   const allLines = allRoutes.rows.reduce((result, route) => {
     // Check if the route_short_name already exists as a line
-    const existingLine = result.find((line) => line.route_short_name === route.route_short_name);
+    const existingLine = result.find((line) => line.short_name === route.route_short_name);
     // Add the route to the existing line
     if (existingLine) existingLine.routes.push(route);
     // Create a new line with the route
