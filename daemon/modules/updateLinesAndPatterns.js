@@ -155,6 +155,7 @@ module.exports = async () => {
         long_name: route.route_long_name,
         color: route.route_color ? `#${route.route_color}` : '#000000',
         text_color: route.route_text_color ? `#${route.route_text_color}` : '#FFFFFF',
+        pattern_codes: [],
         routes: [route],
       });
     }
@@ -166,15 +167,12 @@ module.exports = async () => {
   let updatedPatternIds = [];
   // For each route in each line, save the corresponding trip
   for (const line of allLines) {
-    // Save this line to MongoDB and hold on to the returned _id value
-    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
-    updatedLineIds.push(updatedLineDocument._id);
+    // Define built patterns to save to the database
+    let uniquePatterns = [];
     // Iterate on each route for this line
     for (const route of line.routes) {
       // Get all trips associated with this route
       const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
-      // Define built patterns to save to the database
-      let uniquePatterns = [];
       // Process all trips to create an array of patterns
       for (const trip of allTrips.rows) {
         // Setup a temporary key with the distinguishable values for each trip
@@ -202,16 +200,20 @@ module.exports = async () => {
           });
         }
       }
-
-      // Update patterns in Database
-      for (const pattern of uniquePatterns) {
-        const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
-        updatedPatternIds.push(updatedPatternDocument._id);
-      }
-      // Log count of updated Patterns
-      console.log(`⤷ Updated ${uniquePatterns.length} Patterns for route ${route.route_id}.`);
       //
     }
+    // Update patterns in Database
+    for (const pattern of uniquePatterns) {
+      const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
+      updatedPatternIds.push(updatedPatternDocument._id);
+      line.pattern_codes.push(pattern.code);
+    }
+    // Log count of updated Patterns
+    console.log(`⤷ Updated ${uniquePatterns.length} Patterns for Line ${line.code}.`);
+    // Save this line to MongoDB and hold on to the returned _id value
+    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
+    updatedLineIds.push(updatedLineDocument._id);
+    //
   }
   // Log count of updated Lines
   console.log(`⤷ Updated ${updatedLineIds.length} Lines.`);

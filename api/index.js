@@ -43,7 +43,7 @@ app.get('/lines', async (req, res) => {
 //
 app.get('/lines/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Line.findOne({ code: req.params.code }).populate({ path: 'patterns', populate: { path: 'trips.schedule.stop' } });
+    const foundOneDocument = await GTFSAPIDB.Line.findOne({ code: req.params.code });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/lines/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
@@ -113,7 +113,7 @@ app.get('/stops', async (req, res) => {
 //
 app.get('/stops/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate({ path: 'patterns', populate: { path: 'line' } });
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate({ path: 'patterns' });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);

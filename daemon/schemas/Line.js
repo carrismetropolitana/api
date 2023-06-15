@@ -27,10 +27,14 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 7,
     },
+    pattern_codes: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     id: false,
-    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     virtuals: {
