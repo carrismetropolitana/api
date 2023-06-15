@@ -167,7 +167,7 @@ module.exports = async () => {
   // For each route in each line, save the corresponding trip
   for (const line of allLines) {
     // Save this line to MongoDB and hold on to the returned _id value
-    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndUpdate({ code: line.code }, line, { new: true, upsert: true });
+    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
     updatedLineIds.push(updatedLineDocument._id);
     // Iterate on each route for this line
     for (const route of line.routes) {
@@ -205,7 +205,7 @@ module.exports = async () => {
 
       // Update patterns in Database
       for (const pattern of uniquePatterns) {
-        const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndUpdate({ code: pattern.code }, pattern, { new: true, upsert: true });
+        const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
         updatedPatternIds.push(updatedPatternDocument._id);
       }
       // Log count of updated Patterns

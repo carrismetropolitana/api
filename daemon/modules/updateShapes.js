@@ -45,7 +45,7 @@ module.exports = async () => {
     // Create geojson feature using turf
     parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
     // Update or create new document
-    const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndUpdate({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+    const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
     updatedShapeIds.push(updatedShapeDocument._id);
   }
   // Log count of updated Shapes

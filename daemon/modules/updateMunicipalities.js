@@ -31,7 +31,7 @@ module.exports = async () => {
       region_name: municipality.region_name,
     };
     // Save to database
-    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndUpdate({ code: parsedMunicipality.code }, parsedMunicipality, { new: true, upsert: true });
+    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndReplace({ code: parsedMunicipality.code }, parsedMunicipality, { new: true, upsert: true });
     updatedMunicipalityIds.push(updatedMunicipalityDocument._id);
   }
   // Log count of updated Municipalities

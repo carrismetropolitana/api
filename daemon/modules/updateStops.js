@@ -63,7 +63,7 @@ module.exports = async () => {
       intermodal_connections: intermodalConnections,
     };
     // Update or create new document
-    const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndUpdate({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
+    const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndReplace({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
     updatedStopIds.push(updatedStopDocument._id);
   }
   // Log count of updated Stops
