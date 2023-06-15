@@ -58,23 +58,6 @@ app.get('/lines/:code', async (req, res) => {
 });
 
 //
-app.get('/shapes/:code', async (req, res) => {
-  try {
-    const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: req.params.code });
-    if (foundOneDocument) {
-      console.log('🟢 → Request for "/shapes/%s": 1 Found', req.params.code);
-      res.send(foundOneDocument);
-    } else {
-      console.log('🟡 → Request for "/shapes/%s": Not Found', req.params.code);
-      res.status(404).send({});
-    }
-  } catch (err) {
-    console.log('🔴 → Request for "/shapes/%s": Server Error', req.params.code, err);
-    res.status(500).send({});
-  }
-});
-
-//
 app.get('/patterns/:code', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: req.params.code }).populate({ path: 'trips.schedule.stop' });
@@ -87,6 +70,23 @@ app.get('/patterns/:code', async (req, res) => {
     }
   } catch (err) {
     console.log('🔴 → Request for "/patterns/%s": Server Error', req.params.code, err);
+    res.status(500).send({});
+  }
+});
+
+//
+app.get('/shapes/:code', async (req, res) => {
+  try {
+    const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: req.params.code });
+    if (foundOneDocument) {
+      console.log('🟢 → Request for "/shapes/%s": 1 Found', req.params.code);
+      res.send(foundOneDocument);
+    } else {
+      console.log('🟡 → Request for "/shapes/%s": Not Found', req.params.code);
+      res.status(404).send({});
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/shapes/%s": Server Error', req.params.code, err);
     res.status(500).send({});
   }
 });
@@ -112,6 +112,23 @@ app.get('/stops', async (req, res) => {
 
 //
 app.get('/stops/:code', async (req, res) => {
+  try {
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code });
+    if (foundOneDocument) {
+      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
+      res.send(foundOneDocument);
+    } else {
+      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.code);
+      res.status(404).send({});
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.code, err);
+    res.status(500).send({});
+  }
+});
+
+//
+app.get('/stops/:code/patterns', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate({ path: 'patterns' });
     if (foundOneDocument) {
