@@ -77,7 +77,7 @@ app.get('/shapes/:code', async (req, res) => {
 //
 app.get('/patterns/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: req.params.code }).populate({ path: 'trips.schedule.stop', select: 'code name latitude longitude tts_name' });
+    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: req.params.code }).populate({ path: 'trips.schedule.stop' });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/patterns/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);

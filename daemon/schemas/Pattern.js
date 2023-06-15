@@ -18,9 +18,21 @@ module.exports = new mongoose.Schema(
     direction: {
       type: Number,
     },
+    short_name: {
+      type: String,
+      maxlength: 4,
+    },
     headsign: {
       type: String,
       maxlength: 50,
+    },
+    color: {
+      type: String,
+      maxlength: 7,
+    },
+    text_color: {
+      type: String,
+      maxlength: 7,
     },
     trips: [
       {

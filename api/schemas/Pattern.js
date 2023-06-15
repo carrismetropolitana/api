@@ -18,9 +18,21 @@ module.exports = new mongoose.Schema(
     direction: {
       type: Number,
     },
+    short_name: {
+      type: String,
+      maxlength: 4,
+    },
     headsign: {
       type: String,
       maxlength: 50,
+    },
+    color: {
+      type: String,
+      maxlength: 7,
+    },
+    text_color: {
+      type: String,
+      maxlength: 7,
     },
     trips: [
       {
@@ -80,14 +92,6 @@ module.exports = new mongoose.Schema(
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
     virtuals: {
-      line: {
-        options: {
-          ref: 'Line',
-          localField: 'line_code',
-          foreignField: 'code',
-          justOne: true,
-        },
-      },
       'trips.schedule.stop': {
         options: {
           ref: 'Stop',
