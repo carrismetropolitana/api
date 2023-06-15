@@ -211,12 +211,11 @@ module.exports = async () => {
       updatedPatternIds.push(updatedPatternDocument._id);
       line.pattern_codes.push(pattern.code);
     }
-    // Log count of updated Patterns
-    console.log(`⤷ Updated ${uniquePatterns.length} Patterns for Line ${line.code}.`);
     // Save this line to MongoDB and hold on to the returned _id value
     const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
     updatedLineIds.push(updatedLineDocument._id);
-    console.log(`⤷ Updated Line ${line.code}.`);
+    // Log count of updated Patterns
+    console.log(`⤷ Updated Line ${line.code} and its ${uniquePatterns.length} Patterns.`);
     //
   }
   // Log count of updated Lines
