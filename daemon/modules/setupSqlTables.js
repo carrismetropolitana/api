@@ -17,7 +17,7 @@ module.exports = async () => {
         municipality_name VARCHAR(255),
         district_id VARCHAR(255),
         district_name VARCHAR(255),
-        region_id VARCHAR(255)
+        region_id VARCHAR(255),
         region_name VARCHAR(255)
     );`);
   await GTFSParseDB.connection.query('CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");');
@@ -76,8 +76,8 @@ module.exports = async () => {
         municipality_name VARCHAR(255),
         district_id VARCHAR(255),
         district_name VARCHAR(255),
-        region_id VARCHAR(255)
-        region_name VARCHAR(255)
+        region_id VARCHAR(255),
+        region_name VARCHAR(255),
         wheelchair_boarding VARCHAR(1),
         near_health_clinic VARCHAR(1),
         near_hospital VARCHAR(1),
