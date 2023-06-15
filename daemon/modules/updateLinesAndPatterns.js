@@ -195,7 +195,10 @@ module.exports = async () => {
             code: uniquePatternCode,
             line_code: line.code,
             direction: trip.direction_id,
+            short_name: line.short_name,
             headsign: trip.trip_headsign,
+            color: line.color,
+            text_color: line.text_color,
             trips: [parsedTrip],
           });
         }
@@ -213,6 +216,7 @@ module.exports = async () => {
     // Save this line to MongoDB and hold on to the returned _id value
     const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
     updatedLineIds.push(updatedLineDocument._id);
+    console.log(`⤷ Updated Line ${line.code}.`);
     //
   }
   // Log count of updated Lines
