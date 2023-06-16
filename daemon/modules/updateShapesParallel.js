@@ -28,7 +28,7 @@ module.exports = async () => {
   // Initiate the worker threads for processing Shapes in parallel
   console.log(`⤷ Setting up workers for ${allShapes.rows.length} Shapes...`);
   const piscina = new Piscina({
-    maxThreads: 10,
+    maxThreads: 50,
     filename: resolve(__dirname, 'updateShapesWorker.js'),
   });
   // Setup a tasks for each shape and await completion for all of them

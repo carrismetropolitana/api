@@ -17,9 +17,8 @@ module.exports = async ({ shape }) => {
   const shapeExtensionKm = turf.length(parsedShape.geojson, { units: 'kilometers' });
   parsedShape.extension = shapeExtensionKm ? shapeExtensionKm / 1000 : 0;
   // Update or create new document
-  const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+  const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true, lean: true });
   // Return _id to main thread
   console.log('updatedShapeDocument._id', updatedShapeDocument._id);
-  return 'teste result';
   return updatedShapeDocument._id;
 };
