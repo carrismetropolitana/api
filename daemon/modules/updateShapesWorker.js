@@ -25,7 +25,7 @@ const processShape = async (shape) => {
   return updatedShapeDocument._id;
 };
 
-module.exports = async (shape) => {
+module.exports = async ({ shape }) => {
   try {
     const startTime = process.hrtime();
     console.log('Inside worker updateShapesWorker', startTime);
