@@ -3,6 +3,7 @@
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
+const splitIntoChunks = require('./splitIntoChunks');
 const Piscina = require('piscina');
 const { resolve } = require('path');
 
@@ -48,7 +49,7 @@ module.exports = async () => {
   console.log(`⤷ Setting up workers for ${allLines.length} Lines divided into ${allChunks.length} chunks...`);
   const piscina = new Piscina({ filename: resolve(__dirname, 'updateLinesWorker.js') });
   // Setup a tasks for each line and await completion for all of them
-  console.log(`⤷ Awaiting tasks to complete...`);
+  console.log(`⤷ Awaiting for tasks to complete...`);
   const workerResult = await Promise.all(allChunks.map(async (chunk) => await piscina.run({ chunk })));
   const allUpdatedObjects = workerResult.flat();
   const updatedLineIds = allUpdatedObjects.map((wr) => wr.updatedLineIds).flat();
