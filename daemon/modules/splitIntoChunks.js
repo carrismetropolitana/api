@@ -1,5 +1,5 @@
 // Function to divide an array into chunks
-function chunkArray(array, numChunks) {
+module.exports = (array, numChunks) => {
   const arrayLength = array.length;
   const chunkSize = Math.ceil(arrayLength / numChunks);
   const chunks = []; // Array to store the chunks
@@ -12,4 +12,4 @@ function chunkArray(array, numChunks) {
   }
   // Return the array of chunks
   return chunks;
-}
+};
