@@ -38,14 +38,17 @@ module.exports = async () => {
   //       });
   //     });
   //   });
-  console.log('Setup workers');
+  console.log('Setup workers for shapes', allShapes.rows.length);
   const updatedShapeIds = await Promise.all(
     allShapes.rows.map((shape) => {
       return new Promise((resolve, reject) => {
         const worker = new Worker('./updateShapesWorker.js', {
           workerData: { shape: shape },
         });
-        worker.on('message', resolve);
+        worker.on('message', (m) => {
+          console.log('message received', m);
+          resolve();
+        });
         worker.on('error', reject);
         worker.on('exit', (code) => {
           console.log('worker terminated');
