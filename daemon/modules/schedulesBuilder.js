@@ -343,7 +343,11 @@ module.exports = {
       }
 
       // Save route to MongoDB
-      await GTFSAPIDB.Route.findOneAndUpdate({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
+      try {
+        await GTFSAPIDB.Route.findOneAndUpdate({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
+      } catch (error) {
+        console.log('ERROR UPDATING DOCUMENT IN MONGODB', error);
+      }
 
       const elapsedTime = timeCalc.getElapsedTime(startTime);
       console.log(`⤷ [${allProcessedRouteIds.length}/${allRoutes.length}] Saved route ${formattedRoute.route_id} to API Database in ${elapsedTime}.`);
