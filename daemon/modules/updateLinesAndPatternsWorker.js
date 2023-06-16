@@ -132,56 +132,63 @@ async function getTripSchedule(trip_id) {
  * @returns {Array} Array of stops objects
  */
 
-module.exports = async ({ line }) => {
-  // Initate temporary variables to hold updated Pattern _ids
-  let updatedPatternIdsForLine = [];
-  // Define built patterns to save to the database
-  let uniquePatterns = [];
-  // Iterate on each route for this line
-  for (const route of line.routes) {
-    // Get all trips associated with this route
-    const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
-    // Process all trips to create an array of patterns
-    for (const trip of allTrips.rows) {
-      // Setup a temporary key with the distinguishable values for each trip
-      const uniquePatternCode = `${trip.route_id}_${trip.direction_id}`;
-      // Parse trip
-      const parsedTrip = {
-        trip_code: trip.trip_id,
-        calendar_code: trip.service_id,
-        shape_code: trip.shape_id,
-        dates: await getTripDates(trip.service_id),
-        schedule: await getTripSchedule(trip.trip_id),
-      };
-      // Check if the pattern code already exists as a pattern
-      const existingPattern = uniquePatterns.find((pattern) => pattern.code === uniquePatternCode);
-      // If pattern already exists, add this trip to the trips array
-      if (existingPattern) existingPattern.trips.push(parsedTrip);
-      // Create a new pattern with the trip
-      else {
-        uniquePatterns.push({
-          code: uniquePatternCode,
-          line_code: line.code,
-          direction: trip.direction_id,
-          short_name: line.short_name,
-          headsign: trip.trip_headsign,
-          color: line.color,
-          text_color: line.text_color,
-          trips: [parsedTrip],
-        });
+module.exports = async ({ chunk }) => {
+  // Initiate variables to keep track of updated _ids
+  let updatedLineIds = [];
+  let updatedPatternIds = [];
+  // Loop through each object in each chunk
+  for (const line of chunk) {
+    // Define built patterns to save to the database
+    let uniquePatterns = [];
+    // Iterate on each route for this line
+    for (const route of line.routes) {
+      // Get all trips associated with this route
+      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      // Process all trips to create an array of patterns
+      for (const trip of allTrips.rows) {
+        // Setup a temporary key with the distinguishable values for each trip
+        const uniquePatternCode = `${trip.route_id}_${trip.direction_id}`;
+        // Parse trip
+        const parsedTrip = {
+          trip_code: trip.trip_id,
+          calendar_code: trip.service_id,
+          shape_code: trip.shape_id,
+          dates: await getTripDates(trip.service_id),
+          schedule: await getTripSchedule(trip.trip_id),
+        };
+        // Check if the pattern code already exists as a pattern
+        const existingPattern = uniquePatterns.find((pattern) => pattern.code === uniquePatternCode);
+        // If pattern already exists, add this trip to the trips array
+        if (existingPattern) existingPattern.trips.push(parsedTrip);
+        // Create a new pattern with the trip
+        else {
+          uniquePatterns.push({
+            code: uniquePatternCode,
+            line_code: line.code,
+            direction: trip.direction_id,
+            short_name: line.short_name,
+            headsign: trip.trip_headsign,
+            color: line.color,
+            text_color: line.text_color,
+            trips: [parsedTrip],
+          });
+        }
       }
+      //
     }
+    // Update patterns in Database
+    for (const pattern of uniquePatterns) {
+      const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
+      updatedPatternIds.push(updatedPatternDocument._id.toString());
+      line.pattern_codes.push(pattern.code);
+    }
+    // Save this line to MongoDB and hold on to the returned _id value
+    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
+    // Send result to main thread
+    updatedLineIds.push(updatedLineDocument._id.toString());
     //
   }
-  // Update patterns in Database
-  for (const pattern of uniquePatterns) {
-    const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
-    updatedPatternIdsForLine.push(updatedPatternDocument._id.toString());
-    line.pattern_codes.push(pattern.code);
-  }
-  // Save this line to MongoDB and hold on to the returned _id value
-  const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
-  // Send result to main thread
-  return { updatedLineId: updatedLineDocument._id, updatedPatternIdsForLine };
+  // Return _id to main thread
+  return { updatedLineIds, updatedPatternIds };
   //
 };

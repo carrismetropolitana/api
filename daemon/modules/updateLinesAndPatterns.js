@@ -49,9 +49,10 @@ module.exports = async () => {
   const piscina = new Piscina({ filename: resolve(__dirname, 'updateLinesWorker.js') });
   // Setup a tasks for each line and await completion for all of them
   console.log(`⤷ Awaiting tasks to complete...`);
-  const workerResult = await Promise.all(allLines.map(async (line) => await piscina.run({ line: line })));
-  const updatedLineIds = workerResult.map((wr) => wr.updatedLineId);
-  const updatedPatternIds = workerResult.map((wr) => wr.updatedPatternIdsForLine).flat();
+  const workerResult = await Promise.all(allChunks.map(async (chunk) => await piscina.run({ chunk })));
+  const allUpdatedObjects = workerResult.flat();
+  const updatedLineIds = allUpdatedObjects.map((wr) => wr.updatedLineIds).flat();
+  const updatedPatternIds = allUpdatedObjects.map((wr) => wr.updatedPatternIds).flat();
   console.log(`⤷ Updated ${updatedLineIds.length} Lines and ${updatedPatternIds.length} Patterns.`);
   // Delete all Lines not present in the current update
   const deletedStaleLines = await GTFSAPIDB.Line.deleteMany({ _id: { $nin: updatedLineIds } });

@@ -27,13 +27,13 @@ module.exports = async () => {
             shape_id
     `);
   // Split the array into chunks
-  const allChunks = splitIntoChunks(allShapes.rows, 2);
+  const allChunks = splitIntoChunks(allShapes.rows, 4);
   // Initiate the worker threads for processing Shapes in parallel
   console.log(`⤷ Setting up workers for ${allShapes.rows.length} Shapes divided into ${allChunks.length} chunks...`);
   const piscina = new Piscina({ filename: resolve(__dirname, 'updateShapesWorker.js') });
   // Setup a tasks for each shape and await completion for all of them
   console.log(`⤷ Awaiting tasks to complete...`);
-  const workerResult = await Promise.all(allChunks.map(async (chunks) => await piscina.run({ chunks })));
+  const workerResult = await Promise.all(allChunks.map(async (chunk) => await piscina.run({ chunk })));
   const updatedShapeIds = workerResult.flat();
   console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
   // Delete all Shapes not present in the current update

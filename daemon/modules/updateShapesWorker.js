@@ -3,9 +3,11 @@
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const turf = require('@turf/turf');
 
-module.exports = async ({ chunks }) => {
+module.exports = async ({ chunk }) => {
+  // Initiate variable to keep track of updated _ids
   let updatedShapeIds = [];
-  for (const shape of chunks) {
+  // Loop through each object in each chunk
+  for (const shape of chunk) {
     // Initiate a variable to hold the parsed shape
     let parsedShape = {
       code: shape.shape_id,
@@ -25,4 +27,5 @@ module.exports = async ({ chunks }) => {
   }
   // Return _id to main thread
   return updatedShapeIds;
+  //
 };
