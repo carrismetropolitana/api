@@ -27,7 +27,7 @@ module.exports = async () => {
             shape_id
     `);
   // Split the array into chunks
-  const allChunks = splitIntoChunks(allShapes.rows, 10);
+  const allChunks = splitIntoChunks(allShapes.rows, 5);
   // Initiate the worker threads for processing Shapes in parallel
   console.log(`⤷ Setting up workers for ${allShapes.rows.length} Shapes divided into ${allChunks.length} chunks...`);
   const piscina = new Piscina({ filename: resolve(__dirname, 'updateShapesWorker.js') });
