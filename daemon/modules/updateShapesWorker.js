@@ -7,6 +7,7 @@ const timeCalc = require('./timeCalc');
 const turf = require('@turf/turf');
 
 const processShape = async (shape) => {
+  console.log('Inside worker processShape', shape.shape_id);
   // Initiate a variable to hold the parsed shape
   let parsedShape = {
     code: shape.shape_id,
@@ -27,16 +28,11 @@ const processShape = async (shape) => {
 const updateShapesWorker = async () => {
   try {
     const startTime = process.hrtime();
+    console.log('Inside worker updateShapesWorker', startTime);
 
-    const { shapes } = workerData;
-    const updatedShapeIds = [];
+    const updatedShapeId = await processShape(workerData.shape);
 
-    for (const shape of shapes) {
-      const updatedShapeId = await processShape(shape);
-      updatedShapeIds.push(updatedShapeId);
-    }
-
-    parentPort.postMessage(updatedShapeIds);
+    parentPort.postMessage(updatedShapeId);
 
     const elapsedTime = timeCalc.getElapsedTime(startTime);
     console.log(`⤷ Done updating Shapes (${elapsedTime}).`);

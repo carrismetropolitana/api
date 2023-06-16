@@ -26,28 +26,33 @@ module.exports = async () => {
             shape_id
     `);
 
-  // Split shapes into chunks for parallel processing
-  const chunkSize = 100; // Adjust the chunk size as per your requirements
-  const shapeChunks = [];
-  for (let i = 0; i < allShapes.rows.length; i += chunkSize) {
-    shapeChunks.push(allShapes.rows.slice(i, i + chunkSize));
-  }
-
-  const workerPromises = shapeChunks.map((shapes) => {
-    return new Promise((resolve, reject) => {
-      const worker = new Worker('./updateShapesWorker.js', {
-        workerData: { shapes },
+  //   const workerPromises = allShapes.map((shape) => {
+  //     return new Promise((resolve, reject) => {
+  //       const worker = new Worker('./updateShapesWorker.js', {
+  //         workerData: { shape: shape },
+  //       });
+  //       worker.on('message', resolve);
+  //       worker.on('error', reject);
+  //       worker.on('exit', (code) => {
+  //         if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
+  //       });
+  //     });
+  //   });
+  console.log('Setup workers');
+  const updatedShapeIds = await Promise.all(
+    allShapes.map((shape) => {
+      return new Promise((resolve, reject) => {
+        const worker = new Worker('./updateShapesWorker.js', {
+          workerData: { shape: shape },
+        });
+        worker.on('message', resolve);
+        worker.on('error', reject);
+        worker.on('exit', (code) => {
+          if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
+        });
       });
-      worker.on('message', resolve);
-      worker.on('error', reject);
-      worker.on('exit', (code) => {
-        if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
-      });
-    });
-  });
-
-  const updatedShapeIdsList = await Promise.all(workerPromises);
-  const updatedShapeIds = updatedShapeIdsList.flat();
+    })
+  );
 
   console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
 
