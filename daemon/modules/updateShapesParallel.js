@@ -1,14 +1,12 @@
-const { Worker } = require('worker_threads');
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
-const turf = require('@turf/turf');
 const Piscina = require('piscina');
 const { resolve } = require('path');
 
 module.exports = async () => {
   // Record the start time to later calculate operation duration
-  console.log(`⤷ Updating Shapes...`);
+  console.log(`⤷ Querying database...`);
   const startTime = process.hrtime();
   // Query Postgres for all unique shapes by shape_id
   const allShapes = await GTFSParseDB.connection.query(`
@@ -27,38 +25,20 @@ module.exports = async () => {
         GROUP BY
             shape_id
     `);
-
-  //   const workerPromises = allShapes.map((shape) => {
-  //     return new Promise((resolve, reject) => {
-  //       const worker = new Worker('./updateShapesWorker.js', {
-  //         workerData: { shape: shape },
-  //       });
-  //       worker.on('message', resolve);
-  //       worker.on('error', reject);
-  //       worker.on('exit', (code) => {
-  //         if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
-  //       });
-  //     });
-  //   });
-  console.log('Setup workers for shapes', allShapes.rows.length);
-
+  // Initiate the worker threads for processing Shapes in parallel
+  console.log(`⤷ Setting up workers for ${allShapes.rows.length} Shapes...`);
   const piscina = new Piscina({
+    maxThreads: 10,
     filename: resolve(__dirname, 'updateShapesWorker.js'),
-    maxThreads: 2,
   });
-
-  const updatedShapeIds = await Promise.all(
-    allShapes.rows.map(async (shape) => {
-      await piscina.run({ shape: shape });
-    })
-  );
-
+  // Setup a tasks for each shape and await completion for all of them
+  const updatedShapeIds = await Promise.all(allShapes.rows.map(async (shape) => await piscina.run({ shape: shape })));
+  console.log('updatedShapeIds', updatedShapeIds);
   console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
-
   // Delete all Shapes not present in the current update
   const deletedStaleShapes = await GTFSAPIDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
   console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
-
+  // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Shapes (${elapsedTime}).`);
 };
