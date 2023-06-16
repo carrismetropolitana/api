@@ -33,14 +33,7 @@ module.exports = async () => {
   });
   // Setup a tasks for each shape and await completion for all of them
   console.log(`⤷ Awaiting tasks to complete...`);
-  const updatedShapeIds = await Promise.all(
-    allShapes.rows.map(async (shape) => {
-      const result = await piscina.run({ shape: shape });
-      console.log('result', result);
-      return result;
-    })
-  );
-  console.log('updatedShapeIds', updatedShapeIds);
+  const updatedShapeIds = await Promise.all(allShapes.rows.map(async (shape) => await piscina.run({ shape: shape })));
   console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
   // Delete all Shapes not present in the current update
   const deletedStaleShapes = await GTFSAPIDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
