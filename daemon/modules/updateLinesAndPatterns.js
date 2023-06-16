@@ -127,46 +127,19 @@ async function getTripSchedule(trip_id) {
 //
 
 /**
- * UPDATE LINES AND PATTERNS
- * Query 'routes' table to get all unique routes.
- * Save each result in MongoDB.
+ * Retrieve stops for the given trip_id
  * @async
+ * @param {String} trip_id The trip_id to retrieve from stop_times
+ * @returns {Array} Array of stops objects
  */
-module.exports = async () => {
-  // Record the start time to later calculate operation duration
-  console.log(`⤷ Updating Lines and Patterns...`);
-  const startTime = process.hrtime();
-  // Query Postgres for all unique routes
-  const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
-  // Sort allRoutes array by each routes 'route_id' property ascending
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
-  // Group all routes into lines by route_short_name
-  const allLines = allRoutes.rows.reduce((result, route) => {
-    // Check if the route_short_name already exists as a line
-    const existingLine = result.find((line) => line.short_name === route.route_short_name);
-    // Add the route to the existing line
-    if (existingLine) existingLine.routes.push(route);
-    // Create a new line with the route
-    else {
-      result.push({
-        code: route.route_short_name,
-        short_name: route.route_short_name,
-        long_name: route.route_long_name,
-        color: route.route_color ? `#${route.route_color}` : '#000000',
-        text_color: route.route_text_color ? `#${route.route_text_color}` : '#FFFFFF',
-        pattern_codes: [],
-        routes: [route],
-      });
-    }
-    // Return result for the next iteration
-    return result;
-  }, []);
-  // Initate temporary variables to hold updated Lines and Patterns
-  let updatedLineIds = [];
-  let updatedPatternIds = [];
-  // For each route in each line, save the corresponding trip
-  for (const line of allLines) {
+// Initate temporary variables to hold updated Lines and Patterns
+let updatedLineIds = [];
+let updatedPatternIds = [];
+
+async function processEachLine(line, semaphore) {
+  // Acquire a slot from the semaphore
+  await semaphore.acquire();
+  try {
     // Define built patterns to save to the database
     let uniquePatterns = [];
     // Iterate on each route for this line
@@ -217,7 +190,71 @@ module.exports = async () => {
     // Log count of updated Patterns
     console.log(`⤷ Updated Line ${line.code} and its ${uniquePatterns.length} Patterns.`);
     //
+  } finally {
+    // Release the slot in the semaphore
+    semaphore.release();
   }
+  //
+}
+
+//
+//
+//
+
+/**
+ * UPDATE LINES AND PATTERNS
+ * Query 'routes' table to get all unique routes.
+ * Save each result in MongoDB.
+ * @async
+ */
+module.exports = async () => {
+  // Record the start time to later calculate operation duration
+  console.log(`⤷ Updating Lines and Patterns...`);
+  const startTime = process.hrtime();
+  // Query Postgres for all unique routes
+  const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
+  // Sort allRoutes array by each routes 'route_id' property ascending
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
+  // Group all routes into lines by route_short_name
+  const allLines = allRoutes.rows.reduce((result, route) => {
+    // Check if the route_short_name already exists as a line
+    const existingLine = result.find((line) => line.short_name === route.route_short_name);
+    // Add the route to the existing line
+    if (existingLine) existingLine.routes.push(route);
+    // Create a new line with the route
+    else {
+      result.push({
+        code: route.route_short_name,
+        short_name: route.route_short_name,
+        long_name: route.route_long_name,
+        color: route.route_color ? `#${route.route_color}` : '#000000',
+        text_color: route.route_text_color ? `#${route.route_text_color}` : '#FFFFFF',
+        pattern_codes: [],
+        routes: [route],
+      });
+    }
+    // Return result for the next iteration
+    return result;
+  }, []);
+
+  //   // Initate temporary variables to hold updated Lines and Patterns
+  //   let updatedLineIds = [];
+  //   let updatedPatternIds = [];
+  //   // For each route in each line, save the corresponding trip
+  //   for (const line of allLines) {
+  //     // Define built patterns to save to the database
+  //     processEachLine(line);
+  //     //
+  //   }
+
+  // Execute the processing for each line with concurrency control
+  const maxConcurrency = 10; // Set the maximum number of concurrent operations
+  const semaphore = require('semaphore')(maxConcurrency); // Create a semaphore
+
+  const linePromises = allLines.map((line) => processEachLine(line, semaphore));
+  await Promise.all(linePromises);
+
   // Log count of updated Lines
   console.log(`⤷ Updated ${updatedLineIds.length} Lines.`);
   // Delete all Lines not present in the current update
