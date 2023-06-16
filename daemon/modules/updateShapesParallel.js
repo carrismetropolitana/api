@@ -48,23 +48,8 @@ module.exports = async () => {
   });
 
   const updatedShapeIds = await Promise.all(
-    allShapes.rows.map((shape) => {
-      console.log('setting up promise for', shape.shape_id);
-      piscina.run({ shape: shape });
-      //   return new Promise((resolve, reject) => {
-      //     const worker = new Worker('./updateShapesWorker.js', {
-      //       workerData: { shape: shape },
-      //     });
-      //     worker.on('message', (m) => {
-      //       console.log('message received', m);
-      //       resolve();
-      //     });
-      //     worker.on('error', reject);
-      //     worker.on('exit', (code) => {
-      //       console.log('worker terminated');
-      //       if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
-      //     });
-      //   });
+    allShapes.rows.map(async (shape) => {
+      await piscina.run({ shape: shape });
     })
   );
 

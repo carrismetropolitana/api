@@ -1,13 +1,9 @@
 // updateShapesWorker.js
 
-const { workerData, parentPort } = require('worker_threads');
-const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
-const timeCalc = require('./timeCalc');
 const turf = require('@turf/turf');
 
-const processShape = async (shape) => {
-  console.log('Inside worker processShape', shape.shape_id);
+module.exports = async ({ shape }) => {
   // Initiate a variable to hold the parsed shape
   let parsedShape = {
     code: shape.shape_id,
@@ -22,21 +18,6 @@ const processShape = async (shape) => {
   parsedShape.extension = shapeExtensionKm ? shapeExtensionKm / 1000 : 0;
   // Update or create new document
   const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+  // Return _id to main thread
   return updatedShapeDocument._id;
-};
-
-module.exports = async ({ shape }) => {
-  try {
-    const startTime = process.hrtime();
-    console.log('Inside worker updateShapesWorker', startTime);
-
-    const updatedShapeId = await processShape(shape);
-
-    parentPort.postMessage(updatedShapeId);
-
-    const elapsedTime = timeCalc.getElapsedTime(startTime);
-    console.log(`⤷ Done updating Shapes (${elapsedTime}).`);
-  } catch (error) {
-    console.error(error);
-  }
 };
