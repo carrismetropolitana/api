@@ -45,4 +45,4 @@ const updateShapesWorker = async () => {
   }
 };
 
-updateShapesWorker();
+await updateShapesWorker();
