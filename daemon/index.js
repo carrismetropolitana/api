@@ -11,6 +11,7 @@ const saveFilesToTables = require('./modules/saveFilesToTables');
 const updateMunicipalities = require('./modules/updateMunicipalities');
 const updateStops = require('./modules/updateStops');
 const updateShapes = require('./modules/updateShapes');
+const updateShapesParallel = require('./modules/updateShapesParallel');
 const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
 
 const { GTFS_URL } = process.env;
@@ -75,10 +76,11 @@ async function appInitPoint() {
     console.log();
     console.log('STEP 9: Update Shapes');
     // await updateShapes();
+    await updateShapesParallel();
 
     console.log();
     console.log('STEP 10: Update Lines & Patterns');
-    await updateLinesAndPatterns();
+    // await updateLinesAndPatterns();
 
     console.log();
     console.log('STEP 11: Disconnect from databases...');
