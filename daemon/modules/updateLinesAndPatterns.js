@@ -138,7 +138,7 @@ let updatedPatternIds = [];
 
 async function processEachLine(line, semaphore) {
   // Acquire a slot from the semaphore
-  await semaphore.acquire();
+  await semaphore.take();
   try {
     // Define built patterns to save to the database
     let uniquePatterns = [];
@@ -192,7 +192,7 @@ async function processEachLine(line, semaphore) {
     //
   } finally {
     // Release the slot in the semaphore
-    semaphore.release();
+    semaphore.leave();
   }
   //
 }
