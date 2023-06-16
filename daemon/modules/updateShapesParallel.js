@@ -41,6 +41,7 @@ module.exports = async () => {
   console.log('Setup workers for shapes', allShapes.rows.length);
   const updatedShapeIds = await Promise.all(
     allShapes.rows.map((shape) => {
+      console.log('setting up promise for', shape.shape_id);
       return new Promise((resolve, reject) => {
         const worker = new Worker('./updateShapesWorker.js', {
           workerData: { shape: shape },
