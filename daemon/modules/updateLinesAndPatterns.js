@@ -42,12 +42,11 @@ module.exports = async () => {
     // Return result for the next iteration
     return result;
   }, []);
+  // Split the array into chunks
+  const allChunks = splitIntoChunks(allLines, 2);
   // Initiate the worker threads for processing Lines in parallel
-  console.log(`⤷ Setting up workers for ${allLines.length} Lines...`);
-  const piscina = new Piscina({
-    maxThreads: 25,
-    filename: resolve(__dirname, 'updateLinesWorker.js'),
-  });
+  console.log(`⤷ Setting up workers for ${allLines.length} Lines divided into ${allChunks.length} chunks...`);
+  const piscina = new Piscina({ filename: resolve(__dirname, 'updateLinesWorker.js') });
   // Setup a tasks for each line and await completion for all of them
   console.log(`⤷ Awaiting tasks to complete...`);
   const workerResult = await Promise.all(allLines.map(async (line) => await piscina.run({ line: line })));

@@ -1,6 +1,7 @@
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
+const splitIntoChunks = require('./splitIntoChunks');
 const Piscina = require('piscina');
 const { resolve } = require('path');
 
@@ -25,15 +26,15 @@ module.exports = async () => {
         GROUP BY
             shape_id
     `);
+  // Split the array into chunks
+  const allChunks = splitIntoChunks(allShapes.rows, 2);
   // Initiate the worker threads for processing Shapes in parallel
-  console.log(`⤷ Setting up workers for ${allShapes.rows.length} Shapes...`);
-  const piscina = new Piscina({
-    maxThreads: 25,
-    filename: resolve(__dirname, 'updateShapesWorker.js'),
-  });
+  console.log(`⤷ Setting up workers for ${allShapes.rows.length} Shapes divided into ${allChunks.length} chunks...`);
+  const piscina = new Piscina({ filename: resolve(__dirname, 'updateShapesWorker.js') });
   // Setup a tasks for each shape and await completion for all of them
   console.log(`⤷ Awaiting tasks to complete...`);
-  const updatedShapeIds = await Promise.all(allShapes.rows.map(async (shape) => await piscina.run({ shape: shape })));
+  const workerResult = await Promise.all(allChunks.map(async (chunks) => await piscina.run({ chunks })));
+  const updatedShapeIds = workerResult.flat();
   console.log(`⤷ Updated ${updatedShapeIds.length} Shapes.`);
   // Delete all Shapes not present in the current update
   const deletedStaleShapes = await GTFSAPIDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
