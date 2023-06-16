@@ -20,5 +20,6 @@ module.exports = async ({ shape }) => {
   const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
   // Return _id to main thread
   console.log('updatedShapeDocument._id', updatedShapeDocument._id);
+  return 'teste result';
   return updatedShapeDocument._id;
 };
