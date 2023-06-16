@@ -244,8 +244,8 @@ module.exports = async () => {
   const maxConcurrency = 10; // Set the maximum number of concurrent operations
   const semaphore = require('semaphore')(maxConcurrency); // Create a semaphore
 
-  const linePromises = allLines.map((line) => {
-    semaphore.take(async function () {
+  const linePromises = allLines.map(async (line) => {
+    await semaphore.take(async function () {
       try {
         await processEachLine(line);
       } finally {
