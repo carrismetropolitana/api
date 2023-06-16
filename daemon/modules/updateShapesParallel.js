@@ -3,6 +3,8 @@ const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
 const turf = require('@turf/turf');
+const Piscina = require('piscina');
+const { resolve } = require('path');
 
 module.exports = async () => {
   // Record the start time to later calculate operation duration
@@ -39,23 +41,30 @@ module.exports = async () => {
   //     });
   //   });
   console.log('Setup workers for shapes', allShapes.rows.length);
+
+  const piscina = new Piscina({
+    filename: resolve(__dirname, 'updateShapesWorker.js'),
+    maxThreads: 2,
+  });
+
   const updatedShapeIds = await Promise.all(
     allShapes.rows.map((shape) => {
       console.log('setting up promise for', shape.shape_id);
-      return new Promise((resolve, reject) => {
-        const worker = new Worker('./updateShapesWorker.js', {
-          workerData: { shape: shape },
-        });
-        worker.on('message', (m) => {
-          console.log('message received', m);
-          resolve();
-        });
-        worker.on('error', reject);
-        worker.on('exit', (code) => {
-          console.log('worker terminated');
-          if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
-        });
-      });
+      piscina.run({ shape: shape });
+      //   return new Promise((resolve, reject) => {
+      //     const worker = new Worker('./updateShapesWorker.js', {
+      //       workerData: { shape: shape },
+      //     });
+      //     worker.on('message', (m) => {
+      //       console.log('message received', m);
+      //       resolve();
+      //     });
+      //     worker.on('error', reject);
+      //     worker.on('exit', (code) => {
+      //       console.log('worker terminated');
+      //       if (code !== 0) reject(new Error(`Worker stopped with exit code ${code}`));
+      //     });
+      //   });
     })
   );
 

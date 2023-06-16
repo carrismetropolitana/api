@@ -25,12 +25,12 @@ const processShape = async (shape) => {
   return updatedShapeDocument._id;
 };
 
-const updateShapesWorker = async () => {
+module.exports = async (shape) => {
   try {
     const startTime = process.hrtime();
     console.log('Inside worker updateShapesWorker', startTime);
 
-    const updatedShapeId = await processShape(workerData.shape);
+    const updatedShapeId = await processShape(shape);
 
     parentPort.postMessage(updatedShapeId);
 
@@ -40,5 +40,3 @@ const updateShapesWorker = async () => {
     console.error(error);
   }
 };
-
-await updateShapesWorker();
