@@ -133,6 +133,8 @@ async function getTripSchedule(trip_id) {
  */
 
 module.exports = async ({ chunk }) => {
+  console.log('GTFSParseDB', GTFSParseDB);
+  console.log('GTFSParseDB.connection', GTFSParseDB.connection);
   // Initiate variables to keep track of updated _ids
   let updatedLineIds = [];
   let updatedPatternIds = [];
