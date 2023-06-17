@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const GTFSAPIDB = require('./databases/gtfsapidb');
 const rateLimit = require('express-rate-limit');
+const { Readable } = require('stream');
 
 // Apply rate limiter to all requests: maximum of 50 requests per minute
 app.use(
