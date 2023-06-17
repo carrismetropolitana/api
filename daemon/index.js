@@ -74,7 +74,7 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 9: Update Shapes');
-    await updateShapes();
+    // await updateShapes();
 
     console.log();
     console.log('STEP 10: Update Lines & Patterns');
