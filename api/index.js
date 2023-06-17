@@ -126,6 +126,28 @@ app.get('/stops/:stop_id', async (req, res) => {
   }
 });
 
+//
+app.get('/api/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
+  try {
+    const pdf_base_url = 'https://github.com/carrismetropolitana/pdfs/horarios/';
+    const pdf_filename = `horario-singular-${req.params.stop_id}-${req.params.route_short_name}-${req.params.direction_id}.pdf`;
+    const response = await fetch(pdf_base_url + pdf_filename + '?raw=true');
+    if (response.ok) {
+      console.log(`🟢 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Exists`);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${pdf_filename}"`);
+      const pdfStream = Readable.from(response.body);
+      pdfStream.pipe(res);
+    } else {
+      console.log(`🟡 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Not Found`);
+      res.status(404).send();
+    }
+  } catch (err) {
+    console.log(`🔴 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": Server Error`, err);
+    res.status(500).send({});
+  }
+});
+
 // set port, listen for requests
 const PORT = 5050;
 app.listen(5050, async () => {
