@@ -184,6 +184,7 @@ module.exports = async ({ chunk }) => {
     }
     // Save this line to MongoDB and hold on to the returned _id value
     const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
+    console.log(`Done with line ${line.code}`);
     // Send result to main thread
     updatedLineIds.push(updatedLineDocument._id.toString());
     //
