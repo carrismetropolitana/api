@@ -143,7 +143,9 @@ module.exports = async ({ chunk }) => {
     // Iterate on each route for this line
     for (const route of line.routes) {
       // Get all trips associated with this route
+      console.log('Query trips table for line', line.code);
       const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      console.log('Done query trips table for line', line.code);
       // Process all trips to create an array of patterns
       for (const trip of allTrips.rows) {
         // Setup a temporary key with the distinguishable values for each trip
