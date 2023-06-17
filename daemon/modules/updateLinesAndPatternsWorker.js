@@ -1,6 +1,6 @@
 /* * */
 /* IMPORTS */
-const GTFSParseDB = require('../databases/gtfsparsedb');
+const GTFSParseDB = require('../databases/gtfsparsedb2');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 
 //
@@ -133,6 +133,8 @@ async function getTripSchedule(trip_id) {
  */
 
 module.exports = async ({ chunk }) => {
+  // Create new connection to database
+  const dbconnection = new GTFSParseDB();
   // Initiate variables to keep track of updated _ids
   let updatedLineIds = [];
   let updatedPatternIds = [];
@@ -144,7 +146,7 @@ module.exports = async ({ chunk }) => {
     for (const route of line.routes) {
       // Get all trips associated with this route
       console.log('Query trips table for line', line.code);
-      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      const allTrips = await dbconnection.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
       console.log('Done query trips table for line', line.code);
       // Process all trips to create an array of patterns
       for (const trip of allTrips.rows) {
