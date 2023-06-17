@@ -44,7 +44,7 @@ module.exports = async () => {
     return result;
   }, []);
   // Split the array into chunks
-  const allChunks = splitIntoChunks(allLines, 5);
+  const allChunks = splitIntoChunks(allLines, 1);
   // Initiate the worker threads for processing Lines in parallel
   console.log(`⤷ Setting up workers for ${allLines.length} Lines divided into ${allChunks.length} chunks...`);
   const piscina = new Piscina({ filename: resolve(__dirname, 'updateLinesAndPatternsWorker.js') });
