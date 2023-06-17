@@ -127,7 +127,7 @@ app.get('/stops/:stop_id', async (req, res) => {
 });
 
 //
-app.get('/api/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
+app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
   try {
     const pdf_base_url = 'https://github.com/carrismetropolitana/pdfs/horarios/';
     const pdf_filename = `horario-singular-${req.params.stop_id}-${req.params.route_short_name}-${req.params.direction_id}.pdf`;
