@@ -102,6 +102,7 @@ module.exports = async () => {
 
   await GTFSParseDB.connection.query(`CREATE TABLE trips (
         route_id VARCHAR(255),
+        pattern_id VARCHAR(255),
         service_id VARCHAR(255),
         trip_id VARCHAR(255),
         trip_headsign VARCHAR(255),
