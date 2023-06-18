@@ -3,7 +3,6 @@
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
-const turf = require('@turf/turf');
 
 //
 //
