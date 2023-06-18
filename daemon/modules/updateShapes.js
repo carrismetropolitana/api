@@ -1,6 +1,7 @@
 const GTFSParseDB = require('../databases/gtfsparsedb');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const timeCalc = require('./timeCalc');
+const turf = require('@turf/turf');
 
 module.exports = async () => {
   // Record the start time to later calculate operation duration
