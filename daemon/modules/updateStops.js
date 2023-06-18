@@ -12,10 +12,12 @@ const timeCalc = require('./timeCalc');
  */
 module.exports = async () => {
   // Record the start time to later calculate operation duration
-  console.log(`⤷ Updating Stops...`);
   const startTime = process.hrtime();
   // Query Postgres for all unique stops by stop_id
+  console.log(`⤷ Querying database...`);
   const allStops = await GTFSParseDB.connection.query('SELECT * FROM stops');
+  // Log progress
+  console.log(`⤷ Updating Stops...`);
   // Initate a temporary variable to hold updated Stops
   let updatedStopIds = [];
   // For each stop, update its entry in the database

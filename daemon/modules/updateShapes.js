@@ -24,6 +24,8 @@ module.exports = async () => {
         GROUP BY
             shape_id
     `);
+  // Log progress
+  console.log(`⤷ Updating Shapes...`);
   // Initiate variable to keep track of updated _ids
   let updatedShapeIds = [];
   // Loop through each object in each chunk
