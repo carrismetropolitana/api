@@ -54,10 +54,12 @@ async function getTrips(route_id) {
     `
         SELECT
             trip_id,
+            pattern_id,
             direction_id,
             trip_headsign,
             service_id,
-            shape_id
+            shape_id,
+            calendar_desc
         FROM
             trips
         WHERE
@@ -230,13 +232,13 @@ module.exports = {
 
       // Simplify trips array by removing non-common attributes
       const allTrips_simplified = allTrips_raw.map((trip) => {
-        return { direction_id: trip.direction_id, headsign: trip.trip_headsign, shape_id: trip.shape_id };
+        return { direction_id: trip.direction_id, pattern_id: trip.pattern_id, headsign: trip.trip_headsign, shape_id: trip.shape_id };
       });
 
       // Deduplicate simplified trips array to keep only common attributes.
       // This essentially results in an array of 'directions'. Save it to the route object.
       const allDirections = allTrips_simplified.filter((value, index, array) => {
-        return index === array.findIndex((valueInner) => JSON.stringify(valueInner) === JSON.stringify(value));
+        return index === array.findIndex((valueInner) => valueInner.pattern_id === value.pattern_id);
       });
 
       // LOOP 2 — Directions
@@ -245,6 +247,7 @@ module.exports = {
         // Initiate the formatted direction object
         let formattedDirection = {
           direction_id: currentDirection.direction_id,
+          pattern_id: currentDirection.pattern_id,
           headsign: currentDirection.headsign,
           shape: [],
           trips: [],
@@ -266,6 +269,7 @@ module.exports = {
           let formattedTrip = {
             trip_id: currentTrip.trip_id,
             service_id: currentTrip.service_id,
+            calendar_desc: currentTrip.calendar_desc,
             dates: [],
             schedule: [],
           };

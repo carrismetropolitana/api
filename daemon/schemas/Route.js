@@ -41,6 +41,10 @@ module.exports = new mongoose.Schema(
     ],
     directions: [
       {
+        pattern_id: {
+          type: String,
+          maxlength: 1,
+        },
         direction_id: {
           type: String,
           maxlength: 1,
@@ -80,6 +84,10 @@ module.exports = new mongoose.Schema(
               maxlength: 100,
             },
             service_id: {
+              type: String,
+              maxlength: 100,
+            },
+            calendar_desc: {
               type: String,
               maxlength: 100,
             },

@@ -18,7 +18,7 @@ module.exports = {
     await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);
     await prepareFileImport('stop_times', ['trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence']);
     await prepareFileImport('stops', ['stop_id', 'stop_name', 'stop_lat', 'stop_lon']);
-    await prepareFileImport('trips', ['route_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id']);
+    await prepareFileImport('trips', ['route_id', 'pattern_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id', 'calendar_desc']);
 
     await importFileToTable('calendar_dates');
     await importFileToTable('routes');
