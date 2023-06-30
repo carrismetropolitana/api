@@ -12,8 +12,7 @@ module.exports = new mongoose.Schema(
       unique: true,
     },
     extension: {
-      type: String,
-      maxlength: 100,
+      type: Number,
     },
     points: [
       {

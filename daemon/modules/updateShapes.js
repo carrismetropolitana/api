@@ -41,7 +41,8 @@ module.exports = async () => {
     parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
     // Calculate shape extension
     const shapeExtensionKm = turf.length(parsedShape.geojson, { units: 'kilometers' });
-    parsedShape.extension = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
+    const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
+    parsedShape.extension = parseInt(shapeExtensionMeters);
     // Update or create new document
     const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
     // Return _id to main thread
