@@ -45,7 +45,8 @@ module.exports = {
         arrival_time TIME,
         departure_time TIME,
         stop_id VARCHAR(6),
-        stop_sequence SMALLINT
+        stop_sequence SMALLINT,
+        shape_dist_traveled VARCHAR(255)
     );`);
     await GTFSParseDB.connection.execute('ALTER TABLE temp_stop_times ADD KEY `trip_id` (`trip_id`);');
     await GTFSParseDB.connection.execute('ALTER TABLE temp_stop_times ADD KEY `stop_id` (`stop_id`);');
