@@ -320,6 +320,9 @@ module.exports = {
                 formattedRoute.municipalities.push(stopMunicipality[0]);
               }
             }
+
+            console.log('currentStopTime.shape_dist_traveled', currentStopTime.shape_dist_traveled);
+
             // Save formatted stop time
             formattedTrip.schedule.push({
               stop_sequence: currentStopTime.stop_sequence,
