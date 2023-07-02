@@ -144,7 +144,8 @@ async function getStopTimes(trip_id) {
             st.departure_time,
             s.stop_name,
             s.stop_lat,
-            s.stop_lon
+            s.stop_lon,
+            s.shape_dist_traveled
         FROM
             stop_times st
             INNER JOIN stops s ON st.stop_id = s.stop_id
@@ -320,8 +321,6 @@ module.exports = {
                 formattedRoute.municipalities.push(stopMunicipality[0]);
               }
             }
-
-            console.log('currentStopTime.shape_dist_traveled', currentStopTime.shape_dist_traveled);
 
             // Save formatted stop time
             formattedTrip.schedule.push({
