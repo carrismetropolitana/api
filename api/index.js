@@ -27,7 +27,7 @@ app.get('/municipalities', async (req, res) => {
     const foundManyDocuments = await GTFSAPIDB.Municipality.find();
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-      foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
+      foundManyDocuments.sort((a, b) => collator.compare(a.name, b.name));
       console.log('🟢 → Request for "/municipalities/[all]": %s Found', foundManyDocuments.length);
       res.send(foundManyDocuments);
     } else {
