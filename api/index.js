@@ -22,9 +22,45 @@ app.use(function (req, res, next) {
 });
 
 //
+app.get('/municipalities', async (req, res) => {
+  try {
+    const foundManyDocuments = await GTFSAPIDB.Municipality.find();
+    if (foundManyDocuments.length > 0) {
+      const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+      foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
+      console.log('🟢 → Request for "/municipalities/[all]": %s Found', foundManyDocuments.length);
+      res.send(foundManyDocuments);
+    } else {
+      console.log('🟡 → Request for "/municipalities/[all]": Not Found');
+      res.status(404).send([]);
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/municipalities/[all]": Server Error', err);
+    res.status(500).send([]);
+  }
+});
+
+//
+app.get('/municipalities/:code', async (req, res) => {
+  try {
+    const foundOneDocument = await GTFSAPIDB.Municipality.findOne({ code: { $eq: req.params.code } });
+    if (foundOneDocument) {
+      console.log('🟢 → Request for "/municipalities/%s": 1 Found', req.params.code);
+      res.send(foundOneDocument);
+    } else {
+      console.log('🟡 → Request for "/municipalities/%s": Not Found', req.params.code);
+      res.status(404).send({});
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/municipalities/%s": Server Error', req.params.code, err);
+    res.status(500).send({});
+  }
+});
+
+//
 app.get('/lines', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Line.find({});
+    const foundManyDocuments = await GTFSAPIDB.Line.find();
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
@@ -43,7 +79,7 @@ app.get('/lines', async (req, res) => {
 //
 app.get('/lines/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Line.findOne({ code: req.params.code });
+    const foundOneDocument = await GTFSAPIDB.Line.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/lines/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
@@ -60,7 +96,7 @@ app.get('/lines/:code', async (req, res) => {
 //
 app.get('/patterns/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: req.params.code }).populate({ path: 'trips.schedule.stop' });
+    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: { $eq: req.params.code } }).populate({ path: 'trips.schedule.stop' });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/patterns/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
@@ -77,7 +113,7 @@ app.get('/patterns/:code', async (req, res) => {
 //
 app.get('/shapes/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: req.params.code });
+    const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/shapes/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
@@ -94,7 +130,7 @@ app.get('/shapes/:code', async (req, res) => {
 //
 app.get('/stops', async (req, res) => {
   try {
-    const foundManyDocuments = await GTFSAPIDB.Stop.find({});
+    const foundManyDocuments = await GTFSAPIDB.Stop.find();
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
@@ -113,7 +149,7 @@ app.get('/stops', async (req, res) => {
 //
 app.get('/stops/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code });
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
@@ -130,7 +166,7 @@ app.get('/stops/:code', async (req, res) => {
 //
 app.get('/stops/:code/patterns', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: req.params.code }).populate({ path: 'patterns' });
+    const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: req.params.code } }).populate({ path: 'patterns' });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
