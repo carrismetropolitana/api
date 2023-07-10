@@ -408,7 +408,7 @@ module.exports = async () => {
   // 2.5.
   // Log elapsed time in the current operation
   const elapsedTime_global = timeCalc.getElapsedTime(startTime_global);
-  console.log(`⤷ Done updating Lines (${elapsedTime}).`);
+  console.log(`⤷ Done updating Lines (${elapsedTime_global}).`);
 
   //
 };
