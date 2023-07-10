@@ -111,23 +111,6 @@ app.get('/patterns/:code', async (req, res) => {
 });
 
 //
-app.get('/shapes/:code', async (req, res) => {
-  try {
-    const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: { $eq: req.params.code } });
-    if (foundOneDocument) {
-      console.log('🟢 → Request for "/shapes/%s": 1 Found', req.params.code);
-      res.send(foundOneDocument);
-    } else {
-      console.log('🟡 → Request for "/shapes/%s": Not Found', req.params.code);
-      res.status(404).send({});
-    }
-  } catch (err) {
-    console.log('🔴 → Request for "/shapes/%s": Server Error', req.params.code, err);
-    res.status(500).send({});
-  }
-});
-
-//
 app.get('/stops', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Stop.find();
