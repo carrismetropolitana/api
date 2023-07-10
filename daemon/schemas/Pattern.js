@@ -60,7 +60,6 @@ module.exports = new mongoose.Schema({
     shape_code: {
       type: String,
       maxlength: 100,
-      unique: true,
     },
     extension: {
       type: Number,
