@@ -60,10 +60,6 @@ async function appInitPoint() {
     // console.log('STEP 5: Import extracted files into created tables');
     // await saveFilesToTables();
 
-    // console.log();
-    // console.log('STEP 6: Cleanup temp files');
-    // await filemanager.removeTempDirectory();
-
     console.log();
     console.log('STEP 7: Update Municipalities');
     await updateMunicipalities();
