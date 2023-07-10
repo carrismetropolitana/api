@@ -1,7 +1,6 @@
 /* * */
 /* IMPORTS */
 const { mongoose } = require('mongoose');
-const StopSchema = require('./Stop');
 
 /* * */
 /* Schema for MongoDB ["Pattern"] Object */
@@ -57,7 +56,7 @@ module.exports = new mongoose.Schema({
   ],
 
   shape: {
-    shape_code: {
+    code: {
       type: String,
       maxlength: 100,
     },
@@ -109,7 +108,105 @@ module.exports = new mongoose.Schema({
 
   path: [
     {
-      stop: StopSchema,
+      stop: {
+        //
+        // General
+
+        code: {
+          type: String,
+          maxlength: 6,
+        },
+        name: {
+          type: String,
+          maxlength: 100,
+        },
+        short_name: {
+          type: String,
+          maxlength: 100,
+        },
+        tts_name: {
+          type: String,
+          maxlength: 100,
+        },
+        latitude: {
+          type: Number,
+          required: true,
+        },
+        longitude: {
+          type: Number,
+          required: true,
+        },
+
+        //
+        // Administrative
+
+        locality: {
+          type: String,
+          maxlength: 50,
+        },
+        parish_code: {
+          type: String,
+          maxlength: 50,
+        },
+        parish_name: {
+          type: String,
+          maxlength: 50,
+        },
+        municipality_code: {
+          type: String,
+          maxlength: 50,
+        },
+        municipality_name: {
+          type: String,
+          maxlength: 50,
+        },
+        district_code: {
+          type: String,
+          maxlength: 50,
+        },
+        district_name: {
+          type: String,
+          maxlength: 50,
+        },
+        region_code: {
+          type: String,
+          maxlength: 50,
+        },
+        region_name: {
+          type: String,
+          maxlength: 50,
+        },
+
+        //
+        // Accessibility
+
+        wheelchair_boarding: {
+          type: String,
+          maxlength: 100,
+        },
+
+        //
+        // Services
+
+        near_services: [
+          {
+            type: String,
+            maxlength: 50,
+          },
+        ],
+
+        //
+        // Intermodal Conections
+
+        intermodal_connections: [
+          {
+            type: String,
+            maxlength: 50,
+          },
+        ],
+
+        //
+      },
 
       allow_pickup: {
         type: Boolean,
@@ -124,7 +221,7 @@ module.exports = new mongoose.Schema({
   ],
   trips: [
     {
-      trip_code: {
+      code: {
         type: String,
         maxlength: 50,
       },

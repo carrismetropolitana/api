@@ -38,7 +38,7 @@ async function getParsedShape(shape_id) {
 
   // Initiate variable to keep track of updated _ids
   let parsedShape = {
-    shape_code: shape_id,
+    code: shape_id,
   };
 
   // Sort points to match sequence
@@ -314,7 +314,7 @@ module.exports = async () => {
         // 2.2.2.2.6.
         // Create a new formatted trip object
         const formattedTrip = {
-          trip_code: trip.trip_id,
+          code: trip.trip_id,
           calendar_code: trip.service_id,
           dates: tripDates,
           schedule: formattedSchedule,
