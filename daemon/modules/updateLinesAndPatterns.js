@@ -227,8 +227,8 @@ module.exports = async () => {
           const samePatternId = pattern.code === trip.pattern_id;
           const sameDirectionId = pattern.direction === trip.direction_id;
           const sameHeadsign = pattern.headsign === trip.headsign;
-          const sameShapeId = pattern.shape.shape_code === trip.shape_id;
-          return sameDirectionId && samePatternId && sameHeadsign && sameShapeId;
+          //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
+          return sameDirectionId && samePatternId && sameHeadsign;
         });
 
         // 2.2.2.2.2.
@@ -325,10 +325,13 @@ module.exports = async () => {
         // then update it with the current formatted trip and new valid_on dates
         // and skip to the next iteration.
         if (pattern) {
+          console.log('has pattern');
           pattern.valid_on = [...new Set([...pattern.valid_on, ...tripDates])];
           pattern.trips.push(formattedTrip);
           continue;
         }
+
+        console.log('doe not has pattern');
 
         // 2.2.2.2.8.
         // If no pattern was found matching the unique combination,
