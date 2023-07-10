@@ -66,13 +66,24 @@ const singlePattern = {
   headsign: '',
   color: '',
   text_color: '',
+  valid_on: ['20230101'],
+  shape_code: '',
+  path: [],
   trips: [
     {
       trip_code: '',
       calendar_code: '',
-      path_code: '',
       dates: ['20230101'],
       schedule: [
+        {
+          stop_code: '123456',
+          allow_pickup: true,
+          allow_drop_off: true,
+          distance_delta: 2500,
+          arrival_time: '12:13:14',
+          arrival_time_operation: '12:13:14',
+          travel_time: 2427,
+        },
         {
           stop_code: '123456',
           allow_pickup: true,

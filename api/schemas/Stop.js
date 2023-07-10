@@ -42,7 +42,7 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    parish_id: {
+    parish_code: {
       type: String,
       maxlength: 50,
     },
@@ -50,7 +50,7 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    municipality_id: {
+    municipality_code: {
       type: String,
       maxlength: 50,
     },
@@ -58,7 +58,7 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    district_id: {
+    district_code: {
       type: String,
       maxlength: 50,
     },
@@ -66,7 +66,7 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    region_id: {
+    region_code: {
       type: String,
       maxlength: 50,
     },
