@@ -38,7 +38,7 @@ async function getParsedShape(shape_id) {
 
   // Initiate variable to keep track of updated _ids
   let parsedShape = {
-    code: shape_id,
+    shape_code: shape_id,
   };
 
   // Sort points to match sequence
