@@ -96,7 +96,7 @@ app.get('/lines/:code', async (req, res) => {
 //
 app.get('/patterns/:code', async (req, res) => {
   try {
-    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: { $eq: req.params.code } }).populate({ path: 'trips.schedule.stop' });
+    const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
       console.log('🟢 → Request for "/patterns/%s": 1 Found', req.params.code);
       res.send(foundOneDocument);
