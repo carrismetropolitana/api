@@ -1,21 +1,21 @@
 #!/bin/bash
 
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
-domain=schedules-test.carrismetropolitana.pt
+domain=api.carrismetropolitana.pt
 email="carrismetropolitana@gmail.com" # Adding a valid address is strongly recommended
 
 
 echo "### Cleaning letsencrypt directory..."
-sudo rm -Rf "./options/letsencrypt/"
+sudo rm -Rf "./letsencrypt/"
 
 echo "### Downloading recommended TLS parameters ..."
-mkdir -p "./options/letsencrypt"
-curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "./options/letsencrypt/options-ssl-nginx.conf"
-curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "./options/letsencrypt/ssl-dhparams.pem"
+mkdir -p "./letsencrypt"
+curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "./letsencrypt/options-ssl-nginx.conf"
+curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "./letsencrypt/ssl-dhparams.pem"
 echo
 
 echo "### Creating dummy certificate for $domain ..."
-mkdir -p "./options/letsencrypt/live/$domain"
+mkdir -p "./letsencrypt/live/$domain"
 docker compose run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:4096 -days 1\
     -keyout '/etc/letsencrypt/live/$domain/privkey.pem' \

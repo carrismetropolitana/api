@@ -29,8 +29,8 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./options/nginx:/etc/nginx/conf.d
-      - ./options/letsencrypt:/etc/letsencrypt
+      - ./nginx:/etc/nginx/conf.d
+      - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     networks:
       - backend-network
@@ -43,7 +43,7 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     volumes:
-      - ./options/letsencrypt:/etc/letsencrypt
+      - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
@@ -106,7 +106,7 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./options/gtfsparsedb/:/etc/postgresql/
+      - ./gtfsparsedb/:/etc/postgresql/
       - ./data-temp/:/data-temp
     environment:
       - POSTGRES_USER=gtfsparsedbuser
