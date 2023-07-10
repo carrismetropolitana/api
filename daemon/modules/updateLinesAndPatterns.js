@@ -130,7 +130,7 @@ module.exports = async () => {
 
   // 0.
   // Record the start time to later calculate operation duration
-  const startTime = process.hrtime();
+  const startTime_global = process.hrtime();
 
   //
   //
@@ -200,6 +200,10 @@ module.exports = async () => {
   // by 'pattern_id', 'direction_id'. 'headsign' and 'shape_id'.
   for (const line of allLines) {
     //
+    // 2.2.0.
+    // Record the start time to later calculate operation duration
+    const startTime_line = process.hrtime();
+
     // 2.2.1.
     // Initiate holding variables
     let uniqueLinePatterns = [];
@@ -381,8 +385,12 @@ module.exports = async () => {
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
     const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
-    console.log(`⤷ Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns.`);
     updatedLineIds.push(updatedLineDocument._id.toString());
+
+    // 2.2.6.
+    // Log operation details and elapsed time
+    const elapsedTime_line = timeCalc.getElapsedTime(startTime_line);
+    console.log(`⤷ Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns in ${elapsedTime_line}.`);
 
     //
   }
@@ -399,7 +407,7 @@ module.exports = async () => {
 
   // 2.5.
   // Log elapsed time in the current operation
-  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  const elapsedTime_global = timeCalc.getElapsedTime(startTime_global);
   console.log(`⤷ Done updating Lines (${elapsedTime}).`);
 
   //
