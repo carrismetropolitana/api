@@ -197,7 +197,7 @@ module.exports = async () => {
   // 2.2.
   // For all trips of all routes of each line,
   // create unique patterns by grouping common trips
-  // by 'pattern_id', 'direction_id'. 'headsign' and 'shape_id'.
+  // by 'pattern_id', 'direction_id'. 'trip_headsign' and 'shape_id'.
   for (const line of allLines) {
     //
     // 2.2.0.
@@ -222,7 +222,7 @@ module.exports = async () => {
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
-      // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'headsign' and 'shape_id'.
+      // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
       for (const trip of allTrips.rows) {
         //
         // 2.2.2.2.1.
@@ -230,7 +230,7 @@ module.exports = async () => {
         const pattern = uniqueLinePatterns.find((pattern) => {
           const samePatternId = pattern.code === trip.pattern_id;
           const sameDirectionId = pattern.direction === trip.direction_id;
-          const sameHeadsign = pattern.headsign === trip.headsign;
+          const sameHeadsign = pattern.headsign === trip.trip_headsign;
           //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
           return sameDirectionId && samePatternId && sameHeadsign;
         });
