@@ -58,4 +58,25 @@ router.get('/:code/patterns', async (req, res) => {
   }
 });
 
+//
+router.get('/:code/realtime', async (req, res) => {
+  try {
+    const result = await PCGIAPI.request('estimatedStopSchedules', {
+      operators: ['41', '42', '43', '44'],
+      stops: [req.params.code],
+      numResults: 15,
+    });
+    if (result) {
+      console.log('🟢 → Request for "/stops/%s/realtime": %s Found', req.params.code, result.length);
+      res.send(result);
+    } else {
+      console.log('🟡 → Request for "/stops/%s/realtime": Not Found', req.params.code);
+      res.status(404).send({});
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/stops/%s/realtime": Server Error', req.params.code, err);
+    res.status(500).send({});
+  }
+});
+
 module.exports = router;

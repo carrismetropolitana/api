@@ -61,6 +61,8 @@ services:
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
       - GTFSAPIDB_NAME=gtfsapidb
+    env_file:
+      - ./.env
 
   daemon:
     image: ghcr.io/carrismetropolitana/schedules-daemon:v2
