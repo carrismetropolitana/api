@@ -341,7 +341,7 @@ module.exports = async () => {
           //
           code: trip.pattern_id,
           direction: trip.direction_id,
-          headsign: trip.headsign,
+          headsign: trip.trip_headsign,
           //
           line_code: line.code,
           short_name: line.short_name,
