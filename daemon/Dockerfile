@@ -1,4 +1,4 @@
-FROM node:lts
+FROM node:alpine
 # Create app directory
 WORKDIR /usr/src/app
 # Install app dependencies
