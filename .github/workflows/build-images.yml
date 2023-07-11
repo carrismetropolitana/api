@@ -1,19 +1,21 @@
-name: Build & Publish Docker images
+name: Build & Publish Docker Images
 
 on:
   push:
     branches:
-      - v2
+      - production
 
 jobs:
-  run:
+  #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  schedules-api:
+    name: 'Build Docker Image (api)'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - name: api
-          - name: daemon
     permissions:
       contents: read
       packages: write
@@ -29,10 +31,41 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Images
+      - name: Build Docker Image - api
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: ./${{ matrix.name }}
-          file: ./${{ matrix.name }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/schedules-api-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
+          context: ./api
+          file: ./api/Dockerfile
+          tags: ghcr.io/carrismetropolitana/schedules-api:${{ github.ref_name }}
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  schedules-daemon:
+    name: 'Build Docker Image (daemon)'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image - daemon
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          context: ./daemon
+          file: ./daemon/Dockerfile
+          tags: ghcr.io/carrismetropolitana/schedules-daemon:${{ github.ref_name }}
