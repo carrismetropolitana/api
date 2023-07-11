@@ -4,6 +4,7 @@ const express = require('express');
 const GTFSAPIDB = require('../databases/gtfsapidb');
 const router = express.Router();
 
+//
 router.get('/', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Municipality.find();
@@ -19,6 +20,23 @@ router.get('/', async (req, res) => {
   } catch (err) {
     console.log('🔴 → Request for "/municipalities/[all]": Server Error', err);
     res.status(500).send([]);
+  }
+});
+
+//
+router.get('/:code', async (req, res) => {
+  try {
+    const foundOneDocument = await GTFSAPIDB.Municipality.findOne({ code: { $eq: req.params.code } });
+    if (foundOneDocument) {
+      console.log('🟢 → Request for "/municipalities/%s": 1 Found', req.params.code);
+      res.send(foundOneDocument);
+    } else {
+      console.log('🟡 → Request for "/municipalities/%s": Not Found', req.params.code);
+      res.status(404).send({});
+    }
+  } catch (err) {
+    console.log('🔴 → Request for "/municipalities/%s": Server Error', req.params.code, err);
+    res.status(500).send({});
   }
 });
 
