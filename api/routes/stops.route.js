@@ -1,7 +1,8 @@
 /* * */
 /* IMPORTS */
 const express = require('express');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const GTFSAPIDB = require('../services/GTFSAPIDB');
+const PCGIAPI = require('../services/PCGIAPI');
 const router = express.Router();
 
 //
