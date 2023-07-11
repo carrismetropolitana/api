@@ -48,7 +48,7 @@ services:
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   api:
-    image: ghcr.io/carrismetropolitana/schedules-api-api:v2
+    image: ghcr.io/carrismetropolitana/schedules-api:v2
     restart: unless-stopped
     logging:
       options:
@@ -63,7 +63,7 @@ services:
       - GTFSAPIDB_NAME=gtfsapidb
 
   daemon:
-    image: ghcr.io/carrismetropolitana/schedules-api-daemon:v2
+    image: ghcr.io/carrismetropolitana/schedules-daemon:v2
     restart: unless-stopped
     logging:
       options:
