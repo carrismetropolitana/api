@@ -2,7 +2,7 @@
 /* IMPORTS */
 const express = require('express');
 const app = express();
-const GTFSAPIDB = require('./databases/gtfsapidb');
+const GTFSAPIDB = require('./services/GTFSAPIDB');
 const rateLimit = require('express-rate-limit');
 
 const municipalitiesRoute = require('./routes/municipalities.route');
