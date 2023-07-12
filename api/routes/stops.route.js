@@ -67,7 +67,9 @@ router.get('/:code/realtime', async (req, res) => {
       numResults: 15,
     });
     if (result) {
+      console.log('before', result);
       delete result.observedDriverId; // Remove useless property
+      console.log('after', result);
       console.log('🟢 → Request for "/stops/%s/realtime": %s Found', req.params.code, result.length);
       res.send(result);
     } else {
