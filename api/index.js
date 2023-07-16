@@ -122,7 +122,7 @@ app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
   try {
     const pdf_base_url = 'https://raw.githubusercontent.com/carrismetropolitana/pdfs/latest/horarios/';
     const pdf_filename = `horario-singular-${req.params.stop_id}-${req.params.route_short_name}-${req.params.direction_id}.pdf`;
-    const response = await fetch(pdf_base_url + pdf_filename);
+    const response = await fetch(pdf_base_url + pdf_filename, { signal: AbortSignal.timeout(3000) });
     if (response.ok) {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${pdf_filename}"`);
