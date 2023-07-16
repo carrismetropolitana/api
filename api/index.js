@@ -25,6 +25,8 @@ app.use(function (req, res, next) {
 
 //
 app.get('/routes', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const foundManyDocuments = await GTFSAPIDB.Route.find({});
     if (foundManyDocuments.length > 0) {
@@ -39,10 +41,13 @@ app.get('/routes', async (req, res) => {
     res.status(500).send([]);
     console.log('🔴 → Request for "/routes/[all]": Server Error', err);
   }
+  console.log('----------');
 });
 
 //
 app.get('/routes/summary', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const foundManyDocuments = await GTFSAPIDB.RouteSummary.find({});
     if (foundManyDocuments.length > 0) {
@@ -57,10 +62,13 @@ app.get('/routes/summary', async (req, res) => {
     res.status(500).send([]);
     console.log('🔴 → Request for "/routes/summary": Server Error', err);
   }
+  console.log('----------');
 });
 
 //
 app.get('/routes/route_id/:route_id', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const foundOneDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
     if (foundOneDocument) {
@@ -74,10 +82,13 @@ app.get('/routes/route_id/:route_id', async (req, res) => {
     res.status(500).send({});
     console.log('🔴 → Request for "/routes/route_id/%s": Server Error', req.params.route_id, err);
   }
+  console.log('----------');
 });
 
 //
 app.get('/routes/route_short_name/:route_short_name', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const foundManyDocuments = await GTFSAPIDB.Route.find({ route_id: { $regex: `^${req.params.route_short_name}` } });
     if (foundManyDocuments.length > 0) {
@@ -91,10 +102,13 @@ app.get('/routes/route_short_name/:route_short_name', async (req, res) => {
     res.status(500).send([]);
     console.log('🔴 → Request for "/routes/route_short_name/%s": Server Error', req.params.route_short_name, err);
   }
+  console.log('----------');
 });
 
 //
 app.get('/stops', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const foundManyDocuments = await GTFSAPIDB.Stop.find({});
     if (foundManyDocuments.length > 0) {
@@ -109,10 +123,13 @@ app.get('/stops', async (req, res) => {
     res.status(500).send([]);
     console.log('🔴 → Request for "/stops/[all]": Server Error', err);
   }
+  console.log('----------');
 });
 
 //
 app.get('/stops/:stop_id', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
     if (foundOneDocument) {
@@ -126,10 +143,13 @@ app.get('/stops/:stop_id', async (req, res) => {
     res.status(500).send({});
     console.log('🔴 → Request for "/stops/%s": Server Error', req.params.stop_id, err);
   }
+  console.log('----------');
 });
 
 //
 app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
+  console.log('----------');
+  console.log('Request IP', req.ip);
   try {
     const pdf_base_url = 'https://raw.githubusercontent.com/carrismetropolitana/pdfs/latest/horarios/';
     const pdf_filename = `horario-singular-${req.params.stop_id}-${req.params.route_short_name}-${req.params.direction_id}.pdf`;
@@ -148,6 +168,7 @@ app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
     res.status(500).send({});
     console.log(`🔴 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": Server Error`, err);
   }
+  console.log('----------');
 });
 
 // set port, listen for requests
