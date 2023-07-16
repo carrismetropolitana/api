@@ -3,23 +3,12 @@
 const express = require('express');
 const app = express();
 const GTFSAPIDB = require('./services/GTFSAPIDB');
-const rateLimit = require('express-rate-limit');
 
 const municipalitiesRoute = require('./routes/municipalities.route');
 const linesRoute = require('./routes/lines.route');
 const patternsRoute = require('./routes/patterns.route');
 const stopsRoute = require('./routes/stops.route');
 const pdfsRoute = require('./routes/pdfs.route');
-
-// Apply rate limiter to all requests: maximum of 50 requests per minute
-app.use(
-  rateLimit({
-    windowMs: 60000, // 60 seconds (1 minute)
-    max: 1000, // Limit each IP to 1000 requests per 'windowMs'
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  })
-);
 
 // Set CORS Header globally
 app.use(function (req, res, next) {

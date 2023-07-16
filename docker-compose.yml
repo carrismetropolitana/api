@@ -32,12 +32,14 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
+    env_file:
+      - ./.env
     networks:
       - backend-network
     ports:
       - 80:80
       - 443:443
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    command: '/bin/sh -c ''sed -i "s/UPTIME_MONITOR_HEADER/${UPTIME_MONITOR_HEADER}/g" "/etc/nginx/conf.d/nginx.conf" && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   certbot:
     image: certbot/certbot
