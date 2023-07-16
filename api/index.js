@@ -28,15 +28,15 @@ app.get('/routes', async (req, res) => {
     const foundManyDocuments = await GTFSAPIDB.Route.find({});
     if (foundManyDocuments.length > 0) {
       foundManyDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
+      res.status(200).send(foundManyDocuments);
       console.log('🟢 → Request for "/routes/[all]": %s Found', foundManyDocuments.length);
-      res.send(foundManyDocuments);
     } else {
-      console.log('🟡 → Request for "/routes/[all]": Not Found');
       res.status(404).send([]);
+      console.log('🟡 → Request for "/routes/[all]": Not Found');
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/[all]": Server Error', err);
     res.status(500).send([]);
+    console.log('🔴 → Request for "/routes/[all]": Server Error', err);
   }
 });
 
@@ -46,15 +46,15 @@ app.get('/routes/summary', async (req, res) => {
     const foundManyDocuments = await GTFSAPIDB.RouteSummary.find({});
     if (foundManyDocuments.length > 0) {
       foundManyDocuments.sort((a, b) => (a.route_id > b.route_id ? 1 : -1));
+      res.status(200).send(foundManyDocuments);
       console.log('🟢 → Request for "/routes/summary": %s Found', foundManyDocuments.length);
-      res.send(foundManyDocuments);
     } else {
-      console.log('🟡 → Request for "/routes/summary": Not Found');
       res.status(404).send([]);
+      console.log('🟡 → Request for "/routes/summary": Not Found');
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/summary": Server Error', err);
     res.status(500).send([]);
+    console.log('🔴 → Request for "/routes/summary": Server Error', err);
   }
 });
 
@@ -63,15 +63,15 @@ app.get('/routes/route_id/:route_id', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Route.findOne({ route_id: req.params.route_id });
     if (foundOneDocument) {
+      res.status(200).send(foundOneDocument);
       console.log('🟢 → Request for "/routes/route_id/%s": 1 Found', req.params.route_id);
-      res.send(foundOneDocument);
     } else {
-      console.log('🟡 → Request for "/routes/route_id/%s": Not Found', req.params.route_id);
       res.status(404).send({});
+      console.log('🟡 → Request for "/routes/route_id/%s": Not Found', req.params.route_id);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/route_id/%s": Server Error', req.params.route_id, err);
     res.status(500).send({});
+    console.log('🔴 → Request for "/routes/route_id/%s": Server Error', req.params.route_id, err);
   }
 });
 
@@ -80,15 +80,15 @@ app.get('/routes/route_short_name/:route_short_name', async (req, res) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.Route.find({ route_id: { $regex: `^${req.params.route_short_name}` } });
     if (foundManyDocuments.length > 0) {
+      res.status(200).send(foundManyDocuments);
       console.log('🟢 → Request for "/routes/route_short_name/%s": %s Found', req.params.route_short_name, foundManyDocuments.length);
-      res.send(foundManyDocuments);
     } else {
-      console.log('🟡 → Request for "/routes/route_short_name/%s": Not Found', req.params.route_short_name);
       res.status(404).send([]);
+      console.log('🟡 → Request for "/routes/route_short_name/%s": Not Found', req.params.route_short_name);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/routes/route_short_name/%s": Server Error', req.params.route_short_name, err);
     res.status(500).send([]);
+    console.log('🔴 → Request for "/routes/route_short_name/%s": Server Error', req.params.route_short_name, err);
   }
 });
 
@@ -98,15 +98,15 @@ app.get('/stops', async (req, res) => {
     const foundManyDocuments = await GTFSAPIDB.Stop.find({});
     if (foundManyDocuments.length > 0) {
       foundManyDocuments.sort((a, b) => (a.stop_id > b.stop_id ? 1 : -1));
+      res.status(200).send(foundManyDocuments);
       console.log('🟢 → Request for "/stops/[all]": %s Found', foundManyDocuments.length);
-      res.send(foundManyDocuments);
     } else {
-      console.log('🟡 → Request for "/stops/[all]": Not Found');
       res.status(404).send([]);
+      console.log('🟡 → Request for "/stops/[all]": Not Found');
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/[all]": Server Error', err);
     res.status(500).send([]);
+    console.log('🔴 → Request for "/stops/[all]": Server Error', err);
   }
 });
 
@@ -115,15 +115,15 @@ app.get('/stops/:stop_id', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ stop_id: req.params.stop_id });
     if (foundOneDocument) {
+      res.status(200).send(foundOneDocument);
       console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.stop_id);
-      res.send(foundOneDocument);
     } else {
-      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.stop_id);
       res.status(404).send({});
+      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.stop_id);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.stop_id, err);
     res.status(500).send({});
+    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.stop_id, err);
   }
 });
 
@@ -134,18 +134,18 @@ app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
     const pdf_filename = `horario-singular-${req.params.stop_id}-${req.params.route_short_name}-${req.params.direction_id}.pdf`;
     const response = await fetch(pdf_base_url + pdf_filename);
     if (response.ok) {
-      console.log(`🟢 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Exists`);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${pdf_filename}"`);
       const pdfStream = Readable.from(response.body);
       pdfStream.pipe(res);
+      console.log(`🟢 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Exists`);
     } else {
-      console.log(`🟡 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Not Found`);
       res.status(404).send();
+      console.log(`🟡 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Not Found`);
     }
   } catch (err) {
-    console.log(`🔴 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": Server Error`, err);
     res.status(500).send({});
+    console.log(`🔴 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": Server Error`, err);
   }
 });
 
