@@ -10,7 +10,7 @@ const { Readable } = require('stream');
 app.use(
   rateLimit({
     windowMs: 30000, // 30 seconds
-    max: 75, // Limit each IP to 50 requests per `window` (here, per 1 minute)
+    max: 75, // Limit each IP to 75 requests per `window` (here, per 30 seconds)
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   })
