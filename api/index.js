@@ -18,6 +18,7 @@ app.use(
 
 // Set CORS Header globally
 app.use(function (req, res, next) {
+  req.setTimeout(30000, () => console.log('Timeout on ', req.originalUrl));
   res.setHeader('Access-Control-Allow-Origin', '*');
   next();
 });
