@@ -134,11 +134,11 @@ app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
       pdfStream.pipe(res);
       console.log(`🟢 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Exists`);
     } else {
-      res.status(404).send();
+      res.status(200).send();
       console.log(`🟡 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": File Not Found`);
     }
   } catch (err) {
-    res.status(500).send({});
+    res.status(200).send();
     console.log(`🔴 → Request for "/api/pdf/${req.params.stop_id}/${req.params.route_short_name}/${req.params.direction_id}": Server Error`, err);
   }
 });
