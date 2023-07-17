@@ -119,6 +119,8 @@ app.get('/stops/:stop_id', async (req, res) => {
 
 //
 app.get('/pdf/:stop_id/:route_short_name/:direction_id', async (req, res) => {
+  res.status(200).send();
+  return;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
