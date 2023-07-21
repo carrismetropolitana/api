@@ -11,7 +11,14 @@ router.get('/', async (req, res) => {
     const result = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');
     if (result) {
       const responseToClient = result.map((element) => {
-        return { vehicle_id: element.Vid, trip_id: element.Lna, latitude: element.Lat, longitude: element.Lng };
+        return {
+          vehicle_id: element.Vid,
+          trip_id: element.Lna,
+          latitude: element.Lat,
+          longitude: element.Lng,
+          heading: element.Coa,
+          speed: element.Spd,
+        };
       });
       console.log('🟢 → Request for "/vehicles/[all]": %s Found', responseToClient.length);
       await res.send(responseToClient);
