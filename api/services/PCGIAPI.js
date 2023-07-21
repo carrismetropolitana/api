@@ -29,21 +29,20 @@ class PCGIAPI {
    * If all is well, then return the raw data response to the parent caller.
    */
 
-  async request(service, body) {
+  async request(service, options = {}) {
     //
 
     // Renew token if no longer valid
     const isTokenExpired = this.expires_at < new Date();
     if (isTokenExpired) await this.authenticate();
 
-    // Do the request
     const response = await fetch(`${PCGI_BASE_URL}/${service}`, {
-      method: 'POST',
+      method: options.method || 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.access_token}`,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(options.body) || undefined,
     });
 
     return await response.json();

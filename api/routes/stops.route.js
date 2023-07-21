@@ -61,10 +61,13 @@ router.get('/:code/patterns', async (req, res) => {
 //
 router.get('/:code/realtime', async (req, res) => {
   try {
-    const result = await PCGIAPI.request('estimatedStopSchedules', {
-      operators: ['41', '42', '43', '44'],
-      stops: [req.params.code],
-      numResults: 15,
+    const result = await PCGIAPI.request('openservices/estimatedStopSchedules', {
+      method: 'POST',
+      body: {
+        operators: ['41', '42', '43', '44'],
+        stops: [req.params.code],
+        numResults: 15,
+      },
     });
     if (result) {
       result.forEach((element) => delete element.observedDriverId); // Remove useless property

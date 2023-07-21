@@ -9,6 +9,7 @@ const linesRoute = require('./routes/lines.route');
 const patternsRoute = require('./routes/patterns.route');
 const shapesRoute = require('./routes/shapes.route');
 const stopsRoute = require('./routes/stops.route');
+const vehiclesRoute = require('./routes/vehicles.route');
 const pdfsRoute = require('./routes/pdfs.route');
 
 // Set CORS Header globally
@@ -29,12 +30,14 @@ app.use('/shapes', shapesRoute);
 
 app.use('/stops', stopsRoute);
 
+app.use('/vehicles', vehiclesRoute);
+
 app.use('/pdfs', pdfsRoute);
 
 // Set port, listen for requests
 const PORT = 5050;
 app.listen(5050, async () => {
   console.log('GTFS API listening on port %s...', PORT);
-  await GTFSAPIDB.connect();
+  //   await GTFSAPIDB.connect();
   console.log();
 });
