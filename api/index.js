@@ -5,6 +5,7 @@ const app = express();
 const GTFSAPIDB = require('./services/GTFSAPIDB');
 
 const municipalitiesRoute = require('./routes/municipalities.route');
+const facilitiesRoute = require('./routes/facilities.route');
 const linesRoute = require('./routes/lines.route');
 const patternsRoute = require('./routes/patterns.route');
 const shapesRoute = require('./routes/shapes.route');
@@ -22,6 +23,8 @@ app.use(function (req, res, next) {
 
 app.use('/municipalities', municipalitiesRoute);
 
+app.use('/facilities', facilitiesRoute);
+
 app.use('/lines', linesRoute);
 
 app.use('/patterns', patternsRoute);
@@ -38,6 +41,6 @@ app.use('/pdfs', pdfsRoute);
 const PORT = 5050;
 app.listen(5050, async () => {
   console.log('GTFS API listening on port %s...', PORT);
-  //   await GTFSAPIDB.connect();
+  await GTFSAPIDB.connect();
   console.log();
 });
