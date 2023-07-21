@@ -8,6 +8,7 @@ class GTFSAPIDB {
     this.connection = mongoose.createConnection(`mongodb://${GTFSAPIDB_USER}:${GTFSAPIDB_PASSWORD}@${GTFSAPIDB_HOST}/${GTFSAPIDB_NAME}?authSource=admin`);
     this.Line = this.connection.model('Line', require('../schemas/Line'));
     this.Municipality = this.connection.model('Municipality', require('../schemas/Municipality'));
+    this.Facility = this.connection.model('Facility', require('../schemas/Facility'));
     this.Pattern = this.connection.model('Pattern', require('../schemas/Pattern'));
     this.Shape = this.connection.model('Shape', require('../schemas/Shape'));
     this.Stop = this.connection.model('Stop', require('../schemas/Stop'));

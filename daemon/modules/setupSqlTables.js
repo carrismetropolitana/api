@@ -6,7 +6,7 @@ module.exports = async () => {
   //
 
   // Drop existing tables
-  await GTFSParseDB.connection.query('DROP TABLE IF EXISTS municipalities, calendar_dates, routes, shapes, stop_times, stops, trips;');
+  await GTFSParseDB.connection.query('DROP TABLE IF EXISTS municipalities, facilities, calendar_dates, routes, shapes, stop_times, stops, trips;');
   console.log('⤷ Dropped existing SQL tables.');
 
   // Create tables
@@ -22,6 +22,31 @@ module.exports = async () => {
     );`);
   await GTFSParseDB.connection.query('CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");');
   console.log('⤷ Created SQL table "municipalities".');
+
+  await GTFSParseDB.connection.query(`CREATE TABLE facilities (
+        facility_id VARCHAR(255),
+        facility_type VARCHAR(255),
+        facility_name VARCHAR(255),
+        facility_lat VARCHAR(255),
+        facility_lon VARCHAR(255),
+        facility_phone VARCHAR(255),
+        facility_email VARCHAR(255),
+        facility_url VARCHAR(255),
+        address VARCHAR(255),
+        postal_code VARCHAR(255),
+        locality VARCHAR(255),
+        parish_id VARCHAR(255),
+        parish_name VARCHAR(255), 
+        municipality_id VARCHAR(255),
+        municipality_name VARCHAR(255),
+        district_id VARCHAR(255),
+        district_name VARCHAR(255),
+        region_id VARCHAR(255),
+        region_name VARCHAR(255),
+        facility_stops VARCHAR(255)
+    );`);
+  await GTFSParseDB.connection.query('CREATE INDEX facilities_facility_id_idx ON facilities ("facility_id");');
+  console.log('⤷ Created SQL table "facilities".');
 
   await GTFSParseDB.connection.query(`CREATE TABLE calendar_dates (
         service_id VARCHAR(255),

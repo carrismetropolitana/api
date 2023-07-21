@@ -9,6 +9,7 @@ const filemanager = require('./modules/filemanager');
 const setupSqlTables = require('./modules/setupSqlTables');
 const saveFilesToTables = require('./modules/saveFilesToTables');
 const updateMunicipalities = require('./modules/updateMunicipalities');
+const updateFacilities = require('./modules/updateFacilities');
 const updateStops = require('./modules/updateStops');
 const updateShapes = require('./modules/updateShapes');
 const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
@@ -64,19 +65,23 @@ async function appInitPoint() {
     await updateMunicipalities();
 
     console.log();
-    console.log('STEP 8: Update Stops');
+    console.log('STEP 8: Update Facilities');
+    await updateFacilities();
+
+    console.log();
+    console.log('STEP 9: Update Stops');
     await updateStops();
 
     console.log();
-    console.log('STEP 9: Update Shapes');
+    console.log('STEP 10: Update Shapes');
     await updateShapes();
 
     console.log();
-    console.log('STEP 10: Update Lines & Patterns');
+    console.log('STEP 11: Update Lines & Patterns');
     await updateLinesAndPatterns();
 
     console.log();
-    console.log('STEP 11: Disconnect from databases...');
+    console.log('STEP 12: Disconnect from databases...');
     await GTFSParseDB.disconnect();
     await GTFSAPIDB.disconnect();
 

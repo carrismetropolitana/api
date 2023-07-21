@@ -3,41 +3,50 @@
 const { mongoose } = require('mongoose');
 
 /* * */
-/* Schema for MongoDB ["Stop"] Object */
+/* Schema for MongoDB ["Facility"] Object */
 module.exports = new mongoose.Schema(
   {
-    //
-    // General
-
     code: {
       type: String,
-      maxlength: 6,
+      maxlength: 50,
       unique: true,
+    },
+    type: {
+      type: String,
+      maxlength: 50,
     },
     name: {
       type: String,
-      maxlength: 100,
+      maxlength: 50,
     },
-    short_name: {
-      type: String,
-      maxlength: 100,
-    },
-    tts_name: {
-      type: String,
-      maxlength: 100,
-    },
-    lat: {
+    latitude: {
       type: Number,
       required: true,
     },
-    lon: {
+    longitude: {
       type: Number,
       required: true,
     },
-
-    //
-    // Administrative
-
+    phone: {
+      type: String,
+      maxlength: 50,
+    },
+    email: {
+      type: String,
+      maxlength: 50,
+    },
+    url: {
+      type: String,
+      maxlength: 50,
+    },
+    address: {
+      type: String,
+      maxlength: 50,
+    },
+    postal_code: {
+      type: String,
+      maxlength: 50,
+    },
     locality: {
       type: String,
       maxlength: 50,
@@ -74,49 +83,17 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-
-    //
-    // Accessibility
-
-    wheelchair_boarding: {
-      type: String,
-      maxlength: 100,
-    },
-
-    //
-    // Services
-
-    near_services: [
+    facility_stops: [
       {
         type: String,
-        maxlength: 50,
+        maxlength: 6,
       },
     ],
-
-    //
-    // Intermodal Conections
-
-    intermodal_connections: [
-      {
-        type: String,
-        maxlength: 50,
-      },
-    ],
-
-    //
   },
   {
     id: false,
+    timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    virtuals: {
-      patterns: {
-        options: {
-          ref: 'Pattern',
-          localField: 'code',
-          foreignField: 'trips.schedule.stop_code',
-        },
-      },
-    },
   }
 );

@@ -14,6 +14,28 @@ module.exports = async () => {
   fs.mkdirSync('/data-temp/gtfs/prepared/');
 
   await prepareFileImport('municipalities', ['municipality_prefix', 'municipality_id', 'municipality_name', 'district_id', 'district_name', 'region_id', 'region_name']);
+  await prepareFileImport('facilities', [
+    'facility_id',
+    'facility_type',
+    'facility_name',
+    'facility_lat',
+    'facility_lon',
+    'facility_phone',
+    'facility_email',
+    'facility_url',
+    'address',
+    'postal_code',
+    'locality',
+    'parish_id',
+    'parish_name',
+    'municipality_id',
+    'municipality_name',
+    'district_id',
+    'district_name',
+    'region_id',
+    'region_name',
+    'facility_stops',
+  ]);
   await prepareFileImport('calendar_dates', ['service_id', 'date']);
   await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
   await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);
@@ -56,6 +78,7 @@ module.exports = async () => {
   ]);
 
   await importFileToTable('municipalities');
+  await importFileToTable('facilities');
   await importFileToTable('calendar_dates');
   await importFileToTable('routes');
   await importFileToTable('shapes');

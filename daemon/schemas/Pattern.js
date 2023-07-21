@@ -128,11 +128,11 @@ module.exports = new mongoose.Schema({
           type: String,
           maxlength: 100,
         },
-        latitude: {
+        lat: {
           type: Number,
           required: true,
         },
-        longitude: {
+        lon: {
           type: Number,
           required: true,
         },
