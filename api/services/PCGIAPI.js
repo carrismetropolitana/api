@@ -42,7 +42,7 @@ class PCGIAPI {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.access_token}`,
       },
-      body: JSON.stringify(options.body) || undefined,
+      body: options.body ? JSON.stringify(options.body) : undefined,
     });
 
     return await response.json();
