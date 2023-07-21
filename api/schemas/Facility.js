@@ -19,11 +19,11 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    latitude: {
+    lat: {
       type: Number,
       required: true,
     },
-    longitude: {
+    lon: {
       type: Number,
       required: true,
     },
@@ -83,7 +83,7 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    facility_stops: [
+    stops: [
       {
         type: String,
         maxlength: 6,
