@@ -7,6 +7,7 @@ const GTFSAPIDB = require('./services/GTFSAPIDB');
 const municipalitiesRoute = require('./routes/municipalities.route');
 const linesRoute = require('./routes/lines.route');
 const patternsRoute = require('./routes/patterns.route');
+const shapesRoute = require('./routes/shapes.route');
 const stopsRoute = require('./routes/stops.route');
 const pdfsRoute = require('./routes/pdfs.route');
 
@@ -23,6 +24,8 @@ app.use('/municipalities', municipalitiesRoute);
 app.use('/lines', linesRoute);
 
 app.use('/patterns', patternsRoute);
+
+app.use('/shapes', shapesRoute);
 
 app.use('/stops', stopsRoute);
 
