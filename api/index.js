@@ -4,6 +4,7 @@ const express = require('express');
 const app = express();
 const GTFSAPIDB = require('./services/GTFSAPIDB');
 
+const alertsRoute = require('./routes/alerts.route');
 const municipalitiesRoute = require('./routes/municipalities.route');
 const facilitiesRoute = require('./routes/facilities.route');
 const linesRoute = require('./routes/lines.route');
@@ -20,6 +21,8 @@ app.use(function (req, res, next) {
 });
 
 // ROUTES
+
+app.use('/alerts', alertsRoute);
 
 app.use('/municipalities', municipalitiesRoute);
 
