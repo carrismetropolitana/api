@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
       var FeedMessage = root.lookupType('transit_realtime.FeedMessage');
       var FeedHeader = root.lookupType('transit_realtime.FeedHeader');
 
-      const header = FeedHeader.create(allAlerts.header);
+      const header = FeedHeader.create({ ...allAlerts.header, gtfs_realtime_version: '2.0', incrementality: 0 });
 
       const finalMessage = FeedMessage.create({ header: header });
 
