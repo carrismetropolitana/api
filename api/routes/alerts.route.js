@@ -4,12 +4,31 @@ const express = require('express');
 const GTFSAPIDB = require('../services/GTFSAPIDB');
 const router = express.Router();
 const protobuf = require('protobufjs');
+const GTFSRealTimeBindings = require('../protos/gtfsrt');
 //
 router.get('/', async (req, res) => {
   try {
     const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts');
     const allAlerts = await allAlertsResponse.json();
-    console.log(allAlerts);
+
+    // console.log(GTFSRealTimeBindings.transit_realtime.FeedMessage);
+
+    const message = GTFSRealTimeBindings.transit_realtime.FeedMessage.create({
+      FeedHeader: GTFSRealTimeBindings.transit_realtime.FeedHeader.encode({
+        gtfsRealtimeVersion: '2.0',
+        timestamp: Date.now(),
+        incrementality: 0,
+      }),
+    });
+
+    var buffer = GTFSRealTimeBindings.transit_realtime.FeedMessage.encode(message).finish();
+
+    console.log('buffer', buffer);
+    console.log('Uint8Array(buffer)', Uint8Array(buffer));
+
+    await res.send(buffer);
+
+    return;
 
     protobuf.load('./protos/gtfs-realtime.proto', async function (err, root) {
       if (err) throw err;
@@ -25,8 +44,6 @@ router.get('/', async (req, res) => {
 
       await res.send(buffer);
     });
-
-    return;
 
     protobuf.load('../protos/gtfs-realtime.proto', function (err, root) {
       if (err) throw err;
