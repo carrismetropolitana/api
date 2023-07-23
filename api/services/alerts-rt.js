@@ -1,5 +1,5 @@
 const protobuf = require('protobufjs');
-const gtfsRealtime = protobuf.loadSync('gtfs-realtime.proto');
+const gtfsRealtime = protobuf.loadSync('./gtfs-realtime.proto');
 
 function createAlertFeed(alertJson) {
   const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
