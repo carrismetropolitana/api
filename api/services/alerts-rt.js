@@ -74,14 +74,14 @@ function createAlertFeed(alertJson) {
 
   // Decode binary to JSON
   const testDecodeMessage = FeedMessage.decode(buffer);
-  const testDecodeMessageJson = FeedMessage.toObject(testDecodeMessage);
+  //   const testDecodeMessageJson = FeedMessage.toObject(testDecodeMessage);
   // json now contains decoded data
-  console.log(testDecodeMessageJson);
-  console.log(testDecodeMessageJson.entity[1]);
-  console.log(testDecodeMessageJson.entity[1].alert);
-  console.log(testDecodeMessageJson.entity[1].alert.activePeriod[0].start);
-  console.log(testDecodeMessageJson.entity.slice(-1)[0]);
-  console.log(testDecodeMessageJson.entity.slice(-1)[0].alert);
+  //   console.log(testDecodeMessageJson);
+  //   console.log(testDecodeMessageJson.entity[1]);
+  //   console.log(testDecodeMessageJson.entity[1].alert);
+  //   console.log(testDecodeMessageJson.entity[1].alert.activePeriod[0].start);
+  //   console.log(testDecodeMessageJson.entity.slice(-1)[0]);
+  //   console.log(testDecodeMessageJson.entity.slice(-1)[0].alert);
   return buffer;
 }
 
