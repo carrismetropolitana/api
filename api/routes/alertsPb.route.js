@@ -11,10 +11,10 @@ router.get('/', async (req, res) => {
     const allAlerts = await allAlertsResponse.json();
     const feedBuffer = alertsRt.createAlertFeed(allAlerts);
     await res.send(feedBuffer);
-    console.log('🟢 → Request for "/alerts/pb": Found');
+    console.log('🟢 → Request for "/alerts.pb": Found');
   } catch (err) {
     await res.status(500).send({});
-    console.log('🔴 → Request for "/alerts/pb": Server Error', err);
+    console.log('🔴 → Request for "/alerts.pb": Server Error', err);
   }
 });
 
