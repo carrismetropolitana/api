@@ -12,15 +12,15 @@ router.get('/', async (req, res) => {
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-      console.log('🟢 → Request for "/stops/[all]": %s Found', foundManyDocuments.length);
       await res.send(foundManyDocuments);
+      console.log('🟢 → Request for "/stops/[all]": %s Found', foundManyDocuments.length);
     } else {
-      console.log('🟡 → Request for "/stops/[all]": Not Found');
       await res.status(404).send([]);
+      console.log('🟡 → Request for "/stops/[all]": Not Found');
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/[all]": Server Error', err);
     await res.status(500).send([]);
+    console.log('🔴 → Request for "/stops/[all]": Server Error', err);
   }
 });
 
@@ -29,15 +29,15 @@ router.get('/:code', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
-      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       await res.send(foundOneDocument);
+      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
     } else {
-      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.code);
       await res.status(404).send({});
+      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.code);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.code, err);
     await res.status(500).send({});
+    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.code, err);
   }
 });
 
@@ -46,15 +46,15 @@ router.get('/:code/patterns', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: req.params.code } }).populate({ path: 'patterns' });
     if (foundOneDocument) {
-      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
       await res.send(foundOneDocument);
+      console.log('🟢 → Request for "/stops/%s": 1 Found', req.params.code);
     } else {
-      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.code);
       await res.status(404).send({});
+      console.log('🟡 → Request for "/stops/%s": Not Found', req.params.code);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.code, err);
     await res.status(500).send({});
+    console.log('🔴 → Request for "/stops/%s": Server Error', req.params.code, err);
   }
 });
 
@@ -71,15 +71,15 @@ router.get('/:code/realtime', async (req, res) => {
     });
     if (result) {
       result.forEach((element) => delete element.observedDriverId); // Remove useless property
-      console.log('🟢 → Request for "/stops/%s/realtime": %s Found', req.params.code, result.length);
       await res.send(result);
+      console.log('🟢 → Request for "/stops/%s/realtime": %s Found', req.params.code, result.length);
     } else {
-      console.log('🟡 → Request for "/stops/%s/realtime": Not Found', req.params.code);
       await res.status(404).send({});
+      console.log('🟡 → Request for "/stops/%s/realtime": Not Found', req.params.code);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/stops/%s/realtime": Server Error', req.params.code, err);
     await res.status(500).send({});
+    console.log('🔴 → Request for "/stops/%s/realtime": Server Error', req.params.code, err);
   }
 });
 

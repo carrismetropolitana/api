@@ -1,7 +1,6 @@
 /* * */
 /* IMPORTS */
 const express = require('express');
-const GTFSAPIDB = require('../services/GTFSAPIDB');
 const PCGIAPI = require('../services/PCGIAPI');
 const router = express.Router();
 
@@ -20,15 +19,15 @@ router.get('/', async (req, res) => {
           speed: element.Spd,
         };
       });
-      console.log('🟢 → Request for "/vehicles/[all]": %s Found', responseToClient.length);
       await res.send(responseToClient);
+      console.log('🟢 → Request for "/vehicles/[all]": %s Found', responseToClient.length);
     } else {
-      console.log('🟡 → Request for "/vehicles/[all]": Not Found');
       await res.status(404).send({});
+      console.log('🟡 → Request for "/vehicles/[all]": Not Found');
     }
   } catch (err) {
-    console.log('🔴 → Request for "/vehicles/[all]": Server Error', err);
     await res.status(500).send({});
+    console.log('🔴 → Request for "/vehicles/[all]": Server Error', err);
   }
 });
 

@@ -11,15 +11,15 @@ router.get('/', async (req, res) => {
     if (foundManyDocuments.length > 0) {
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-      console.log('🟢 → Request for "/facilities/[all]": %s Found', foundManyDocuments.length);
       await res.send(foundManyDocuments);
+      console.log('🟢 → Request for "/facilities/[all]": %s Found', foundManyDocuments.length);
     } else {
-      console.log('🟡 → Request for "/facilities/[all]": Not Found');
       await res.status(404).send([]);
+      console.log('🟡 → Request for "/facilities/[all]": Not Found');
     }
   } catch (err) {
-    console.log('🔴 → Request for "/facilities/[all]": Server Error', err);
     await res.status(500).send([]);
+    console.log('🔴 → Request for "/facilities/[all]": Server Error', err);
   }
 });
 
@@ -28,15 +28,15 @@ router.get('/:code', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Facility.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
-      console.log('🟢 → Request for "/facilities/%s": 1 Found', req.params.code);
       await res.send(foundOneDocument);
+      console.log('🟢 → Request for "/facilities/%s": 1 Found', req.params.code);
     } else {
-      console.log('🟡 → Request for "/facilities/%s": Not Found', req.params.code);
       await res.status(404).send({});
+      console.log('🟡 → Request for "/facilities/%s": Not Found', req.params.code);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/facilities/%s": Server Error', req.params.code, err);
     await res.status(500).send({});
+    console.log('🔴 → Request for "/facilities/%s": Server Error', req.params.code, err);
   }
 });
 

@@ -9,15 +9,15 @@ router.get('/:code', async (req, res) => {
   try {
     const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: { $eq: req.params.code } });
     if (foundOneDocument) {
-      console.log('🟢 → Request for "/patterns/%s": 1 Found', req.params.code);
       await res.send(foundOneDocument);
+      console.log('🟢 → Request for "/patterns/%s": 1 Found', req.params.code);
     } else {
-      console.log('🟡 → Request for "/patterns/%s": Not Found', req.params.code);
       await res.status(404).send({});
+      console.log('🟡 → Request for "/patterns/%s": Not Found', req.params.code);
     }
   } catch (err) {
-    console.log('🔴 → Request for "/patterns/%s": Server Error', req.params.code, err);
     await res.status(500).send({});
+    console.log('🔴 → Request for "/patterns/%s": Server Error', req.params.code, err);
   }
 });
 
