@@ -19,6 +19,9 @@ module.exports = async () => {
   let updatedFacilityIds = [];
   // For each facility, update its entry in the database
   for (const facility of allFacilities.rows) {
+    // Split stops into discrete IDs
+    let parsedFacilityStops = [];
+    if (facility.facility_stops.length) parsedFacilityStops = facility.facility_stops.split(',');
     // Parse facility
     const parsedFacility = {
       code: facility.facility_id,
@@ -40,7 +43,7 @@ module.exports = async () => {
       district_name: facility.district_name,
       region_id: facility.region_id,
       region_name: facility.region_name,
-      stops: facility.facility_stops,
+      stops: parsedFacilityStops,
     };
     // Save to database
     const updatedFacilityDocument = await GTFSAPIDB.Facility.findOneAndReplace({ code: parsedFacility.code }, parsedFacility, { new: true, upsert: true });
