@@ -21,7 +21,7 @@ module.exports = async () => {
   for (const facility of allFacilities.rows) {
     // Split stops into discrete IDs
     let parsedFacilityStops = [];
-    if (facility.facility_stops.length) parsedFacilityStops = facility.facility_stops.split(',');
+    if (facility.facility_stops?.length) parsedFacilityStops = facility.facility_stops.split(',');
     // Parse facility
     const parsedFacility = {
       code: facility.facility_id,
