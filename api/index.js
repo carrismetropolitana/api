@@ -6,6 +6,7 @@ const GTFSAPIDB = require('./services/GTFSAPIDB');
 
 const alertsRoute = require('./routes/alerts.route');
 const alertsPbRoute = require('./routes/alertsPb.route');
+const alerts2PbRoute = require('./routes/alerts2Pb.route');
 const municipalitiesRoute = require('./routes/municipalities.route');
 const facilitiesRoute = require('./routes/facilities.route');
 const linesRoute = require('./routes/lines.route');
@@ -25,6 +26,7 @@ app.use(function (req, res, next) {
 
 app.use('/alerts', alertsRoute);
 app.use('/alerts.pb', alertsPbRoute);
+app.use('/alerts2.pb', alerts2PbRoute);
 
 app.use('/municipalities', municipalitiesRoute);
 
