@@ -2,15 +2,18 @@
 /* IMPORTS */
 const express = require('express');
 const router = express.Router();
-const alertsRt = require('../services/alerts-rt');
+const protobuf = require('protobufjs');
+const gtfsRealtime = protobuf.loadSync(`${process.env.PWD}/services/gtfs-realtime.proto`);
 
 //
 router.get('/', async (req, res) => {
   try {
-    const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts');
+    const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
     const allAlerts = await allAlertsResponse.json();
-    const feedBuffer = alertsRt.createAlertFeed(allAlerts);
-    await res.send(feedBuffer);
+    const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
+    const message = FeedMessage.create(allAlerts);
+    const buffer = FeedMessage.encode(message).finish();
+    await res.send(buffer);
     console.log('🟢 → Request for "/alerts.pb": Found');
   } catch (err) {
     await res.status(500).send({});
