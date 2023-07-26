@@ -13,7 +13,6 @@ const patternsRoute = require('./routes/patterns.route');
 const shapesRoute = require('./routes/shapes.route');
 const stopsRoute = require('./routes/stops.route');
 const vehiclesRoute = require('./routes/vehicles.route');
-const pdfsRoute = require('./routes/pdfs.route');
 
 // Set CORS Header globally
 app.use(function (req, res, next) {
@@ -39,8 +38,6 @@ app.use('/shapes', shapesRoute);
 app.use('/stops', stopsRoute);
 
 app.use('/vehicles', vehiclesRoute);
-
-app.use('/pdfs', pdfsRoute);
 
 // Set port, listen for requests
 const PORT = 5050;
