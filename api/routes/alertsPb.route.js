@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
     const allAlerts = await allAlertsResponse.json();
     const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
-    const message = FeedMessage.create(allAlerts);
+    const message = FeedMessage.fromObject(allAlerts);
     const buffer = FeedMessage.encode(message).finish();
     await res.send(buffer);
     console.log('🟢 → Request for "/alerts.pb": Found');
