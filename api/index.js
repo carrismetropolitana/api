@@ -8,7 +8,6 @@ const { Readable } = require('stream');
 // Set CORS Header globally
 app.use(function (req, res, next) {
   req.setTimeout(5000, () => console.log('Timeout on ', req.originalUrl));
-  res.setHeader('Access-Control-Allow-Origin', '*');
   next();
 });
 
