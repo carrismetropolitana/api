@@ -18,6 +18,76 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 ## Available Endpoints
 
+### `GET /routes`
+
+Returns all routes with all associated schedule information.
+
+_Please avoid using this endpoint, and if you must do so responsibly. It returns a lot of data and may crash your users devices. This endpoint may be occasionally switched off during peak hours._
+
+**Example Response:**
+
+```
+[
+  {
+    route_id: "1001_0",
+    route_short_name: "1001",
+    route_long_name: "Alfragide (Estr Seminario) - Reboleira (Estação)",
+    route_color: "#ED1944",
+    route_text_color: "#FFFFFF",
+    createdAt: "2023-03-27T14:57:59.918Z",
+    updatedAt: "2023-03-29T12:02:31.230Z",
+    municipalities: [
+      {
+        id: "03",
+        value: "Amadora",
+      },
+      ...
+    ],
+    directions: [
+      {
+        direction_id: "0",
+        headsign: "Reboleira (Estação)",
+        shape: [
+          {
+            shape_id: "p0_424",
+            shape_pt_lat: "38.73440170288086",
+            shape_pt_lon: "-9.220534324645996",
+            shape_pt_sequence: "1",
+            shape_dist_traveled: "0",
+          },
+          ...
+        ],
+        trips: [
+          {
+            trip_id: "p0_1001_0_1_0600_0629_0_7",
+            dates: [
+              "20230703",
+              "20230704",
+              ...
+            ],
+            schedule: [
+              {
+                stop_sequence: "1",
+                stop_id: "030001",
+                stop_name: "Alfragide (Hosp Veterinário)",
+                stop_lon: "-9.220518",
+                stop_lat: "38.734441",
+                arrival_time: "06:20:00",
+                departure_time: "06:20:00"
+              },
+              ...
+            ]
+          },
+          ...
+        ]
+      },
+      ...
+    ]
+  },
+  ...
+]
+```
+
 ### `GET /routes/summary`
 
 Returns all routes with the same `route_short_name`, effectively a list of lines.
