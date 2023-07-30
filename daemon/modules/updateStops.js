@@ -20,7 +20,7 @@ module.exports = async () => {
         s.*,
         r.route_ids,
         r.line_ids,
-        t.pattern_ids
+        r.pattern_ids
     FROM
         stops s
     LEFT JOIN (
