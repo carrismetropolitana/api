@@ -4,12 +4,6 @@ const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
 const GTFSAPIDB = require('./databases/gtfsapidb');
 
 //
-fastify.addHook('onResponse', function (req, reply, done) {
-  console.log('---------------------------------------------------------------------------');
-  done();
-});
-
-//
 fastify.get('/routes/summary', async (request, reply) => {
   try {
     const foundManyDocuments = await GTFSAPIDB.RouteSummary.find({});
