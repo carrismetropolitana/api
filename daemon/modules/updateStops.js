@@ -39,7 +39,6 @@ module.exports = async () => {
             stop_id
     ) r ON s.stop_id = r.stop_id;
   `);
-  console.log(allStops.rows[0]);
   // Log progress
   console.log(`⤷ Updating Stops...`);
   // Initate a temporary variable to hold updated Stops
@@ -47,7 +46,7 @@ module.exports = async () => {
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
     // Discover which facilities this stop is near to
-    let facilities = [];
+    const facilities = [];
     if (stop.near_health_clinic) facilities.push('health_clinic');
     if (stop.near_hospital) facilities.push('hospital');
     if (stop.near_university) facilities.push('university');
@@ -84,6 +83,9 @@ module.exports = async () => {
       region_name: stop.region_name,
       wheelchair_boarding: stop.wheelchair_boarding,
       facilities: facilities,
+      lines: stop.line_ids,
+      routes: stop.route_ids,
+      patterns: stop.pattern_ids,
     };
     // Update or create new document
     const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndReplace({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
