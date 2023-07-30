@@ -5,7 +5,6 @@ const PCGIAPI = require('../services/PCGIAPI');
 //
 module.exports.all = async (request, reply) => {
   const allVehicles = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');
-  console.log(allVehicles[0]);
   const allVehiclesFormatted = allVehicles.map((element) => {
     return {
       vehicle_id: element.Vid,
