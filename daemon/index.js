@@ -39,10 +39,10 @@ async function appInitPoint() {
     const startTime = process.hrtime();
     console.log('Starting...');
 
-    // console.log();
-    // console.log('STEP 1: Connect to databases');
-    // await GTFSParseDB.connect();
-    // await GTFSAPIDB.connect();
+    console.log();
+    console.log('STEP 1: Connect to databases');
+    await GTFSParseDB.connect();
+    await GTFSAPIDB.connect();
 
     // console.log();
     // console.log('STEP 2: Fetching latest GTFS archive');
