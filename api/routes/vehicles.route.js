@@ -16,5 +16,5 @@ module.exports.all = async (request, reply) => {
       speed: element.Spd,
     };
   });
-  return reply.send(allVehiclesFormatted);
+  return reply.send(allVehiclesFormatted || []);
 };

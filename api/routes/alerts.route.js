@@ -7,7 +7,7 @@ const gtfsRealtime = protobuf.loadSync(`${process.env.PWD}/services/gtfs-realtim
 module.exports.json = async (request, reply) => {
   const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
   const allAlerts = await allAlertsResponse.json();
-  return reply.send(allAlerts);
+  return reply.send(allAlerts || []);
 };
 
 //

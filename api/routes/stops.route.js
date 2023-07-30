@@ -8,13 +8,13 @@ module.exports.all = async (request, reply) => {
   const foundManyDocuments = await GTFSAPIDB.Stop.find();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-  return reply.send(foundManyDocuments);
+  return reply.send(foundManyDocuments || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
   const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: request.params.code } });
-  return reply.send(foundOneDocument);
+  return reply.send(foundOneDocument || {});
 };
 
 //
@@ -28,5 +28,5 @@ module.exports.singleWithRealtime = async (request, reply) => {
     },
   });
   result.forEach((element) => delete element.observedDriverId); // Remove useless property
-  return reply.send(result);
+  return reply.send(result || {});
 };
