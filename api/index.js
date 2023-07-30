@@ -1,6 +1,8 @@
 /* * */
 /* IMPORTS */
 const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
+const fastifyMongoDbPlugin = require('@fastify/mongodb');
+const { GTFSAPIDB_USER, GTFSAPIDB_PASSWORD, GTFSAPIDB_HOST, GTFSAPIDB_NAME } = process.env;
 const GTFSAPIDB = require('./services/GTFSAPIDB');
 
 const alertsRoute = require('./routes/alerts.route');
@@ -11,6 +13,11 @@ const patternsRoute = require('./routes/patterns.route');
 const shapesRoute = require('./routes/shapes.route');
 const stopsRoute = require('./routes/stops.route');
 const vehiclesRoute = require('./routes/vehicles.route');
+
+fastify.register(fastifyMongoDbPlugin, {
+  forceClose: true,
+  url: `mongodb://${GTFSAPIDB_USER}:${GTFSAPIDB_PASSWORD}@${GTFSAPIDB_HOST}/${GTFSAPIDB_NAME}?authSource=admin`,
+});
 
 //
 // ROUTES
@@ -42,10 +49,7 @@ fastify.get('/vehicles', vehiclesRoute.all);
 //
 // Start Fastify server
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
-  if (err) {
-    console.log('Error starting server:', err);
-    process.exit(1);
-  }
+  if (err) throw err;
   console.log(`Server listening on ${address}`);
   await GTFSAPIDB.connect();
 });
