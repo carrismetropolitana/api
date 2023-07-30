@@ -16,18 +16,39 @@ module.exports = async () => {
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
   const allStops = await GTFSParseDB.connection.query(`
-    SELECT
-        jsonb_build_object('stop_info', row_to_json(s), 'lines', json_agg(t.route_id), 'routes', json_agg(r.route_id)) AS result
-    FROM
-        stops s
-    JOIN
-        stop_times st ON s.stop_id = st.stop_id
-    JOIN
-        trips t ON st.trip_id = t.trip_id
-    JOIN
-        routes r ON t.route_id = r.route_id
-    GROUP BY
-        s.stop_id;
+  SELECT
+  jsonb_build_object(
+      'stop_id', s.stop_id,
+      'stop_info', jsonb_strip_nulls(row_to_json(s)),
+      'lines', t.lines,
+      'routes', r.routes
+  ) AS result
+FROM
+  stops s
+LEFT JOIN (
+  SELECT
+      stop_id,
+      json_agg(route_id) AS lines
+  FROM
+      stop_times st
+  JOIN
+      trips t ON st.trip_id = t.trip_id
+  GROUP BY
+      stop_id
+) t ON s.stop_id = t.stop_id
+LEFT JOIN (
+  SELECT
+      stop_id,
+      json_agg(route_id || '_' || service_id || '_' || direction_id) AS routes
+  FROM
+      stop_times st
+  JOIN
+      trips t ON st.trip_id = t.trip_id
+  JOIN
+      routes r ON t.route_id = r.route_id
+  GROUP BY
+      stop_id
+) r ON s.stop_id = r.stop_id;
   `);
   console.log(allStops[0]);
   // Log progress
