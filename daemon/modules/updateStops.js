@@ -17,7 +17,7 @@ module.exports = async () => {
   console.log(`⤷ Querying database...`);
   const allStops = await GTFSParseDB.connection.query(`
     SELECT
-        jsonb_build_object('stop_info', row_to_json(s), 'lines', json_agg(t.route_id), 'routes', json_agg(r.route_id || '_' || r.service_id || '_' || r.direction_id)) AS result
+        jsonb_build_object('stop_info', row_to_json(s), 'lines', json_agg(t.route_id), 'routes', json_agg(r.route_id)) AS result
     FROM
         stops s
     JOIN
@@ -29,7 +29,7 @@ module.exports = async () => {
     GROUP BY
         s.stop_id;
   `);
-  console.log(allStops);
+  console.log(allStops[0]);
   // Log progress
   console.log(`⤷ Updating Stops...`);
   // Initate a temporary variable to hold updated Stops

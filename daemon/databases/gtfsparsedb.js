@@ -10,6 +10,7 @@ class GTFSParseDB {
       user: GTFSPARSEDB_USER,
       database: GTFSPARSEDB_USER,
       password: GTFSPARSEDB_PASSWORD,
+      connectionTimeoutMillis: 10000,
     });
   }
   async connect() {
