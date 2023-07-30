@@ -13,5 +13,5 @@ module.exports.all = async (request, reply) => {
 //
 module.exports.single = async (request, reply) => {
   const foundOneDocument = await GTFSAPIDB.Facility.findOne({ code: { $eq: request.params.code } });
-  return reply.send(foundOneDocument);
+  return reply.send(foundOneDocument || {});
 };
