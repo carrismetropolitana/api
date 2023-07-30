@@ -1,11 +1,10 @@
 /* * */
 /* IMPORTS */
+const GTFSAPIDB = require('../services/GTFSAPIDB');
 
 //
 module.exports.all = async (request, reply) => {
-  console.log(this);
-  const collection = this.mongo.db.collection('facilities');
-  const foundManyDocuments = await collection.find();
+  const foundManyDocuments = await GTFSAPIDB.Facility.find();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
   return reply.send(foundManyDocuments || []);
@@ -13,8 +12,6 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  console.log(this);
-  const collection = this.mongo.db.collection('facilities');
-  const foundOneDocument = await collection.findOne({ code: { $eq: request.params.code } });
+  const foundOneDocument = await GTFSAPIDB.Facility.findOne({ code: { $eq: request.params.code } });
   return reply.send(foundOneDocument || {});
 };
