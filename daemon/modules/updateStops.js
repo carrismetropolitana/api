@@ -24,7 +24,9 @@ module.exports = async () => {
     LEFT JOIN (
         SELECT
             stop_id,
-            json_agg(DISTINCT r.route_id) AS route_ids
+            json_agg(DISTINCT r.line_id) AS line_ids,
+            json_agg(DISTINCT r.route_id) AS route_ids,
+            json_agg(DISTINCT t.pattern_id) AS pattern_ids
         FROM
             stop_times st
         JOIN
