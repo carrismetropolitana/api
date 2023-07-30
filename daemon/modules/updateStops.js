@@ -35,7 +35,7 @@ module.exports = async () => {
             stop_id
     ) r ON s.stop_id = r.stop_id;
   `);
-  console.log(allStops);
+  console.log(allStops.rows[0]);
   // Log progress
   console.log(`⤷ Updating Stops...`);
   // Initate a temporary variable to hold updated Stops
