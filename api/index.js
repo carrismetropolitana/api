@@ -4,7 +4,7 @@ const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
 const GTFSAPIDB = require('./databases/gtfsapidb');
 
 //
-app.addHook('onRequest', function (req, reply, done) {
+fastify.addHook('onRequest', function (req, reply, done) {
   console.log('---------------------------------------------------------------------------');
   done();
 });
