@@ -18,7 +18,9 @@ module.exports = async () => {
   const allStops = await GTFSParseDB.connection.query(`
     SELECT
         s.*,
-        r.route_ids
+        r.route_ids,
+        r.line_ids,
+        t.pattern_ids
     FROM
         stops s
     LEFT JOIN (
