@@ -1,7 +1,6 @@
 /* * */
 /* IMPORTS */
 const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
-const fastifyMongoDbPlugin = require('@fastify/mongodb');
 const { GTFSAPIDB_USER, GTFSAPIDB_PASSWORD, GTFSAPIDB_HOST, GTFSAPIDB_NAME } = process.env;
 const GTFSAPIDB = require('./services/GTFSAPIDB');
 
@@ -14,7 +13,7 @@ const shapesRoute = require('./routes/shapes.route');
 const stopsRoute = require('./routes/stops.route');
 const vehiclesRoute = require('./routes/vehicles.route');
 
-fastify.register(fastifyMongoDbPlugin, {
+fastify.register(require('@fastify/mongodb'), {
   forceClose: true,
   url: `mongodb://${GTFSAPIDB_USER}:${GTFSAPIDB_PASSWORD}@${GTFSAPIDB_HOST}/${GTFSAPIDB_NAME}?authSource=admin`,
 });

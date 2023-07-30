@@ -3,6 +3,7 @@
 
 //
 module.exports.all = async (request, reply) => {
+  console.log(this);
   const collection = this.mongo.db.collection('facilities');
   const foundManyDocuments = await collection.find();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
@@ -12,6 +13,7 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
+  console.log(this);
   const collection = this.mongo.db.collection('facilities');
   const foundOneDocument = await collection.findOne({ code: { $eq: request.params.code } });
   return reply.send(foundOneDocument || {});
