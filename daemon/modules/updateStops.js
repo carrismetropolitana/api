@@ -15,19 +15,7 @@ module.exports = async () => {
   const startTime = process.hrtime();
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
-  const allStops = await GTFSParseDB.connection.query(`
-        SELECT 
-            stops.*,
-            json_agg(trips.route_id) AS route_ids
-        FROM 
-            stops
-        JOIN 
-            stop_times ON stops.stop_id = stop_times.stop_id
-        JOIN
-            trips ON stop_times.trip_id = trips.trip_id
-        GROUP BY
-            stops.stop_id;
-    `);
+  const allStops = await GTFSParseDB.connection.query(`SELECT * FROM stops`);
   console.log(allStops);
   // Log progress
   console.log(`⤷ Updating Stops...`);
