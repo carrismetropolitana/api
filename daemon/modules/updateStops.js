@@ -15,34 +15,45 @@ module.exports = async () => {
   const startTime = process.hrtime();
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
-  const allStops = await GTFSParseDB.connection.query('SELECT * FROM stops');
+  const allStops = await GTFSParseDB.connection.query(`
+        SELECT 
+            stops.*,
+            json_agg(trips.route_id) AS route_ids
+        FROM 
+            stops
+        JOIN 
+            stop_times ON stops.stop_id = stop_times.stop_id
+        JOIN
+            trips ON stop_times.trip_id = trips.trip_id
+        GROUP BY
+            stops.stop_id;
+    `);
+  console.log(allStops);
   // Log progress
   console.log(`⤷ Updating Stops...`);
   // Initate a temporary variable to hold updated Stops
   let updatedStopIds = [];
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
-    // Discover which services this stop is near to
-    let nearServices = [];
-    if (stop.near_health_clinic) nearServices.push('health_clinic');
-    if (stop.near_hospital) nearServices.push('hospital');
-    if (stop.near_university) nearServices.push('university');
-    if (stop.near_school) nearServices.push('school');
-    if (stop.near_police_station) nearServices.push('police_station');
-    if (stop.near_fire_station) nearServices.push('fire_station');
-    if (stop.near_shopping) nearServices.push('shopping');
-    if (stop.near_historic_building) nearServices.push('historic_building');
-    if (stop.near_transit_office) nearServices.push('transit_office');
-    // Discover which modal connections this stop serves
-    let intermodalConnections = [];
-    if (stop.subway) intermodalConnections.push('subway');
-    if (stop.light_rail) intermodalConnections.push('light_rail');
-    if (stop.train) intermodalConnections.push('train');
-    if (stop.boat) intermodalConnections.push('boat');
-    if (stop.airport) intermodalConnections.push('airport');
-    if (stop.bike_sharing) intermodalConnections.push('bike_sharing');
-    if (stop.bike_parking) intermodalConnections.push('bike_parking');
-    if (stop.car_parking) intermodalConnections.push('car_parking');
+    // Discover which facilities this stop is near to
+    let facilities = [];
+    if (stop.near_health_clinic) facilities.push('health_clinic');
+    if (stop.near_hospital) facilities.push('hospital');
+    if (stop.near_university) facilities.push('university');
+    if (stop.near_school) facilities.push('school');
+    if (stop.near_police_station) facilities.push('police_station');
+    if (stop.near_fire_station) facilities.push('fire_station');
+    if (stop.near_shopping) facilities.push('shopping');
+    if (stop.near_historic_building) facilities.push('historic_building');
+    if (stop.near_transit_office) facilities.push('transit_office');
+    if (stop.subway) facilities.push('subway');
+    if (stop.light_rail) facilities.push('light_rail');
+    if (stop.train) facilities.push('train');
+    if (stop.boat) facilities.push('boat');
+    if (stop.airport) facilities.push('airport');
+    if (stop.bike_sharing) facilities.push('bike_sharing');
+    if (stop.bike_parking) facilities.push('bike_parking');
+    if (stop.car_parking) facilities.push('car_parking');
     // Initiate a variable to hold the parsed stop
     let parsedStop = {
       code: stop.stop_id,
@@ -61,8 +72,7 @@ module.exports = async () => {
       region_code: stop.region_id,
       region_name: stop.region_name,
       wheelchair_boarding: stop.wheelchair_boarding,
-      near_services: nearServices,
-      intermodal_connections: intermodalConnections,
+      facilities: facilities,
     };
     // Update or create new document
     const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndReplace({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
