@@ -39,26 +39,26 @@ async function appInitPoint() {
     const startTime = process.hrtime();
     console.log('Starting...');
 
-    console.log();
-    console.log('STEP 1: Connect to databases');
-    await GTFSParseDB.connect();
-    await GTFSAPIDB.connect();
+    // console.log();
+    // console.log('STEP 1: Connect to databases');
+    // await GTFSParseDB.connect();
+    // await GTFSAPIDB.connect();
 
-    console.log();
-    console.log('STEP 2: Fetching latest GTFS archive');
-    await filemanager.downloadFromUrl(GTFS_URL);
+    // console.log();
+    // console.log('STEP 2: Fetching latest GTFS archive');
+    // await filemanager.downloadFromUrl(GTFS_URL);
 
-    console.log();
-    console.log('STEP 3: Extracting downloaded archive');
-    await filemanager.extractArchive();
+    // console.log();
+    // console.log('STEP 3: Extracting downloaded archive');
+    // await filemanager.extractArchive();
 
-    console.log();
-    console.log('STEP 4: Setup SQL tables to store the GTFS files');
-    await setupSqlTables();
+    // console.log();
+    // console.log('STEP 4: Setup SQL tables to store the GTFS files');
+    // await setupSqlTables();
 
-    console.log();
-    console.log('STEP 5: Import extracted files into created tables');
-    await saveFilesToTables();
+    // console.log();
+    // console.log('STEP 5: Import extracted files into created tables');
+    // await saveFilesToTables();
 
     console.log();
     console.log('STEP 7: Update Municipalities');
