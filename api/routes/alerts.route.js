@@ -1,19 +1,21 @@
 /* * */
 /* IMPORTS */
-const express = require('express');
-const router = express.Router();
+const protobuf = require('protobufjs');
+const gtfsRealtime = protobuf.loadSync(`${process.env.PWD}/services/gtfs-realtime.proto`);
 
 //
-router.get('/', async (req, res) => {
-  try {
-    const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
-    const allAlerts = await allAlertsResponse.json();
-    await res.send(allAlerts);
-    console.log('🟢 → Request for "/alerts": Found');
-  } catch (err) {
-    await res.status(500).send({});
-    console.log('🔴 → Request for "/alerts": Server Error', err);
-  }
-});
+module.exports.json = async (request, reply) => {
+  const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
+  const allAlerts = await allAlertsResponse.json();
+  return reply.send(allAlerts);
+};
 
-module.exports = router;
+//
+module.exports.protobuf = async (request, reply) => {
+  const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
+  const allAlerts = await allAlertsResponse.json();
+  const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
+  const message = FeedMessage.fromObject(allAlerts);
+  const buffer = FeedMessage.encode(message).finish();
+  return reply.send(buffer);
+};

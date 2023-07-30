@@ -1,11 +1,9 @@
 /* * */
 /* IMPORTS */
-const express = require('express');
-const app = express();
+const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
 const GTFSAPIDB = require('./services/GTFSAPIDB');
 
 const alertsRoute = require('./routes/alerts.route');
-const alertsPbRoute = require('./routes/alertsPb.route');
 const municipalitiesRoute = require('./routes/municipalities.route');
 const facilitiesRoute = require('./routes/facilities.route');
 const linesRoute = require('./routes/lines.route');
@@ -14,35 +12,40 @@ const shapesRoute = require('./routes/shapes.route');
 const stopsRoute = require('./routes/stops.route');
 const vehiclesRoute = require('./routes/vehicles.route');
 
-// Set CORS Header globally
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-});
-
+//
 // ROUTES
+fastify.get('/alerts', alertsRoute.json);
+fastify.get('/alerts.pb', alertsRoute.protobuf);
+// fastify.get('/alerts.rss', alertsRoute.alertsRss);
 
-app.use('/alerts', alertsRoute);
-app.use('/alerts.pb', alertsPbRoute);
+fastify.get('/municipalities', municipalitiesRoute.all);
+fastify.get('/municipalities/:code', municipalitiesRoute.single);
 
-app.use('/municipalities', municipalitiesRoute);
+fastify.get('/facilities', facilitiesRoute.all);
+fastify.get('/facilities/:code', facilitiesRoute.single);
 
-app.use('/facilities', facilitiesRoute);
+fastify.get('/lines', linesRoute.all);
+fastify.get('/lines/:code', linesRoute.single);
 
-app.use('/lines', linesRoute);
+fastify.get('/patterns', patternsRoute.all);
+fastify.get('/patterns/:code', patternsRoute.single);
 
-app.use('/patterns', patternsRoute);
+fastify.get('/shapes', shapesRoute.all);
+fastify.get('/shapes/:code', shapesRoute.single);
 
-app.use('/shapes', shapesRoute);
+fastify.get('/stops', stopsRoute.all);
+fastify.get('/stops/:code', stopsRoute.single);
+fastify.get('/stops/:code/realtime', stopsRoute.singleWithRealtime);
 
-app.use('/stops', stopsRoute);
+fastify.get('/vehicles', vehiclesRoute.all);
 
-app.use('/vehicles', vehiclesRoute);
-
-// Set port, listen for requests
-const PORT = 5050;
-app.listen(5050, async () => {
-  console.log('GTFS API listening on port %s...', PORT);
+//
+// Start Fastify server
+fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
+  if (err) {
+    console.log('Error starting server:', err);
+    process.exit(1);
+  }
+  console.log(`Server listening on ${address}`);
   await GTFSAPIDB.connect();
-  console.log();
 });
