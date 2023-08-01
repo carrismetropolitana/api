@@ -144,16 +144,16 @@ module.exports = async () => {
   // 1.1,
   // Query Postgres for all unique routes
   console.log(`⤷ Querying database...`);
-  const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
+  const allRoutesData = await GTFSParseDB.connection.query('SELECT * FROM routes');
 
   // 1.2.
   // Sort allRoutes array by each route 'route_id' property, ascending
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
+  allRoutesData.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
 
   // 1.3.
   // Group all routes into lines by route_short_name
-  const allLinesData = allRoutes.rows.reduce((result, route) => {
+  const allLinesData = allRoutesData.rows.reduce((result, route) => {
     // 1.3.1.
     // Check if the route_short_name already exists as a line
     const existingLine = result.find((line) => line.short_name === route.route_short_name);
@@ -198,7 +198,7 @@ module.exports = async () => {
   // For all trips of all routes of each line,
   // create unique patterns by grouping common trips
   // by 'pattern_id', 'direction_id'. 'trip_headsign' and 'shape_id'.
-  for (const [lineIndex, lineData] of allLinesData) {
+  for (const [lineIndex, lineData] of allLinesData.entries()) {
     //
     // 2.2.0.
     // Record the start time to later calculate operation duration
@@ -211,8 +211,6 @@ module.exports = async () => {
     let linePassesByMunicipalities = new Set();
     let linePassesByLocalities = new Set();
     let linePassesByFacilities = new Set();
-
-    return;
 
     // 2.2.2.
     // Iterate on each route for this line
