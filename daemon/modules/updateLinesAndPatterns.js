@@ -212,6 +212,8 @@ module.exports = async () => {
     let linePassesByLocalities = new Set();
     let linePassesByFacilities = new Set();
 
+    return;
+
     // 2.2.2.
     // Iterate on each route for this line
     for (const routeData of lineData.routes) {
