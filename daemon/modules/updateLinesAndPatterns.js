@@ -153,7 +153,7 @@ module.exports = async () => {
 
   // 1.3.
   // Group all routes into lines by route_short_name
-  const allLines = allRoutes.rows.reduce((result, route) => {
+  const allLinesData = allRoutes.rows.reduce((result, route) => {
     // 1.3.1.
     // Check if the route_short_name already exists as a line
     const existingLine = result.find((line) => line.short_name === route.route_short_name);
@@ -198,7 +198,7 @@ module.exports = async () => {
   // For all trips of all routes of each line,
   // create unique patterns by grouping common trips
   // by 'pattern_id', 'direction_id'. 'trip_headsign' and 'shape_id'.
-  for (const line of allLines) {
+  for (const [lineIndex, lineData] of allLinesData) {
     //
     // 2.2.0.
     // Record the start time to later calculate operation duration
@@ -214,23 +214,28 @@ module.exports = async () => {
 
     // 2.2.2.
     // Iterate on each route for this line
-    for (const route of line.routes) {
+    for (const routeData of lineData.routes) {
       //
       // 2.2.2.1.
       // Get all trips associated with this route
-      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      const allTripsData = await GTFSParseDB.connection.query(`SELECT * FROM trips JOIN stop_times ON trips.trip_id = stop_times.trip_id WHERE trips.route_id = '${routeData.route_id}' ORDER BY stop_times.stop_sequence`);
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
       // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
-      for (const trip of allTrips.rows) {
+      for (const tripData of allTripsData.rows) {
         //
+
+        console.log(tripData);
+
+        return;
+
         // 2.2.2.2.1.
         // Find the pattern that matches the unique combination for this trip
         const pattern = uniqueLinePatterns.find((pattern) => {
-          const samePatternId = pattern.code === trip.pattern_id;
-          const sameDirectionId = pattern.direction === trip.direction_id;
-          const sameHeadsign = pattern.headsign === trip.trip_headsign;
+          const samePatternId = pattern.code === tripData.pattern_id;
+          const sameDirectionId = pattern.direction === tripData.direction_id;
+          const sameHeadsign = pattern.headsign === tripData.trip_headsign;
           //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
           return sameDirectionId && samePatternId && sameHeadsign;
         });
@@ -253,7 +258,7 @@ module.exports = async () => {
 
         // 2.2.2.2.4.
         // For each path sequence
-        for (const currentStopTime of allStopTimes.rows) {
+        for (const currentStopTime of tripData.stop_times.rows) {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
@@ -390,7 +395,7 @@ module.exports = async () => {
     // 2.2.6.
     // Log operation details and elapsed time
     const elapsedTime_line = timeCalc.getElapsedTime(startTime_line);
-    console.log(`⤷ Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns in ${elapsedTime_line}.`);
+    console.log(`⤷ [${lineIndex}/${allLines.length}] Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns in ${elapsedTime_line}.`);
 
     //
   }
