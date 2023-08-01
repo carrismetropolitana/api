@@ -220,16 +220,15 @@ module.exports = async () => {
       // Get all trips associated with this route
       const allTripsData = await GTFSParseDB.connection.query(`SELECT * FROM trips JOIN stop_times ON trips.trip_id = stop_times.trip_id WHERE trips.route_id = '${routeData.route_id}' ORDER BY stop_times.stop_sequence`);
 
+      console.log(allTripsData.rows);
+
+      return;
+
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
       // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
       for (const tripData of allTripsData.rows) {
         //
-
-        console.log(tripData);
-
-        return;
-
         // 2.2.2.2.1.
         // Find the pattern that matches the unique combination for this trip
         const pattern = uniqueLinePatterns.find((pattern) => {
