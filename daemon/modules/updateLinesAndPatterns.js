@@ -144,16 +144,16 @@ module.exports = async () => {
   // 1.1,
   // Query Postgres for all unique routes
   console.log(`⤷ Querying database...`);
-  const allRoutesData = await GTFSParseDB.connection.query('SELECT * FROM routes');
+  const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
 
   // 1.2.
   // Sort allRoutes array by each route 'route_id' property, ascending
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allRoutesData.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
+  allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
 
   // 1.3.
   // Group all routes into lines by route_short_name
-  const allLinesData = allRoutesData.rows.reduce((result, route) => {
+  const allLines = allRoutes.rows.reduce((result, route) => {
     // 1.3.1.
     // Check if the route_short_name already exists as a line
     const existingLine = result.find((line) => line.short_name === route.route_short_name);
@@ -198,7 +198,7 @@ module.exports = async () => {
   // For all trips of all routes of each line,
   // create unique patterns by grouping common trips
   // by 'pattern_id', 'direction_id'. 'trip_headsign' and 'shape_id'.
-  for (const [lineIndex, lineData] of allLinesData.entries()) {
+  for (const line of allLines) {
     //
     // 2.2.0.
     // Record the start time to later calculate operation duration
@@ -214,27 +214,23 @@ module.exports = async () => {
 
     // 2.2.2.
     // Iterate on each route for this line
-    for (const routeData of lineData.routes) {
+    for (const route of line.routes) {
       //
       // 2.2.2.1.
       // Get all trips associated with this route
-      const allTripsData = await GTFSParseDB.connection.query(`SELECT * FROM trips JOIN stop_times ON trips.trip_id = stop_times.trip_id WHERE trips.route_id = '${routeData.route_id}' ORDER BY stop_times.stop_sequence`);
-
-      console.log(allTripsData.rows);
-
-      return;
+      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
       // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
-      for (const tripData of allTripsData.rows) {
+      for (const trip of allTrips.rows) {
         //
         // 2.2.2.2.1.
         // Find the pattern that matches the unique combination for this trip
         const pattern = uniqueLinePatterns.find((pattern) => {
-          const samePatternId = pattern.code === tripData.pattern_id;
-          const sameDirectionId = pattern.direction === tripData.direction_id;
-          const sameHeadsign = pattern.headsign === tripData.trip_headsign;
+          const samePatternId = pattern.code === trip.pattern_id;
+          const sameDirectionId = pattern.direction === trip.direction_id;
+          const sameHeadsign = pattern.headsign === trip.trip_headsign;
           //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
           return sameDirectionId && samePatternId && sameHeadsign;
         });
@@ -257,7 +253,7 @@ module.exports = async () => {
 
         // 2.2.2.2.4.
         // For each path sequence
-        for (const currentStopTime of tripData.stop_times.rows) {
+        for (const currentStopTime of allStopTimes.rows) {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
@@ -394,7 +390,7 @@ module.exports = async () => {
     // 2.2.6.
     // Log operation details and elapsed time
     const elapsedTime_line = timeCalc.getElapsedTime(startTime_line);
-    console.log(`⤷ [${lineIndex}/${allLines.length}] Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns in ${elapsedTime_line}.`);
+    console.log(`⤷ Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns in ${elapsedTime_line}.`);
 
     //
   }
