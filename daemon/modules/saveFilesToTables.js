@@ -114,6 +114,7 @@ module.exports = async () => {
   await importFileToTable('trips');
   await importFileToTable('stop_times');
   await importFileToTable('stops');
+  await importFileToTable('stores');
 
   //
 };
