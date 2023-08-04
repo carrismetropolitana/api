@@ -36,6 +36,35 @@ module.exports = async () => {
     'region_name',
     'facility_stops',
   ]);
+  await prepareFileImport('stores', [
+    'store_id',
+    'store_type',
+    'store_name',
+    'store_lat',
+    'store_lon',
+    'store_phone',
+    'store_email',
+    'store_url',
+    'address',
+    'postal_code',
+    'locality',
+    'parish_id',
+    'parish_name',
+    'municipality_id',
+    'municipality_name',
+    'district_id',
+    'district_name',
+    'region_id',
+    'region_name',
+    'hours_monday',
+    'hours_tuesday',
+    'hours_wednesday',
+    'hours_thursday',
+    'hours_friday',
+    'hours_saturday',
+    'hours_sunday',
+    'store_stops',
+  ]);
   await prepareFileImport('calendar_dates', ['service_id', 'date']);
   await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
   await prepareFileImport('shapes', ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled']);
