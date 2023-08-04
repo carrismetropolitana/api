@@ -89,12 +89,6 @@ class PCGIAPI {
   }
 
   //
-  //
-  //
-  //
-  //
-
-  //
 }
 
 module.exports = new PCGIAPI();
