@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
-const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
-const GTFSAPIDB = require('./services/GTFSAPIDB');
+const fastify = require('fastify')({ logger: false, requestTimeout: 20000 });
+// const GTFSAPIDB = require('./services/GTFSAPIDB');
 
 const alertsRoute = require('./routes/alerts.route');
 const municipalitiesRoute = require('./routes/municipalities.route');
@@ -27,6 +27,7 @@ fastify.get('/facilities/:code', facilitiesRoute.single);
 
 fastify.get('/stores', storesRoute.all);
 fastify.get('/stores/:code', storesRoute.single);
+fastify.get('/stores/:code/realtime', storesRoute.singleWithRealtime);
 
 fastify.get('/lines', linesRoute.all);
 fastify.get('/lines/:code', linesRoute.single);
@@ -48,5 +49,5 @@ fastify.get('/vehicles', vehiclesRoute.all);
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
   if (err) throw err;
   console.log(`Server listening on ${address}`);
-  await GTFSAPIDB.connect();
+  //   await GTFSAPIDB.connect();
 });

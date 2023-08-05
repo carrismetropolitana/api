@@ -3,9 +3,9 @@
 /* * */
 /* IMPORTS */
 require('dotenv').config();
-const { PCGI_AUTH_URL, PCGI_CLIENT_ID, PCGI_CLIENT_SECRET, PCGI_BASE_URL } = process.env;
+const { IX_AUTH_URL, IX_SERVER_KEY, IX_USERNAME, IX_PASSWORD, IX_CLIENT_ID, IX_CLIENT_SECRET, IX_GRANT_TYPE, IX_BASE_URL } = process.env;
 
-class PCGIAPI {
+class IXAPI {
   //
 
   constructor() {
@@ -36,7 +36,7 @@ class PCGIAPI {
     const isTokenExpired = this.expires_at < new Date();
     if (isTokenExpired) await this.authenticate();
 
-    const response = await fetch(`${PCGI_BASE_URL}/${service}`, {
+    const response = await fetch(`${IX_BASE_URL}/${service}`, {
       method: options.method || 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -58,16 +58,19 @@ class PCGIAPI {
   async authenticate() {
     try {
       //
-      console.log('Starting PCGIAPI authentication...');
+      console.log('Starting IXAPI authentication...');
 
       // Initiate a new request to the token endpoint
-      const response = await fetch(PCGI_AUTH_URL, {
+      const response = await fetch(IX_AUTH_URL, {
         method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
-          client_id: PCGI_CLIENT_ID,
-          client_secret: PCGI_CLIENT_SECRET,
-          grant_type: 'client_credentials',
+          server: IX_SERVER_KEY,
+          username: IX_USERNAME,
+          password: IX_PASSWORD,
+          grant_type: IX_GRANT_TYPE,
+          client_id: IX_CLIENT_ID,
+          client_secret: IX_CLIENT_SECRET,
         }),
       });
 
@@ -81,14 +84,14 @@ class PCGIAPI {
       const now = new Date();
       this.expires_at = new Date(now.getTime() + responseData.expires_in * 1000);
 
-      console.log('PCGIAPI Authentication successful');
+      console.log('IXAPI Authentication successful');
       //
     } catch (err) {
-      console.log('PCGIAPI Authentication failed', err);
+      console.log('IXAPI Authentication failed', err);
     }
   }
 
   //
 }
 
-module.exports = new PCGIAPI();
+module.exports = new IXAPI();

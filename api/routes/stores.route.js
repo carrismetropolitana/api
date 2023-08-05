@@ -1,6 +1,7 @@
 /* * */
 /* IMPORTS */
 const GTFSAPIDB = require('../services/GTFSAPIDB');
+const IXAPI = require('../services/IXAPI');
 
 //
 module.exports.all = async (request, reply) => {
@@ -14,4 +15,18 @@ module.exports.all = async (request, reply) => {
 module.exports.single = async (request, reply) => {
   const foundOneDocument = await GTFSAPIDB.Store.findOne({ code: { $eq: request.params.code } });
   return reply.send(foundOneDocument || {});
+};
+
+//
+module.exports.singleWithRealtime = async (request, reply) => {
+  const result = await IXAPI.request('openservices/estimatedStopSchedules', {
+    method: 'POST',
+    body: {
+      operators: ['41', '42', '43', '44'],
+      stops: [request.params.code],
+      numResults: 15,
+    },
+  });
+  result.forEach((element) => delete element.observedDriverId); // Remove useless property
+  return reply.send(result || {});
 };
