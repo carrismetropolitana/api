@@ -27,7 +27,6 @@ fastify.get('/facilities/:code', facilitiesRoute.single);
 
 fastify.get('/stores', storesRoute.all);
 fastify.get('/stores/:code', storesRoute.single);
-fastify.get('/stores/:code/realtime', storesRoute.singleWithRealtime);
 
 fastify.get('/lines', linesRoute.all);
 fastify.get('/lines/:code', linesRoute.single);
