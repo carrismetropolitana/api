@@ -19,9 +19,6 @@ module.exports = async () => {
   let updatedStoreIds = [];
   // For each facility, update its entry in the database
   for (const store of allStores.rows) {
-    // Split stops into discrete IDs
-    let parsedStoreStops = [];
-    if (store.store_stops?.length) parsedStoreStops = store.store_stops.split('|');
     // Parse store
     const parsedStore = {
       code: store.store_id,
@@ -43,14 +40,15 @@ module.exports = async () => {
       district_name: store.district_name,
       region_code: store.region_id,
       region_name: store.region_name,
-      hours_monday: store.hours_monday,
-      hours_tuesday: store.hours_tuesday,
-      hours_wednesday: store.hours_wednesday,
-      hours_thursday: store.hours_thursday,
-      hours_friday: store.hours_friday,
-      hours_saturday: store.hours_saturday,
-      hours_sunday: store.hours_sunday,
-      stops: parsedStoreStops,
+      hours_monday: store.hours_monday?.length ? store.hours_monday.split('|') : [],
+      hours_tuesday: store.hours_tuesday?.length ? store.hours_tuesday.split('|') : [],
+      hours_wednesday: store.hours_wednesday?.length ? store.hours_wednesday.split('|') : [],
+      hours_thursday: store.hours_thursday?.length ? store.hours_thursday.split('|') : [],
+      hours_friday: store.hours_friday?.length ? store.hours_friday.split('|') : [],
+      hours_saturday: store.hours_saturday?.length ? store.hours_saturday.split('|') : [],
+      hours_sunday: store.hours_sunday?.length ? store.hours_sunday.split('|') : [],
+      hours_special: store.hours_special,
+      stops: store.store_stops?.length ? store.store_stops.split('|') : [],
     };
     // Save to database
     const updatedStoreDocument = await GTFSAPIDB.Store.findOneAndReplace({ code: parsedStore.code }, parsedStore, { new: true, upsert: true });
