@@ -83,34 +83,48 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
-    hours_monday: {
-      type: String,
-      maxlength: 50,
-    },
-    hours_tuesday: {
-      type: String,
-      maxlength: 50,
-    },
-    hours_wednesday: {
-      type: String,
-      maxlength: 50,
-    },
-    hours_thursday: {
-      type: String,
-      maxlength: 50,
-    },
-    hours_friday: {
-      type: String,
-      maxlength: 50,
-    },
-    hours_saturday: {
-      type: String,
-      maxlength: 50,
-    },
-    hours_sunday: {
-      type: String,
-      maxlength: 50,
-    },
+    hours_monday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
+    hours_tuesday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
+    hours_wednesday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
+    hours_thursday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
+    hours_friday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
+    hours_saturday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
+    hours_sunday: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
     stops: [
       {
         type: String,
