@@ -14,7 +14,7 @@ module.exports.all = async (request, reply) => {
 //
 module.exports.single = async (request, reply) => {
   // Fetch requested document from database
-  const foundOneDocument = await GTFSAPIDB.Store.findOne({ code: { $eq: request.params.code } });
+  const foundOneDocument = await GTFSAPIDB.Store.findOne({ code: { $eq: request.params.code } }).lean();
   // Return early if nothing is found
   if (!foundOneDocument) return reply.send({});
   // Setup the four default ticket categories
