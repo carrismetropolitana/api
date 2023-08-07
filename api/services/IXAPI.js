@@ -29,18 +29,30 @@ class IXAPI {
    * If all is well, then return the raw data response to the parent caller.
    */
 
-  async request(service, options = {}) {
+  async request(options = {}) {
     //
 
     // Renew token if no longer valid
     const isTokenExpired = this.expires_at < new Date();
     if (isTokenExpired) await this.authenticate();
 
-    const response = await fetch(`${IX_BASE_URL}/${service}`, {
+    const response = await fetch(`${IX_BASE_URL}/statistics`, {
       method: options.method || 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.access_token}`,
+        StatisticsFilter: JSON.stringify({
+          header: { method: 'statisticsGetReport' },
+          content: {
+            reportType: 'ticket',
+            apiVersion: '1.0',
+            initialDate: options.initialDate,
+            finalDate: options.finalDate,
+            siteEIDs: options.storeCode,
+            status: 'W',
+            rowsPerPage: 2000,
+          },
+        }),
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
     });

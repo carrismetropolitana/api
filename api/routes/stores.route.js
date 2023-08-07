@@ -19,14 +19,47 @@ module.exports.single = async (request, reply) => {
 
 //
 module.exports.singleWithRealtime = async (request, reply) => {
-  const result = await IXAPI.request('openservices/estimatedStopSchedules', {
-    method: 'POST',
-    body: {
-      operators: ['41', '42', '43', '44'],
-      stops: [request.params.code],
-      numResults: 15,
-    },
-  });
-  result.forEach((element) => delete element.observedDriverId); // Remove useless property
-  return reply.send(result || {});
+  // Query IXAPI for the status of the requested store
+  const result = await IXAPI.request({ storeCode: request.params.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  // Setup the four default ticket categories
+  const storeRealtimeStatus = [
+    { category_code: 'A', currently_waiting: 0 },
+    { category_code: 'B', currently_waiting: 0 },
+    { category_code: 'C', currently_waiting: 0 },
+    { category_code: 'D', currently_waiting: 0 },
+  ];
+  // Return early if request result is undefined
+  if (!result?.content?.ticket?.length) return reply.send(storeRealtimeStatus);
+  // Parse the response result to match the desired structure
+  for (const obj of result.content.ticket) {
+    // Find index of current category object
+    const categoryIndex = storeRealtimeStatus.findIndex((item) => item.category_code === obj.categoryCode);
+    // If the categoryCode is not yet present in the result array, add it with total 1
+    if (categoryIndex === -1) storeRealtimeStatus.push({ category_code: obj.categoryCode, currently_waiting: 1 });
+    // If the categoryCode is already present, increase the total count by 1
+    else storeRealtimeStatus[categoryIndex].currently_waiting += 1;
+  }
+  // Return result to the caller
+  return reply.send(storeRealtimeStatus);
 };
+
+//
+//
+//
+
+function getIxDateString(adjustmentSeconds = 0) {
+  const dateObj = new Date();
+  // Apply the adjustment to the current date
+  dateObj.setSeconds(dateObj.getSeconds() + adjustmentSeconds);
+  // Get the components of the date
+  const year = dateObj.getFullYear().toString().padStart(4, '0');
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  const hours = dateObj.getHours().toString().padStart(2, '0');
+  const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+  const seconds = dateObj.getSeconds().toString().padStart(2, '0');
+  // Format the date string
+  const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  // Return result
+  return formattedDate;
+}
