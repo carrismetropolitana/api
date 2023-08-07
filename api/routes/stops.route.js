@@ -5,7 +5,7 @@ const PCGIAPI = require('../services/PCGIAPI');
 
 //
 module.exports.all = async (request, reply) => {
-  const foundManyDocuments = await GTFSAPIDB.Stop.find();
+  const foundManyDocuments = await GTFSAPIDB.Stop.find().lean();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
   return reply.send(foundManyDocuments || []);
@@ -13,7 +13,7 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: request.params.code } });
+  const foundOneDocument = await GTFSAPIDB.Stop.findOne({ code: { $eq: request.params.code } }).lean();
   return reply.send(foundOneDocument || {});
 };
 

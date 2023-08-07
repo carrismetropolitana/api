@@ -10,6 +10,6 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: { $eq: request.params.code } });
+  const foundOneDocument = await GTFSAPIDB.Shape.findOne({ code: { $eq: request.params.code } }).lean();
   return reply.send(foundOneDocument || {});
 };
