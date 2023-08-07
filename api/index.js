@@ -17,7 +17,7 @@ const vehiclesRoute = require('./routes/vehicles.route');
 // ROUTES
 fastify.get('/alerts', alertsRoute.json);
 fastify.get('/alerts.pb', alertsRoute.protobuf);
-// fastify.get('/alerts.rss', alertsRoute.alertsRss);
+// fastify.get('/alerts.rss', alertsRoute.rss);
 
 fastify.get('/municipalities', municipalitiesRoute.all);
 fastify.get('/municipalities/:code', municipalitiesRoute.single);
