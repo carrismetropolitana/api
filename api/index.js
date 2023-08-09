@@ -6,7 +6,7 @@ const GTFSAPIDB = require('./services/GTFSAPIDB');
 const alertsRoute = require('./routes/alerts.route');
 const municipalitiesRoute = require('./routes/municipalities.route');
 const facilitiesRoute = require('./routes/facilities.route');
-const storesRoute = require('./routes/stores.route');
+const helpdesksRoute = require('./routes/helpdesks.route');
 const linesRoute = require('./routes/lines.route');
 const patternsRoute = require('./routes/patterns.route');
 const shapesRoute = require('./routes/shapes.route');
@@ -25,8 +25,8 @@ fastify.get('/municipalities/:code', municipalitiesRoute.single);
 fastify.get('/facilities', facilitiesRoute.all);
 fastify.get('/facilities/:code', facilitiesRoute.single);
 
-fastify.get('/stores', storesRoute.all);
-fastify.get('/stores/:code', storesRoute.single);
+fastify.get('/helpdesks', helpdesksRoute.all);
+fastify.get('/helpdesks/:code', helpdesksRoute.single);
 
 fastify.get('/lines', linesRoute.all);
 fastify.get('/lines/:code', linesRoute.single);
