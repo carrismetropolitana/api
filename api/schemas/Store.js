@@ -125,6 +125,10 @@ module.exports = new mongoose.Schema(
         maxlength: 50,
       },
     ],
+    hours_special: {
+      type: String,
+      maxlength: 500,
+    },
     stops: [
       {
         type: String,
@@ -135,7 +139,5 @@ module.exports = new mongoose.Schema(
   {
     id: false,
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );

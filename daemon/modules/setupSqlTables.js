@@ -75,6 +75,7 @@ module.exports = async () => {
         hours_friday VARCHAR(255),
         hours_saturday VARCHAR(255),
         hours_sunday VARCHAR(255),
+        hours_special VARCHAR(255),
         store_stops VARCHAR(255)
     );`);
   await GTFSParseDB.connection.query('CREATE INDEX stores_store_id_idx ON stores ("store_id");');

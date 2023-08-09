@@ -63,6 +63,7 @@ module.exports = async () => {
     'hours_friday',
     'hours_saturday',
     'hours_sunday',
+    'hours_special',
     'store_stops',
   ]);
   await prepareFileImport('calendar_dates', ['service_id', 'date']);
