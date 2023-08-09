@@ -358,7 +358,7 @@ module.exports = async () => {
           //
           path: formattedPath,
           //
-          trips: [trip],
+          trips: [formattedTrip],
           //
         });
 
