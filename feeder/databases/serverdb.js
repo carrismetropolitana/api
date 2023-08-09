@@ -1,11 +1,11 @@
 /* * */
 /* IMPORTS */
 const mongoose = require('mongoose');
-const { GTFSAPIDB_USER, GTFSAPIDB_PASSWORD, GTFSAPIDB_HOST, GTFSAPIDB_NAME } = process.env;
+const { SERVERDB_USER, SERVERDB_PASSWORD, SERVERDB_HOST, SERVERDB_NAME } = process.env;
 
-class GTFSAPIDB {
+class SERVERDB {
   constructor() {
-    this.connection = mongoose.createConnection(`mongodb://${GTFSAPIDB_USER}:${GTFSAPIDB_PASSWORD}@${GTFSAPIDB_HOST}/${GTFSAPIDB_NAME}?authSource=admin`);
+    this.connection = mongoose.createConnection(`mongodb://${SERVERDB_USER}:${SERVERDB_PASSWORD}@${SERVERDB_HOST}/${SERVERDB_NAME}?authSource=admin`);
     this.Line = this.connection.model('Line', require('../schemas/Line'));
     this.Municipality = this.connection.model('Municipality', require('../schemas/Municipality'));
     this.Facility = this.connection.model('Facility', require('../schemas/Facility'));
@@ -17,21 +17,21 @@ class GTFSAPIDB {
 
   async connect() {
     try {
-      await this.connection.openUri(`mongodb://${GTFSAPIDB_USER}:${GTFSAPIDB_PASSWORD}@${GTFSAPIDB_HOST}/${GTFSAPIDB_NAME}?authSource=admin`);
-      console.log(`⤷ Connected to GTFSAPIDB.`);
+      await this.connection.openUri(`mongodb://${SERVERDB_USER}:${SERVERDB_PASSWORD}@${SERVERDB_HOST}/${SERVERDB_NAME}?authSource=admin`);
+      console.log(`⤷ Connected to SERVERDB.`);
     } catch (err) {
-      console.log(`⤷X Failed to connect to GTFSAPIDB.`, err);
+      console.log(`⤷X Failed to connect to SERVERDB.`, err);
     }
   }
 
   async disconnect() {
     try {
       await this.connection.close();
-      console.log(`⤷ Disconnected from GTFSAPIDB.`);
+      console.log(`⤷ Disconnected from SERVERDB.`);
     } catch (err) {
-      console.log(`⤷X Failed to disconnect from GTFSAPIDB.`, err);
+      console.log(`⤷X Failed to disconnect from SERVERDB.`, err);
     }
   }
 }
 
-module.exports = new GTFSAPIDB();
+module.exports = new SERVERDB();

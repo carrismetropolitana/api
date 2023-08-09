@@ -1,6 +1,6 @@
 /* * */
 /* IMPORTS */
-const GTFSAPIDB = require('../services/GTFSAPIDB');
+const SERVERDB = require('../services/SERVERDB');
 
 //
 module.exports.all = async (request, reply) => {
@@ -10,6 +10,6 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  const foundOneDocument = await GTFSAPIDB.Pattern.findOne({ code: { $eq: request.params.code } }).lean();
+  const foundOneDocument = await SERVERDB.Pattern.findOne({ code: { $eq: request.params.code } }).lean();
   return reply.send(foundOneDocument || {});
 };

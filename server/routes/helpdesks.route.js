@@ -1,12 +1,12 @@
 /* * */
 /* IMPORTS */
-const GTFSAPIDB = require('../services/GTFSAPIDB');
+const SERVERDB = require('../services/SERVERDB');
 const IXAPI = require('../services/IXAPI');
 
 //
 module.exports.all = async (request, reply) => {
   // Retrieve helpdesks from database
-  const foundManyDocuments = await GTFSAPIDB.Helpdesk.find().lean();
+  const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
   // Add realtime status to each helpdesk

@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
 const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
-const GTFSAPIDB = require('./services/GTFSAPIDB');
+const SERVERDB = require('./services/SERVERDB');
 
 const alertsRoute = require('./routes/alerts.route');
 const municipalitiesRoute = require('./routes/municipalities.route');
@@ -48,5 +48,5 @@ fastify.get('/vehicles', vehiclesRoute.all);
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
   if (err) throw err;
   console.log(`Server listening on ${address}`);
-  await GTFSAPIDB.connect();
+  await SERVERDB.connect();
 });

@@ -1,8 +1,8 @@
 /* * */
 /* IMPORTS */
 const crontab = require('node-cron');
-const GTFSParseDB = require('./databases/gtfsparsedb');
-const GTFSAPIDB = require('./databases/gtfsapidb');
+const FEEDERDB = require('./databases/feederdb');
+const SERVERDB = require('./databases/serverdb');
 
 const timeCalc = require('./modules/timeCalc');
 const filemanager = require('./modules/filemanager');
@@ -42,8 +42,8 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 1: Connect to databases');
-    await GTFSParseDB.connect();
-    await GTFSAPIDB.connect();
+    await FEEDERDB.connect();
+    await SERVERDB.connect();
 
     console.log();
     console.log('STEP 2: Fetching latest GTFS archive');
@@ -87,8 +87,8 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 13: Disconnect from databases...');
-    await GTFSParseDB.disconnect();
-    await GTFSAPIDB.disconnect();
+    await FEEDERDB.disconnect();
+    await SERVERDB.disconnect();
 
     console.log();
     console.log('- - - - - - - - - - - - - - - - - - - - -');

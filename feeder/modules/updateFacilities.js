@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
-const GTFSParseDB = require('../databases/gtfsparsedb');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const FEEDERDB = require('../databases/feederdb');
+const SERVERDB = require('../databases/serverdb');
 const timeCalc = require('./timeCalc');
 
 /**
@@ -14,7 +14,7 @@ module.exports = async () => {
   console.log(`⤷ Updating Facilities...`);
   const startTime = process.hrtime();
   // Fetch all Facilities from Postgres
-  const allFacilities = await GTFSParseDB.connection.query('SELECT * FROM facilities');
+  const allFacilities = await FEEDERDB.connection.query('SELECT * FROM facilities');
   // Initate a temporary variable to hold updated Facilities
   let updatedFacilityIds = [];
   // For each facility, update its entry in the database
@@ -46,13 +46,13 @@ module.exports = async () => {
       stops: parsedFacilityStops,
     };
     // Save to database
-    const updatedFacilityDocument = await GTFSAPIDB.Facility.findOneAndReplace({ code: parsedFacility.code }, parsedFacility, { new: true, upsert: true });
+    const updatedFacilityDocument = await SERVERDB.Facility.findOneAndReplace({ code: parsedFacility.code }, parsedFacility, { new: true, upsert: true });
     updatedFacilityIds.push(updatedFacilityDocument._id);
   }
   // Log count of updated Facilities
   console.log(`⤷ Updated ${updatedFacilityIds.length} Facilities.`);
   // Delete all Facilities not present in the current update
-  const deletedStaleFacilities = await GTFSAPIDB.Facility.deleteMany({ _id: { $nin: updatedFacilityIds } });
+  const deletedStaleFacilities = await SERVERDB.Facility.deleteMany({ _id: { $nin: updatedFacilityIds } });
   console.log(`⤷ Deleted ${deletedStaleFacilities.deletedCount} stale Facilities.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

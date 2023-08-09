@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
-const GTFSParseDB = require('../databases/gtfsparsedb');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const FEEDERDB = require('../databases/feederdb');
+const SERVERDB = require('../databases/serverdb');
 const timeCalc = require('./timeCalc');
 
 /**
@@ -15,7 +15,7 @@ module.exports = async () => {
   console.log(`⤷ Updating Municipalities...`);
   const startTime = process.hrtime();
   // Fetch all Municipalities from Postgres
-  const allMunicipalities = await GTFSParseDB.connection.query('SELECT * FROM municipalities');
+  const allMunicipalities = await FEEDERDB.connection.query('SELECT * FROM municipalities');
   // Initate a temporary variable to hold updated Municipalities
   let updatedMunicipalityIds = [];
   // For each municipality, update its entry in the database
@@ -31,13 +31,13 @@ module.exports = async () => {
       region_name: municipality.region_name,
     };
     // Save to database
-    const updatedMunicipalityDocument = await GTFSAPIDB.Municipality.findOneAndReplace({ code: parsedMunicipality.code }, parsedMunicipality, { new: true, upsert: true });
+    const updatedMunicipalityDocument = await SERVERDB.Municipality.findOneAndReplace({ code: parsedMunicipality.code }, parsedMunicipality, { new: true, upsert: true });
     updatedMunicipalityIds.push(updatedMunicipalityDocument._id);
   }
   // Log count of updated Municipalities
   console.log(`⤷ Updated ${updatedMunicipalityIds.length} Municipalities.`);
   // Delete all Municipalities not present in the current update
-  const deletedStaleMunicipalities = await GTFSAPIDB.Municipality.deleteMany({ _id: { $nin: updatedMunicipalityIds } });
+  const deletedStaleMunicipalities = await SERVERDB.Municipality.deleteMany({ _id: { $nin: updatedMunicipalityIds } });
   console.log(`⤷ Deleted ${deletedStaleMunicipalities.deletedCount} stale Municipalities.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
