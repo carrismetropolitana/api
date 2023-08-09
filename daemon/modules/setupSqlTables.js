@@ -6,7 +6,7 @@ module.exports = async () => {
   //
 
   // Drop existing tables
-  await GTFSParseDB.connection.query('DROP TABLE IF EXISTS municipalities, facilities, stores, calendar_dates, routes, shapes, stop_times, stops, trips;');
+  await GTFSParseDB.connection.query('DROP TABLE IF EXISTS municipalities, facilities, helpdesks, calendar_dates, routes, shapes, stop_times, stops, trips;');
   console.log('⤷ Dropped existing SQL tables.');
 
   // Create tables
@@ -48,15 +48,15 @@ module.exports = async () => {
   await GTFSParseDB.connection.query('CREATE INDEX facilities_facility_id_idx ON facilities ("facility_id");');
   console.log('⤷ Created SQL table "facilities".');
 
-  await GTFSParseDB.connection.query(`CREATE TABLE stores (
-        store_id VARCHAR(255),
-        store_type VARCHAR(255),
-        store_name VARCHAR(255),
-        store_lat VARCHAR(255),
-        store_lon VARCHAR(255),
-        store_phone VARCHAR(255),
-        store_email VARCHAR(255),
-        store_url VARCHAR(255),
+  await GTFSParseDB.connection.query(`CREATE TABLE helpdesks (
+        helpdesk_id VARCHAR(255),
+        helpdesk_type VARCHAR(255),
+        helpdesk_name VARCHAR(255),
+        helpdesk_lat VARCHAR(255),
+        helpdesk_lon VARCHAR(255),
+        helpdesk_phone VARCHAR(255),
+        helpdesk_email VARCHAR(255),
+        helpdesk_url VARCHAR(255),
         address VARCHAR(255),
         postal_code VARCHAR(255),
         locality VARCHAR(255),
@@ -76,10 +76,10 @@ module.exports = async () => {
         hours_saturday VARCHAR(255),
         hours_sunday VARCHAR(255),
         hours_special VARCHAR(255),
-        store_stops VARCHAR(255)
+        helpdesk_stops VARCHAR(255)
     );`);
-  await GTFSParseDB.connection.query('CREATE INDEX stores_store_id_idx ON stores ("store_id");');
-  console.log('⤷ Created SQL table "stores".');
+  await GTFSParseDB.connection.query('CREATE INDEX helpdesks_helpdesk_id_idx ON helpdesks ("helpdesk_id");');
+  console.log('⤷ Created SQL table "helpdesks".');
 
   await GTFSParseDB.connection.query(`CREATE TABLE calendar_dates (
         service_id VARCHAR(255),

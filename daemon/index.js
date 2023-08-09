@@ -10,7 +10,7 @@ const setupSqlTables = require('./modules/setupSqlTables');
 const saveFilesToTables = require('./modules/saveFilesToTables');
 const updateMunicipalities = require('./modules/updateMunicipalities');
 const updateFacilities = require('./modules/updateFacilities');
-const updateStores = require('./modules/updateStores');
+const updateHelpdesks = require('./modules/updateHelpdesks');
 const updateStops = require('./modules/updateStops');
 const updateShapes = require('./modules/updateShapes');
 const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
@@ -70,8 +70,8 @@ async function appInitPoint() {
     await updateFacilities();
 
     console.log();
-    console.log('STEP 9: Update Stores');
-    await updateStores();
+    console.log('STEP 9: Update Helpdesks');
+    await updateHelpdesks();
 
     console.log();
     console.log('STEP 10: Update Stops');

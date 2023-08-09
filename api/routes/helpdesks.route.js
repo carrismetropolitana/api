@@ -5,11 +5,11 @@ const IXAPI = require('../services/IXAPI');
 
 //
 module.exports.all = async (request, reply) => {
-  // Retrieve stores from database
-  const foundManyDocuments = await GTFSAPIDB.Store.find().lean();
+  // Retrieve helpdesks from database
+  const foundManyDocuments = await GTFSAPIDB.Helpdesk.find().lean();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-  // Add realtime status to each store
+  // Add realtime status to each helpdesk
   for (const foundDocument of foundManyDocuments) {
     // Setup the four default ticket categories
     foundDocument.status = [
@@ -18,8 +18,8 @@ module.exports.all = async (request, reply) => {
       { category_code: 'C', currently_waiting: 0 },
       { category_code: 'D', currently_waiting: 0 },
     ];
-    // Query IXAPI for the status of the requested store
-    const result = await IXAPI.request({ storeCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+    // Query IXAPI for the status of the requested helpdesk
+    const result = await IXAPI.request({ helpdeskCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Exit current iteration early if expected request result is undefined
     if (!result?.content?.ticket?.length) continue;
     // Parse the response result to match the desired structure
@@ -40,13 +40,13 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  // Fetch all stores using public API endpoint to ensure cache is hit
-  const allStoresRes = await fetch('https://api.carrismetropolitana.pt/stores');
-  const allStoresData = await allStoresRes.json();
-  // Find the requested store in response json
-  const foundStore = allStoresData.find((item) => item.code === request.params.code);
+  // Fetch all helpdesks using public API endpoint to ensure cache is hit
+  const allHelpdesksRes = await fetch('https://api.carrismetropolitana.pt/helpdesks');
+  const allHelpdesksData = await allHelpdesksRes.json();
+  // Find the requested helpdesk in response json
+  const foundHelpdesk = allHelpdesksData.find((item) => item.code === request.params.code);
   // Return result
-  return reply.send(foundStore || {});
+  return reply.send(foundHelpdesk || {});
   //
 };
 

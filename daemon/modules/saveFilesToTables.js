@@ -36,15 +36,15 @@ module.exports = async () => {
     'region_name',
     'facility_stops',
   ]);
-  await prepareFileImport('stores', [
-    'store_id',
-    'store_type',
-    'store_name',
-    'store_lat',
-    'store_lon',
-    'store_phone',
-    'store_email',
-    'store_url',
+  await prepareFileImport('helpdesks', [
+    'helpdesk_id',
+    'helpdesk_type',
+    'helpdesk_name',
+    'helpdesk_lat',
+    'helpdesk_lon',
+    'helpdesk_phone',
+    'helpdesk_email',
+    'helpdesk_url',
     'address',
     'postal_code',
     'locality',
@@ -64,7 +64,7 @@ module.exports = async () => {
     'hours_saturday',
     'hours_sunday',
     'hours_special',
-    'store_stops',
+    'helpdesk_stops',
   ]);
   await prepareFileImport('calendar_dates', ['service_id', 'date']);
   await prepareFileImport('routes', ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color']);
@@ -115,7 +115,7 @@ module.exports = async () => {
   await importFileToTable('trips');
   await importFileToTable('stop_times');
   await importFileToTable('stops');
-  await importFileToTable('stores');
+  await importFileToTable('helpdesks');
 
   //
 };
