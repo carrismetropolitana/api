@@ -15,15 +15,15 @@ module.exports = async () => {
   //   const helpdeskCodes = foundManyDocuments.map((item) => item.code).join(',');
 
   // Query IXAPI for the status of the requested helpdesk
-  const allHelpdesksTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  //   console.log('allHelpdesksTickets', allHelpdesksTickets);
+  const allHelpdesksTickets = await IXAPI.request({ reportType: 'ticket', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  console.log('allHelpdesksTickets', allHelpdesksTickets);
   // Exit current iteration early if expected request result is undefined
   //   if (!allHelpdesksTickets?.content?.ticket?.length) continue;
   // Reduce result into a sum of tickets for each helpdesk
 
   // Query IXAPI for the status of the requested helpdesk
-  const allHelpdesksStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  //   console.log('allHelpdesksStatistics.content.entityReport', allHelpdesksStatistics.content.entityReport);
+  const allHelpdesksStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  console.log('allHelpdesksStatistics.content.entityReport', allHelpdesksStatistics.content.entityReport);
   // Exit current iteration early if expected request result is undefined
   //   if (!allHelpdesksStatistics?.content?.entityReport?.length) continue;
 
