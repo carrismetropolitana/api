@@ -25,7 +25,7 @@ module.exports.all = async (request, reply) => {
       console.log(`------- ERROR ON STORE ${foundDocument.code} -------`);
       console.log(result);
       console.log('------- ERROR -------');
-      return reply.send(foundDocument);
+      continue;
     }
     // Parse the response result to match the desired structure
     for (const obj of result.content.ticket) {
