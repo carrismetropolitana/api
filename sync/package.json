@@ -1,5 +1,5 @@
 {
-    "name": "@carrismetropolitana/api-feeder",
+    "name": "@carrismetropolitana/api-sync",
     "version": "2023.2.1",
     "private": true,
     "main": "index.js",
@@ -7,13 +7,7 @@
         "start": "node index.js"
     },
     "dependencies": {
-        "@turf/turf": "6.5.0",
-        "adm-zip": "0.5.10",
-        "csv-parse": "5.4.0",
-        "csv-stringify": "6.4.0",
         "mongoose": "7.4.2",
-        "node-cron": "3.0.2",
-        "pg": "8.11.2",
-        "pg-copy-streams": "6.0.6"
+        "node-cron": "3.0.2"
     }
 }
