@@ -44,13 +44,13 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
-    env_file:
-      - ./.env
     networks:
       - api-network
     ports:
       - 80:80
       - 443:443
+    env_file:
+      - ./.env
     command: '/bin/sh -c ''sed -i "s/UPTIME_MONITOR_HEADER/${UPTIME_MONITOR_HEADER}/g" "/etc/nginx/conf.d/nginx.conf" && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -80,11 +80,11 @@ services:
         max-file: '1'
     volumes:
       - serverdb:/data/db
+    networks:
+      - api-network
     environment:
       - MONGO_INITDB_ROOT_USERNAME=serverdbuser
       - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
-    networks:
-      - api-network
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -98,11 +98,11 @@ services:
         max-file: '1'
     volumes:
       - ./feederdb/:/etc/postgresql/
+    networks:
+      - api-network
     environment:
       - POSTGRES_USER=feederdbuser
       - POSTGRES_PASSWORD=feederdbpassword
-    networks:
-      - api-network
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -116,13 +116,13 @@ services:
         max-file: '1'
     networks:
       - api-network
+    env_file:
+      - ./.env
     environment:
       - SERVERDB_HOST=serverdb
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
-    env_file:
-      - ./.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -134,6 +134,8 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
+    networks:
+      - api-network
     environment:
       - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
       - SERVERDB_HOST=serverdb
@@ -143,8 +145,6 @@ services:
       - FEEDERDB_HOST=feederdb
       - FEEDERDB_USER=feederdbuser
       - FEEDERDB_PASSWORD=feederdbpassword
-    networks:
-      - api-network
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -158,10 +158,12 @@ services:
         max-file: '1'
     volumes:
       - ./data-temp/:/data-temp
+    networks:
+      - api-network
+    env_file:
+      - ./.env
     environment:
       - SERVERDB_HOST=serverdb
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
-    networks:
-      - api-network
