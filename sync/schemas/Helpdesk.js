@@ -135,6 +135,14 @@ module.exports = new mongoose.Schema(
         maxlength: 6,
       },
     ],
+    currently_waiting: {
+      type: Number,
+      default: 0,
+    },
+    expected_wait_time: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     id: false,
