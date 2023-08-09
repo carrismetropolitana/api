@@ -98,7 +98,6 @@ services:
         max-file: '1'
     volumes:
       - ./feederdb/:/etc/postgresql/
-      - ./data-temp/:/data-temp
     environment:
       - POSTGRES_USER=feederdbuser
       - POSTGRES_PASSWORD=feederdbpassword
@@ -135,8 +134,6 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    volumes:
-      - ./data-temp/:/data-temp
     environment:
       - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
       - SERVERDB_HOST=serverdb

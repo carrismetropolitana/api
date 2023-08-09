@@ -10,7 +10,7 @@ const AdmZip = require('adm-zip');
 const downloadFromUrl = async (url) => {
   removeTempDirectory();
   createTempDirectory();
-  const destination = '/data-temp/gtfs/gtfs.zip';
+  const destination = '/tmp/gtfs/gtfs.zip';
   const stream = fs.createWriteStream(destination);
   const { body } = await fetch(url);
   await finished(Readable.fromWeb(body).pipe(stream));
@@ -20,23 +20,23 @@ const downloadFromUrl = async (url) => {
 //
 // Extract downloaded archive to directory
 const extractArchive = async () => {
-  const zip = new AdmZip('/data-temp/gtfs/gtfs.zip');
-  zip.extractAllTo('/data-temp/gtfs/extracted/', true, false);
-  console.log('⤷ Extracted file to "/data-temp/gtfs/extracted/" successfully.');
+  const zip = new AdmZip('/tmp/gtfs/gtfs.zip');
+  zip.extractAllTo('/tmp/gtfs/extracted/', true, false);
+  console.log('⤷ Extracted file to "/tmp/gtfs/extracted/" successfully.');
 };
 
 //
 // Create temporary directory
 const createTempDirectory = async () => {
-  fs.mkdirSync('/data-temp/gtfs/');
-  console.log('⤷ Created directory "/data-temp/gtfs" successfully.');
+  fs.mkdirSync('/tmp/gtfs/');
+  console.log('⤷ Created directory "/tmp/gtfs" successfully.');
 };
 
 //
 // Remove temporary directory
 const removeTempDirectory = async () => {
-  fs.rmSync('/data-temp/gtfs/', { recursive: true, force: true });
-  console.log('⤷ Removed directory "/data-temp/gtfs" successfully.');
+  fs.rmSync('/tmp/gtfs/', { recursive: true, force: true });
+  console.log('⤷ Removed directory "/tmp/gtfs" successfully.');
 };
 
 //
