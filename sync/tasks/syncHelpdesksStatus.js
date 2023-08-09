@@ -18,7 +18,7 @@ module.exports = async () => {
     console.log('helpdeskTickets', helpdeskTickets);
     // Query IXAPI for the status of the requested helpdesk
     const helpdeskStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    console.log('helpdeskStatistics', helpdeskStatistics);
+    console.log('helpdeskStatistics.content.entityReport', helpdeskStatistics.content.entityReport);
     // Exit current iteration early if expected request result is undefined
     if (!helpdeskTickets?.content?.ticket?.length) continue;
     // Exit current iteration early if expected request result is undefined
