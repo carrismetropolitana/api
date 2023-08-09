@@ -16,11 +16,11 @@ module.exports = async () => {
     // Query IXAPI for the status of the requested helpdesk
     const helpdeskTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     console.log('helpdeskTickets', helpdeskTickets);
-    // Exit current iteration early if expected request result is undefined
-    if (!helpdeskTickets?.content?.ticket?.length) continue;
     // Query IXAPI for the status of the requested helpdesk
     const helpdeskStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     console.log('helpdeskStatistics', helpdeskStatistics);
+    // Exit current iteration early if expected request result is undefined
+    if (!helpdeskTickets?.content?.ticket?.length) continue;
     // Exit current iteration early if expected request result is undefined
     if (!helpdeskStatistics?.content?.entityReport?.length) continue;
     // Parse the response result to match the desired structure
