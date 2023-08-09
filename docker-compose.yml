@@ -2,16 +2,25 @@ version: '3.9'
 
 volumes:
   certbotdata:
-  gtfsapidb:
+  serverdb:
 
 networks:
-  backend-network:
+  api-network:
     driver: bridge
 
 services:
   #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   watchtower:
     image: containrrr/watchtower
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -20,6 +29,9 @@ services:
       - WATCHTOWER_INCLUDE_STOPPED=TRUE
       - WATCHTOWER_REVIVE_STOPPED=TRUE
       - WATCHTOWER_ROLLING_RESTART=TRUE
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
 
   nginx:
     image: nginx:stable
@@ -35,39 +47,89 @@ services:
     env_file:
       - ./.env
     networks:
-      - backend-network
+      - api-network
     ports:
       - 80:80
       - 443:443
     command: '/bin/sh -c ''sed -i "s/UPTIME_MONITOR_HEADER/${UPTIME_MONITOR_HEADER}/g" "/etc/nginx/conf.d/nginx.conf" && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   certbot:
     image: certbot/certbot
     restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
     volumes:
       - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
-  api:
-    image: ghcr.io/carrismetropolitana/schedules-api:v2
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  serverdb:
+    image: mongo
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - serverdb:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=serverdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
+    networks:
+      - api-network
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  feederdb:
+    image: postgres
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - ./feederdb/:/etc/postgresql/
+      - ./data-temp/:/data-temp
+    environment:
+      - POSTGRES_USER=feederdbuser
+      - POSTGRES_PASSWORD=feederdbpassword
+    networks:
+      - api-network
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  server:
+    image: ghcr.io/carrismetropolitana/api-server:v2
     restart: unless-stopped
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     networks:
-      - backend-network
+      - api-network
     environment:
-      - GTFSAPIDB_HOST=gtfsapidb
-      - GTFSAPIDB_USER=gtfsapidbuser
-      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidb
+      - SERVERDB_HOST=serverdb
+      - SERVERDB_USER=serverdbuser
+      - SERVERDB_PASSWORD=serverdbpassword
+      - SERVERDB_NAME=serverdb
     env_file:
       - ./.env
 
-  daemon:
-    image: ghcr.io/carrismetropolitana/schedules-daemon:v2
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  feeder:
+    image: ghcr.io/carrismetropolitana/api-feeder:v2
     restart: unless-stopped
     logging:
       options:
@@ -77,43 +139,32 @@ services:
       - ./data-temp/:/data-temp
     environment:
       - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
-      - GTFSAPIDB_HOST=gtfsapidb
-      - GTFSAPIDB_USER=gtfsapidbuser
-      - GTFSAPIDB_PASSWORD=gtfsapidbpassword
-      - GTFSAPIDB_NAME=gtfsapidb
-      - GTFSPARSEDB_HOST=gtfsparsedb
-      - GTFSPARSEDB_USER=gtfsparsedbuser
-      - GTFSPARSEDB_PASSWORD=gtfsparsedbpassword
+      - SERVERDB_HOST=serverdb
+      - SERVERDB_USER=serverdbuser
+      - SERVERDB_PASSWORD=serverdbpassword
+      - SERVERDB_NAME=serverdb
+      - FEEDERDB_HOST=feederdb
+      - FEEDERDB_USER=feederdbuser
+      - FEEDERDB_PASSWORD=feederdbpassword
     networks:
-      - backend-network
+      - api-network
 
-  gtfsapidb:
-    image: mongo
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync:
+    image: ghcr.io/carrismetropolitana/api-sync:v2
     restart: unless-stopped
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - gtfsapidb:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=gtfsapidbuser
-      - MONGO_INITDB_ROOT_PASSWORD=gtfsapidbpassword
-    networks:
-      - backend-network
-
-  gtfsparsedb:
-    image: postgres
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - ./gtfsparsedb/:/etc/postgresql/
       - ./data-temp/:/data-temp
     environment:
-      - POSTGRES_USER=gtfsparsedbuser
-      - POSTGRES_PASSWORD=gtfsparsedbpassword
+      - SERVERDB_HOST=serverdb
+      - SERVERDB_USER=serverdbuser
+      - SERVERDB_PASSWORD=serverdbpassword
+      - SERVERDB_NAME=serverdb
     networks:
-      - backend-network
+      - api-network

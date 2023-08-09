@@ -11,8 +11,8 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  schedules-api:
-    name: 'Build Docker Image (api)'
+  api-server:
+    name: 'Docker Build - server'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -31,19 +31,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image - api
+      - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: ./api
-          file: ./api/Dockerfile
-          tags: ghcr.io/carrismetropolitana/schedules-api:${{ github.ref_name }}
+          context: ./server
+          file: ./server/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-server:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  schedules-daemon:
-    name: 'Build Docker Image (daemon)'
+  api-feeder:
+    name: 'Docker Build - feeder'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -62,10 +62,41 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image - daemon
+      - name: Build Docker Image
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: ./daemon
-          file: ./daemon/Dockerfile
-          tags: ghcr.io/carrismetropolitana/schedules-daemon:${{ github.ref_name }}
+          context: ./feeder
+          file: ./feeder/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-feeder:${{ github.ref_name }}
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  api-sync:
+    name: 'Docker Build - sync'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          context: ./sync
+          file: ./sync/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync:${{ github.ref_name }}
