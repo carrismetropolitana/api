@@ -11,14 +11,23 @@ const IXAPI = require('../services/IXAPI');
 module.exports = async () => {
   // Retrieve helpdesks from database
   const foundManyDocuments = await SERVERDB.Helpdesk.find();
+
+  // Map all helpdesk codes into a comma separated string
+  const helpdeskCodes = foundManyDocuments.map((item) => item.code).join(',');
+  console.log('helpdeskCodes', helpdeskCodes);
+
+  // Query IXAPI for the status of the requested helpdesk
+  const helpdeskTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  console.log('helpdeskTickets', helpdeskTickets);
+
+  // Query IXAPI for the status of the requested helpdesk
+  const helpdeskStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  console.log('helpdeskStatistics.content.entityReport', helpdeskStatistics.content.entityReport);
+
+  return;
+
   // Add realtime status to each helpdesk
   for (const foundDocument of foundManyDocuments) {
-    // Query IXAPI for the status of the requested helpdesk
-    const helpdeskTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    console.log('helpdeskTickets', helpdeskTickets);
-    // Query IXAPI for the status of the requested helpdesk
-    const helpdeskStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCode: foundDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    console.log('helpdeskStatistics.content.entityReport', helpdeskStatistics.content.entityReport);
     // Exit current iteration early if expected request result is undefined
     if (!helpdeskTickets?.content?.ticket?.length) continue;
     // Exit current iteration early if expected request result is undefined
