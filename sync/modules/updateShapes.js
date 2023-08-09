@@ -1,5 +1,5 @@
-const GTFSParseDB = require('../databases/gtfsparsedb');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const FEEDERDB = require('../databases/FEEDERDB');
+const SERVERDB = require('../databases/SERVERDB');
 const timeCalc = require('./timeCalc');
 const turf = require('@turf/turf');
 
@@ -8,7 +8,7 @@ module.exports = async () => {
   const startTime = process.hrtime();
   // Query Postgres for all unique shapes by shape_id
   console.log(`⤷ Querying database...`);
-  const allShapes = await GTFSParseDB.connection.query(`
+  const allShapes = await FEEDERDB.connection.query(`
         SELECT
             shape_id,
             ARRAY_AGG(
@@ -44,12 +44,12 @@ module.exports = async () => {
     const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
     parsedShape.extension = parseInt(shapeExtensionMeters);
     // Update or create new document
-    const updatedShapeDocument = await GTFSAPIDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+    const updatedShapeDocument = await SERVERDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
     // Return _id to main thread
     updatedShapeIds.push(updatedShapeDocument._id);
   }
   // Delete all Shapes not present in the current update
-  const deletedStaleShapes = await GTFSAPIDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
+  const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
   console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);

@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
-const GTFSParseDB = require('../databases/gtfsparsedb');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const FEEDERDB = require('../databases/FEEDERDB');
+const SERVERDB = require('../databases/SERVERDB');
 const timeCalc = require('./timeCalc');
 
 /**
@@ -15,7 +15,7 @@ module.exports = async () => {
   const startTime = process.hrtime();
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
-  const allStops = await GTFSParseDB.connection.query(`
+  const allStops = await FEEDERDB.connection.query(`
     SELECT
         s.*,
         r.route_ids,
@@ -88,13 +88,13 @@ module.exports = async () => {
       patterns: stop.pattern_ids,
     };
     // Update or create new document
-    const updatedStopDocument = await GTFSAPIDB.Stop.findOneAndReplace({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
+    const updatedStopDocument = await SERVERDB.Stop.findOneAndReplace({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
     updatedStopIds.push(updatedStopDocument._id);
   }
   // Log count of updated Stops
   console.log(`⤷ Updated ${updatedStopIds.length} Stops.`);
   // Delete all Stops not present in the current update
-  const deletedStaleStops = await GTFSAPIDB.Stop.deleteMany({ _id: { $nin: updatedStopIds } });
+  const deletedStaleStops = await SERVERDB.Stop.deleteMany({ _id: { $nin: updatedStopIds } });
   console.log(`⤷ Deleted ${deletedStaleStops.deletedCount} stale Stops.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

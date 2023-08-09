@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
-const GTFSParseDB = require('../databases/gtfsparsedb');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const FEEDERDB = require('../databases/FEEDERDB');
+const SERVERDB = require('../databases/SERVERDB');
 const timeCalc = require('./timeCalc');
 const turf = require('@turf/turf');
 
@@ -17,7 +17,7 @@ const turf = require('@turf/turf');
  */
 async function getTripDates(service_id) {
   // Get dates in the YYYYMMDD format (GTFS Standard format)
-  const allDates = await GTFSParseDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = '${service_id}'`);
+  const allDates = await FEEDERDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = '${service_id}'`);
   return allDates.rows.map((item) => item.date);
 }
 
@@ -34,7 +34,7 @@ async function getTripDates(service_id) {
 async function getParsedShape(shape_id) {
   //
   // Query Postgres for all points for the given shape_id
-  const allShapePoints = await GTFSParseDB.connection.query(`SELECT * FROM shapes WHERE shape_id = '${shape_id}'`);
+  const allShapePoints = await FEEDERDB.connection.query(`SELECT * FROM shapes WHERE shape_id = '${shape_id}'`);
 
   // Initiate variable to keep track of updated _ids
   let parsedShape = {
@@ -144,7 +144,7 @@ module.exports = async () => {
   // 1.1,
   // Query Postgres for all unique routes
   console.log(`⤷ Querying database...`);
-  const allRoutes = await GTFSParseDB.connection.query('SELECT * FROM routes');
+  const allRoutes = await FEEDERDB.connection.query('SELECT * FROM routes');
 
   // 1.2.
   // Sort allRoutes array by each route 'route_id' property, ascending
@@ -218,7 +218,7 @@ module.exports = async () => {
       //
       // 2.2.2.1.
       // Get all trips associated with this route
-      const allTrips = await GTFSParseDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -237,7 +237,7 @@ module.exports = async () => {
 
         // 2.2.2.2.2.
         // Get the current trip stop_times
-        const allStopTimes = await GTFSParseDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip.trip_id}' ORDER BY stop_sequence`);
+        const allStopTimes = await FEEDERDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip.trip_id}' ORDER BY stop_sequence`);
 
         // 2.2.2.2.3.
         // Initiate temporary holding variables
@@ -257,7 +257,7 @@ module.exports = async () => {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
-          const existingStopDocument = await GTFSAPIDB.Stop.findOne({ code: currentStopTime.stop_id });
+          const existingStopDocument = await SERVERDB.Stop.findOne({ code: currentStopTime.stop_id });
 
           // 2.2.2.2.4.2.
           // Calculate distance delta and update variable
@@ -377,14 +377,14 @@ module.exports = async () => {
     // 2.2.4.
     // Save all created patterns to the database
     for (const pattern of uniqueLinePatterns) {
-      const updatedPatternDocument = await GTFSAPIDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
+      const updatedPatternDocument = await SERVERDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
       updatedPatternIds.push(updatedPatternDocument._id.toString());
       line.patterns.push(pattern.code);
     }
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
-    const updatedLineDocument = await GTFSAPIDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
+    const updatedLineDocument = await SERVERDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
     updatedLineIds.push(updatedLineDocument._id.toString());
 
     // 2.2.6.
@@ -397,12 +397,12 @@ module.exports = async () => {
 
   // 2.3.
   // Delete all Lines not present in the current update
-  const deletedStaleLines = await GTFSAPIDB.Line.deleteMany({ _id: { $nin: updatedLineIds } });
+  const deletedStaleLines = await SERVERDB.Line.deleteMany({ _id: { $nin: updatedLineIds } });
   console.log(`⤷ Deleted ${deletedStaleLines.deletedCount} stale Lines.`);
 
   // 2.4.
   // Delete all Patterns not present in the current update
-  const deletedStalePatterns = await GTFSAPIDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
+  const deletedStalePatterns = await SERVERDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
   console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns.`);
 
   // 2.5.

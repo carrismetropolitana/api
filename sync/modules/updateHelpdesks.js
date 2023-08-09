@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
-const GTFSParseDB = require('../databases/gtfsparsedb');
-const GTFSAPIDB = require('../databases/gtfsapidb');
+const FEEDERDB = require('../databases/FEEDERDB');
+const SERVERDB = require('../databases/SERVERDB');
 const timeCalc = require('./timeCalc');
 
 /**
@@ -14,7 +14,7 @@ module.exports = async () => {
   console.log(`⤷ Updating Helpdesks...`);
   const startTime = process.hrtime();
   // Fetch all Helpdesks from Postgres
-  const allHelpdesks = await GTFSParseDB.connection.query('SELECT * FROM helpdesks');
+  const allHelpdesks = await FEEDERDB.connection.query('SELECT * FROM helpdesks');
   // Initate a temporary variable to hold updated Helpdesks
   let updatedHelpdeskIds = [];
   // For each facility, update its entry in the database
@@ -51,13 +51,13 @@ module.exports = async () => {
       stops: helpdesk.helpdesk_stops?.length ? helpdesk.helpdesk_stops.split('|') : [],
     };
     // Save to database
-    const updatedHelpdeskDocument = await GTFSAPIDB.Helpdesk.findOneAndReplace({ code: parsedHelpdesk.code }, parsedHelpdesk, { new: true, upsert: true });
+    const updatedHelpdeskDocument = await SERVERDB.Helpdesk.findOneAndReplace({ code: parsedHelpdesk.code }, parsedHelpdesk, { new: true, upsert: true });
     updatedHelpdeskIds.push(updatedHelpdeskDocument._id);
   }
   // Log count of updated Helpdesks
   console.log(`⤷ Updated ${updatedHelpdeskIds.length} Helpdesks.`);
   // Delete all Helpdesks not present in the current update
-  const deletedStaleHelpdesks = await GTFSAPIDB.Helpdesk.deleteMany({ _id: { $nin: updatedHelpdeskIds } });
+  const deletedStaleHelpdesks = await SERVERDB.Helpdesk.deleteMany({ _id: { $nin: updatedHelpdeskIds } });
   console.log(`⤷ Deleted ${deletedStaleHelpdesks.deletedCount} stale Helpdesks.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

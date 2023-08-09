@@ -2,7 +2,7 @@
 /* IMPORTS */
 const fs = require('fs');
 const copyFrom = require('pg-copy-streams').from;
-const GTFSParseDB = require('../databases/gtfsparsedb');
+const FEEDERDB = require('../databases/FEEDERDB');
 const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
 const timeCalc = require('./timeCalc');
@@ -148,7 +148,7 @@ async function importFileToTable(filename) {
   const startTime = process.hrtime();
   console.log(`⤷ Importing "/data-temp/gtfs/prepared/${filename}.txt" to "${filename}" table...`);
   // Setup the query and a filesystem connection using 'pg-copy-streams' and 'fs'
-  const stream = GTFSParseDB.connection.query(copyFrom(`COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
+  const stream = FEEDERDB.connection.query(copyFrom(`COPY ${filename} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
   const fileStream = fs.createReadStream(`/data-temp/gtfs/prepared/${filename}.txt`);
   // Pipe the contents of the file into the pg-copy-stream function
   const { rowCount } = await new Promise((resolve, reject) => {
