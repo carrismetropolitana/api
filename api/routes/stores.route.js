@@ -27,7 +27,12 @@ module.exports.single = async (request, reply) => {
   // Query IXAPI for the status of the requested store
   const result = await IXAPI.request({ storeCode: foundOneDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
   // Return early if request result is undefined
-  if (!result?.content?.ticket?.length) return reply.send(foundOneDocument);
+  if (!result?.content?.ticket?.length) {
+    console.log(`------- ERROR ON STORE ${foundOneDocument.code} -------`);
+    console.log(result);
+    console.log('------- ERROR -------');
+    return reply.send(foundOneDocument);
+  }
   // Parse the response result to match the desired structure
   for (const obj of result.content.ticket) {
     // Find index of current category object
