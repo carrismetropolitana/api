@@ -1,6 +1,6 @@
 /* * */
 /* IMPORTS */
-const FEEDERDB = require('../databases/feederdb');
+const FEEDERDB = require('../databases/FEEDERDB');
 
 module.exports = async () => {
   //

@@ -1,8 +1,8 @@
 /* * */
 /* IMPORTS */
 const crontab = require('node-cron');
-const FEEDERDB = require('./databases/feederdb');
-const SERVERDB = require('./databases/serverdb');
+const FEEDERDB = require('./databases/FEEDERDB');
+const SERVERDB = require('./databases/SERVERDB');
 
 const timeCalc = require('./modules/timeCalc');
 const filemanager = require('./modules/filemanager');

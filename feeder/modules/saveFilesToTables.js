@@ -2,7 +2,7 @@
 /* IMPORTS */
 const fs = require('fs');
 const copyFrom = require('pg-copy-streams').from;
-const FEEDERDB = require('../databases/feederdb');
+const FEEDERDB = require('../databases/FEEDERDB');
 const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
 const timeCalc = require('./timeCalc');
