@@ -29,10 +29,12 @@ module.exports = async () => {
 
   // Add realtime status to each helpdesk
   for (const foundDocument of foundManyDocuments) {
+    //
+    console.log(foundDocument);
     // Lorem ipsum
-    const helpdeskTickets = allHelpdesksTickets.content.ticket.filter((item) => item.siteEID === foundDocument.code);
+    const helpdeskTickets = allHelpdesksTickets?.content?.ticket?.filter((item) => item.siteEID === foundDocument.code);
     // Lorem ipsum
-    const helpdeskStatistics = allHelpdesksStatistics.content.entityReport.find((item) => item.siteEID === foundDocument.code);
+    const helpdeskStatistics = allHelpdesksStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
     // Parse the response result to match the desired structure
     foundDocument.currently_waiting = helpdeskTickets?.length || 0;
     foundDocument.expected_wait_time = helpdeskStatistics?.averageWaitTime || 0;
