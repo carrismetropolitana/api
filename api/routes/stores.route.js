@@ -39,48 +39,15 @@ module.exports.all = async (request, reply) => {
 };
 
 //
-//
-//
-//
-//
-//
-//
-//
-//
-
-//
 module.exports.single = async (request, reply) => {
-  // Fetch requested document from database
-  const foundOneDocument = await GTFSAPIDB.Store.findOne({ code: { $eq: request.params.code } }).lean();
-  // Return early if nothing is found
-  if (!foundOneDocument) return reply.send({});
-  // Setup the four default ticket categories
-  foundOneDocument.status = [
-    { category_code: 'A', currently_waiting: 0 },
-    { category_code: 'B', currently_waiting: 0 },
-    { category_code: 'C', currently_waiting: 0 },
-    { category_code: 'D', currently_waiting: 0 },
-  ];
-  // Query IXAPI for the status of the requested store
-  const result = await IXAPI.request({ storeCode: foundOneDocument.code, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  // Return early if request result is undefined
-  if (!result?.content?.ticket?.length) {
-    console.log(`------- ERROR ON STORE ${foundOneDocument.code} -------`);
-    console.log(result);
-    console.log('------- ERROR -------');
-    return reply.send(foundOneDocument);
-  }
-  // Parse the response result to match the desired structure
-  for (const obj of result.content.ticket) {
-    // Find index of current category object
-    const categoryIndex = foundOneDocument.status.findIndex((item) => item.category_code === obj.categoryCode);
-    // If the categoryCode is not yet present in the result array, add it with total 1
-    if (categoryIndex === -1) foundOneDocument.status.push({ category_code: obj.categoryCode, currently_waiting: 1 });
-    // If the categoryCode is already present, increase the total count by 1
-    else foundOneDocument.status[categoryIndex].currently_waiting += 1;
-  }
-  // Return result to the caller
-  return reply.send(foundOneDocument);
+  // Fetch all stores using public API endpoint to ensure cache is hit
+  const allStoresRes = await fetch('https://api.carrismetropolitana.pt/stores');
+  const allStoresData = await allStoresRes.json();
+  // Find the requested store in response json
+  const foundStore = allStoresData.find((item) => item.code === request.params.code);
+  // Return result
+  return reply.send(foundStore || {});
+  //
 };
 
 //
