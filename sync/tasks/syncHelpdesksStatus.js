@@ -11,48 +11,25 @@ const IXAPI = require('../services/IXAPI');
 module.exports = async () => {
   // Retrieve helpdesks from database
   const foundManyDocuments = await SERVERDB.Helpdesk.find();
-  // Map all helpdesk codes into a comma separated string
-  //   const helpdeskCodes = foundManyDocuments.map((item) => item.code).join(',');
-
   // Query IXAPI for the status of the requested helpdesk
-  const allHelpdesksTickets = await IXAPI.request({ reportType: 'ticket', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  console.log('allHelpdesksTickets', allHelpdesksTickets);
-  // Exit current iteration early if expected request result is undefined
-  //   if (!allHelpdesksTickets?.content?.ticket?.length) continue;
-  // Reduce result into a sum of tickets for each helpdesk
-
+  const allHelpdesksTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
   // Query IXAPI for the status of the requested helpdesk
   const allHelpdesksStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  console.log('allHelpdesksStatistics.content.entityReport', allHelpdesksStatistics.content.entityReport);
-  // Exit current iteration early if expected request result is undefined
-  //   if (!allHelpdesksStatistics?.content?.entityReport?.length) continue;
-
   // Add realtime status to each helpdesk
   for (const foundDocument of foundManyDocuments) {
-    // Lorem ipsum
-    const helpdeskTickets = allHelpdesksTickets?.content?.ticket?.filter((item) => item.siteEID === foundDocument.code);
-    // Lorem ipsum
+    // Filter all waiting ticket by the current helpdesk code
+    const helpdeskTicketsWaiting = allHelpdesksTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.code);
+    // Find the entityReport entry for the current helpdesk
     const helpdeskStatistics = allHelpdesksStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
-    // Parse the response result to match the desired structure
-    // foundDocument.currently_waiting = helpdeskTickets?.length || 0;
-    // foundDocument.expected_wait_time = helpdeskStatistics?.averageWaitTime || 0;
-
-    // console.log('-------------------');
-    // console.log(foundDocument.code);
-    // console.log(foundDocument.currently_waiting);
-    // console.log(foundDocument.expected_wait_time);
-    // console.log('-------------------');
-    //
-    await SERVERDB.Helpdesk.findOneAndUpdate(
-      { code: foundDocument.code },
-      {
-        currently_waiting: helpdeskTickets?.length || 0,
-        expected_wait_time: helpdeskStatistics?.averageWaitTime || 0,
-      },
-      { new: true, upsert: true }
-    );
-
-    console.log('Updated document with code', foundDocument.code);
+    // Format the update query with the request results
+    const updatedDocumentValues = {
+      currently_waiting: helpdeskTicketsWaiting?.length || Math.random() * 100,
+      expected_wait_time: helpdeskStatistics?.averageWaitTime || Math.random() * 100,
+    };
+    // Update the current document with the new values
+    await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
+    // Log progress
+    console.log(`⤷ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
     //
   }
   //

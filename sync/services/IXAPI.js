@@ -43,14 +43,7 @@ class IXAPI {
         Authorization: `Bearer ${this.access_token}`,
         StatisticsFilter: JSON.stringify({
           header: { method: 'statisticsGetReport' },
-          content: {
-            apiVersion: '1.0',
-            reportType: options.reportType,
-            initialDate: options.initialDate,
-            finalDate: options.finalDate,
-            status: 'W',
-            rowsPerPage: 2000,
-          },
+          content: { apiVersion: '1.0', rowsPerPage: 2000, ...options },
         }),
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
