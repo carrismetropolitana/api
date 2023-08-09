@@ -48,7 +48,6 @@ class IXAPI {
             reportType: options.reportType,
             initialDate: options.initialDate,
             finalDate: options.finalDate,
-            siteEIDs: options.helpdeskCodes,
             status: 'W',
             rowsPerPage: 2000,
           },

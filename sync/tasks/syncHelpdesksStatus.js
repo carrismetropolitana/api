@@ -12,7 +12,7 @@ module.exports = async () => {
   // Retrieve helpdesks from database
   const foundManyDocuments = await SERVERDB.Helpdesk.find();
   // Map all helpdesk codes into a comma separated string
-  const helpdeskCodes = foundManyDocuments.map((item) => item.code).join(',');
+  //   const helpdeskCodes = foundManyDocuments.map((item) => item.code).join(',');
 
   // Query IXAPI for the status of the requested helpdesk
   const allHelpdesksTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
