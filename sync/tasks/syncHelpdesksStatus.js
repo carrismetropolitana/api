@@ -11,30 +11,37 @@ const IXAPI = require('../services/IXAPI');
 module.exports = async () => {
   // Retrieve helpdesks from database
   const foundManyDocuments = await SERVERDB.Helpdesk.find();
-
   // Map all helpdesk codes into a comma separated string
   const helpdeskCodes = foundManyDocuments.map((item) => item.code).join(',');
-  console.log('helpdeskCodes', helpdeskCodes);
 
   // Query IXAPI for the status of the requested helpdesk
-  const helpdeskTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  console.log('helpdeskTickets', helpdeskTickets);
+  const allHelpdesksTickets = await IXAPI.request({ reportType: 'ticket', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  //   console.log('allHelpdesksTickets', allHelpdesksTickets);
+  // Exit current iteration early if expected request result is undefined
+  //   if (!allHelpdesksTickets?.content?.ticket?.length) continue;
+  // Reduce result into a sum of tickets for each helpdesk
 
   // Query IXAPI for the status of the requested helpdesk
-  const helpdeskStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-  console.log('helpdeskStatistics.content.entityReport', helpdeskStatistics.content.entityReport);
-
-  return;
+  const allHelpdesksStatistics = await IXAPI.request({ reportType: 'entityReport', helpdeskCodes: helpdeskCodes, initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+  //   console.log('allHelpdesksStatistics.content.entityReport', allHelpdesksStatistics.content.entityReport);
+  // Exit current iteration early if expected request result is undefined
+  //   if (!allHelpdesksStatistics?.content?.entityReport?.length) continue;
 
   // Add realtime status to each helpdesk
   for (const foundDocument of foundManyDocuments) {
-    // Exit current iteration early if expected request result is undefined
-    if (!helpdeskTickets?.content?.ticket?.length) continue;
-    // Exit current iteration early if expected request result is undefined
-    if (!helpdeskStatistics?.content?.entityReport?.length) continue;
+    // Lorem ipsum
+    const helpdeskTickets = allHelpdesksTickets.content.ticket.filter((item) => item.siteEID === foundDocument.code);
+    // Lorem ipsum
+    const helpdeskStatistics = allHelpdesksStatistics.content.entityReport.find((item) => item.siteEID === foundDocument.code);
     // Parse the response result to match the desired structure
-    foundDocument.currently_waiting = helpdeskTickets?.content?.ticket?.totalRows || 0;
-    foundDocument.expected_wait_time = helpdeskTickets?.content?.entityReport?.averageWaitTime || 0;
+    foundDocument.currently_waiting = helpdeskTickets?.length || 0;
+    foundDocument.expected_wait_time = helpdeskStatistics?.averageWaitTime || 0;
+
+    console.log('-------------------');
+    console.log(foundDocument.code);
+    console.log(foundDocument.currently_waiting);
+    console.log(foundDocument.expected_wait_time);
+    console.log('-------------------');
     //
     await foundDocument.save();
     //
