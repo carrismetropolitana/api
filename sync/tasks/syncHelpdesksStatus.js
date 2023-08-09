@@ -45,7 +45,7 @@ module.exports = async () => {
     console.log(foundDocument.expected_wait_time);
     console.log('-------------------');
     //
-    await foundDocument.save();
+    await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, foundDocument, { new: true, upsert: true });
     //
   }
   //
