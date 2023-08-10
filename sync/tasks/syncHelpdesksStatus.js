@@ -49,7 +49,9 @@ module.exports = async () => {
       IS_THIS_TASK_RUNNING = false;
       // Log elapsed time in the current operation
       const elapsedTime = timeCalc.getElapsedTime(startTime);
-      console.log(`⤷ Task completed: Updated Helpdesks status (${foundManyDocuments.length} in ${elapsedTime}).`);
+      console.log(`⤷ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
+      console.log(`------------------------------------------------------------------------------------------------------`);
+      console.log();
       //
     }
     //

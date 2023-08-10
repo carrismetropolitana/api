@@ -62,7 +62,7 @@ class IXAPI {
   async authenticate() {
     try {
       //
-      console.log('Starting IXAPI authentication...');
+      console.log('→ Starting IXAPI authentication...');
 
       // Initiate a new request to the token endpoint
       const response = await fetch(IX_AUTH_URL, {
@@ -88,10 +88,10 @@ class IXAPI {
       const now = new Date();
       this.expires_at = new Date(now.getTime() + responseData.expires_in * 1000);
 
-      console.log('IXAPI Authentication successful');
+      console.log('→ IXAPI Authentication successful');
       //
     } catch (err) {
-      console.log('IXAPI Authentication failed', err);
+      console.log('→ IXAPI Authentication failed', err);
     }
   }
 
