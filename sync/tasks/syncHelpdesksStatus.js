@@ -13,7 +13,7 @@ module.exports = async () => {
   // Setup flag to avoid overlapping runs
   let IS_THIS_TASK_RUNNING = false;
   // Schedule task (https://crontab.guru/#*_*_*_*_*)
-  crontab.schedule('*/30 * * * *', async () => {
+  crontab.schedule('*/30 * * * * *', async () => {
     // Check if task is already running
     if (!IS_THIS_TASK_RUNNING) {
       // Switch the flag ON
