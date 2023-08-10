@@ -21,12 +21,13 @@ module.exports.single = async (request, reply) => {
 module.exports.singleWithRealtime = async (request, reply) => {
   const foundManyDocuments = await SERVERDB.Stop.find({}, 'code').lean();
   const allStopCodes = foundManyDocuments.map((item) => item.code);
+  console.log('allStopCodes', allStopCodes);
   const result = await PCGIAPI.request('openservices/estimatedStopSchedules', {
     method: 'POST',
     body: {
       operators: ['41', '42', '43', '44'],
       //   stops: [request.params.code],
-      stops: [allStopCodes],
+      stops: allStopCodes,
       numResults: 1,
     },
   });
