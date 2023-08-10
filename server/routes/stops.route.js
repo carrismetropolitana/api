@@ -32,5 +32,5 @@ module.exports.singleWithRealtime = async (request, reply) => {
     },
   });
   result.forEach((element) => delete element.observedDriverId); // Remove useless property
-  return reply.send(result || {});
+  return reply.send(result || []);
 };

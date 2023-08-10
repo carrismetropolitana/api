@@ -7,6 +7,7 @@ class SERVERDB {
   constructor() {
     this.connection = mongoose.createConnection(`mongodb://${SERVERDB_USER}:${SERVERDB_PASSWORD}@${SERVERDB_HOST}/${SERVERDB_NAME}?authSource=admin`);
     this.Helpdesk = this.connection.model('Helpdesk', require('../schemas/Helpdesk'));
+    this.Stop = this.connection.model('Stop', require('../schemas/Stop'));
   }
 
   async connect() {
