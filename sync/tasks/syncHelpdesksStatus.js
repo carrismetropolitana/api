@@ -23,8 +23,8 @@ module.exports = async () => {
     const helpdeskStatistics = allHelpdesksStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
     // Format the update query with the request results
     const updatedDocumentValues = {
-      currently_waiting: helpdeskTicketsWaiting?.length || parseInt(Math.random() * 100),
-      expected_wait_time: helpdeskStatistics?.averageWaitTime || parseInt(Math.random() * 100),
+      currently_waiting: helpdeskTicketsWaiting?.length || parseInt(Math.random() * -100),
+      expected_wait_time: helpdeskStatistics?.averageWaitTime || parseInt(Math.random() * -100),
     };
     // Update the current document with the new values
     await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
