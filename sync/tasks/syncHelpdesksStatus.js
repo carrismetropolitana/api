@@ -20,7 +20,9 @@ module.exports = async () => {
       // Switch the flag ON
       IS_THIS_TASK_RUNNING = true;
       // Record the start time to later calculate operation duration
-      console.log(`⤷ Updating Helpdesks status...`);
+      console.log();
+      console.log(`------------------------------------------------------------------------------------------------------------------------`);
+      console.log(`→ Updating Helpdesks status...`);
       const startTime = process.hrtime();
       // Retrieve helpdesks from database
       const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
@@ -42,15 +44,15 @@ module.exports = async () => {
         // Update the current document with the new values
         await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
         // Log progress
-        console.log(`⤷ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
+        console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         //
       }
       // Switch the flag OFF
       IS_THIS_TASK_RUNNING = false;
       // Log elapsed time in the current operation
       const elapsedTime = timeCalc.getElapsedTime(startTime);
-      console.log(`⤷ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
-      console.log(`------------------------------------------------------------------------------------------------------`);
+      console.log(`→ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
+      console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
       //
     }
