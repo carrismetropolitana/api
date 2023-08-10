@@ -15,14 +15,14 @@ const syncHelpdesksStatus = require('./tasks/syncHelpdesksStatus');
   // Setup task
   let TASK_SYNC_HELPDESKS_STATUS = false;
   // Schedule task (helper: https://crontab.guru/#*_*_*_*_*)
-  crontab.schedule('*/30 * * * * *', async () => {
+  crontab.schedule('* * * * *', async () => {
     // CHECK IF TASK IS NOT ALREADY RUNNING
     if (!TASK_SYNC_HELPDESKS_STATUS) {
-      console.log('will run task');
+      console.log('-- will run task');
       TASK_SYNC_HELPDESKS_STATUS = true;
       await syncHelpdesksStatus();
       TASK_SYNC_HELPDESKS_STATUS = false;
-      console.log('did run task - finish');
+      console.log('-- did run task - finish');
     }
   });
 
