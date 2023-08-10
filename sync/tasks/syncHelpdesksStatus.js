@@ -3,6 +3,7 @@
 const crontab = require('node-cron');
 const SERVERDB = require('../services/SERVERDB');
 const IXAPI = require('../services/IXAPI');
+const timeCalc = require('../services/timeCalc');
 
 /**
  * UPDATE HELPDESKS STATUS
@@ -18,8 +19,11 @@ module.exports = async () => {
     if (!IS_THIS_TASK_RUNNING) {
       // Switch the flag ON
       IS_THIS_TASK_RUNNING = true;
+      // Record the start time to later calculate operation duration
+      console.log(`⤷ Updating Helpdesks status...`);
+      const startTime = process.hrtime();
       // Retrieve helpdesks from database
-      const foundManyDocuments = await SERVERDB.Helpdesk.find();
+      const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
       // Query IXAPI for the status of the requested helpdesk
       const allHelpdesksTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
       // Query IXAPI for the status of the requested helpdesk
@@ -43,6 +47,9 @@ module.exports = async () => {
       }
       // Switch the flag OFF
       IS_THIS_TASK_RUNNING = false;
+      // Log elapsed time in the current operation
+      const elapsedTime = timeCalc.getElapsedTime(startTime);
+      console.log(`⤷ Task completed: Updated Helpdesks status (${foundManyDocuments.length} in ${elapsedTime}).`);
       //
     }
     //

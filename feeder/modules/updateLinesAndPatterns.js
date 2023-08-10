@@ -257,7 +257,7 @@ module.exports = async () => {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
-          const existingStopDocument = await SERVERDB.Stop.findOne({ code: currentStopTime.stop_id });
+          const existingStopDocument = await SERVERDB.Stop.findOne({ code: currentStopTime.stop_id }).lean();
 
           // 2.2.2.2.4.2.
           // Calculate distance delta and update variable
