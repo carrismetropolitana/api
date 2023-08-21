@@ -25,6 +25,12 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log(`→ Updating Helpdesks status...`);
       const startTime = process.hrtime();
+
+      //
+      console.log('DELETE REDIS DATA');
+      await SERVERDBREDIS.client.del('helpdesks:test');
+      //
+
       // Retrieve helpdesks from database
       const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
       // Query IXAPI for the status of the requested helpdesk
@@ -47,7 +53,7 @@ module.exports = async () => {
         // Log progress
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         // Update the current document with the new values
-        await SERVERDBREDIS.client.json.set('helpdesks', '$', updatedDocumentValues);
+        await SERVERDBREDIS.client.json.set('helpdesks:test', '$', updatedDocumentValues);
         //
       }
       // Switch the flag OFF
@@ -58,7 +64,7 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
 
-      const resultFromRedis = await SERVERDBREDIS.client.json.get(`helpdesks`);
+      const resultFromRedis = await SERVERDBREDIS.client.json.get('helpdesks:test');
       console.log(resultFromRedis);
       //
     }
