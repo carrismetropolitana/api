@@ -53,7 +53,7 @@ module.exports = async () => {
         // Log progress
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         // Update the current document with the new values
-        await SERVERDBREDIS.client.json.set('helpdesks:test', '$', updatedDocumentValues);
+        // await SERVERDBREDIS.client.json.set('helpdesks:test', '$', updatedDocumentValues);
         //
       }
       // Switch the flag OFF
