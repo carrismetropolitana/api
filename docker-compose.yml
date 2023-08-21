@@ -172,8 +172,6 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    volumes:
-      - ./data-temp/:/data-temp
     networks:
       - api-network
     env_file:
