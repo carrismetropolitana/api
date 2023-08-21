@@ -48,7 +48,7 @@ module.exports = async () => {
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         // Update the current document with the new values
         // await SERVERDBREDIS.client.json.set(`helpdesks:${foundDocument.code}`, '$', updatedDocumentValues);
-        await SERVERDBREDIS.client.json.set('noderedis:jsondata', '$', {
+        await SERVERDBREDIS.client.json.set('helpdesks', '$', {
           name: 'Roberta McDonald',
           pets: [
             {
@@ -88,7 +88,7 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
 
-      const resultFromRedis = await SERVERDBREDIS.client.json.get('noderedis:jsondata');
+      const resultFromRedis = await SERVERDBREDIS.client.json.get('helpdesks');
       console.log(resultFromRedis);
       //
     }
