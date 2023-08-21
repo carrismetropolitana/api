@@ -2,6 +2,7 @@
 /* IMPORTS */
 const crontab = require('node-cron');
 const SERVERDB = require('../services/SERVERDB');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const IXAPI = require('../services/IXAPI');
 const timeCalc = require('../services/timeCalc');
 
