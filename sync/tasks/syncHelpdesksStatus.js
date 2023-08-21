@@ -27,6 +27,9 @@ module.exports = async () => {
       const startTime = process.hrtime();
       // Retrieve helpdesks from database
       const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
+
+      await SERVERDBREDIS.client.json.set('helpdesks', '$', foundManyDocuments);
+
       // Query IXAPI for the status of the requested helpdesk
       const allHelpdesksTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
       // Query IXAPI for the status of the requested helpdesk
@@ -48,36 +51,6 @@ module.exports = async () => {
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         // Update the current document with the new values
         // await SERVERDBREDIS.client.json.set(`helpdesks:${foundDocument.code}`, '$', updatedDocumentValues);
-        await SERVERDBREDIS.client.json.set('helpdesks', '$', {
-          name: 'Roberta McDonald',
-          pets: [
-            {
-              name: 'Fluffy',
-              species: 'dog',
-              age: 5,
-              isMammal: true,
-            },
-            {
-              name: 'Rex',
-              species: 'dog',
-              age: 3,
-              isMammal: true,
-            },
-            {
-              name: 'Goldie',
-              species: 'fish',
-              age: 2,
-              isMammal: false,
-            },
-          ],
-          address: {
-            number: 99,
-            street: 'Main Street',
-            city: 'Springfield',
-            state: 'OH',
-            country: 'USA',
-          },
-        });
         //
       }
       // Switch the flag OFF
