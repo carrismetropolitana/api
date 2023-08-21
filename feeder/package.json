@@ -11,9 +11,10 @@
         "adm-zip": "0.5.10",
         "csv-parse": "5.4.0",
         "csv-stringify": "6.4.0",
-        "mongoose": "7.4.2",
+        "mongoose": "7.4.3",
         "node-cron": "3.0.2",
-        "pg": "8.11.2",
-        "pg-copy-streams": "6.0.6"
+        "pg": "8.11.3",
+        "pg-copy-streams": "6.0.6",
+        "redis": "^4.6.7"
     }
 }
