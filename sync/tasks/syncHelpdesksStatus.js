@@ -28,7 +28,7 @@ module.exports = async () => {
 
       //
       console.log('DELETE REDIS DATA');
-      await SERVERDBREDIS.client.del('helpdesks');
+      await SERVERDBREDIS.client.del('helpdesks:*');
       //
 
       // Retrieve helpdesks from database
@@ -64,7 +64,7 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
 
-      const resultFromRedis = await SERVERDBREDIS.client.hGetAll('helpdesks');
+      const resultFromRedis = await SERVERDBREDIS.client.hGetAll('helpdesks:*');
       console.log(resultFromRedis);
       //
     }
