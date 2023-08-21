@@ -28,7 +28,7 @@ module.exports = async () => {
 
       //
       console.log('DELETE REDIS DATA');
-      await SERVERDBREDIS.client.del('helpdesks:test');
+      await SERVERDBREDIS.client.del('helpdesks');
       //
 
       // Retrieve helpdesks from database
@@ -53,7 +53,7 @@ module.exports = async () => {
         // Log progress
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         // Update the current document with the new values
-        // await SERVERDBREDIS.client.json.set('helpdesks:test', '$', updatedDocumentValues);
+        await SERVERDBREDIS.client.hSet(`helpdesks:${foundDocument.code}`, updatedDocumentValues);
         //
       }
       // Switch the flag OFF
@@ -64,7 +64,7 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
 
-      const resultFromRedis = await SERVERDBREDIS.client.json.get('helpdesks:test');
+      const resultFromRedis = await SERVERDBREDIS.client.hGetAll('helpdesks');
       console.log(resultFromRedis);
       //
     }
