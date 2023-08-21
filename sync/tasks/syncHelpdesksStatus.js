@@ -25,12 +25,6 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log(`→ Updating Helpdesks status...`);
       const startTime = process.hrtime();
-
-      //
-      console.log('DELETE REDIS DATA');
-      await SERVERDBREDIS.client.del('helpdesks:*');
-      //
-
       // Retrieve helpdesks from database
       const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
       // Query IXAPI for the status of the requested helpdesk
