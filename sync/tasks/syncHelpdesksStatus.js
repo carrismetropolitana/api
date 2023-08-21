@@ -47,7 +47,37 @@ module.exports = async () => {
         // Log progress
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         // Update the current document with the new values
-        await SERVERDBREDIS.client.json.set(`helpdesks:${foundDocument.code}`, '$', updatedDocumentValues);
+        // await SERVERDBREDIS.client.json.set(`helpdesks:${foundDocument.code}`, '$', updatedDocumentValues);
+        await SERVERDBREDIS.client.json.set('noderedis:jsondata', '$', {
+          name: 'Roberta McDonald',
+          pets: [
+            {
+              name: 'Fluffy',
+              species: 'dog',
+              age: 5,
+              isMammal: true,
+            },
+            {
+              name: 'Rex',
+              species: 'dog',
+              age: 3,
+              isMammal: true,
+            },
+            {
+              name: 'Goldie',
+              species: 'fish',
+              age: 2,
+              isMammal: false,
+            },
+          ],
+          address: {
+            number: 99,
+            street: 'Main Street',
+            city: 'Springfield',
+            state: 'OH',
+            country: 'USA',
+          },
+        });
         //
       }
       // Switch the flag OFF
@@ -58,7 +88,7 @@ module.exports = async () => {
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
 
-      const resultFromRedis = await SERVERDBREDIS.client.json.get('helpdesks:*');
+      const resultFromRedis = await SERVERDBREDIS.client.json.get('noderedis:jsondata');
       console.log(resultFromRedis);
       //
     }
