@@ -44,6 +44,8 @@ module.exports = async () => {
         };
         // Update the current document with the new values
         await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
+        // Update the current document with the new values
+        await SERVERDBREDIS.client.json.set(`helpdesks:${foundDocument.code}`, '$', updatedDocumentValues);
         // Log progress
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
         //
@@ -55,6 +57,9 @@ module.exports = async () => {
       console.log(`→ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
+
+      const resultFromRedis = await SERVERDBREDIS.client.json.get(`helpdesks`);
+      console.log(resultFromRedis);
       //
     }
     //
