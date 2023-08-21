@@ -136,7 +136,6 @@ services:
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
       - SERVERDBREDIS_HOST=serverdbredis
-      - SERVERDBREDIS_PORT=637
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -157,7 +156,6 @@ services:
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
       - SERVERDBREDIS_HOST=serverdbredis
-      - SERVERDBREDIS_PORT=6379
       - FEEDERDB_HOST=feederdb
       - FEEDERDB_USER=feederdbuser
       - FEEDERDB_PASSWORD=feederdbpassword
@@ -182,4 +180,3 @@ services:
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
       - SERVERDBREDIS_HOST=serverdbredis
-      - SERVERDBREDIS_PORT=637
