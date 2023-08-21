@@ -88,7 +88,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
 
   serverdbredis:
-    image: redis/redis-stack
+    image: redis/redis-stack-server
     restart: unless-stopped
     logging:
       options:
@@ -98,7 +98,8 @@ services:
       - serverdbredis:/data
     networks:
       - api-network
-    command: redis-server --save 5 1 # --loglevel warning
+    environment:
+      - REDIS_ARGS=--save 5 1
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
