@@ -2,7 +2,6 @@
 /* IMPORTS */
 const crontab = require('node-cron');
 const SERVERDB = require('../services/SERVERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const IXAPI = require('../services/IXAPI');
 const timeCalc = require('../services/timeCalc');
 
@@ -27,9 +26,6 @@ module.exports = async () => {
       const startTime = process.hrtime();
       // Retrieve helpdesks from database
       const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
-
-      await SERVERDBREDIS.client.json.set('helpdesks', '$', foundManyDocuments);
-
       // Query IXAPI for the status of the requested helpdesk
       const allHelpdesksTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
       // Query IXAPI for the status of the requested helpdesk
@@ -49,8 +45,6 @@ module.exports = async () => {
         await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
         // Log progress
         console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
-        // Update the current document with the new values
-        // await SERVERDBREDIS.client.json.set('helpdesks', '$', updatedDocumentValues);
         //
       }
       // Switch the flag OFF
@@ -60,9 +54,6 @@ module.exports = async () => {
       console.log(`→ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
       console.log(`------------------------------------------------------------------------------------------------------------------------`);
       console.log();
-
-      const resultFromRedis = await SERVERDBREDIS.client.json.get('helpdesks');
-      console.log(resultFromRedis);
       //
     }
     //

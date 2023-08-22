@@ -1,13 +1,14 @@
 /* * */
 /* IMPORTS */
 const FEEDERDB = require('../databases/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../databases/SERVERDB');
 const timeCalc = require('./timeCalc');
 
 /**
  * UPDATE HELPDESKS
+ * parse them and save them to MongoDB.
+ * @async
  */
-
 module.exports = async () => {
   // Record the start time to later calculate operation duration
   console.log(`⤷ Updating Helpdesks...`);
@@ -50,20 +51,14 @@ module.exports = async () => {
       stops: helpdesk.helpdesk_stops?.length ? helpdesk.helpdesk_stops.split('|') : [],
     };
     // Save to database
-    const updatedHelpdeskDocument = await SERVERDBREDIS.client.json.set(`helpdesks:${parsedHelpdesk.code}`, '.', parsedHelpdesk);
+    const updatedHelpdeskDocument = await SERVERDB.Helpdesk.findOneAndReplace({ code: parsedHelpdesk.code }, parsedHelpdesk, { new: true, upsert: true });
     updatedHelpdeskIds.push(updatedHelpdeskDocument._id);
   }
   // Log count of updated Helpdesks
   console.log(`⤷ Updated ${updatedHelpdeskIds.length} Helpdesks.`);
-  // Delete stale helpdesk keys in Redis
-  const allHelpdeskKeys = await SERVERDBREDIS.client.keys('helpdesks:*');
-  const keysToDelete = allHelpdeskKeys.filter((key) => !updatedHelpdeskIds.includes(key.split(':')[1]));
-  if (keysToDelete.length > 0) {
-    await SERVERDBREDIS.client.del(keysToDelete);
-    console.log(`⤷ Deleted ${keysToDelete.length} stale Helpdesk keys in Redis.`);
-  } else {
-    console.log('⤷ No stale Helpdesk keys to delete in Redis.');
-  }
+  // Delete all Helpdesks not present in the current update
+  const deletedStaleHelpdesks = await SERVERDB.Helpdesk.deleteMany({ _id: { $nin: updatedHelpdeskIds } });
+  console.log(`⤷ Deleted ${deletedStaleHelpdesks.deletedCount} stale Helpdesks.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Helpdesks (${elapsedTime}).`);

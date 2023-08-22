@@ -3,7 +3,6 @@
 const crontab = require('node-cron');
 const FEEDERDB = require('./databases/FEEDERDB');
 const SERVERDB = require('./databases/SERVERDB');
-const SERVERDBREDIS = require('./services/SERVERDBREDIS');
 
 const timeCalc = require('./modules/timeCalc');
 const filemanager = require('./modules/filemanager');
@@ -45,7 +44,6 @@ async function appInitPoint() {
     console.log('STEP 1: Connect to databases');
     await FEEDERDB.connect();
     await SERVERDB.connect();
-    await SERVERDBREDIS.connect();
 
     console.log();
     console.log('STEP 2: Fetching latest GTFS archive');
@@ -91,7 +89,6 @@ async function appInitPoint() {
     console.log('STEP 13: Disconnect from databases...');
     await FEEDERDB.disconnect();
     await SERVERDB.disconnect();
-    await SERVERDBREDIS.disconnect();
 
     console.log();
     console.log('- - - - - - - - - - - - - - - - - - - - -');

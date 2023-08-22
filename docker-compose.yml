@@ -3,7 +3,6 @@ version: '3.9'
 volumes:
   certbotdata:
   serverdb:
-  serverdbredis:
 
 networks:
   api-network:
@@ -87,20 +86,6 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=serverdbuser
       - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
 
-  serverdbredis:
-    image: redis/redis-stack-server
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - serverdbredis:/data
-    networks:
-      - api-network
-    environment:
-      - REDIS_ARGS=--save 5 1
-
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
@@ -138,7 +123,6 @@ services:
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
-      - SERVERDBREDIS_HOST=serverdbredis
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -158,7 +142,6 @@ services:
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
-      - SERVERDBREDIS_HOST=serverdbredis
       - FEEDERDB_HOST=feederdb
       - FEEDERDB_USER=feederdbuser
       - FEEDERDB_PASSWORD=feederdbpassword
@@ -182,4 +165,3 @@ services:
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
-      - SERVERDBREDIS_HOST=serverdbredis
