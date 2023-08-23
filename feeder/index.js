@@ -4,7 +4,8 @@ const crontab = require('node-cron');
 const FEEDERDB = require('./databases/FEEDERDB');
 const SERVERDB = require('./databases/SERVERDB');
 
-const files = require('./files/files');
+const settings = require('./config/settings');
+const files = require('./config/files');
 
 const setupBaseDirectory = require('./tasks/setupBaseDirectory');
 const fetchAndExtractLatestGtfs = require('./tasks/fetchAndExtractLatestGtfs');
@@ -17,23 +18,6 @@ const updateHelpdesks = require('./modules/updateHelpdesks');
 const updateStops = require('./modules/updateStops');
 const updateShapes = require('./modules/updateShapes');
 const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
-
-//
-//
-//
-//
-//
-//
-
-const BASE_DIR = '/tmp/base';
-const GTFS_BASE_DIR = 'gtfs';
-const GTFS_EXTRACTED_DIR = 'extracted';
-const GTFS_PARSED_DIR = 'parsed';
-const GTFS_URL = 'https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip';
-
-const DATASETS_BASE_DIR = 'datasets';
-const DATASETS_PARSED_DIR = 'parsed';
-const DATASETS_BASE_URL = 'https://github.com/carrismetropolitana/gtfs/raw/latest/';
 
 //
 //
@@ -71,16 +55,15 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 2: Setup working directory');
-    await setupBaseDirectory(BASE_DIR);
+    await setupBaseDirectory(settings.BASE_DIR);
 
     console.log();
     console.log('STEP 3: Fetch and Extract latest GTFS');
-    await fetchAndExtractLatestGtfs(BASE_DIR, GTFS_BASE_DIR, GTFS_EXTRACTED_DIR, GTFS_URL);
+    await fetchAndExtractLatestGtfs(settings.BASE_DIR, settings.GTFS_BASE_DIR, settings.GTFS_EXTRACTED_DIR, settings.GTFS_URL);
 
     console.log();
     console.log('STEP 4: Setup Tables, Prepare and Import each file');
-    const getFiles = files(BASE_DIR, GTFS_BASE_DIR, GTFS_EXTRACTED_DIR, GTFS_PREPARED_DIR);
-    for (const fileOptions of getFiles) {
+    for (const fileOptions of files) {
       await setupPrepareAndImportFile(fileOptions);
     }
 
