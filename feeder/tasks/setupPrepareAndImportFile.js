@@ -28,8 +28,8 @@ module.exports = async (FILE_OPTIONS) => {
 
   // Create prepared directory if it does not already exist
   if (!fs.existsSync(FILE_OPTIONS.prepared_dir)) {
-    console.log(`⤷ Creating directory "/tmp/gtfs/prepared/"...`);
-    fs.mkdirSync('/tmp/gtfs/prepared/');
+    console.log(`⤷ Creating directory "${FILE_OPTIONS.prepared_dir}"...`);
+    fs.mkdirSync(FILE_OPTIONS.prepared_dir);
   }
 
   // Prepare file
