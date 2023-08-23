@@ -1,22 +1,19 @@
-/* * */
-/* IMPORTS */
-const FEEDERDB = require('../databases/FEEDERDB');
-const SERVERDB = require('../databases/SERVERDB');
-const timeCalc = require('./timeCalc');
+const FEEDERDB = require('../services/FEEDERDB');
+const SERVERDB = require('../services/SERVERDB');
+const timeCalc = require('../modules/timeCalc');
 
-/**
- * UPDATE FACILITIES
- * parse them and save them to MongoDB.
- * @async
- */
+/* UPDATE FACILITIES */
+
 module.exports = async () => {
   // Record the start time to later calculate operation duration
-  console.log(`⤷ Updating Facilities...`);
   const startTime = process.hrtime();
   // Fetch all Facilities from Postgres
+  console.log(`⤷ Querying database...`);
   const allFacilities = await FEEDERDB.connection.query('SELECT * FROM facilities');
   // Initate a temporary variable to hold updated Facilities
   let updatedFacilityIds = [];
+  // Log progress
+  console.log(`⤷ Updating Facilities...`);
   // For each facility, update its entry in the database
   for (const facility of allFacilities.rows) {
     // Split stops into discrete IDs

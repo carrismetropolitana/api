@@ -1,7 +1,9 @@
-const FEEDERDB = require('../databases/FEEDERDB');
-const SERVERDB = require('../databases/SERVERDB');
-const timeCalc = require('./timeCalc');
+const FEEDERDB = require('../services/FEEDERDB');
+const SERVERDB = require('../services/SERVERDB');
+const timeCalc = require('../modules/timeCalc');
 const turf = require('@turf/turf');
+
+/* UPDATE SHAPES */
 
 module.exports = async () => {
   // Record the start time to later calculate operation duration

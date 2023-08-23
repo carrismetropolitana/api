@@ -1,9 +1,6 @@
-/* * */
-/* IMPORTS */
-const FEEDERDB = require('../databases/FEEDERDB');
-const SERVERDB = require('../databases/SERVERDB');
-const timeCalc = require('./timeCalc');
-const turf = require('@turf/turf');
+const FEEDERDB = require('../services/FEEDERDB');
+const SERVERDB = require('../services/SERVERDB');
+const timeCalc = require('../modules/timeCalc');
 
 //
 //

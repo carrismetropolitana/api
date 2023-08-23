@@ -1,23 +1,21 @@
-/* * */
-/* IMPORTS */
-const crontab = require('node-cron');
-const FEEDERDB = require('./databases/FEEDERDB');
-const SERVERDB = require('./databases/SERVERDB');
-
 const settings = require('./config/settings');
 const files = require('./config/files');
 
-const setupBaseDirectory = require('./tasks/setupBaseDirectory');
-const fetchAndExtractLatestGtfs = require('./tasks/fetchAndExtractLatestGtfs');
-const setupPrepareAndImportFile = require('./tasks/setupPrepareAndImportFile');
+const crontab = require('node-cron');
+const FEEDERDB = require('./services/FEEDERDB');
+const SERVERDB = require('./services/SERVERDB');
 
 const timeCalc = require('./modules/timeCalc');
-const updateMunicipalities = require('./modules/updateMunicipalities');
-const updateFacilities = require('./modules/updateFacilities');
-const updateHelpdesks = require('./modules/updateHelpdesks');
-const updateStops = require('./modules/updateStops');
-const updateShapes = require('./modules/updateShapes');
-const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
+const setupBaseDirectory = require('./modules/setupBaseDirectory');
+const fetchAndExtractLatestGtfs = require('./modules/fetchAndExtractLatestGtfs');
+const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
+
+const buildMunicipalities = require('./builders/buildMunicipalities');
+const buildFacilities = require('./builders/buildFacilities');
+const buildHelpdesks = require('./builders/buildHelpdesks');
+const buildStops = require('./builders/buildStops');
+const buildShapes = require('./builders/buildShapes');
+const buildLinesAndPatterns = require('./builders/buildLinesAndPatterns');
 
 //
 //
@@ -34,6 +32,7 @@ crontab.schedule('0 */3 * * *', async () => {
 });
 
 appInitPoint();
+
 async function appInitPoint() {
   IS_TASK_RUNNING = true;
 
@@ -73,27 +72,27 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 7: Update Municipalities');
-    await updateMunicipalities();
+    await buildMunicipalities();
 
     console.log();
     console.log('STEP 8: Update Facilities');
-    await updateFacilities();
+    await buildFacilities();
 
     console.log();
     console.log('STEP 9: Update Helpdesks');
-    await updateHelpdesks();
+    await buildHelpdesks();
 
     console.log();
     console.log('STEP 10: Update Stops');
-    await updateStops();
+    await buildStops();
 
     console.log();
     console.log('STEP 11: Update Shapes');
-    await updateShapes();
+    await buildShapes();
 
     console.log();
     console.log('STEP 12: Update Lines & Patterns');
-    await updateLinesAndPatterns();
+    await buildLinesAndPatterns();
 
     console.log();
     console.log('STEP 13: Disconnect from databases...');
@@ -110,7 +109,6 @@ async function appInitPoint() {
   } catch (err) {
     console.log('An error occurred. Halting execution.', err);
     console.log('Retrying in 10 seconds...');
-    // TODO: Send email / notify on error
     setTimeout(() => {
       process.exit(0); // End process
     }, 10000); // after 10 seconds

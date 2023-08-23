@@ -1,22 +1,19 @@
-/* * */
-/* IMPORTS */
-const FEEDERDB = require('../databases/FEEDERDB');
-const SERVERDB = require('../databases/SERVERDB');
-const timeCalc = require('./timeCalc');
+const FEEDERDB = require('../services/FEEDERDB');
+const SERVERDB = require('../services/SERVERDB');
+const timeCalc = require('../modules/timeCalc');
 
-/**
- * UPDATE HELPDESKS
- * parse them and save them to MongoDB.
- * @async
- */
+/* UPDATE HELPDESKS */
+
 module.exports = async () => {
   // Record the start time to later calculate operation duration
-  console.log(`⤷ Updating Helpdesks...`);
   const startTime = process.hrtime();
   // Fetch all Helpdesks from Postgres
+  console.log(`⤷ Querying database...`);
   const allHelpdesks = await FEEDERDB.connection.query('SELECT * FROM helpdesks');
   // Initate a temporary variable to hold updated Helpdesks
   let updatedHelpdeskIds = [];
+  // Log progress
+  console.log(`⤷ Updating Helpdesks...`);
   // For each facility, update its entry in the database
   for (const helpdesk of allHelpdesks.rows) {
     // Parse helpdesk

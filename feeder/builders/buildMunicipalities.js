@@ -1,23 +1,19 @@
-/* * */
-/* IMPORTS */
-const FEEDERDB = require('../databases/FEEDERDB');
-const SERVERDB = require('../databases/SERVERDB');
-const timeCalc = require('./timeCalc');
+const FEEDERDB = require('../services/FEEDERDB');
+const SERVERDB = require('../services/SERVERDB');
+const timeCalc = require('../modules/timeCalc');
 
-/**
- * UPDATE MUNICIPALITIES
- * Fetch Municipalities from www,
- * parse them and save them to MongoDB.
- * @async
- */
+/* UPDATE MUNICIPALITIES */
+
 module.exports = async () => {
   // Record the start time to later calculate operation duration
-  console.log(`⤷ Updating Municipalities...`);
   const startTime = process.hrtime();
   // Fetch all Municipalities from Postgres
+  console.log(`⤷ Querying database...`);
   const allMunicipalities = await FEEDERDB.connection.query('SELECT * FROM municipalities');
   // Initate a temporary variable to hold updated Municipalities
   let updatedMunicipalityIds = [];
+  // Log progress
+  console.log(`⤷ Updating Municipalities...`);
   // For each municipality, update its entry in the database
   for (const municipality of allMunicipalities.rows) {
     // Parse municipality

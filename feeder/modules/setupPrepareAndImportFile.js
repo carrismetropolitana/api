@@ -1,15 +1,16 @@
 const fs = require('fs');
-const FEEDERDB = require('../databases/FEEDERDB');
+const FEEDERDB = require('../services/FEEDERDB');
 const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
 const copyFrom = require('pg-copy-streams').from;
-const timeCalc = require('../modules/timeCalc');
+const timeCalc = require('./timeCalc');
 
 //
 
 module.exports = async (FILE_OPTIONS) => {
   //
 
+  console.log();
   console.log(`⤷ Importing "${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 
   // Drop existing table
@@ -80,5 +81,5 @@ async function importFileToTable(FILE_OPTIONS) {
       .on('error', reject);
   });
   const elapsedTime = timeCalc.getElapsedTime(startTime);
-  console.log(`⤷ Saved "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table. ${rowCount} rows in ${elapsedTime}.`);
+  console.log(`⤷ Saved "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table (${rowCount} rows in ${elapsedTime})`);
 }
