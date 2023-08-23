@@ -331,7 +331,7 @@ module.exports = [
   {
     type: 'datasets',
     file_name: 'schools',
-    file_extension: 'txt',
+    file_extension: 'csv',
     download_url: 'https://github.com/carrismetropolitana/datasets/raw/live/facilities/schools/schools.csv',
     file_headers: [
       'school_id',
