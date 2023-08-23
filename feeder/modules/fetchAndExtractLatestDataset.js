@@ -8,9 +8,9 @@ module.exports = async (FILE_OPTIONS) => {
   const filePath = `${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`;
 
   // Create directory if it does not already exist
-  if (!fs.existsSync(`${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}`)) {
-    console.log(`⤷ Creating directory "${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}"...`);
-    fs.mkdirSync(`${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}`);
+  if (!fs.existsSync(`${FILE_OPTIONS.raw_dir}`)) {
+    console.log(`⤷ Creating directory "${FILE_OPTIONS.raw_dir}"...`);
+    fs.mkdirSync(`${FILE_OPTIONS.raw_dir}`);
   }
 
   // Download DATASETS file to given destination
