@@ -11,10 +11,6 @@ module.exports = new mongoose.Schema(
       maxlength: 50,
       unique: true,
     },
-    type: {
-      type: String,
-      maxlength: 50,
-    },
     name: {
       type: String,
       maxlength: 50,
@@ -27,18 +23,20 @@ module.exports = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    phone: {
+    type: {
       type: String,
       maxlength: 50,
     },
-    email: {
+    group: {
       type: String,
       maxlength: 50,
     },
-    url: {
-      type: String,
-      maxlength: 50,
-    },
+    cicles: [
+      {
+        type: String,
+        maxlength: 50,
+      },
+    ],
     address: {
       type: String,
       maxlength: 50,
@@ -83,6 +81,18 @@ module.exports = new mongoose.Schema(
       type: String,
       maxlength: 50,
     },
+    url: {
+      type: String,
+      maxlength: 50,
+    },
+    email: {
+      type: String,
+      maxlength: 50,
+    },
+    phone: {
+      type: String,
+      maxlength: 50,
+    },
     stops: [
       {
         type: String,
@@ -91,9 +101,6 @@ module.exports = new mongoose.Schema(
     ],
   },
   {
-    id: false,
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
   }
 );

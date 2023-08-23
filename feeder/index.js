@@ -12,7 +12,7 @@ const fetchAndExtractLatestDataset = require('./modules/fetchAndExtractLatestDat
 const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
 
 const buildMunicipalities = require('./builders/buildMunicipalities');
-const buildFacilities = require('./builders/buildFacilities');
+const buildSchools = require('./builders/buildSchools');
 const buildHelpdesks = require('./builders/buildHelpdesks');
 const buildStops = require('./builders/buildStops');
 const buildShapes = require('./builders/buildShapes');
@@ -46,64 +46,78 @@ async function appInitPoint() {
     const startTime = process.hrtime();
     console.log('Starting...');
 
+    //
+    //
+    // GLOBAL STARTUP
+
     console.log();
-    console.log('STEP 1: Connect to databases');
+    console.log('STEP 0.0: Connect to databases');
     await FEEDERDB.connect();
     await SERVERDB.connect();
 
     console.log();
-    console.log('STEP 2: Setup working directory');
+    console.log('STEP 0.1: Setup working directory');
     await setupBaseDirectory();
 
-    console.log();
-    console.log('STEP 3: Fetch and Extract latest GTFS');
-    await fetchAndExtractLatestGtfs();
+    //
+    //
+    // DATASETS
 
     console.log();
-    console.log('STEP 4: Fetch and Extract latest Datasets');
+    console.log('STEP 1.0: Fetch and Import Datasets');
     for (const fileOptions of files) {
       if (fileOptions.type !== 'datasets') continue;
       await fetchAndExtractLatestDataset(fileOptions);
-    }
-
-    console.log();
-    console.log('STEP 5: Setup Tables, Prepare and Import each file');
-    for (const fileOptions of files) {
       await setupPrepareAndImportFile(fileOptions);
     }
 
     console.log();
-    console.log('STEP 6: Update Municipalities');
+    console.log('STEP 1.1: Update Facilities');
+    await buildSchools();
+
+    //
+    //
+    // GTFS
+
+    console.log();
+    console.log('STEP 2.0: Fetch and Extract latest GTFS');
+    await fetchAndExtractLatestGtfs();
+
+    console.log();
+    console.log('STEP 2.1: Import each GTFS file');
+    for (const fileOptions of files) {
+      if (fileOptions.type !== 'gtfs') continue;
+      await setupPrepareAndImportFile(fileOptions);
+    }
+
+    console.log();
+    console.log('STEP 2.2: Update Municipalities');
     await buildMunicipalities();
 
     console.log();
-    console.log('STEP 7: Update Facilities');
-    await buildFacilities();
-
-    console.log();
-    console.log('STEP 8: Update Helpdesks');
+    console.log('STEP 2.3: Update Helpdesks');
     await buildHelpdesks();
 
     console.log();
-    console.log('STEP 9: Update Stops');
+    console.log('STEP 2.4: Update Stops');
     await buildStops();
 
     console.log();
-    console.log('STEP 10: Update Shapes');
+    console.log('STEP 2.5: Update Shapes');
     await buildShapes();
 
     console.log();
-    console.log('STEP 11: Update Lines & Patterns');
+    console.log('STEP 2.6: Update Lines & Patterns');
     await buildLinesAndPatterns();
 
     console.log();
-    console.log('STEP 12: Disconnect from databases...');
+    console.log('Disconnecting from databases...');
     await FEEDERDB.disconnect();
     await SERVERDB.disconnect();
 
     console.log();
     console.log('- - - - - - - - - - - - - - - - - - - - -');
-    console.log(`Operation took ${timeCalc.getElapsedTime(startTime)}.`);
+    console.log(`Run took ${timeCalc.getElapsedTime(startTime)}.`);
     console.log('- - - - - - - - - - - - - - - - - - - - -');
     console.log();
 
