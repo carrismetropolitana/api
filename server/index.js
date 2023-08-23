@@ -3,45 +3,51 @@
 const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
 const SERVERDB = require('./services/SERVERDB');
 
-const alertsRoute = require('./routes/alerts.route');
-const municipalitiesRoute = require('./routes/municipalities.route');
-const facilitiesRoute = require('./routes/facilities.route');
-const helpdesksRoute = require('./routes/helpdesks.route');
-const linesRoute = require('./routes/lines.route');
-const patternsRoute = require('./routes/patterns.route');
-const shapesRoute = require('./routes/shapes.route');
-const stopsRoute = require('./routes/stops.route');
-const vehiclesRoute = require('./routes/vehicles.route');
+// GTFS
+const alertsEndpoint = require('./endpoints/alerts.endpoint');
+const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
+const helpdesksEndpoint = require('./endpoints/helpdesks.endpoint');
+const linesEndpoint = require('./endpoints/lines.endpoint');
+const patternsEndpoint = require('./endpoints/patterns.endpoint');
+const shapesEndpoint = require('./endpoints/shapes.endpoint');
+const stopsEndpoint = require('./endpoints/stops.endpoint');
+const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
+// DATASETS
+const schoolsEndpoint = require('./endpoints/schools.endpoint');
 
 //
-// ROUTES
-fastify.get('/alerts', alertsRoute.json);
-fastify.get('/alerts.pb', alertsRoute.protobuf);
-// fastify.get('/alerts.rss', alertsRoute.rss);
+// GTFS ENDPOINTS
 
-fastify.get('/municipalities', municipalitiesRoute.all);
-fastify.get('/municipalities/:code', municipalitiesRoute.single);
+fastify.get('/alerts', alertsEndpoint.json);
+fastify.get('/alerts.pb', alertsEndpoint.protobuf);
+// fastify.get('/alerts.rss', alertsEndpoint.rss);
 
-fastify.get('/facilities', facilitiesRoute.all);
-fastify.get('/facilities/:code', facilitiesRoute.single);
+fastify.get('/municipalities', municipalitiesEndpoint.all);
+fastify.get('/municipalities/:code', municipalitiesEndpoint.single);
 
-fastify.get('/helpdesks', helpdesksRoute.all);
-fastify.get('/helpdesks/:code', helpdesksRoute.single);
+fastify.get('/helpdesks', helpdesksEndpoint.all);
+fastify.get('/helpdesks/:code', helpdesksEndpoint.single);
 
-fastify.get('/lines', linesRoute.all);
-fastify.get('/lines/:code', linesRoute.single);
+fastify.get('/lines', linesEndpoint.all);
+fastify.get('/lines/:code', linesEndpoint.single);
 
-fastify.get('/patterns', patternsRoute.all);
-fastify.get('/patterns/:code', patternsRoute.single);
+fastify.get('/patterns', patternsEndpoint.all);
+fastify.get('/patterns/:code', patternsEndpoint.single);
 
-fastify.get('/shapes', shapesRoute.all);
-fastify.get('/shapes/:code', shapesRoute.single);
+fastify.get('/shapes', shapesEndpoint.all);
+fastify.get('/shapes/:code', shapesEndpoint.single);
 
-fastify.get('/stops', stopsRoute.all);
-fastify.get('/stops/:code', stopsRoute.single);
-fastify.get('/stops/:code/realtime', stopsRoute.singleWithRealtime);
+fastify.get('/stops', stopsEndpoint.all);
+fastify.get('/stops/:code', stopsEndpoint.single);
+fastify.get('/stops/:code/realtime', stopsEndpoint.singleWithRealtime);
 
-fastify.get('/vehicles', vehiclesRoute.all);
+fastify.get('/vehicles', vehiclesEndpoint.all);
+
+//
+// DATASETS ENDPOINTS
+
+fastify.get('/facilities/schools', schoolsEndpoint.all);
+fastify.get('/facilities/schools/:code', schoolsEndpoint.single);
 
 //
 // Start Fastify server
