@@ -54,58 +54,6 @@ module.exports = new mongoose.Schema({
       type: String,
     },
   ],
-
-  shape: {
-    code: {
-      type: String,
-      maxlength: 100,
-    },
-    extension: {
-      type: Number,
-    },
-    points: [
-      {
-        shape_pt_lat: {
-          type: String,
-          maxlength: 100,
-        },
-        shape_pt_lon: {
-          type: String,
-          maxlength: 100,
-        },
-        shape_pt_sequence: {
-          type: String,
-          maxlength: 100,
-        },
-        shape_dist_traveled: {
-          type: String,
-          maxlength: 100,
-        },
-      },
-    ],
-    geojson: {
-      type: {
-        type: String,
-        maxlength: 50,
-        default: 'Feature',
-      },
-      geometry: {
-        type: {
-          type: String,
-          maxlength: 50,
-          default: 'LineString',
-        },
-        coordinates: [
-          [
-            {
-              type: Number,
-            },
-          ],
-        ],
-      },
-    },
-  },
-
   path: [
     {
       stop: {

@@ -26,44 +26,6 @@ async function getTripDates(service_id) {
 //
 
 /**
- * Retrieve and parse shape
- * @async
- * @param {String} shape_id The shape_id to retrieve
- * @returns {Object} Parsed shape object
- */
-async function getParsedShape(shape_id) {
-  //
-  // Query Postgres for all points for the given shape_id
-  const allShapePoints = await FEEDERDB.connection.query(`SELECT * FROM shapes WHERE shape_id = '${shape_id}'`);
-
-  // Initiate variable to keep track of updated _ids
-  let parsedShape = {
-    code: shape_id,
-  };
-
-  // Sort points to match sequence
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  parsedShape.points = allShapePoints.rows.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
-
-  // Create geojson feature using turf
-  parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
-
-  // Calculate shape extension
-  const shapeExtensionKm = turf.length(parsedShape.geojson, { units: 'kilometers' });
-  const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
-  parsedShape.extension = parseInt(shapeExtensionMeters);
-
-  // Return parsed shape to the caller
-  return parsedShape;
-
-  //
-}
-
-//
-//
-//
-
-/**
  * Calculate time difference
  * @async
  * @param {String} service_id The service_id to retrieve
@@ -353,8 +315,6 @@ module.exports = async () => {
           municipalities: Array.from(patternPassesByMunicipalities),
           localities: Array.from(patternPassesByLocalities),
           facilities: Array.from(patternPassesByFacilities),
-          //
-          shape: await getParsedShape(trip.shape_id),
           //
           path: formattedPath,
           //
