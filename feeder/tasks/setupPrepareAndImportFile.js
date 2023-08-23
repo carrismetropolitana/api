@@ -3,7 +3,7 @@ const FEEDERDB = require('../databases/FEEDERDB');
 const { parse } = require('csv-parse');
 const { stringify } = require('csv-stringify/sync');
 const copyFrom = require('pg-copy-streams').from;
-const timeCalc = require('./timeCalc');
+const timeCalc = require('../modules/timeCalc');
 
 //
 
