@@ -4,12 +4,13 @@ const crontab = require('node-cron');
 const FEEDERDB = require('./databases/FEEDERDB');
 const SERVERDB = require('./databases/SERVERDB');
 
+const files = require('./files/files');
+
 const setupBaseDirectory = require('./tasks/setupBaseDirectory');
 const fetchAndExtractLatestGtfs = require('./tasks/fetchAndExtractLatestGtfs');
+const setupPrepareAndImportFile = require('./tasks/setupPrepareAndImportFile');
 
 const timeCalc = require('./modules/timeCalc');
-const setupSqlTables = require('./modules/setupSqlTables');
-const saveFilesToTables = require('./modules/saveFilesToTables');
 const updateMunicipalities = require('./modules/updateMunicipalities');
 const updateFacilities = require('./modules/updateFacilities');
 const updateHelpdesks = require('./modules/updateHelpdesks');
@@ -24,9 +25,15 @@ const updateLinesAndPatterns = require('./modules/updateLinesAndPatterns');
 //
 //
 
-const BASE_DIR = '/tmp/gtfs';
-const EXTRACTED_DIR = 'extracted';
+const BASE_DIR = '/tmp/base';
+const GTFS_BASE_DIR = 'gtfs';
+const GTFS_EXTRACTED_DIR = 'extracted';
+const GTFS_PARSED_DIR = 'parsed';
 const GTFS_URL = 'https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip';
+
+const DATASETS_BASE_DIR = 'datasets';
+const DATASETS_PARSED_DIR = 'parsed';
+const DATASETS_BASE_URL = 'https://github.com/carrismetropolitana/gtfs/raw/latest/';
 
 //
 //
@@ -68,19 +75,17 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 3: Fetch and Extract latest GTFS');
-    await fetchAndExtractLatestGtfs(BASE_DIR, EXTRACTED_DIR, GTFS_URL);
-
-    //
-    //
-    //
+    await fetchAndExtractLatestGtfs(BASE_DIR, GTFS_BASE_DIR, GTFS_EXTRACTED_DIR, GTFS_URL);
 
     console.log();
-    console.log('STEP 4: Setup SQL tables to store the GTFS files');
-    await setupSqlTables();
+    console.log('STEP 4: Setup Tables, Prepare and Import each file');
+    for (const fileOptions of files) {
+      await setupPrepareAndImportFile(fileOptions);
+    }
 
-    console.log();
-    console.log('STEP 5: Import extracted files into created tables');
-    await saveFilesToTables();
+    //
+    //
+    //
 
     console.log();
     console.log('STEP 7: Update Municipalities');

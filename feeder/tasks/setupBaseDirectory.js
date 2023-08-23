@@ -1,15 +1,15 @@
 const fs = require('fs');
 
-module.exports = async (base_dir) => {
+module.exports = async (BASE_DIR) => {
   //
 
   // Remove directory, if exists
-  fs.rmSync(base_dir, { recursive: true, force: true });
-  console.log(`⤷ Removed directory "${base_dir}" successfully.`);
+  fs.rmSync(BASE_DIR, { recursive: true, force: true });
+  console.log(`⤷ Removed directory "${BASE_DIR}" successfully.`);
 
   // Create directory
-  fs.mkdirSync(base_dir);
-  console.log(`⤷ Created directory "${base_dir}" successfully.`);
+  fs.mkdirSync(BASE_DIR);
+  console.log(`⤷ Created directory "${BASE_DIR}" successfully.`);
 
   //
 };

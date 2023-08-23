@@ -3,17 +3,17 @@ const AdmZip = require('adm-zip');
 const { Readable } = require('stream');
 const { finished } = require('stream/promises');
 
-module.exports = async (base_dir, extracted_dir, gtfs_url) => {
+module.exports = async (BASE_DIR, GTFS_BASE_DIR, GTFS_EXTRACTED_DIR, GTFS_URL) => {
   //
 
-  const filePath = `${base_dir}/gtfs.zip`;
-  const extractedPath = `${base_dir}/${extracted_dir}/`;
+  const filePath = `${BASE_DIR}/gtfs.zip`;
+  const extractedPath = `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_EXTRACTED_DIR}/`;
 
   // Download GTFS file to given destination
   const stream = fs.createWriteStream(filePath);
-  const { body } = await fetch(gtfs_url);
+  const { body } = await fetch(GTFS_URL);
   await finished(Readable.fromWeb(body).pipe(stream));
-  console.log(`⤷ Downloaded file from "${gtfs_url}" to "${filePath}" successfully.`);
+  console.log(`⤷ Downloaded file from "${GTFS_URL}" to "${filePath}" successfully.`);
 
   // Extract archive to directory
   const zip = new AdmZip(filePath);
