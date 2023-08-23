@@ -26,6 +26,12 @@ module.exports = async (FILE_OPTIONS) => {
     console.log(`⤷ Created index on SQL table "${FILE_OPTIONS.file_name}".`);
   }
 
+  // Create prepared directory if it does not already exist
+  if (!fs.existsSync(FILE_OPTIONS.prepared_dir)) {
+    console.log(`⤷ Creating directory "/tmp/gtfs/prepared/"...`);
+    fs.mkdirSync('/tmp/gtfs/prepared/');
+  }
+
   // Prepare file
   await prepareFile(FILE_OPTIONS);
 
