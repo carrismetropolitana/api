@@ -135,7 +135,6 @@ services:
     networks:
       - api-network
     environment:
-      - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
       - SERVERDB_HOST=serverdb
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
