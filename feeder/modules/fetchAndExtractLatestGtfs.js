@@ -7,7 +7,7 @@ const settings = require('../config/settings');
 module.exports = async () => {
   //
 
-  const filePath = `${settings.BASE_DIR}/gtfs.zip`;
+  const filePath = `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/gtfs.zip`;
   const extractedPath = `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}/`;
 
   // Download GTFS file to given destination
