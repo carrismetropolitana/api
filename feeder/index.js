@@ -8,6 +8,7 @@ const SERVERDB = require('./services/SERVERDB');
 const timeCalc = require('./modules/timeCalc');
 const setupBaseDirectory = require('./modules/setupBaseDirectory');
 const fetchAndExtractLatestGtfs = require('./modules/fetchAndExtractLatestGtfs');
+const fetchAndExtractLatestDataset = require('./modules/fetchAndExtractLatestDataset');
 const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
 
 const buildMunicipalities = require('./builders/buildMunicipalities');
@@ -24,9 +25,7 @@ const buildLinesAndPatterns = require('./builders/buildLinesAndPatterns');
 //
 
 let IS_TASK_RUNNING = false;
-
-// Schedule task (helper: https://crontab.guru/#0_*/3_*_*_*)
-crontab.schedule('0 */3 * * *', async () => {
+crontab.schedule(settings.CRON_INTERVAL, async () => {
   // CHECK IF TASK IS NOT ALREADY RUNNING
   if (!IS_TASK_RUNNING) await appInitPoint();
 });
@@ -54,48 +53,51 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 2: Setup working directory');
-    await setupBaseDirectory(settings.BASE_DIR);
+    await setupBaseDirectory();
 
     console.log();
     console.log('STEP 3: Fetch and Extract latest GTFS');
-    await fetchAndExtractLatestGtfs(settings.BASE_DIR, settings.GTFS_BASE_DIR, settings.GTFS_EXTRACTED_DIR, settings.GTFS_URL);
+    await fetchAndExtractLatestGtfs();
 
     console.log();
-    console.log('STEP 4: Setup Tables, Prepare and Import each file');
+    console.log('STEP 4: Fetch and Extract latest Datasets');
+    for (const fileOptions of files) {
+      if (fileOptions.type !== 'datasets') continue;
+      await fetchAndExtractLatestDataset(fileOptions);
+    }
+
+    console.log();
+    console.log('STEP 5: Setup Tables, Prepare and Import each file');
     for (const fileOptions of files) {
       await setupPrepareAndImportFile(fileOptions);
     }
 
-    //
-    //
-    //
-
     console.log();
-    console.log('STEP 7: Update Municipalities');
+    console.log('STEP 6: Update Municipalities');
     await buildMunicipalities();
 
     console.log();
-    console.log('STEP 8: Update Facilities');
+    console.log('STEP 7: Update Facilities');
     await buildFacilities();
 
     console.log();
-    console.log('STEP 9: Update Helpdesks');
+    console.log('STEP 8: Update Helpdesks');
     await buildHelpdesks();
 
     console.log();
-    console.log('STEP 10: Update Stops');
+    console.log('STEP 9: Update Stops');
     await buildStops();
 
     console.log();
-    console.log('STEP 11: Update Shapes');
+    console.log('STEP 10: Update Shapes');
     await buildShapes();
 
     console.log();
-    console.log('STEP 12: Update Lines & Patterns');
+    console.log('STEP 11: Update Lines & Patterns');
     await buildLinesAndPatterns();
 
     console.log();
-    console.log('STEP 13: Disconnect from databases...');
+    console.log('STEP 12: Disconnect from databases...');
     await FEEDERDB.disconnect();
     await SERVERDB.disconnect();
 

@@ -4,8 +4,9 @@ module.exports = [
   //
 
   //
-  // MUNICIPALITIES
+  // GTFS / MUNICIPALITIES
   {
+    type: 'gtfs',
     file_name: 'municipalities',
     file_extension: 'txt',
     file_headers: ['municipality_prefix', 'municipality_id', 'municipality_name', 'district_id', 'district_name', 'region_id', 'region_name'],
@@ -19,13 +20,14 @@ module.exports = [
         region_name VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // FACILITIES
+  // GTFS / FACILITIES
   {
+    type: 'gtfs',
     file_name: 'facilities',
     file_extension: 'txt',
     file_headers: [
@@ -73,13 +75,14 @@ module.exports = [
         facility_stops VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX facilities_facility_id_idx ON facilities ("facility_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // HELPDESKS
+  // GTFS / HELPDESKS
   {
+    type: 'gtfs',
     file_name: 'helpdesks',
     file_extension: 'txt',
     file_headers: [
@@ -143,13 +146,14 @@ module.exports = [
         helpdesk_stops VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX helpdesks_helpdesk_id_idx ON helpdesks ("helpdesk_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // CALENDAR_DATES
+  // GTFS / CALENDAR_DATES
   {
+    type: 'gtfs',
     file_name: 'calendar_dates',
     file_extension: 'txt',
     file_headers: ['service_id', 'date'],
@@ -158,13 +162,14 @@ module.exports = [
         date VARCHAR(8)
     );`,
     index_queries: ['CREATE INDEX calendar_dates_service_id_idx ON calendar_dates ("service_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // ROUTES
+  // GTFS / ROUTES
   {
+    type: 'gtfs',
     file_name: 'routes',
     file_extension: 'txt',
     file_headers: ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color'],
@@ -177,13 +182,14 @@ module.exports = [
         route_text_color VARCHAR(6)
     );`,
     index_queries: ['CREATE INDEX routes_route_id_idx ON routes ("route_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // SHAPES
+  // GTFS / SHAPES
   {
+    type: 'gtfs',
     file_name: 'shapes',
     file_extension: 'txt',
     file_headers: ['shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled'],
@@ -195,13 +201,14 @@ module.exports = [
         shape_dist_traveled FLOAT(6)
     );`,
     index_queries: ['CREATE INDEX shapes_shape_id_idx ON shapes ("shape_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // TRIPS
+  // GTFS / TRIPS
   {
+    type: 'gtfs',
     file_name: 'trips',
     file_extension: 'txt',
     file_headers: ['route_id', 'pattern_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id'],
@@ -215,13 +222,14 @@ module.exports = [
         shape_id VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX trips_route_id_idx ON trips ("route_id");', 'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // STOP_TIMES
+  // GTFS / STOP_TIMES
   {
+    type: 'gtfs',
     file_name: 'stop_times',
     file_extension: 'txt',
     file_headers: ['trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled'],
@@ -233,13 +241,14 @@ module.exports = [
         shape_dist_traveled VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");', 'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
   },
 
   //
-  // STOPS
+  // GTFS / STOPS
   {
+    type: 'gtfs',
     file_name: 'stops',
     file_extension: 'txt',
     file_headers: [
@@ -313,8 +322,85 @@ module.exports = [
         car_parking BOOLEAN
     );`,
     index_queries: ['CREATE INDEX stops_stop_id_idx ON stops ("stop_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_EXTRACTED_DIR}`,
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
     prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+  },
+
+  //
+  // DATASETS / SCHOOLS
+  {
+    type: 'datasets',
+    file_name: 'schools',
+    file_extension: 'txt',
+    download_url: 'https://github.com/carrismetropolitana/datasets/raw/live/facilities/schools/schools.csv',
+    file_headers: [
+      'school_id',
+      'school_name',
+      'school_lat',
+      'school_lon',
+      'school_type',
+      'pre_school',
+      'basic_1',
+      'basic_2',
+      'basic_3',
+      'high_school',
+      'professional',
+      'special',
+      'artistic',
+      'other',
+      'school_group',
+      'address',
+      'postal_code',
+      'locality',
+      'parish_id',
+      'parish_name',
+      'municipality_id',
+      'municipality_name',
+      'district_id',
+      'district_name',
+      'region_id',
+      'region_name',
+      'school_url',
+      'school_email',
+      'school_phone',
+      'school_stops',
+    ],
+    table_query: `CREATE TABLE schools (
+        school_id VARCHAR(255),
+        school_name VARCHAR(255),
+        school_lat VARCHAR(10),
+        school_lon VARCHAR(10),
+        school_type VARCHAR(255),
+        pre_school BOOLEAN,
+        basic_1 BOOLEAN,
+        basic_2 BOOLEAN,
+        basic_3 BOOLEAN,
+        high_school BOOLEAN,
+        professional BOOLEAN,
+        special BOOLEAN,
+        artistic BOOLEAN,
+        other BOOLEAN,
+        school_group VARCHAR(255),
+        pre_school BOOLEAN,
+        address VARCHAR(255),
+        postal_code VARCHAR(255),
+        locality VARCHAR(255),
+        parish_id VARCHAR(255),
+        parish_name VARCHAR(255),
+        municipality_id VARCHAR(255),
+        municipality_name VARCHAR(255),
+        district_id VARCHAR(255),
+        district_name VARCHAR(255),
+        region_id VARCHAR(255),
+        region_name VARCHAR(255),
+        school_url VARCHAR(255),
+        school_email VARCHAR(255),
+        school_phone VARCHAR(255),
+        school_stops VARCHAR(255)
+    );`,
+    index_queries: ['CREATE INDEX schools_school_id_idx ON schools ("school_id");'],
+    raw_dir: `${settings.BASE_DIR}/${settings.DATASETS_BASE_DIR}/${settings.DATASETS_RAW_DIR}`,
+    prepared_dir: `${settings.BASE_DIR}/${settings.DATASETS_BASE_DIR}/${settings.DATASETS_PREPARED_DIR}`,
   },
 
   //
