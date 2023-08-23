@@ -54,6 +54,9 @@ module.exports = new mongoose.Schema({
       type: String,
     },
   ],
+  shape_code: {
+    type: String,
+  },
   path: [
     {
       stop: {

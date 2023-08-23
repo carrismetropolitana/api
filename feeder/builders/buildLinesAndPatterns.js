@@ -313,6 +313,8 @@ module.exports = async () => {
           localities: Array.from(patternPassesByLocalities),
           facilities: Array.from(patternPassesByFacilities),
           //
+          shape_code: trip.shape_id,
+          //
           path: formattedPath,
           //
           trips: [formattedTrip],
