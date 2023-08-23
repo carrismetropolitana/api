@@ -79,7 +79,8 @@ async function appInitPoint() {
 
     console.log();
     console.log('STEP 4: Setup Tables, Prepare and Import each file');
-    for (const fileOptions of files) {
+    const getFiles = files(BASE_DIR, GTFS_BASE_DIR, GTFS_EXTRACTED_DIR, GTFS_PREPARED_DIR);
+    for (const fileOptions of getFiles) {
       await setupPrepareAndImportFile(fileOptions);
     }
 
