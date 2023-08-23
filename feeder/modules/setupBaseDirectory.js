@@ -9,7 +9,7 @@ module.exports = async () => {
   console.log(`⤷ Removed directory "${settings.BASE_DIR}" successfully.`);
 
   // Create directory
-  fs.mkdirSync(settings.BASE_DIR);
+  fs.mkdirSync(settings.BASE_DIR, { recursive: true });
   console.log(`⤷ Created directory "${settings.BASE_DIR}" successfully.`);
 
   //

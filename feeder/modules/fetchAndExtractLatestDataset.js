@@ -10,7 +10,7 @@ module.exports = async (FILE_OPTIONS) => {
   // Create directory if it does not already exist
   if (!fs.existsSync(`${FILE_OPTIONS.raw_dir}`)) {
     console.log(`⤷ Creating directory "${FILE_OPTIONS.raw_dir}"...`);
-    fs.mkdirSync(`${FILE_OPTIONS.raw_dir}`);
+    fs.mkdirSync(`${FILE_OPTIONS.raw_dir}`, { recursive: true });
   }
 
   // Download DATASETS file to given destination

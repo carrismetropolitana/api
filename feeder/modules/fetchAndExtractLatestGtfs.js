@@ -13,7 +13,7 @@ module.exports = async () => {
   // Create directory if it does not already exist
   if (!fs.existsSync(`${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}`)) {
     console.log(`⤷ Creating directory "${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}"...`);
-    fs.mkdirSync(`${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}`);
+    fs.mkdirSync(`${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}`, { recursive: true });
   }
 
   // Download GTFS file to given destination
