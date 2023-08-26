@@ -40,7 +40,7 @@ class PCGIAPI {
       method: options.method || 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Authorization: `Bearer ${this.access_token}`,
+        Authorization: `Bearer ${this.access_token}`,
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
