@@ -33,8 +33,8 @@ class PCGIAPI {
     //
 
     // Renew token if no longer valid
-    // const isTokenExpired = this.expires_at < new Date();
-    // if (isTokenExpired) await this.authenticate();
+    const isTokenExpired = this.expires_at < new Date();
+    if (isTokenExpired) await this.authenticate();
 
     const response = await fetch(`${PCGI_BASE_URL}/${service}`, {
       method: options.method || 'GET',
