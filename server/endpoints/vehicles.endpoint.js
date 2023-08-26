@@ -13,7 +13,7 @@ module.exports.all = async (request, reply) => {
       longitude: element.Lng,
       heading: element.Coa,
       speed: element.Spd,
-      timestamp: element.Cst,
+      timestamp: element.Ts,
     };
   });
   return reply.send(allVehiclesFormatted || []);
