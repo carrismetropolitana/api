@@ -11,4 +11,4 @@ RUN npm --omit=dev install
 COPY . .
 
 # Start the program
-CMD ["node", "index.js"]
+CMD ["node", '--prof', "index.js"]

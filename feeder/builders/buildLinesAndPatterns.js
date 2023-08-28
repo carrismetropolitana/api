@@ -177,7 +177,13 @@ module.exports = async () => {
       //
       // 2.2.2.1.
       // Get all trips associated with this route
+
+      const startTime_queryTrips = process.hrtime();
+
       const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+
+      const elapsedTime_queryTrips = timeCalc.getElapsedTime(startTime_queryTrips);
+      console.log(`  ⤷ ${route.route_id} (${elapsedTime_queryTrips}).`);
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
