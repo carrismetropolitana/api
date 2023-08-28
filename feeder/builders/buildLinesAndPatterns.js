@@ -339,8 +339,8 @@ module.exports = async () => {
 
         //
       }
-      console.log(`  ⤷ queryTimesTime ${queryTimesTime / 1000}`);
-      console.log(`  ⤷ queryFindOne ${queryFindOne / 1000}`);
+      console.log(`  ⤷ queryTimesTime ${queryTimesTime / 1000000}`);
+      console.log(`  ⤷ queryFindOne ${queryFindOne / 1000000}`);
 
       //
     }
