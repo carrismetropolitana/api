@@ -150,7 +150,7 @@ module.exports = async () => {
 
   const startTime_queryFind = process.hrtime();
   const allStopsArray = await SERVERDB.Stop.find().lean();
-  console.log('query find all', timeCalc.getElapsedTime(startTime_queryFind));
+  console.log('query find all   ', timeCalc.getElapsedTime(startTime_queryFind));
 
   const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
 
