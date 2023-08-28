@@ -150,7 +150,7 @@ module.exports = async () => {
 
   const startTime_queryFind = process.hrtime();
   const allStopsArray = await SERVERDB.Stop.find().lean();
-  queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
+  console.log('query find all', timeCalc.getElapsedTime(startTime_queryFind));
 
   const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
 
@@ -188,10 +188,7 @@ module.exports = async () => {
 
       const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
 
-      const elapsedTime_queryTrips = timeCalc.getElapsedTime(startTime_queryTrips);
       console.log(`  ⤷ ${route.route_id} (${elapsedTime_queryTrips}).`);
-      let queryTimesTime = 0;
-      let queryFindOne = 0;
 
       function toNs(timePair) {
         return timePair[0] * 1000000000 + timePair[1];
