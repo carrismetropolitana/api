@@ -190,6 +190,7 @@ module.exports = async () => {
       function toNs(timePair) {
         return timePair[0] * 1000000000 + timePair[1];
       }
+
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
       // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
@@ -224,15 +225,21 @@ module.exports = async () => {
         let patternPassesByLocalities = new Set();
         let patternPassesByFacilities = new Set();
 
+        const allStopIds = allStopTimes.rows.map((item) => {
+          return item.stop_id;
+        });
+
+        const startTime_queryFind = process.hrtime();
+        const allStopsForThisTrip = await SERVERDB.Stop.find({ code: { $in: allStopIds } }).lean();
+        queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
+
         // 2.2.2.2.4.
         // For each path sequence
         for (const currentStopTime of allStopTimes.rows) {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
-          const startTime_queryFind = process.hrtime();
-          const existingStopDocument = await SERVERDB.Stop.findOne({ code: currentStopTime.stop_id }).lean();
-          queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
+          const existingStopDocument = allStopsForThisTrip.find((item) => item.code === currentStopTime.stop_id);
 
           // 2.2.2.2.4.2.
           // Calculate distance delta and update variable
@@ -340,7 +347,7 @@ module.exports = async () => {
         //
       }
       console.log(`  ⤷ queryTimesTime ${queryTimesTime / 1000000}`);
-      console.log(`  ⤷ queryFindOne ${queryFindOne / 1000000}`);
+      console.log(`  ⤷ queryFindAll ${queryFindOne / 1000000}`);
 
       //
     }
