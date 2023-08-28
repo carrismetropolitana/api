@@ -184,6 +184,8 @@ module.exports = async () => {
 
       const elapsedTime_queryTrips = timeCalc.getElapsedTime(startTime_queryTrips);
       console.log(`  ⤷ ${route.route_id} (${elapsedTime_queryTrips}).`);
+      let queryTimesTime = 0;
+      let queryFindOne = 0;
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -202,7 +204,10 @@ module.exports = async () => {
 
         // 2.2.2.2.2.
         // Get the current trip stop_times
+        const startTime_queryTimes = process.hrtime();
+
         const allStopTimes = await FEEDERDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip.trip_id}' ORDER BY stop_sequence`);
+        queryTimesTime += process.hrtime() - startTime_queryTimes;
 
         // 2.2.2.2.3.
         // Initiate temporary holding variables
@@ -222,7 +227,9 @@ module.exports = async () => {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
+          const startTime_queryFind = process.hrtime();
           const existingStopDocument = await SERVERDB.Stop.findOne({ code: currentStopTime.stop_id }).lean();
+          queryFindOne += process.hrtime() - startTime_queryFind;
 
           // 2.2.2.2.4.2.
           // Calculate distance delta and update variable
@@ -329,6 +336,8 @@ module.exports = async () => {
 
         //
       }
+      console.log(`  ⤷ queryTimesTime ${queryTimesTime}`);
+      console.log(`  ⤷ queryFindOne ${queryFindOne}`);
 
       //
     }
