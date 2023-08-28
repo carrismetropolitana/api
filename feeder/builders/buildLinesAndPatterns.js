@@ -152,7 +152,9 @@ module.exports = async () => {
   const allStopsArray = await SERVERDB.Stop.find().lean();
   console.log('query find all ', timeCalc.getElapsedTime(startTime_queryFind));
 
+  const startTime_TransformToMap = process.hrtime();
   const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
+  console.log('tranform to map ', timeCalc.getElapsedTime(startTime_TransformToMap));
 
   // 2.1.
   // Initiate variables to keep track of updated _ids
@@ -183,16 +185,7 @@ module.exports = async () => {
       //
       // 2.2.2.1.
       // Get all trips associated with this route
-
-      const startTime_queryTrips = process.hrtime();
-
       const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
-
-      console.log(`  ⤷ ${route.route_id} (${elapsedTime_queryTrips}).`);
-
-      function toNs(timePair) {
-        return timePair[0] * 1000000000 + timePair[1];
-      }
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -211,10 +204,7 @@ module.exports = async () => {
 
         // 2.2.2.2.2.
         // Get the current trip stop_times
-        const startTime_queryTimes = process.hrtime();
-
         const allStopTimes = await FEEDERDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip.trip_id}' ORDER BY stop_sequence`);
-        queryTimesTime += toNs(process.hrtime()) - toNs(startTime_queryTimes);
 
         // 2.2.2.2.3.
         // Initiate temporary holding variables
@@ -227,14 +217,6 @@ module.exports = async () => {
         let patternPassesByMunicipalities = new Set();
         let patternPassesByLocalities = new Set();
         let patternPassesByFacilities = new Set();
-
-        // const allStopIds = allStopTimes.rows.map((item) => {
-        //   return item.stop_id;
-        // });
-
-        // const startTime_queryFind = process.hrtime();
-        // const allStopsForThisTrip = await SERVERDB.Stop.find({ code: { $in: allStopIds } }).lean();
-        // queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
 
         // 2.2.2.2.4.
         // For each path sequence
@@ -349,8 +331,6 @@ module.exports = async () => {
 
         //
       }
-      console.log(`  ⤷ queryTimesTime ${queryTimesTime / 1000000}`);
-      console.log(`  ⤷ queryFindAll ${queryFindOne / 1000000}`);
 
       //
     }
