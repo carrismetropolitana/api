@@ -188,7 +188,7 @@ module.exports = async () => {
       let queryFindOne = 0;
 
       function toNs(timePair) {
-        return timePair[0] * 1000 + timePair[1];
+        return timePair[0] * 1000000000 + timePair[1];
       }
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
