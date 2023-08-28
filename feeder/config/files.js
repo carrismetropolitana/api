@@ -25,61 +25,6 @@ module.exports = [
   },
 
   //
-  // GTFS / FACILITIES
-  {
-    type: 'gtfs',
-    file_name: 'facilities',
-    file_extension: 'txt',
-    file_headers: [
-      'facility_id',
-      'facility_type',
-      'facility_name',
-      'facility_lat',
-      'facility_lon',
-      'facility_phone',
-      'facility_email',
-      'facility_url',
-      'address',
-      'postal_code',
-      'locality',
-      'parish_id',
-      'parish_name',
-      'municipality_id',
-      'municipality_name',
-      'district_id',
-      'district_name',
-      'region_id',
-      'region_name',
-      'facility_stops',
-    ],
-    table_query: `CREATE TABLE facilities (
-        facility_id VARCHAR(255),
-        facility_type VARCHAR(255),
-        facility_name VARCHAR(255),
-        facility_lat VARCHAR(255),
-        facility_lon VARCHAR(255),
-        facility_phone VARCHAR(255),
-        facility_email VARCHAR(255),
-        facility_url VARCHAR(255),
-        address VARCHAR(255),
-        postal_code VARCHAR(255),
-        locality VARCHAR(255),
-        parish_id VARCHAR(255),
-        parish_name VARCHAR(255), 
-        municipality_id VARCHAR(255),
-        municipality_name VARCHAR(255),
-        district_id VARCHAR(255),
-        district_name VARCHAR(255),
-        region_id VARCHAR(255),
-        region_name VARCHAR(255),
-        facility_stops VARCHAR(255)
-    );`,
-    index_queries: ['CREATE INDEX facilities_facility_id_idx ON facilities ("facility_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
-  },
-
-  //
   // GTFS / HELPDESKS
   {
     type: 'gtfs',
