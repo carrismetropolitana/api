@@ -185,7 +185,7 @@ module.exports = async () => {
       //
       // 2.2.2.1.
       // Get all trips associated with this route
-      const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = '${route.route_id}'`);
+      const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = $1`, [route.route_id]);
 
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
