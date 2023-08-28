@@ -148,6 +148,12 @@ module.exports = async () => {
   // Now, parse each line and create patterns.
   // Lorem ipsum dolor sit amet.
 
+  const startTime_queryFind = process.hrtime();
+  const allStopsArray = await SERVERDB.Stop.find().lean();
+  queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
+
+  const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
+
   // 2.1.
   // Initiate variables to keep track of updated _ids
   let updatedLineIds = [];
@@ -225,13 +231,13 @@ module.exports = async () => {
         let patternPassesByLocalities = new Set();
         let patternPassesByFacilities = new Set();
 
-        const allStopIds = allStopTimes.rows.map((item) => {
-          return item.stop_id;
-        });
+        // const allStopIds = allStopTimes.rows.map((item) => {
+        //   return item.stop_id;
+        // });
 
-        const startTime_queryFind = process.hrtime();
-        const allStopsForThisTrip = await SERVERDB.Stop.find({ code: { $in: allStopIds } }).lean();
-        queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
+        // const startTime_queryFind = process.hrtime();
+        // const allStopsForThisTrip = await SERVERDB.Stop.find({ code: { $in: allStopIds } }).lean();
+        // queryFindOne += toNs(process.hrtime()) - toNs(startTime_queryFind);
 
         // 2.2.2.2.4.
         // For each path sequence
@@ -239,7 +245,7 @@ module.exports = async () => {
           //
           // 2.2.2.2.4.1.
           // Get existing stop document from database
-          const existingStopDocument = allStopsForThisTrip.find((item) => item.code === currentStopTime.stop_id);
+          const existingStopDocument = allStops.get(currentStopTime.stop_id);
 
           // 2.2.2.2.4.2.
           // Calculate distance delta and update variable
