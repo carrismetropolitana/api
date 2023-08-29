@@ -6,6 +6,13 @@ const timeCalc = require('../modules/timeCalc');
 //
 //
 
+function toNs(timePair) {
+  return timePair[0] * 1000000000 + timePair[1];
+}
+//
+//
+//
+
 /**
  * Calculate time difference
  * @async
@@ -183,13 +190,22 @@ module.exports = async () => {
       // Get all trips associated with this route
       const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = $1`, [route.route_id]);
 
+      let prof_routeGlobal = 0;
+      let prof_patternFind = 0;
+      let prof_queryStopTimes = 0;
+      let prof_forPathSequence = 0;
+      let prof_addMoreValidDatesToPattern = 0;
+
       // 2.2.2.2.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
       // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
       for (const trip of allTrips.rows) {
         //
+        const prof_start_routeGlobal = process.hrtime();
+
         // 2.2.2.2.1.
         // Find the pattern that matches the unique combination for this trip
+        const prof_start_patternFind = process.hrtime();
         const pattern = uniqueLinePatterns.find((pattern) => {
           const samePatternId = pattern.code === trip.pattern_id;
           const sameDirectionId = pattern.direction === trip.direction_id;
@@ -197,10 +213,13 @@ module.exports = async () => {
           //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
           return sameDirectionId && samePatternId && sameHeadsign;
         });
+        prof_patternFind += toNs(process.hrtime()) - toNs(prof_start_patternFind);
 
         // 2.2.2.2.2.
         // Get the current trip stop_times
+        const prof_start_queryStopTimes = process.hrtime();
         const allStopTimes = await FEEDERDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip.trip_id}' ORDER BY stop_sequence`);
+        prof_queryStopTimes += toNs(process.hrtime()) - toNs(prof_start_queryStopTimes);
 
         // 2.2.2.2.3.
         // Initiate temporary holding variables
@@ -216,6 +235,7 @@ module.exports = async () => {
 
         // 2.2.2.2.4.
         // For each path sequence
+        const prof_start_forPathSequence = process.hrtime();
         for (const currentStopTime of allStopTimes.rows) {
           //
           // 2.2.2.2.4.1.
@@ -273,6 +293,7 @@ module.exports = async () => {
 
           //
         }
+        prof_forPathSequence += toNs(process.hrtime()) - toNs(prof_start_forPathSequence);
 
         // 2.2.2.2.5.
         // Get dates in the YYYYMMDD format (GTFS Standard format)
@@ -292,7 +313,9 @@ module.exports = async () => {
         // then update it with the current formatted trip and new valid_on dates
         // and skip to the next iteration.
         if (pattern) {
+          const prof_start_addMoreValidDatesToPattern = process.hrtime();
           pattern.valid_on = [...new Set([...pattern.valid_on, ...tripDates])];
+          prof_addMoreValidDatesToPattern += toNs(process.hrtime()) - toNs(prof_start_addMoreValidDatesToPattern);
           pattern.trips.push(formattedTrip);
           continue;
         }
@@ -325,8 +348,16 @@ module.exports = async () => {
           //
         });
 
+        prof_routeGlobal += toNs(process.hrtime()) - toNs(prof_start_routeGlobal);
+
         //
       }
+
+      console.log('prof_routeGlobal', prof_routeGlobal);
+      console.log('prof_patternFind', prof_patternFind);
+      console.log('prof_queryStopTimes', prof_queryStopTimes);
+      console.log('prof_forPathSequence', prof_forPathSequence);
+      console.log('prof_addMoreValidDatesToPattern', prof_addMoreValidDatesToPattern);
 
       //
     }
@@ -339,16 +370,20 @@ module.exports = async () => {
 
     // 2.2.4.
     // Save all created patterns to the database
+    const startTime_SavePatternsToDB = process.hrtime();
     for (const pattern of uniqueLinePatterns) {
       const updatedPatternDocument = await SERVERDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
       updatedPatternIds.push(updatedPatternDocument._id.toString());
       line.patterns.push(pattern.code);
     }
+    console.log('startTime_SavePatternsToDB', timeCalc.getElapsedTime(startTime_SavePatternsToDB));
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
+    const startTime_SaveLineToDb = process.hrtime();
     const updatedLineDocument = await SERVERDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
     updatedLineIds.push(updatedLineDocument._id.toString());
+    console.log('startTime_SaveLineToDb', timeCalc.getElapsedTime(startTime_SaveLineToDb));
 
     // 2.2.6.
     // Log operation details and elapsed time
