@@ -202,10 +202,10 @@ module.exports = async () => {
         // Find the pattern that matches the unique combination for this trip
         const pattern = uniqueLinePatterns.find((pattern) => {
           const samePatternId = pattern.code === trip.pattern_id;
-          const sameDirectionId = pattern.direction === trip.direction_id;
-          const sameHeadsign = pattern.headsign === trip.trip_headsign;
+          //   const sameDirectionId = pattern.direction === trip.direction_id;
+          //   const sameHeadsign = pattern.headsign === trip.trip_headsign;
           //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
-          return sameDirectionId && samePatternId && sameHeadsign;
+          return samePatternId; // && sameDirectionId && sameHeadsign && sameShapeId;
         });
 
         // 2.2.2.2.2.
