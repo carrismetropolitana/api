@@ -161,8 +161,10 @@ module.exports = async () => {
 
   // 2.1.
   // Initiate variables to keep track of updated _ids
-  let updatedLineIds = [];
+  let updatedLineCodes = [];
   let updatedPatternCodes = [];
+
+  let allPromises = [];
 
   // 2.2.
   // For all trips of all routes of each line,
@@ -371,23 +373,21 @@ module.exports = async () => {
     // 2.2.4.
     // Save all created patterns to the database
     const startTime_SavePatternsToDB = process.hrtime();
-    let promises = [];
     for (const pattern of uniqueLinePatterns) {
-      promises.push(
+      allPromises.push(
         SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true }).then(() => {
           updatedPatternCodes.push(pattern.code);
           line.patterns.push(pattern.code);
         })
       );
     }
-    await Promise.all(promises);
     console.log('startTime_SavePatternsToDB', timeCalc.getElapsedTime(startTime_SavePatternsToDB));
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
     const startTime_SaveLineToDb = process.hrtime();
-    const updatedLineDocument = await SERVERDB.Line.findOneAndReplace({ code: line.code }, line, { new: true, upsert: true });
-    updatedLineIds.push(updatedLineDocument._id.toString());
+    await SERVERDB.Line.replaceOne({ code: line.code }, line, { new: true, upsert: true });
+    updatedLineCodes.push(line.code);
     console.log('startTime_SaveLineToDb', timeCalc.getElapsedTime(startTime_SaveLineToDb));
 
     // 2.2.6.
@@ -398,9 +398,13 @@ module.exports = async () => {
     //
   }
 
+  const startTime_allPromises = process.hrtime();
+  await Promise.all(allPromises);
+  console.log('startTime_allPromises', timeCalc.getElapsedTime(startTime_allPromises));
+
   // 2.3.
   // Delete all Lines not present in the current update
-  const deletedStaleLines = await SERVERDB.Line.deleteMany({ _id: { $nin: updatedLineIds } });
+  const deletedStaleLines = await SERVERDB.Line.deleteMany({ code: { $nin: updatedLineCodes } });
   console.log(`⤷ Deleted ${deletedStaleLines.deletedCount} stale Lines.`);
 
   // 2.4.
