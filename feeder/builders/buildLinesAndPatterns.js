@@ -360,7 +360,7 @@ module.exports = async () => {
       const op = {
         replaceOne: {
           filter: { code: formattedPattern.code },
-          replacement: formattedPattern,
+          replacement: { $set: formattedPattern },
           upsert: true,
         },
       };
