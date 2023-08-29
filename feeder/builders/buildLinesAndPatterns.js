@@ -372,7 +372,6 @@ module.exports = async () => {
 
     // 2.2.4.
     // Save all created patterns to the database
-    const startTime_SavePatternsToDB = process.hrtime();
     for (const pattern of uniqueLinePatterns) {
       allPromises.push(
         SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true }).then(() => {
@@ -381,14 +380,14 @@ module.exports = async () => {
         })
       );
     }
-    console.log('startTime_SavePatternsToDB', timeCalc.getElapsedTime(startTime_SavePatternsToDB));
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
-    const startTime_SaveLineToDb = process.hrtime();
-    await SERVERDB.Line.replaceOne({ code: line.code }, line, { new: true, upsert: true });
-    updatedLineCodes.push(line.code);
-    console.log('startTime_SaveLineToDb', timeCalc.getElapsedTime(startTime_SaveLineToDb));
+    allPromises.push(
+      await SERVERDB.Line.replaceOne({ code: line.code }, line, { new: true, upsert: true }).then(() => {
+        updatedLineCodes.push(line.code);
+      })
+    );
 
     // 2.2.6.
     // Log operation details and elapsed time
