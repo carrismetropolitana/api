@@ -349,22 +349,29 @@ module.exports = async () => {
 
     // 2.2.4.
     // Save all created patterns to the database
-    for (const pattern of uniqueLinePatterns) {
-      allPromises.push(
-        SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true }).then(() => {
-          updatedPatternCodes.push(pattern.code);
-          line.patterns.push(pattern.code);
-        })
-      );
-    }
+    // for (const pattern of uniqueLinePatterns) {
+    //   await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
+    //   updatedPatternCodes.push(pattern.code);
+    //   line.patterns.push(pattern.code);
+    // }
+    const startTime_bulkWrite = process.hrtime();
+    await SERVERDB.Pattern.bulkWrite(
+      uniqueLinePatterns.map((pattern) => ({
+        replaceOne: {
+          filter: { code: pattern.code },
+          replacement: pattern,
+          upsert: true,
+        },
+      })),
+      { ordered: false }
+    );
+    const elapsedTime_bulkWrite = timeCalc.getElapsedTime(startTime_bulkWrite);
+    console.log(`⤷ Bulk Write ${elapsedTime_bulkWrite}.`);
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
-    allPromises.push(
-      SERVERDB.Line.replaceOne({ code: line.code }, line, { new: true, upsert: true }).then(() => {
-        updatedLineCodes.push(line.code);
-      })
-    );
+    await SERVERDB.Line.replaceOne({ code: line.code }, line, { new: true, upsert: true });
+    updatedLineCodes.push(line.code);
 
     // 2.2.6.
     // Log operation details and elapsed time
@@ -373,10 +380,6 @@ module.exports = async () => {
 
     //
   }
-
-  const startTime_allPromises = process.hrtime();
-  await Promise.all(allPromises);
-  console.log('startTime_allPromises', timeCalc.getElapsedTime(startTime_allPromises));
 
   // 2.3.
   // Delete all Lines not present in the current update
