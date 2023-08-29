@@ -371,11 +371,16 @@ module.exports = async () => {
     // 2.2.4.
     // Save all created patterns to the database
     const startTime_SavePatternsToDB = process.hrtime();
+    let promises = [];
     for (const pattern of uniqueLinePatterns) {
-      await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
-      updatedPatternCodes.push(pattern.code);
-      line.patterns.push(pattern.code);
+      promises.push(
+        SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true }).then(() => {
+          updatedPatternCodes.push(pattern.code);
+          line.patterns.push(pattern.code);
+        })
+      );
     }
+    await Promise.all(promises);
     console.log('startTime_SavePatternsToDB', timeCalc.getElapsedTime(startTime_SavePatternsToDB));
 
     // 2.2.5.
