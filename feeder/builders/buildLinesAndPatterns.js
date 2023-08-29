@@ -162,7 +162,7 @@ module.exports = async () => {
   // 2.1.
   // Initiate variables to keep track of updated _ids
   let updatedLineIds = [];
-  let updatedPatternIds = [];
+  let updatedPatternCodes = [];
 
   // 2.2.
   // For all trips of all routes of each line,
@@ -372,8 +372,8 @@ module.exports = async () => {
     // Save all created patterns to the database
     const startTime_SavePatternsToDB = process.hrtime();
     for (const pattern of uniqueLinePatterns) {
-      const updatedPatternDocument = await SERVERDB.Pattern.findOneAndReplace({ code: pattern.code }, pattern, { new: true, upsert: true });
-      updatedPatternIds.push(updatedPatternDocument._id.toString());
+      await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
+      updatedPatternCodes.push(pattern.code);
       line.patterns.push(pattern.code);
     }
     console.log('startTime_SavePatternsToDB', timeCalc.getElapsedTime(startTime_SavePatternsToDB));
@@ -400,7 +400,7 @@ module.exports = async () => {
 
   // 2.4.
   // Delete all Patterns not present in the current update
-  const deletedStalePatterns = await SERVERDB.Pattern.deleteMany({ _id: { $nin: updatedPatternIds } });
+  const deletedStalePatterns = await SERVERDB.Pattern.deleteMany({ code: { $nin: updatedPatternCodes } });
   console.log(`⤷ Deleted ${deletedStalePatterns.deletedCount} stale Patterns.`);
 
   // 2.5.
