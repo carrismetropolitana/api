@@ -349,22 +349,24 @@ module.exports = async () => {
 
     // 2.2.4.
     // Save all created patterns to the database
-    // for (const pattern of uniqueLinePatterns) {
-    //   await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
-    //   updatedPatternCodes.push(pattern.code);
-    //   line.patterns.push(pattern.code);
-    // }
+    for (const pattern of uniqueLinePatterns) {
+      //   await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
+      updatedPatternCodes.push(pattern.code);
+      line.patterns.push(pattern.code);
+    }
+
     const startTime_bulkWrite = process.hrtime();
-    await SERVERDB.Pattern.bulkWrite(
-      uniqueLinePatterns.map((pattern) => ({
+    const bulkWriteOps = uniqueLinePatterns.map((formattedPattern) => {
+      return {
         replaceOne: {
-          filter: { code: pattern.code },
-          replacement: pattern,
+          filter: { code: formattedPattern.code },
+          replacement: formattedPattern,
           upsert: true,
         },
-      })),
-      { ordered: false }
-    );
+      };
+    });
+    console.log(bulkWriteOps);
+    await SERVERDB.Pattern.bulkWrite(bulkWriteOps, { ordered: false });
     const elapsedTime_bulkWrite = timeCalc.getElapsedTime(startTime_bulkWrite);
     console.log(`⤷ Bulk Write ${elapsedTime_bulkWrite}.`);
 
