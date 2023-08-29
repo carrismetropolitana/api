@@ -90,21 +90,21 @@ async function appInitPoint() {
       await setupPrepareAndImportFile(fileOptions);
     }
 
-    console.log();
-    console.log('STEP 2.2: Update Municipalities');
-    await buildMunicipalities();
+    // console.log();
+    // console.log('STEP 2.2: Update Municipalities');
+    // await buildMunicipalities();
 
-    console.log();
-    console.log('STEP 2.3: Update Helpdesks');
-    await buildHelpdesks();
+    // console.log();
+    // console.log('STEP 2.3: Update Helpdesks');
+    // await buildHelpdesks();
 
-    console.log();
-    console.log('STEP 2.4: Update Stops');
-    await buildStops();
+    // console.log();
+    // console.log('STEP 2.4: Update Stops');
+    // await buildStops();
 
-    console.log();
-    console.log('STEP 2.5: Update Shapes');
-    await buildShapes();
+    // console.log();
+    // console.log('STEP 2.5: Update Shapes');
+    // await buildShapes();
 
     console.log();
     console.log('STEP 2.6: Update Lines & Patterns');

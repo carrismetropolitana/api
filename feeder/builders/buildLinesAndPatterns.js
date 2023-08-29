@@ -360,7 +360,7 @@ module.exports = async () => {
       const op = {
         replaceOne: {
           filter: { code: formattedPattern.code },
-          replacement: { $set: formattedPattern },
+          replacement: formattedPattern,
           upsert: true,
         },
       };
@@ -368,7 +368,7 @@ module.exports = async () => {
       return op;
     });
     console.log(bulkWriteOps);
-    await SERVERDB.Pattern.bulkWrite(bulkWriteOps, { ordered: false });
+    await SERVERDB.Pattern.collection.bulkWrite(bulkWriteOps, { ordered: false });
     const elapsedTime_bulkWrite = timeCalc.getElapsedTime(startTime_bulkWrite);
     console.log(`⤷ Bulk Write ${elapsedTime_bulkWrite}.`);
 
