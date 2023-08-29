@@ -7,22 +7,6 @@ const timeCalc = require('../modules/timeCalc');
 //
 
 /**
- * Retrieve the dates matching the provided service_id
- * @async
- * @param {String} service_id The service_id to retrieve
- * @returns {Array} Array of date strings
- */
-async function getTripDates(service_id) {
-  // Get dates in the YYYYMMDD format (GTFS Standard format)
-  const allDates = await FEEDERDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = '${service_id}'`);
-  return allDates.rows.map((item) => item.date);
-}
-
-//
-//
-//
-
-/**
  * Calculate time difference
  * @async
  * @param {String} service_id The service_id to retrieve
@@ -156,6 +140,18 @@ module.exports = async () => {
   const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
   console.log('tranform to map ', timeCalc.getElapsedTime(startTime_TransformToMap));
 
+  const startTime_GetAllCalendars = process.hrtime();
+  const allDates = await FEEDERDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = '${trip.service_id}'`);
+  console.log('getAllCalendars ', timeCalc.getElapsedTime(startTime_GetAllCalendars));
+
+  const startTime_ForLoop = process.hrtime();
+  const allCalendarDates = new Map();
+  for (const row of allDates.rows) {
+    if (allCalendarDates.has(row.service_id)) allCalendarDates.get(row.service_id).push(row.date);
+    else allCalendarDates.set(row.service_id, [row.date]);
+  }
+  console.log('For loop ', timeCalc.getElapsedTime(startTime_ForLoop));
+
   // 2.1.
   // Initiate variables to keep track of updated _ids
   let updatedLineIds = [];
@@ -279,8 +275,8 @@ module.exports = async () => {
         }
 
         // 2.2.2.2.5.
-        // Get current trip dates.
-        const tripDates = await getTripDates(trip.service_id);
+        // Get dates in the YYYYMMDD format (GTFS Standard format)
+        const tripDates = allCalendarDates.get(trip.service_id);
 
         // 2.2.2.2.6.
         // Create a new formatted trip object
