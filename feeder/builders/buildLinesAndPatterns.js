@@ -141,7 +141,7 @@ module.exports = async () => {
   console.log('tranform to map ', timeCalc.getElapsedTime(startTime_TransformToMap));
 
   const startTime_GetAllCalendars = process.hrtime();
-  const allDates = await FEEDERDB.connection.query(`SELECT date FROM calendar_dates WHERE service_id = '${trip.service_id}'`);
+  const allDates = await FEEDERDB.connection.query(`SELECT * FROM calendar_dates`);
   console.log('getAllCalendars ', timeCalc.getElapsedTime(startTime_GetAllCalendars));
 
   const startTime_ForLoop = process.hrtime();
