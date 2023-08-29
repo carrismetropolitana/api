@@ -356,19 +356,19 @@ module.exports = async () => {
     }
 
     const startTime_bulkWrite = process.hrtime();
-    const bulkWriteOps = uniqueLinePatterns.map((formattedPattern) => {
-      const op = {
-        replaceOne: {
-          filter: { code: formattedPattern.code },
-          replacement: formattedPattern,
-          upsert: true,
-        },
-      };
-      console.log(op);
-      return op;
-    });
-    console.log(bulkWriteOps);
-    await SERVERDB.Pattern.collection.bulkWrite(bulkWriteOps, { ordered: false });
+
+    await SERVERDB.Pattern.collection.bulkWrite(
+      uniqueLinePatterns.map((formattedPattern) => {
+        return {
+          replaceOne: {
+            filter: { code: formattedPattern.code },
+            replacement: formattedPattern,
+            upsert: true,
+          },
+        };
+      }),
+      { ordered: false }
+    );
     const elapsedTime_bulkWrite = timeCalc.getElapsedTime(startTime_bulkWrite);
     console.log(`⤷ Bulk Write ${elapsedTime_bulkWrite}.`);
 
