@@ -353,11 +353,11 @@ module.exports = async () => {
         //
       }
 
-      console.log('prof_routeGlobal', prof_routeGlobal);
-      console.log('prof_patternFind', prof_patternFind);
-      console.log('prof_queryStopTimes', prof_queryStopTimes);
-      console.log('prof_forPathSequence', prof_forPathSequence);
-      console.log('prof_addMoreValidDatesToPattern', prof_addMoreValidDatesToPattern);
+      console.log('prof_routeGlobal', prof_routeGlobal / 1000000);
+      console.log('prof_patternFind', prof_patternFind / 1000000);
+      console.log('prof_queryStopTimes', prof_queryStopTimes / 1000000);
+      console.log('prof_forPathSequence', prof_forPathSequence / 1000000);
+      console.log('prof_addMoreValidDatesToPattern', prof_addMoreValidDatesToPattern / 1000000);
 
       //
     }
