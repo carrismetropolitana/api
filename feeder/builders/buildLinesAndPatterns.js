@@ -350,28 +350,10 @@ module.exports = async () => {
     // 2.2.4.
     // Save all created patterns to the database
     for (const pattern of uniqueLinePatterns) {
-      //   await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
+      await SERVERDB.Pattern.replaceOne({ code: pattern.code }, pattern, { upsert: true });
       updatedPatternCodes.push(pattern.code);
       line.patterns.push(pattern.code);
     }
-
-    const startTime_bulkWrite = process.hrtime();
-
-    const bulkWriteResult = await SERVERDB.Pattern.collection.bulkWrite(
-      uniqueLinePatterns.map((formattedPattern) => {
-        return {
-          replaceOne: {
-            filter: { code: formattedPattern.code },
-            replacement: formattedPattern,
-            upsert: true,
-          },
-        };
-      }),
-      { ordered: false }
-    );
-    console.log(bulkWriteResult);
-    const elapsedTime_bulkWrite = timeCalc.getElapsedTime(startTime_bulkWrite);
-    console.log(`⤷ Bulk Write ${elapsedTime_bulkWrite}.`);
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
