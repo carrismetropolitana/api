@@ -63,48 +63,48 @@ async function appInitPoint() {
     //
     // DATASETS
 
-    // console.log();
-    // console.log('STEP 1.0: Fetch and Import Datasets');
-    // for (const fileOptions of files) {
-    //   if (fileOptions.type !== 'datasets') continue;
-    //   await fetchAndExtractLatestDataset(fileOptions);
-    //   await setupPrepareAndImportFile(fileOptions);
-    // }
+    console.log();
+    console.log('STEP 1.0: Fetch and Import Datasets');
+    for (const fileOptions of files) {
+      if (fileOptions.type !== 'datasets') continue;
+      await fetchAndExtractLatestDataset(fileOptions);
+      await setupPrepareAndImportFile(fileOptions);
+    }
 
-    // console.log();
-    // console.log('STEP 1.1: Update Facilities');
-    // await buildSchools();
+    console.log();
+    console.log('STEP 1.1: Update Facilities');
+    await buildSchools();
 
     //
     //
     // GTFS
 
-    // console.log();
-    // console.log('STEP 2.0: Fetch and Extract latest GTFS');
-    // await fetchAndExtractLatestGtfs();
+    console.log();
+    console.log('STEP 2.0: Fetch and Extract latest GTFS');
+    await fetchAndExtractLatestGtfs();
 
-    // console.log();
-    // console.log('STEP 2.1: Import each GTFS file');
-    // for (const fileOptions of files) {
-    //   if (fileOptions.type !== 'gtfs') continue;
-    //   await setupPrepareAndImportFile(fileOptions);
-    // }
+    console.log();
+    console.log('STEP 2.1: Import each GTFS file');
+    for (const fileOptions of files) {
+      if (fileOptions.type !== 'gtfs') continue;
+      await setupPrepareAndImportFile(fileOptions);
+    }
 
-    // console.log();
-    // console.log('STEP 2.2: Update Municipalities');
-    // await buildMunicipalities();
+    console.log();
+    console.log('STEP 2.2: Update Municipalities');
+    await buildMunicipalities();
 
-    // console.log();
-    // console.log('STEP 2.3: Update Helpdesks');
-    // await buildHelpdesks();
+    console.log();
+    console.log('STEP 2.3: Update Helpdesks');
+    await buildHelpdesks();
 
-    // console.log();
-    // console.log('STEP 2.4: Update Stops');
-    // await buildStops();
+    console.log();
+    console.log('STEP 2.4: Update Stops');
+    await buildStops();
 
-    // console.log();
-    // console.log('STEP 2.5: Update Shapes');
-    // await buildShapes();
+    console.log();
+    console.log('STEP 2.5: Update Shapes');
+    await buildShapes();
 
     console.log();
     console.log('STEP 2.6: Update Lines & Patterns');
