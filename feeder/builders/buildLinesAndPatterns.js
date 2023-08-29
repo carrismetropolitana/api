@@ -6,13 +6,6 @@ const timeCalc = require('../modules/timeCalc');
 //
 //
 
-function toNs(timePair) {
-  return timePair[0] * 1000000000 + timePair[1];
-}
-//
-//
-//
-
 /**
  * Calculate time difference
  * @async
@@ -139,32 +132,20 @@ module.exports = async () => {
   // Now, parse each line and create patterns.
   // Lorem ipsum dolor sit amet.
 
-  const startTime_queryFind = process.hrtime();
   const allStopsArray = await SERVERDB.Stop.find().lean();
-  console.log('query find all ', timeCalc.getElapsedTime(startTime_queryFind));
-
-  const startTime_TransformToMap = process.hrtime();
   const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
-  console.log('tranform to map ', timeCalc.getElapsedTime(startTime_TransformToMap));
 
-  const startTime_GetAllCalendars = process.hrtime();
   const allDates = await FEEDERDB.connection.query(`SELECT * FROM calendar_dates`);
-  console.log('getAllCalendars ', timeCalc.getElapsedTime(startTime_GetAllCalendars));
-
-  const startTime_ForLoop = process.hrtime();
   const allCalendarDates = new Map();
   for (const row of allDates.rows) {
     if (allCalendarDates.has(row.service_id)) allCalendarDates.get(row.service_id).push(row.date);
     else allCalendarDates.set(row.service_id, [row.date]);
   }
-  console.log('For loop ', timeCalc.getElapsedTime(startTime_ForLoop));
 
   // 2.1.
   // Initiate variables to keep track of updated _ids
   let updatedLineCodes = [];
   let updatedPatternCodes = [];
-
-  let allPromises = [];
 
   // 2.2.
   // For all trips of all routes of each line,
