@@ -357,7 +357,7 @@ module.exports = async () => {
 
     const startTime_bulkWrite = process.hrtime();
 
-    await SERVERDB.Pattern.collection.bulkWrite(
+    const bulkWriteResult = await SERVERDB.Pattern.collection.bulkWrite(
       uniqueLinePatterns.map((formattedPattern) => {
         return {
           replaceOne: {
@@ -369,6 +369,7 @@ module.exports = async () => {
       }),
       { ordered: false }
     );
+    console.log(bulkWriteResult);
     const elapsedTime_bulkWrite = timeCalc.getElapsedTime(startTime_bulkWrite);
     console.log(`⤷ Bulk Write ${elapsedTime_bulkWrite}.`);
 
