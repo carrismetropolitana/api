@@ -357,7 +357,7 @@ module.exports = async () => {
 
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
-    await SERVERDB.Line.replaceOne({ code: line.code }, line, { new: true, upsert: true });
+    await SERVERDB.Line.replaceOne({ code: line.code }, line, { upsert: true });
     updatedLineCodes.push(line.code);
 
     // 2.2.6.

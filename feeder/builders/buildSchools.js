@@ -13,7 +13,7 @@ module.exports = async () => {
   // Log progress
   console.log(`⤷ Updating Schools...`);
   // Initate a temporary variable to hold updated Schools
-  let updatedSchoolIds = [];
+  let updatedSchoolCodes = [];
   // For each school, update its entry in the database
   for (const school of allSchools.rows) {
     // Discover which cicles this school has
@@ -31,7 +31,7 @@ module.exports = async () => {
     let parsedSchoolStops = [];
     if (school.school_stops?.length) parsedSchoolStops = school.school_stops.split('|');
     // Initiate a variable to hold the parsed school
-    let parsedSchool = {
+    const parsedSchool = {
       code: school.school_id,
       name: school.school_name,
       lat: school.school_lat,
@@ -56,13 +56,13 @@ module.exports = async () => {
       stops: parsedSchoolStops,
     };
     // Update or create new document
-    const updatedSchoolDocument = await SERVERDB.School.findOneAndReplace({ code: parsedSchool.code }, parsedSchool, { new: true, upsert: true });
-    updatedSchoolIds.push(updatedSchoolDocument._id);
+    await SERVERDB.School.replaceOne({ code: parsedSchool.code }, parsedSchool, { upsert: true });
+    updatedSchoolCodes.push(parsedSchool.code);
   }
   // Log count of updated Schools
-  console.log(`⤷ Updated ${updatedSchoolIds.length} Schools.`);
+  console.log(`⤷ Updated ${updatedSchoolCodes.length} Schools.`);
   // Delete all Schools not present in the current update
-  const deletedStaleSchools = await SERVERDB.School.deleteMany({ _id: { $nin: updatedSchoolIds } });
+  const deletedStaleSchools = await SERVERDB.School.deleteMany({ _id: { $nin: updatedSchoolCodes } });
   console.log(`⤷ Deleted ${deletedStaleSchools.deletedCount} stale Schools.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

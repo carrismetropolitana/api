@@ -11,7 +11,7 @@ module.exports = async () => {
   console.log(`⤷ Querying database...`);
   const allHelpdesks = await FEEDERDB.connection.query('SELECT * FROM helpdesks');
   // Initate a temporary variable to hold updated Helpdesks
-  let updatedHelpdeskIds = [];
+  let updatedHelpdeskCodes = [];
   // Log progress
   console.log(`⤷ Updating Helpdesks...`);
   // For each facility, update its entry in the database
@@ -48,13 +48,13 @@ module.exports = async () => {
       stops: helpdesk.helpdesk_stops?.length ? helpdesk.helpdesk_stops.split('|') : [],
     };
     // Save to database
-    const updatedHelpdeskDocument = await SERVERDB.Helpdesk.findOneAndReplace({ code: parsedHelpdesk.code }, parsedHelpdesk, { new: true, upsert: true });
-    updatedHelpdeskIds.push(updatedHelpdeskDocument._id);
+    await SERVERDB.Helpdesk.replaceOne({ code: parsedHelpdesk.code }, parsedHelpdesk, { upsert: true });
+    updatedHelpdeskCodes.push(parsedHelpdesk.code);
   }
   // Log count of updated Helpdesks
-  console.log(`⤷ Updated ${updatedHelpdeskIds.length} Helpdesks.`);
+  console.log(`⤷ Updated ${updatedHelpdeskCodes.length} Helpdesks.`);
   // Delete all Helpdesks not present in the current update
-  const deletedStaleHelpdesks = await SERVERDB.Helpdesk.deleteMany({ _id: { $nin: updatedHelpdeskIds } });
+  const deletedStaleHelpdesks = await SERVERDB.Helpdesk.deleteMany({ _id: { $nin: updatedHelpdeskCodes } });
   console.log(`⤷ Deleted ${deletedStaleHelpdesks.deletedCount} stale Helpdesks.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

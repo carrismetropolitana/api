@@ -36,7 +36,7 @@ module.exports = async () => {
   // Log progress
   console.log(`⤷ Updating Stops...`);
   // Initate a temporary variable to hold updated Stops
-  let updatedStopIds = [];
+  let updatedStopCodes = [];
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
     // Discover which facilities this stop is near to
@@ -82,13 +82,13 @@ module.exports = async () => {
       patterns: stop.pattern_ids,
     };
     // Update or create new document
-    const updatedStopDocument = await SERVERDB.Stop.findOneAndReplace({ code: parsedStop.code }, parsedStop, { new: true, upsert: true });
-    updatedStopIds.push(updatedStopDocument._id);
+    await SERVERDB.Stop.replaceOne({ code: parsedStop.code }, parsedStop, { upsert: true });
+    updatedStopCodes.push(parsedStop.code);
   }
   // Log count of updated Stops
-  console.log(`⤷ Updated ${updatedStopIds.length} Stops.`);
+  console.log(`⤷ Updated ${updatedStopCodes.length} Stops.`);
   // Delete all Stops not present in the current update
-  const deletedStaleStops = await SERVERDB.Stop.deleteMany({ _id: { $nin: updatedStopIds } });
+  const deletedStaleStops = await SERVERDB.Stop.deleteMany({ _id: { $nin: updatedStopCodes } });
   console.log(`⤷ Deleted ${deletedStaleStops.deletedCount} stale Stops.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

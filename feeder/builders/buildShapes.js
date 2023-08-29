@@ -29,7 +29,7 @@ module.exports = async () => {
   // Log progress
   console.log(`⤷ Updating Shapes...`);
   // Initiate variable to keep track of updated _ids
-  let updatedShapeIds = [];
+  let updatedShapeCodes = [];
   // Loop through each object in each chunk
   for (const shape of allShapes.rows) {
     // Initiate a variable to hold the parsed shape
@@ -46,14 +46,14 @@ module.exports = async () => {
     const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
     parsedShape.extension = parseInt(shapeExtensionMeters);
     // Update or create new document
-    const updatedShapeDocument = await SERVERDB.Shape.findOneAndReplace({ code: parsedShape.code }, parsedShape, { new: true, upsert: true });
+    await SERVERDB.Shape.replaceOne({ code: parsedShape.code }, parsedShape, { upsert: true });
     // Return _id to main thread
-    updatedShapeIds.push(updatedShapeDocument._id);
+    updatedShapeCodes.push(parsedShape.code);
   }
   // Delete all Shapes not present in the current update
-  const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ _id: { $nin: updatedShapeIds } });
+  const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ _id: { $nin: updatedShapeCodes } });
   console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);
-  console.log(`⤷ Done updating Shapes (${updatedShapeIds.length} in ${elapsedTime}).`);
+  console.log(`⤷ Done updating Shapes (${updatedShapeCodes.length} in ${elapsedTime}).`);
 };
