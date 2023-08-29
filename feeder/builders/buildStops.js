@@ -88,7 +88,7 @@ module.exports = async () => {
   // Log count of updated Stops
   console.log(`⤷ Updated ${updatedStopCodes.length} Stops.`);
   // Delete all Stops not present in the current update
-  const deletedStaleStops = await SERVERDB.Stop.deleteMany({ _id: { $nin: updatedStopCodes } });
+  const deletedStaleStops = await SERVERDB.Stop.deleteMany({ code: { $nin: updatedStopCodes } });
   console.log(`⤷ Deleted ${deletedStaleStops.deletedCount} stale Stops.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

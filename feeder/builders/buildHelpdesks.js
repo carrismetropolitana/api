@@ -54,7 +54,7 @@ module.exports = async () => {
   // Log count of updated Helpdesks
   console.log(`⤷ Updated ${updatedHelpdeskCodes.length} Helpdesks.`);
   // Delete all Helpdesks not present in the current update
-  const deletedStaleHelpdesks = await SERVERDB.Helpdesk.deleteMany({ _id: { $nin: updatedHelpdeskCodes } });
+  const deletedStaleHelpdesks = await SERVERDB.Helpdesk.deleteMany({ code: { $nin: updatedHelpdeskCodes } });
   console.log(`⤷ Deleted ${deletedStaleHelpdesks.deletedCount} stale Helpdesks.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

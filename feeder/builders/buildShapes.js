@@ -51,7 +51,7 @@ module.exports = async () => {
     updatedShapeCodes.push(parsedShape.code);
   }
   // Delete all Shapes not present in the current update
-  const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ _id: { $nin: updatedShapeCodes } });
+  const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ code: { $nin: updatedShapeCodes } });
   console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);

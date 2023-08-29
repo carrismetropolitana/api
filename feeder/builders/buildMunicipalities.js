@@ -33,7 +33,7 @@ module.exports = async () => {
   // Log count of updated Municipalities
   console.log(`⤷ Updated ${updatedMunicipalityCodes.length} Municipalities.`);
   // Delete all Municipalities not present in the current update
-  const deletedStaleMunicipalities = await SERVERDB.Municipality.deleteMany({ _id: { $nin: updatedMunicipalityCodes } });
+  const deletedStaleMunicipalities = await SERVERDB.Municipality.deleteMany({ code: { $nin: updatedMunicipalityCodes } });
   console.log(`⤷ Deleted ${deletedStaleMunicipalities.deletedCount} stale Municipalities.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
