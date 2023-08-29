@@ -357,13 +357,15 @@ module.exports = async () => {
 
     const startTime_bulkWrite = process.hrtime();
     const bulkWriteOps = uniqueLinePatterns.map((formattedPattern) => {
-      return {
+      const op = {
         replaceOne: {
           filter: { code: formattedPattern.code },
           replacement: formattedPattern,
           upsert: true,
         },
       };
+      console.log(op);
+      return op;
     });
     console.log(bulkWriteOps);
     await SERVERDB.Pattern.bulkWrite(bulkWriteOps, { ordered: false });
