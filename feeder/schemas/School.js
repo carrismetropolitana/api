@@ -23,11 +23,11 @@ module.exports = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    type: {
+    nature: {
       type: String,
       maxlength: 50,
     },
-    group: {
+    grouping: {
       type: String,
       maxlength: 50,
     },
