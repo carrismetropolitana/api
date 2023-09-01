@@ -29,15 +29,15 @@ module.exports = async () => {
     if (school.other) cicles.push('other');
     // Split stops into discrete IDs
     let parsedSchoolStops = [];
-    if (school.school_stops?.length) parsedSchoolStops = school.school_stops.split('|');
+    if (school.stops?.length) parsedSchoolStops = school.stops.split('|');
     // Initiate a variable to hold the parsed school
     const parsedSchool = {
-      code: school.school_id,
-      name: school.school_name,
-      lat: school.school_lat,
-      lon: school.school_lon,
-      type: school.school_type,
-      group: school.school_group,
+      code: school.id,
+      name: school.name,
+      lat: school.lat,
+      lon: school.lon,
+      type: school.type,
+      group: school.group,
       cicles: cicles,
       address: school.address,
       postal_code: school.postal_code,
@@ -50,9 +50,9 @@ module.exports = async () => {
       district_name: school.district_name,
       region_code: school.region_id,
       region_name: school.region_name,
-      url: school.school_url,
-      email: school.school_email,
-      phone: school.school_phone,
+      url: school.url,
+      email: school.email,
+      phone: school.phone,
       stops: parsedSchoolStops,
     };
     // Update or create new document

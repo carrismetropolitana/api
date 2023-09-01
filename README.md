@@ -20,6 +20,16 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 _Documentation in progress_
 
+alerts
+helpdesks
+lines
+municipalities
+patterns
+schools
+shapes
+stops
+vehicles
+
 # Contributing
 
 If you'd like to contribute or help fix any errors, please fork this repository and submit a pull request. We welcome contributions of all kinds, including bug fixes, documentation improvements, and new features.
