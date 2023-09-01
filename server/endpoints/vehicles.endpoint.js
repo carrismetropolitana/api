@@ -16,11 +16,6 @@ module.exports.all = async (request, reply) => {
       heading: vehicle.Coa,
       trip_code: vehicle.Lna,
       pattern_code: vehicle.Lna?.substring(0, 8),
-      // deprecated
-      vehicle_id: vehicle.Vid,
-      trip_id: vehicle.Lna,
-      latitude: vehicle.Lat,
-      longitude: vehicle.Lng,
     };
   });
   return reply.send(allVehiclesFormatted || []);
