@@ -26,6 +26,7 @@ module.exports = async () => {
     if (school.professional) cicles.push('professional');
     if (school.special) cicles.push('special');
     if (school.artistic) cicles.push('artistic');
+    if (school.university) cicles.push('university');
     if (school.other) cicles.push('other');
     // Split stops into discrete IDs
     let parsedSchoolStops = [];
