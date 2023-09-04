@@ -6,7 +6,7 @@ const SERVERDB = require('../services/SERVERDB');
 module.exports.all = async (request, reply) => {
   const foundManyDocuments = await SERVERDB.School.find().lean();
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  foundManyDocuments.sort((a, b) => collator.compare(a.name, b.name));
+  foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
   return reply.send(foundManyDocuments || []);
 };
 
