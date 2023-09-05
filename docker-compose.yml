@@ -4,10 +4,6 @@ volumes:
   certbotdata:
   serverdb:
 
-networks:
-  api-network:
-    driver: bridge
-
 services:
   #
 
@@ -44,8 +40,6 @@ services:
       - ./nginx:/etc/nginx/conf.d
       - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
-    networks:
-      - api-network
     ports:
       - 80:80
       - 443:443
@@ -80,8 +74,6 @@ services:
         max-file: '1'
     volumes:
       - serverdb:/data/db
-    networks:
-      - api-network
     environment:
       - MONGO_INITDB_ROOT_USERNAME=serverdbuser
       - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
@@ -96,8 +88,6 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    networks:
-      - api-network
     environment:
       - POSTGRES_USER=feederdbuser
       - POSTGRES_PASSWORD=feederdbpassword
@@ -112,8 +102,6 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    networks:
-      - api-network
     env_file:
       - ./.env
     environment:
@@ -132,8 +120,6 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    networks:
-      - api-network
     environment:
       - SERVERDB_HOST=serverdb
       - SERVERDB_USER=serverdbuser
@@ -153,8 +139,6 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
-    networks:
-      - api-network
     env_file:
       - ./.env
     environment:
