@@ -1,11 +1,10 @@
-/* * */
-/* IMPORTS */
-const { PCGI_BASE_URL_DEV } = process.env;
+//
+
+const PCGIAPI = require('../services/PCGIAPI');
 
 //
 module.exports.all = async (request, reply) => {
-  const allVehiclesResponse = await fetch(`${PCGI_BASE_URL_DEV}/vehiclelocation/vehiclePosition/mapVehicles`);
-  const allVehiclesData = await allVehiclesResponse.json();
+  const allVehiclesData = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');
   const allVehiclesFormatted = allVehiclesData.map((vehicle) => {
     return {
       code: vehicle.Vid,

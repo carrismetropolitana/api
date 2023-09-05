@@ -1,5 +1,5 @@
-/* * */
-/* IMPORTS */
+//
+
 const SERVERDB = require('../services/SERVERDB');
 const PCGIAPI = require('../services/PCGIAPI');
 
