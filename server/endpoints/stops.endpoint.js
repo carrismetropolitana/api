@@ -23,7 +23,19 @@ module.exports.single = async (request, reply) => {
 //
 module.exports.singleWithRealtime = async (request, reply) => {
   if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const result = await PCGIAPI.request(`opcoremanager/stop-schedules/${request.params.code}`);
-  result.forEach((element) => delete element.observedDriverId); // Remove useless property
+  const response = await PCGIAPI.request(`opcoremanager/stop-schedules/${request.params.code}`);
+  const result = response.map((estimate) => {
+    return {
+      stop_code: estimate.stopId,
+      line_code: estimate.lineId,
+      pattern_code: estimate.patternId,
+      trip_code: estimate.tripId,
+      headsign: estimate.tripHeadsign,
+      scheduled_arrival: estimate.arrivalTime,
+      estimated_arrival: estimate.estimatedArrivalTime,
+      observed_arrival: estimate.observedArrivalTime,
+      vehicle_code: estimate.observedVehicleId,
+    };
+  });
   return reply.send(result || []);
 };
