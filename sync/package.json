@@ -8,7 +8,7 @@
     },
     "dependencies": {
         "dotenv": "16.3.1",
-        "mongoose": "7.4.2",
+        "mongoose": "7.5.0",
         "node-cron": "3.0.2"
     }
 }

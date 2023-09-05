@@ -8,8 +8,8 @@
     },
     "dependencies": {
         "dotenv": "16.3.1",
-        "fastify": "4.21.0",
-        "mongoose": "7.4.2",
-        "protobufjs": "7.2.4"
+        "fastify": "4.22.2",
+        "mongoose": "7.5.0",
+        "protobufjs": "7.2.5"
     }
 }

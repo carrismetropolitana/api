@@ -9,9 +9,9 @@
     "dependencies": {
         "@turf/turf": "6.5.0",
         "adm-zip": "0.5.10",
-        "csv-parse": "5.4.0",
-        "csv-stringify": "6.4.0",
-        "mongoose": "7.4.4",
+        "csv-parse": "5.5.0",
+        "csv-stringify": "6.4.2",
+        "mongoose": "7.5.0",
         "node-cron": "3.0.2",
         "pg": "8.11.3",
         "pg-copy-streams": "6.0.6"
