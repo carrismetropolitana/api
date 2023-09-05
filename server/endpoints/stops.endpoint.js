@@ -19,14 +19,9 @@ module.exports.single = async (request, reply) => {
 
 //
 module.exports.singleWithRealtime = async (request, reply) => {
-  const result = await PCGIAPI.request('openservices/estimatedStopSchedules', {
-    method: 'POST',
-    body: {
-      operators: ['41', '42', '43', '44'],
-      stops: [request.params.code],
-      numResults: 1,
-    },
-  });
+  // Test if a variable is a string with exactly 6 numeric digits
+  if (!request.params.code.test(/^\d{6}$/)) return reply.status(400).send([]);
+  const result = await PCGIAPI.request(`opcoremanager/stop-schedules/${request.params.code}`);
   result.forEach((element) => delete element.observedDriverId); // Remove useless property
   return reply.send(result || []);
 };
