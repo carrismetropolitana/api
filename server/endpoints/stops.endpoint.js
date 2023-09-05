@@ -26,7 +26,6 @@ module.exports.singleWithRealtime = async (request, reply) => {
   const response = await PCGIAPI.request(`opcoremanager/stop-schedules/${request.params.code}`);
   const result = response.map((estimate) => {
     return {
-      stop_code: estimate.stopId,
       line_code: estimate.lineId,
       pattern_code: estimate.patternId,
       trip_code: estimate.tripId,
