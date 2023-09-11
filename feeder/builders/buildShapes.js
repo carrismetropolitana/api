@@ -51,7 +51,7 @@ module.exports = async () => {
       // Return _id to main thread
       updatedShapeCodes.push(parsedShape.code);
     } catch (error) {
-      console.log('ERROR parsing shape', shape.code, error);
+      console.log('ERROR parsing shape', shape, error);
     }
   }
   // Delete all Shapes not present in the current update
