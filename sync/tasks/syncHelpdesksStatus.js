@@ -11,7 +11,7 @@ const timeCalc = require('../services/timeCalc');
  */
 module.exports = async () => {
   // Setup flag to avoid overlapping runs
-  let RUN_ON_INTERVAL = 3000;
+  let RUN_ON_INTERVAL = 30000;
   // Setup flag to avoid overlapping runs
   let IS_THIS_TASK_RUNNING = false;
   // Schedule task (https://crontab.guru/#*_*_*_*_*)
