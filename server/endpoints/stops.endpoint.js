@@ -30,7 +30,7 @@ module.exports.singleWithRealtime = async (request, reply) => {
       pattern_code: estimate.patternId,
       trip_code: estimate.tripId,
       headsign: estimate.tripHeadsign,
-      scheduled_arrival: estimate.scheduledArrivalTime,
+      scheduled_arrival: estimate.scheduledArrivalTime || estimate.arrivalTime,
       estimated_arrival: estimate.estimatedArrivalTime,
       observed_arrival: estimate.observedArrivalTime,
       vehicle_code: estimate.observedVehicleId,
