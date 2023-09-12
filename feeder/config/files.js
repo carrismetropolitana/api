@@ -316,7 +316,6 @@ module.exports = [
     ],
     table_query: `CREATE TABLE encm (
         id VARCHAR(255),
-        type VARCHAR(255),
         name VARCHAR(255),
         lat VARCHAR(255),
         lon VARCHAR(255),

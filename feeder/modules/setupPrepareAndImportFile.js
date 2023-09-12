@@ -10,7 +10,6 @@ const timeCalc = require('./timeCalc');
 module.exports = async (FILE_OPTIONS) => {
   //
 
-  console.log();
   console.log(`⤷ Importing "${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 
   // Drop existing table
@@ -38,6 +37,8 @@ module.exports = async (FILE_OPTIONS) => {
 
   // Import to table
   await importFileToTable(FILE_OPTIONS);
+
+  console.log();
 
   //
 };
