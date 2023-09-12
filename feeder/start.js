@@ -11,7 +11,7 @@ const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile')
 
 const buildMunicipalities = require('./builders/buildMunicipalities');
 const buildSchools = require('./builders/buildSchools');
-const buildHelpdesks = require('./builders/buildHelpdesks');
+const buildEncm = require('./builders/buildEncm');
 const buildStops = require('./builders/buildStops');
 const buildShapes = require('./builders/buildShapes');
 const buildLinesAndPatterns = require('./builders/buildLinesAndPatterns');
@@ -82,7 +82,7 @@ module.exports = async () => {
 
     console.log();
     console.log('STEP 2.3: Update Helpdesks');
-    await buildHelpdesks();
+    await buildEncm();
 
     console.log();
     console.log('STEP 2.4: Update Stops');
