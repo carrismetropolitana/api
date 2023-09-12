@@ -49,13 +49,13 @@ Returns information for municipalities in the Lisbon metropolitan area, as well 
 
 Returns the service alerts in JSON and Protobuf format, following the GTFS-RT Service Alerts standard. [Please refer to the documentation available here.](https://gtfs.org/realtime/feed-entities/#service-alerts)
 
-## Helpdesks
+## ENCM
 
-#### `GET /helpdesks`
+#### `GET /facilities/encm`
 
-#### `GET /helpdesks/:code`
+#### `GET /facilities/encm/:code`
 
-Known as Espaços navegante® Carris Metropolitana, these endpoints return information for all or each helpdesk location, including live estimated wait times.
+Known as Espaços navegante® Carris Metropolitana, these endpoints return information for all or each location, including live estimated wait times.
 
 **Example Response:**
 
@@ -64,7 +64,6 @@ Known as Espaços navegante® Carris Metropolitana, these endpoints return infor
     {
 
         code: "8400000000000001",
-        type: "encm",
         name: "Espaço navegante® Carris Metropolitana Queluz",
 
         lat: 38.756317,
