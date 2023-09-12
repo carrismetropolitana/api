@@ -23,16 +23,18 @@ module.exports.single = async (request, reply) => {
 //
 module.exports.singleWithRealtime = async (request, reply) => {
   if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const response = await PCGIAPI.request(`opcoremanager/stop-schedules/${request.params.code}`);
+  const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.code}`);
   const result = response.map((estimate) => {
     return {
       line_code: estimate.lineId,
       pattern_code: estimate.patternId,
+      route_code: estimate.routeId,
       trip_code: estimate.tripId,
       headsign: estimate.tripHeadsign,
-      scheduled_arrival: estimate.scheduledArrivalTime || estimate.arrivalTime,
-      estimated_arrival: estimate.estimatedArrivalTime,
-      observed_arrival: estimate.observedArrivalTime,
+      stop_sequence: estimate.stopSequence,
+      scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+      estimated_arrival: estimate.stopArrivalEta || estimate.stopDepartureEta,
+      observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
       vehicle_code: estimate.observedVehicleId,
     };
   });
