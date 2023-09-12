@@ -60,6 +60,7 @@ module.exports = async () => {
     console.log();
     console.log('STEP 1.1: Update Facilities');
     await buildSchools();
+    await buildEncm();
 
     //
     //
@@ -79,10 +80,6 @@ module.exports = async () => {
     console.log();
     console.log('STEP 2.2: Update Municipalities');
     await buildMunicipalities();
-
-    console.log();
-    console.log('STEP 2.3: Update Helpdesks');
-    await buildEncm();
 
     console.log();
     console.log('STEP 2.4: Update Stops');
