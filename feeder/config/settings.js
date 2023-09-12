@@ -1,6 +1,6 @@
 module.exports = {
   //
-  CRON_INTERVAL: '0 */3 * * *', // https://crontab.guru/#0_*/3_*_*_*
+  RUN_INTERVAL: 1200000, // 20 minutes
 
   //
   BASE_DIR: '/tmp/base',

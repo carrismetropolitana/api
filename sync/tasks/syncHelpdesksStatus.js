@@ -13,13 +13,13 @@ module.exports = async () => {
   // Setup flag to avoid overlapping runs
   let RUN_ON_INTERVAL = 30000;
   // Setup flag to avoid overlapping runs
-  let IS_THIS_TASK_RUNNING = false;
+  let TASK_IS_RUNNING = false;
   // Schedule task (https://crontab.guru/#*_*_*_*_*)
   setInterval(async () => {
     // Check if task is already running
-    if (IS_THIS_TASK_RUNNING) throw new Error('Force restart program.');
+    if (TASK_IS_RUNNING) throw new Error('Force restart program.');
     // Switch the flag ON
-    IS_THIS_TASK_RUNNING = true;
+    TASK_IS_RUNNING = true;
     // Record the start time to later calculate operation duration
     console.log();
     console.log(`------------------------------------------------------------------------------------------------------------------------`);
@@ -49,7 +49,7 @@ module.exports = async () => {
       //
     }
     // Switch the flag OFF
-    IS_THIS_TASK_RUNNING = false;
+    TASK_IS_RUNNING = false;
     // Log elapsed time in the current operation
     const elapsedTime = timeCalc.getElapsedTime(startTime);
     console.log(`→ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
