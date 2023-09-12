@@ -6,7 +6,7 @@ const { SERVERDB_USER, SERVERDB_PASSWORD, SERVERDB_HOST, SERVERDB_NAME } = proce
 class SERVERDB {
   constructor() {
     this.connection = mongoose.createConnection(`mongodb://${SERVERDB_USER}:${SERVERDB_PASSWORD}@${SERVERDB_HOST}/${SERVERDB_NAME}?authSource=admin`);
-    this.Helpdesk = this.connection.model('Helpdesk', require('../schemas/Helpdesk'));
+    this.Encm = this.connection.model('Encm', require('../schemas/Encm'));
   }
 
   async connect() {

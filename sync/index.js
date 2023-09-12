@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
 const SERVERDB = require('./services/SERVERDB');
-const syncHelpdesksStatus = require('./tasks/syncHelpdesksStatus');
+const syncEncmStatus = require('./tasks/syncEncmStatus');
 
 //
 
@@ -12,7 +12,7 @@ const syncHelpdesksStatus = require('./tasks/syncHelpdesksStatus');
   await SERVERDB.connect();
 
   // Setup tasks
-  await syncHelpdesksStatus();
+  await syncEncmStatus();
 
   //
 })();

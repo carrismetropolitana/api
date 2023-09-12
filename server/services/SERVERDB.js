@@ -9,12 +9,12 @@ class SERVERDB {
     // GTFS
     this.Line = this.connection.model('Line', require('../schemas/Line'));
     this.Municipality = this.connection.model('Municipality', require('../schemas/Municipality'));
-    this.Helpdesk = this.connection.model('Helpdesk', require('../schemas/Helpdesk'));
     this.Pattern = this.connection.model('Pattern', require('../schemas/Pattern'));
     this.Shape = this.connection.model('Shape', require('../schemas/Shape'));
     this.Stop = this.connection.model('Stop', require('../schemas/Stop'));
     // DATASETS
     this.School = this.connection.model('School', require('../schemas/School'));
+    this.Encm = this.connection.model('Encm', require('../schemas/Encm'));
   }
 
   async connect() {

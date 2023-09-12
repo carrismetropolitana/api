@@ -6,7 +6,6 @@ const SERVERDB = require('./services/SERVERDB');
 // GTFS
 const alertsEndpoint = require('./endpoints/alerts.endpoint');
 const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
-const helpdesksEndpoint = require('./endpoints/helpdesks.endpoint');
 const linesEndpoint = require('./endpoints/lines.endpoint');
 const patternsEndpoint = require('./endpoints/patterns.endpoint');
 const shapesEndpoint = require('./endpoints/shapes.endpoint');
@@ -14,6 +13,7 @@ const stopsEndpoint = require('./endpoints/stops.endpoint');
 const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
 // DATASETS
 const schoolsEndpoint = require('./endpoints/schools.endpoint');
+const encmEndpoint = require('./endpoints/encm.endpoint');
 
 //
 // GTFS ENDPOINTS
@@ -24,9 +24,6 @@ fastify.get('/alerts.pb', alertsEndpoint.protobuf);
 
 fastify.get('/municipalities', municipalitiesEndpoint.all);
 fastify.get('/municipalities/:code', municipalitiesEndpoint.single);
-
-fastify.get('/helpdesks', helpdesksEndpoint.all);
-fastify.get('/helpdesks/:code', helpdesksEndpoint.single);
 
 fastify.get('/lines', linesEndpoint.all);
 fastify.get('/lines/:code', linesEndpoint.single);
@@ -48,6 +45,9 @@ fastify.get('/vehicles', vehiclesEndpoint.all);
 
 fastify.get('/facilities/schools', schoolsEndpoint.all);
 fastify.get('/facilities/schools/:code', schoolsEndpoint.single);
+
+fastify.get('/facilities/encm', encmEndpoint.all);
+fastify.get('/facilities/encm/:code', encmEndpoint.single);
 
 //
 // Start Fastify server

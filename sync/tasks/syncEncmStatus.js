@@ -5,10 +5,9 @@ const IXAPI = require('../services/IXAPI');
 const timeCalc = require('../services/timeCalc');
 
 /**
- * UPDATE HELPDESKS STATUS
- * Query 'stops' table to get all unique stops.
- * Save each result in MongoDB.
+ * UPDATE ENCM STATUS
  */
+
 module.exports = async () => {
   // Setup flag to avoid overlapping runs
   let RUN_ON_INTERVAL = 30000;
@@ -23,36 +22,36 @@ module.exports = async () => {
     // Record the start time to later calculate operation duration
     console.log();
     console.log(`------------------------------------------------------------------------------------------------------------------------`);
-    console.log(`→ Updating Helpdesks status...`);
+    console.log(`→ Updating ENCM status...`);
     const startTime = process.hrtime();
-    // Retrieve helpdesks from database
-    const foundManyDocuments = await SERVERDB.Helpdesk.find().lean();
-    // Query IXAPI for the status of the requested helpdesk
-    const allHelpdesksTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    // Query IXAPI for the status of the requested helpdesk
-    const allHelpdesksStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    // Add realtime status to each helpdesk
+    // Retrieve ENCM from database
+    const foundManyDocuments = await SERVERDB.Encm.find().lean();
+    // Query IXAPI for the status of the requested ENCM
+    const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+    // Query IXAPI for the status of the requested ENCM
+    const allEncmStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
+    // Add realtime status to each ENCM
     for (const foundDocument of foundManyDocuments) {
-      // Filter all waiting ticket by the current helpdesk code
-      const helpdeskTicketsWaiting = allHelpdesksTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.code);
-      // Find the entityReport entry for the current helpdesk
-      const helpdeskStatistics = allHelpdesksStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
+      // Filter all waiting ticket by the current ENCM code
+      const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.code);
+      // Find the entityReport entry for the current ENCM
+      const encmStatistics = allEncmStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
       // Format the update query with the request results
       const updatedDocumentValues = {
-        currently_waiting: helpdeskTicketsWaiting?.length || 0, // parseInt(Math.random() * -100),
-        expected_wait_time: helpdeskStatistics?.averageWaitTime || 0, // parseInt(Math.random() * -100),
+        currently_waiting: encmTicketsWaiting?.length || 0,
+        expected_wait_time: encmStatistics?.averageWaitTime || 0,
       };
       // Update the current document with the new values
-      await SERVERDB.Helpdesk.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
+      await SERVERDB.Encm.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
       // Log progress
-      console.log(`→ Updated Helpdesk ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
+      console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
       //
     }
     // Switch the flag OFF
     TASK_IS_RUNNING = false;
     // Log elapsed time in the current operation
     const elapsedTime = timeCalc.getElapsedTime(startTime);
-    console.log(`→ Task completed: Updated Helpdesks status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
+    console.log(`→ Task completed: Updated ENCM status (${foundManyDocuments.length} documents in ${elapsedTime}).`);
     console.log(`------------------------------------------------------------------------------------------------------------------------`);
     console.log();
 

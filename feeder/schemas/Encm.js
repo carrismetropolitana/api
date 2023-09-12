@@ -3,17 +3,13 @@
 const { mongoose } = require('mongoose');
 
 /* * */
-/* Schema for MongoDB ["Helpdesk"] Object */
+/* Schema for MongoDB ["Encm"] Object */
 module.exports = new mongoose.Schema(
   {
     code: {
       type: String,
       maxlength: 50,
       unique: true,
-    },
-    type: {
-      type: String,
-      maxlength: 50,
     },
     name: {
       type: String,

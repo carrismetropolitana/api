@@ -3,7 +3,7 @@
 const { mongoose } = require('mongoose');
 
 /* * */
-/* Schema for MongoDB ["Helpdesk"] Object */
+/* Schema for MongoDB ["Encm"] Object */
 module.exports = new mongoose.Schema(
   {
     code: {
