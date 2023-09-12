@@ -314,7 +314,7 @@ module.exports = [
       'hours_special',
       'stops',
     ],
-    table_query: `CREATE TABLE helpdesks (
+    table_query: `CREATE TABLE encm (
         id VARCHAR(255),
         type VARCHAR(255),
         name VARCHAR(255),
