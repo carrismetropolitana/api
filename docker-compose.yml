@@ -30,7 +30,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   nginx:
-    image: nginx:stable
+    image: nginx:alpine-slim
     restart: unless-stopped
     logging:
       options:
@@ -82,7 +82,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   feederdb:
-    image: postgres
+    image: postgres:alpine
     restart: unless-stopped
     logging:
       options:
