@@ -1,17 +1,14 @@
-/* * */
-/* IMPORTS */
-const SERVERDB = require('../services/SERVERDB');
+//
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 
 //
 module.exports.all = async (request, reply) => {
-  const foundManyDocuments = await SERVERDB.School.find().lean();
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-  return reply.send(foundManyDocuments || []);
+  const allSchoolsData = await SERVERDBREDIS.client.get('schools:all');
+  return reply.send(JSON.parse(allSchoolsData) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
-  const foundOneDocument = await SERVERDB.School.findOne({ code: { $eq: request.params.code } }).lean();
-  return reply.send(foundOneDocument || {});
+  const schoolData = await SERVERDBREDIS.client.get(`schools:${request.params.code}`);
+  return reply.send(JSON.parse(schoolData) || {});
 };

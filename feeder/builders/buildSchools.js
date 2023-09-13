@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const timeCalc = require('../modules/timeCalc');
 
 /* UPDATE STOPS */
@@ -13,7 +13,8 @@ module.exports = async () => {
   // Log progress
   console.log(`⤷ Updating Schools...`);
   // Initate a temporary variable to hold updated Schools
-  let updatedSchoolCodes = [];
+  const allSchoolsData = [];
+  const updatedSchoolKeys = new Set();
   // For each school, update its entry in the database
   for (const school of allSchools.rows) {
     // Discover which cicles this school has
@@ -57,14 +58,27 @@ module.exports = async () => {
       stops: parsedSchoolStops,
     };
     // Update or create new document
-    await SERVERDB.School.replaceOne({ code: parsedSchool.code }, parsedSchool, { upsert: true });
-    updatedSchoolCodes.push(parsedSchool.code);
+    allSchoolsData.push(parsedSchool);
+    const schoolKey = `schools:${parsedSchool.code}`;
+    await SERVERDBREDIS.client.set(schoolKey, JSON.stringify(parsedSchool));
+    updatedSchoolKeys.add(schoolKey);
+    //
   }
   // Log count of updated Schools
-  console.log(`⤷ Updated ${updatedSchoolCodes.length} Schools.`);
+  console.log(`⤷ Updated ${updatedSchoolKeys.size} Schools.`);
+  // Add the 'all' option
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  allSchoolsData.sort((a, b) => collator.compare(a.code, b.code));
+  await SERVERDBREDIS.client.set('schools:all', JSON.stringify(allSchoolsData));
+  updatedSchoolKeys.add('schools:all');
   // Delete all Schools not present in the current update
-  const deletedStaleSchools = await SERVERDB.School.deleteMany({ code: { $nin: updatedSchoolCodes } });
-  console.log(`⤷ Deleted ${deletedStaleSchools.deletedCount} stale Schools.`);
+  const allSavedSchoolKeys = [];
+  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'schools:*' })) {
+    allSavedSchoolKeys.push(key);
+  }
+  const staleSchoolKeys = allSavedSchoolKeys.filter((code) => !updatedSchoolKeys.has(code));
+  if (staleSchoolKeys.length) await SERVERDBREDIS.client.del(staleSchoolKeys);
+  console.log(`⤷ Deleted ${staleSchoolKeys.length} stale Schools.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Schools (${elapsedTime}).`);

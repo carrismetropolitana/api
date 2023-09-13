@@ -1,6 +1,4 @@
-/* * */
-/* IMPORTS */
-
+//
 const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 
 //
