@@ -39,6 +39,7 @@ module.exports.singleWithRealtime = async (request, reply) => {
 };
 
 function convertTimeStringTo25Hours(timeString) {
+  if (!timeString) return;
   const hoursString = timeString.substring(0, 2);
   const hoursInt = parseInt(hoursString);
   if (hoursInt < 4) {
