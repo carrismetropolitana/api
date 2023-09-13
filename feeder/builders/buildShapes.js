@@ -65,5 +65,5 @@ module.exports = async () => {
 
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);
-  console.log(`⤷ Done updating Shapes (${updatedShapeCodes.length} in ${elapsedTime}).`);
+  console.log(`⤷ Done updating Shapes (${updatedShapeCodes.size} in ${elapsedTime}).`);
 };
