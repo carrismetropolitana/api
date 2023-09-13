@@ -1,19 +1,19 @@
 //
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const PCGIAPI = require('../services/PCGIAPI');
 
 const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
 
 //
 module.exports.all = async (request, reply) => {
-  const allStopsData = await SERVERDBREDIS.client.get('stops:all');
+  const allStopsData = await SERVERDB.client.get('stops:all');
   return reply.send(JSON.parse(allStopsData) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const stopData = await SERVERDBREDIS.client.get(`stops:${request.params.code}`);
+  const stopData = await SERVERDB.client.get(`stops:${request.params.code}`);
   return reply.send(JSON.parse(stopData) || {});
 };
 

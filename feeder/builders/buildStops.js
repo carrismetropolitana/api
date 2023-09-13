@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 
 /* UPDATE STOPS */
@@ -84,7 +84,7 @@ module.exports = async () => {
     };
     // Update or create new document
     allStopsData.push(parsedStop);
-    await SERVERDBREDIS.client.set(`stops:${parsedStop.code}`, JSON.stringify(parsedStop));
+    await SERVERDB.client.set(`stops:${parsedStop.code}`, JSON.stringify(parsedStop));
     updatedStopKeys.add(`stops:${parsedStop.code}`);
     //
   }
@@ -93,15 +93,15 @@ module.exports = async () => {
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allStopsData.sort((a, b) => collator.compare(a.code, b.code));
-  await SERVERDBREDIS.client.set('stops:all', JSON.stringify(allStopsData));
+  await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
   updatedStopKeys.add('stops:all');
   // Delete all Stops not present in the current update
   const allSavedStopKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
     allSavedStopKeys.push(key);
   }
   const staleStopKeys = allSavedStopKeys.filter((code) => !updatedStopKeys.has(code));
-  if (staleStopKeys.length) await SERVERDBREDIS.client.del(staleStopKeys);
+  if (staleStopKeys.length) await SERVERDB.client.del(staleStopKeys);
   console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

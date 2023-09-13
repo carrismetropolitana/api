@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 
 //
@@ -132,7 +132,7 @@ module.exports = async () => {
   // Now, parse each line and create patterns.
   // Lorem ipsum dolor sit amet.
 
-  const allStopsRaw = await SERVERDBREDIS.client.get('stops:all');
+  const allStopsRaw = await SERVERDB.client.get('stops:all');
   const allStopsArray = JSON.parse(allStopsRaw);
   const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
 
@@ -333,7 +333,7 @@ module.exports = async () => {
     // 2.2.4.
     // Save all created patterns to the database
     for (const pattern of uniqueLinePatterns) {
-      await SERVERDBREDIS.client.set(`patterns:${pattern.code}`, JSON.stringify(pattern));
+      await SERVERDB.client.set(`patterns:${pattern.code}`, JSON.stringify(pattern));
       updatedPatternKeys.add(`patterns:${pattern.code}`);
       line.patterns.push(pattern.code);
     }
@@ -341,7 +341,7 @@ module.exports = async () => {
     // 2.2.5.
     // Save the current line to MongoDB and hold on to the returned _id value
     allLinesData.push(line);
-    await SERVERDBREDIS.client.set(`lines:${line.code}`, JSON.stringify(line));
+    await SERVERDB.client.set(`lines:${line.code}`, JSON.stringify(line));
     updatedLineKeys.add(`lines:${line.code}`);
 
     // 2.2.6.
@@ -355,27 +355,27 @@ module.exports = async () => {
   // 2.3.
   // Add the 'all' option
   allLinesData.sort((a, b) => collator.compare(a.code, b.code));
-  await SERVERDBREDIS.client.set('lines:all', JSON.stringify(allLinesData));
+  await SERVERDB.client.set('lines:all', JSON.stringify(allLinesData));
   updatedLineKeys.add('lines:all');
 
   // 2.4.
   // Delete all Lines not present in the current update
   const allSavedLineKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
     allSavedLineKeys.push(key);
   }
   const staleLineKeys = allSavedLineKeys.filter((code) => !updatedLineKeys.has(code));
-  if (staleLineKeys.length) await SERVERDBREDIS.client.del(staleLineKeys);
+  if (staleLineKeys.length) await SERVERDB.client.del(staleLineKeys);
   console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 
   // 2.5.
   // Delete all Patterns not present in the current update
   const allSavedPatternKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
     allSavedPatternKeys.push(key);
   }
   const stalePatternKeys = allSavedPatternKeys.filter((code) => !updatedPatternKeys.has(code));
-  if (stalePatternKeys.length) await SERVERDBREDIS.client.del(stalePatternKeys);
+  if (stalePatternKeys.length) await SERVERDB.client.del(stalePatternKeys);
   console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
   // 2.6.

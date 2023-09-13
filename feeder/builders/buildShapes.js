@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const turf = require('@turf/turf');
 
@@ -47,7 +47,7 @@ module.exports = async () => {
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = parseInt(shapeExtensionMeters);
       // Update or create new document
-      await SERVERDBREDIS.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
+      await SERVERDB.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
       updatedShapeKeys.add(`shapes:${parsedShape.code}`);
       //
     } catch (error) {
@@ -56,11 +56,11 @@ module.exports = async () => {
   }
   // Delete all Shapes not present in the current update
   const allSavedShapeKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
     allSavedShapeKeys.push(key);
   }
   const staleShapeKeys = allSavedShapeKeys.filter((code) => !updatedShapeKeys.has(code));
-  if (staleShapeKeys.length) await SERVERDBREDIS.client.del(staleShapeKeys);
+  if (staleShapeKeys.length) await SERVERDB.client.del(staleShapeKeys);
   console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
   // Log how long it took to process everything

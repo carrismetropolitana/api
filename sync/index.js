@@ -1,5 +1,5 @@
 //
-const SERVERDBREDIS = require('./services/SERVERDBREDIS');
+const SERVERDB = require('./services/SERVERDB');
 const syncEncmStatus = require('./tasks/syncEncmStatus');
 
 //
@@ -8,7 +8,7 @@ const syncEncmStatus = require('./tasks/syncEncmStatus');
   //
 
   //
-  await SERVERDBREDIS.connect();
+  await SERVERDB.connect();
 
   // Setup tasks
   await syncEncmStatus();

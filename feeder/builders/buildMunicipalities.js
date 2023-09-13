@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 
 /* UPDATE MUNICIPALITIES */
@@ -29,7 +29,7 @@ module.exports = async () => {
     };
     // Update or create new document
     allMunicipalitiesData.push(parsedMunicipality);
-    await SERVERDBREDIS.client.set(`municipalities:${parsedMunicipality.code}`, JSON.stringify(parsedMunicipality));
+    await SERVERDB.client.set(`municipalities:${parsedMunicipality.code}`, JSON.stringify(parsedMunicipality));
     updatedMunicipalityKeys.add(`municipalities:${parsedMunicipality.code}`);
     //
   }
@@ -38,15 +38,15 @@ module.exports = async () => {
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allMunicipalitiesData.sort((a, b) => collator.compare(a.code, b.code));
-  await SERVERDBREDIS.client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
+  await SERVERDB.client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
   updatedMunicipalityKeys.add('municipalities:all');
   // Delete all Municipalities not present in the current update
   const allSavedMunicipalityKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
     allSavedMunicipalityKeys.push(key);
   }
   const staleMunicipalityKeys = allSavedMunicipalityKeys.filter((code) => !updatedMunicipalityKeys.has(code));
-  if (staleMunicipalityKeys.length) await SERVERDBREDIS.client.del(staleMunicipalityKeys);
+  if (staleMunicipalityKeys.length) await SERVERDB.client.del(staleMunicipalityKeys);
   console.log(`⤷ Deleted ${staleMunicipalityKeys.length} stale Municipalities.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

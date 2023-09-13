@@ -1,14 +1,14 @@
 //
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 
 //
 module.exports.all = async (request, reply) => {
-  const allMunicipalitiesData = await SERVERDBREDIS.client.get('municipalities:all');
+  const allMunicipalitiesData = await SERVERDB.client.get('municipalities:all');
   return reply.send(JSON.parse(allMunicipalitiesData) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
-  const municipalityData = await SERVERDBREDIS.client.get(`municipalities:${request.params.code}`);
+  const municipalityData = await SERVERDB.client.get(`municipalities:${request.params.code}`);
   return reply.send(JSON.parse(municipalityData) || {});
 };

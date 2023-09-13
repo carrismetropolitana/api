@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 
 /* UPDATE STOPS */
@@ -59,7 +59,7 @@ module.exports = async () => {
     };
     // Update or create new document
     allSchoolsData.push(parsedSchool);
-    await SERVERDBREDIS.client.set(`schools:${parsedSchool.code}`, JSON.stringify(parsedSchool));
+    await SERVERDB.client.set(`schools:${parsedSchool.code}`, JSON.stringify(parsedSchool));
     updatedSchoolKeys.add(`schools:${parsedSchool.code}`);
     //
   }
@@ -68,15 +68,15 @@ module.exports = async () => {
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allSchoolsData.sort((a, b) => collator.compare(a.code, b.code));
-  await SERVERDBREDIS.client.set('schools:all', JSON.stringify(allSchoolsData));
+  await SERVERDB.client.set('schools:all', JSON.stringify(allSchoolsData));
   updatedSchoolKeys.add('schools:all');
   // Delete all Schools not present in the current update
   const allSavedSchoolKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'schools:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'schools:*' })) {
     allSavedSchoolKeys.push(key);
   }
   const staleSchoolKeys = allSavedSchoolKeys.filter((code) => !updatedSchoolKeys.has(code));
-  if (staleSchoolKeys.length) await SERVERDBREDIS.client.del(staleSchoolKeys);
+  if (staleSchoolKeys.length) await SERVERDB.client.del(staleSchoolKeys);
   console.log(`⤷ Deleted ${staleSchoolKeys.length} stale Schools.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);

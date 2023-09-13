@@ -1,5 +1,5 @@
 //
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const IXAPI = require('../services/IXAPI');
 const timeCalc = require('../services/timeCalc');
 
@@ -24,7 +24,7 @@ module.exports = async () => {
     console.log(`→ Updating ENCM status...`);
     const startTime = process.hrtime();
     // Retrieve ENCM from database
-    const foundManyDocuments_raw = await SERVERDBREDIS.client.get('encm:all');
+    const foundManyDocuments_raw = await SERVERDB.client.get('encm:all');
     const foundManyDocuments = JSON.parse(foundManyDocuments_raw);
     // Query IXAPI for the status of the requested ENCM
     const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
@@ -43,7 +43,7 @@ module.exports = async () => {
         expected_wait_time: encmStatistics?.averageWaitTime || 0,
       };
       // Update the current document with the new values
-      await SERVERDBREDIS.client.set(`encm:${updatedDocument.code}`, JSON.stringify(updatedDocument));
+      await SERVERDB.client.set(`encm:${updatedDocument.code}`, JSON.stringify(updatedDocument));
       // Log progress
       console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocument.currently_waiting}; expected_wait_time: ${updatedDocument.expected_wait_time}`);
       //

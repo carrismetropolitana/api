@@ -3,7 +3,6 @@ version: '3.9'
 volumes:
   certbotdata:
   serverdb:
-  serverdbredis:
 
 services:
   #
@@ -67,22 +66,6 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   serverdb:
-    image: mongo
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - serverdb:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=serverdbuser
-      - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  serverdbredis:
     image: redis:alpine
     restart: unless-stopped
     logging:
@@ -90,7 +73,7 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - serverdbredis:/data
+      - serverdb:/data
     environment:
       - REDIS_ARGS=--save 5 1
 
@@ -122,10 +105,6 @@ services:
       - ./.env
     environment:
       - SERVERDB_HOST=serverdb
-      - SERVERDB_USER=serverdbuser
-      - SERVERDB_PASSWORD=serverdbpassword
-      - SERVERDB_NAME=serverdb
-      - SERVERDBREDIS_HOST=serverdbredis
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -139,10 +118,6 @@ services:
         max-file: '1'
     environment:
       - SERVERDB_HOST=serverdb
-      - SERVERDB_USER=serverdbuser
-      - SERVERDB_PASSWORD=serverdbpassword
-      - SERVERDB_NAME=serverdb
-      - SERVERDBREDIS_HOST=serverdbredis
       - FEEDERDB_HOST=feederdb
       - FEEDERDB_USER=feederdbuser
       - FEEDERDB_PASSWORD=feederdbpassword
@@ -161,7 +136,3 @@ services:
       - ./.env
     environment:
       - SERVERDB_HOST=serverdb
-      - SERVERDB_USER=serverdbuser
-      - SERVERDB_PASSWORD=serverdbpassword
-      - SERVERDB_NAME=serverdb
-      - SERVERDBREDIS_HOST=serverdbredis

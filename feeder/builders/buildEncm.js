@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDBREDIS = require('../services/SERVERDBREDIS');
+const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 
 /* UPDATE HELPDESKS */
@@ -49,7 +49,7 @@ module.exports = async () => {
     };
     // Save to database
     allEncmData.push(parsedEncm);
-    await SERVERDBREDIS.client.set(`encm:${parsedEncm.code}`, JSON.stringify(parsedEncm));
+    await SERVERDB.client.set(`encm:${parsedEncm.code}`, JSON.stringify(parsedEncm));
     updatedEncmKeys.add(`encm:${parsedEncm.code}`);
     //
   }
@@ -58,15 +58,15 @@ module.exports = async () => {
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allEncmData.sort((a, b) => collator.compare(a.code, b.code));
-  await SERVERDBREDIS.client.set('encm:all', JSON.stringify(allEncmData));
+  await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
   updatedEncmKeys.add('encm:all');
   // Delete all ENCM not present in the current update
   const allSavedEncmKeys = [];
-  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'encm:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'encm:*' })) {
     allSavedEncmKeys.push(key);
   }
   const staleEncmKeys = allSavedEncmKeys.filter((code) => !updatedEncmKeys.has(code));
-  if (staleEncmKeys.length) await SERVERDBREDIS.client.del(staleEncmKeys);
+  if (staleEncmKeys.length) await SERVERDB.client.del(staleEncmKeys);
   console.log(`⤷ Deleted ${staleEncmKeys.length} stale ENCM.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
