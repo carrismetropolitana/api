@@ -15,6 +15,7 @@ const buildEncm = require('./builders/buildEncm');
 const buildStops = require('./builders/buildStops');
 const buildShapes = require('./builders/buildShapes');
 const buildLinesAndPatterns = require('./builders/buildLinesAndPatterns');
+const SERVERDBREDIS = require('./services/SERVERDBREDIS');
 
 //
 
@@ -40,6 +41,7 @@ module.exports = async () => {
     console.log('STEP 0.0: Connect to databases');
     await FEEDERDB.connect();
     await SERVERDB.connect();
+    await SERVERDBREDIS.connect();
 
     console.log();
     console.log('STEP 0.1: Setup working directory');
@@ -97,6 +99,7 @@ module.exports = async () => {
     console.log('Disconnecting from databases...');
     await FEEDERDB.disconnect();
     await SERVERDB.disconnect();
+    await SERVERDBREDIS.disconnect();
 
     console.log();
     console.log('- - - - - - - - - - - - - - - - - - - - -');
