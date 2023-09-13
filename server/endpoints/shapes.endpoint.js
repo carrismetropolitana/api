@@ -1,7 +1,7 @@
 /* * */
 /* IMPORTS */
 
-const SERVERDBREDIS = require('./services/SERVERDBREDIS');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 
 //
 module.exports.all = async (request, reply) => {
