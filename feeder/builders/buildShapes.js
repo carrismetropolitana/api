@@ -29,7 +29,7 @@ module.exports = async () => {
   // Log progress
   console.log(`⤷ Updating Shapes...`);
   // Initiate variable to keep track of updated _ids
-  const updatedShapeCodes = new Set();
+  const updatedShapeKeys = new Set();
   // Loop through each object in each chunk
   for (const shape of allShapes.rows) {
     try {
@@ -47,25 +47,25 @@ module.exports = async () => {
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = parseInt(shapeExtensionMeters);
       // Update or create new document
-      console.log(`shapes:${parsedShape.code}`);
-      await SERVERDBREDIS.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
-      // Store object code
-      updatedShapeCodes.add(parsedShape.code);
+      const shapeKey = `shapes:${parsedShape.code}`;
+      await SERVERDBREDIS.client.set(shapeKey, JSON.stringify(parsedShape));
+      updatedShapeKeys.add(shapeKey);
+      //
     } catch (error) {
       console.log('ERROR parsing shape', shape, error);
     }
   }
   // Delete all Shapes not present in the current update
-  const allSavedShapeCodes = [];
+  const allSavedShapeKeys = [];
   for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
     console.log(key);
-    allSavedShapeCodes.push(key);
+    allSavedShapeKeys.push(key);
   }
-  const staleShapeCodes = allSavedShapeCodes.filter((code) => !updatedShapeCodes.has(code));
-  SERVERDBREDIS.client.del(staleShapeCodes);
-  console.log(`⤷ Deleted ${staleShapeCodes.length} stale Shapes.`);
+  const staleShapeKeys = allSavedShapeKeys.filter((code) => !updatedShapeKeys.has(code));
+  SERVERDBREDIS.client.del(staleShapeKeys);
+  console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);
-  console.log(`⤷ Done updating Shapes (${updatedShapeCodes.size} in ${elapsedTime}).`);
+  console.log(`⤷ Done updating Shapes (${updatedShapeKeys.size} in ${elapsedTime}).`);
 };
