@@ -58,11 +58,10 @@ module.exports = async () => {
   // Delete all Shapes not present in the current update
   const allSavedShapeKeys = [];
   for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
-    console.log(key);
     allSavedShapeKeys.push(key);
   }
   const staleShapeKeys = allSavedShapeKeys.filter((code) => !updatedShapeKeys.has(code));
-  SERVERDBREDIS.client.del(staleShapeKeys);
+  if (staleShapeKeys.length) await SERVERDBREDIS.client.del(staleShapeKeys);
   console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
   // Log how long it took to process everything
