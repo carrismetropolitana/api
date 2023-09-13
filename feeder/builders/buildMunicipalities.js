@@ -29,9 +29,9 @@ module.exports = async () => {
     };
     // Update or create new document
     allMunicipalitiesData.push(parsedMunicipality);
-    const municipalityKey = `municipalities:${parsedMunicipality.code}`;
-    await SERVERDBREDIS.client.set(municipalityKey, JSON.stringify(parsedMunicipality));
-    updatedMunicipalityKeys.add(municipalityKey);
+    await SERVERDBREDIS.client.set(`municipalities:${parsedMunicipality.code}`, JSON.stringify(parsedMunicipality));
+    updatedMunicipalityKeys.add(`municipalities:${parsedMunicipality.code}`);
+    //
   }
   // Log count of updated Municipalities
   console.log(`⤷ Updated ${updatedMunicipalityKeys.size} Municipalities.`);

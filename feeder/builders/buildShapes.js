@@ -47,9 +47,8 @@ module.exports = async () => {
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = parseInt(shapeExtensionMeters);
       // Update or create new document
-      const shapeKey = `shapes:${parsedShape.code}`;
-      await SERVERDBREDIS.client.set(shapeKey, JSON.stringify(parsedShape));
-      updatedShapeKeys.add(shapeKey);
+      await SERVERDBREDIS.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
+      updatedShapeKeys.add(`shapes:${parsedShape.code}`);
       //
     } catch (error) {
       console.log('ERROR parsing shape', shape, error);

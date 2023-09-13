@@ -60,7 +60,7 @@ module.exports = async () => {
     if (stop.bike_parking) facilities.push('bike_parking');
     if (stop.car_parking) facilities.push('car_parking');
     // Initiate a variable to hold the parsed stop
-    let parsedStop = {
+    const parsedStop = {
       code: stop.stop_id,
       name: stop.stop_name,
       short_name: stop.stop_short_name,
@@ -84,9 +84,8 @@ module.exports = async () => {
     };
     // Update or create new document
     allStopsData.push(parsedStop);
-    const stopKey = `stops:${parsedStop.code}`;
-    await SERVERDBREDIS.client.set(stopKey, JSON.stringify(parsedStop));
-    updatedStopKeys.add(stopKey);
+    await SERVERDBREDIS.client.set(`stops:${parsedStop.code}`, JSON.stringify(parsedStop));
+    updatedStopKeys.add(`stops:${parsedStop.code}`);
     //
   }
   // Log count of updated Stops
