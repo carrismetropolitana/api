@@ -3,6 +3,7 @@ version: '3.9'
 volumes:
   certbotdata:
   serverdb:
+  serverdb-redis:
 
 services:
   #
@@ -77,6 +78,20 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=serverdbuser
       - MONGO_INITDB_ROOT_PASSWORD=serverdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  serverdb-redis:
+    image: redis:alpine
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - serverdb-redis:/data
+    command: redis-server --save 20 1 --loglevel warning
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
