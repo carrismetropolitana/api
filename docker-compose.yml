@@ -3,7 +3,7 @@ version: '3.9'
 volumes:
   certbotdata:
   serverdb:
-  serverdb-redis:
+  serverdbredis:
 
 services:
   #
@@ -82,7 +82,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  serverdb-redis:
+  serverdbredis:
     image: redis:alpine
     restart: unless-stopped
     logging:
@@ -90,8 +90,9 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - serverdb-redis:/data
-    command: redis-server --save 20 1 --loglevel warning
+      - serverdbredis:/data
+    environment:
+      - REDIS_ARGS=--save 5 1
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -106,6 +107,7 @@ services:
     environment:
       - POSTGRES_USER=feederdbuser
       - POSTGRES_PASSWORD=feederdbpassword
+      - SERVERDBREDIS_HOST=serverdbredis
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #

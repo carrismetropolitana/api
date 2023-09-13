@@ -13,6 +13,7 @@
         "csv-stringify": "6.4.2",
         "mongoose": "7.5.1",
         "pg": "8.11.3",
-        "pg-copy-streams": "6.0.6"
+        "pg-copy-streams": "6.0.6",
+        "redis": "4.6.8"
     }
 }

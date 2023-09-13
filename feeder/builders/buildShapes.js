@@ -1,5 +1,6 @@
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const timeCalc = require('../modules/timeCalc');
 const turf = require('@turf/turf');
 
@@ -29,7 +30,7 @@ module.exports = async () => {
   // Log progress
   console.log(`⤷ Updating Shapes...`);
   // Initiate variable to keep track of updated _ids
-  let updatedShapeCodes = [];
+  const updatedShapeCodes = new Set();
   // Loop through each object in each chunk
   for (const shape of allShapes.rows) {
     try {
@@ -47,14 +48,21 @@ module.exports = async () => {
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = parseInt(shapeExtensionMeters);
       // Update or create new document
-      await SERVERDB.Shape.replaceOne({ code: parsedShape.code }, parsedShape, { upsert: true });
-      // Return _id to main thread
-      updatedShapeCodes.push(parsedShape.code);
+      await SERVERDBREDIS.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
+      // Store object code
+      updatedShapeCodes.add(parsedShape.code);
     } catch (error) {
       console.log('ERROR parsing shape', shape, error);
     }
   }
   // Delete all Shapes not present in the current update
+  const allSavedShapeCodes = [];
+  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
+    allSavedShapeCodes.push(key);
+  }
+  const staleShapeCodes = allSavedShapeCodes.filter((code) => !updatedShapeCodes.has(code));
+  SERVERDBREDIS.client.del(staleShapeCodes);
+
   const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ code: { $nin: updatedShapeCodes } });
   console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
   // Log how long it took to process everything
