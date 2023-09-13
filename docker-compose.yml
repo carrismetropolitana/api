@@ -107,7 +107,6 @@ services:
     environment:
       - POSTGRES_USER=feederdbuser
       - POSTGRES_PASSWORD=feederdbpassword
-      - SERVERDBREDIS_HOST=serverdbredis
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -142,6 +141,7 @@ services:
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
+      - SERVERDBREDIS_HOST=serverdbredis
       - FEEDERDB_HOST=feederdb
       - FEEDERDB_USER=feederdbuser
       - FEEDERDB_PASSWORD=feederdbpassword

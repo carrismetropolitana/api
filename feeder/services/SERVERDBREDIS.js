@@ -5,13 +5,13 @@ const { SERVERDBREDIS_HOST } = process.env;
 
 class SERVERDBREDIS {
   constructor() {
-    console.log('SERVERDBREDIS_HOST', SERVERDBREDIS_HOST);
     this.client = redis.createClient({ socket: { host: SERVERDBREDIS_HOST } });
     this.client.on('error', (err) => console.log('Redis Client Error', err));
   }
 
   async connect() {
     try {
+      console.log('SERVERDBREDIS_HOST', SERVERDBREDIS_HOST);
       await this.client.connect();
       console.log(`⤷ Connected to SERVERDBREDIS.`);
     } catch (err) {
