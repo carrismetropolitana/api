@@ -1,6 +1,5 @@
 //
-
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const IXAPI = require('../services/IXAPI');
 const timeCalc = require('../services/timeCalc');
 
@@ -25,7 +24,8 @@ module.exports = async () => {
     console.log(`→ Updating ENCM status...`);
     const startTime = process.hrtime();
     // Retrieve ENCM from database
-    const foundManyDocuments = await SERVERDB.Encm.find().lean();
+    const foundManyDocuments_raw = await SERVERDBREDIS.client.get('encm:all');
+    const foundManyDocuments = JSON.parse(foundManyDocuments_raw);
     // Query IXAPI for the status of the requested ENCM
     const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Query IXAPI for the status of the requested ENCM
@@ -37,14 +37,15 @@ module.exports = async () => {
       // Find the entityReport entry for the current ENCM
       const encmStatistics = allEncmStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
       // Format the update query with the request results
-      const updatedDocumentValues = {
+      const updatedDocument = {
+        ...foundDocument,
         currently_waiting: encmTicketsWaiting?.length || 0,
         expected_wait_time: encmStatistics?.averageWaitTime || 0,
       };
       // Update the current document with the new values
-      await SERVERDB.Encm.findOneAndUpdate({ code: foundDocument.code }, updatedDocumentValues, { new: true, upsert: true });
+      await SERVERDBREDIS.client.set(`encm:${updatedDocument.code}`, JSON.stringify(updatedDocument));
       // Log progress
-      console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocumentValues.currently_waiting}; expected_wait_time: ${updatedDocumentValues.expected_wait_time}`);
+      console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocument.currently_waiting}; expected_wait_time: ${updatedDocument.expected_wait_time}`);
       //
     }
     // Switch the flag OFF
