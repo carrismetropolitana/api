@@ -5,6 +5,7 @@ const { SERVERDBREDIS_HOST } = process.env;
 
 class SERVERDBREDIS {
   constructor() {
+    console.log('SERVERDBREDIS_HOST', SERVERDBREDIS_HOST);
     this.client = redis.createClient({ socket: { host: SERVERDBREDIS_HOST } });
     this.client.on('error', (err) => console.log('Redis Client Error', err));
   }
