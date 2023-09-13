@@ -23,11 +23,6 @@ const schoolsEndpoint = require('./endpoints/schools.endpoint');
 const encmEndpoint = require('./endpoints/encm.endpoint');
 
 //
-// REGISTER PLUGIN
-
-fastify.register(require('@fastify/redis'), { socket: { host: SERVERDBREDIS_HOST } });
-
-//
 // GTFS ENDPOINTS
 
 fastify.get('/alerts', alertsEndpoint.json);
