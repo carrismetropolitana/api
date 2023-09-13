@@ -1,23 +1,20 @@
 //
-
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const PCGIAPI = require('../services/PCGIAPI');
 
 const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
 
 //
 module.exports.all = async (request, reply) => {
-  const foundManyDocuments = await SERVERDB.Stop.find().lean();
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-  return reply.send(foundManyDocuments || []);
+  const allStopsData = await SERVERDBREDIS.client.get('stops:all');
+  return reply.send(JSON.parse(allStopsData) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const foundOneDocument = await SERVERDB.Stop.findOne({ code: { $eq: request.params.code } }).lean();
-  return reply.send(foundOneDocument || {});
+  const stopData = await SERVERDBREDIS.client.get(`stops:${request.params.code}`);
+  return reply.send(JSON.parse(stopData) || {});
 };
 
 //
