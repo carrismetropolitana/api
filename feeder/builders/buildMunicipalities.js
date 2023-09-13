@@ -1,5 +1,5 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const timeCalc = require('../modules/timeCalc');
 
 /* UPDATE MUNICIPALITIES */
@@ -11,7 +11,8 @@ module.exports = async () => {
   console.log(`⤷ Querying database...`);
   const allMunicipalities = await FEEDERDB.connection.query('SELECT * FROM municipalities');
   // Initate a temporary variable to hold updated Municipalities
-  let updatedMunicipalityCodes = [];
+  const allMunicipalitiesData = [];
+  const updatedMunicipalityKeys = new Set();
   // Log progress
   console.log(`⤷ Updating Municipalities...`);
   // For each municipality, update its entry in the database
@@ -26,15 +27,27 @@ module.exports = async () => {
       region_code: municipality.region_id,
       region_name: municipality.region_name,
     };
-    // Save to database
-    await SERVERDB.Municipality.replaceOne({ code: parsedMunicipality.code }, parsedMunicipality, { upsert: true });
-    updatedMunicipalityCodes.push(parsedMunicipality.code);
+    // Update or create new document
+    allMunicipalitiesData.push(parsedMunicipality);
+    const municipalityKey = `municipalities:${parsedMunicipality.code}`;
+    await SERVERDBREDIS.client.set(municipalityKey, JSON.stringify(parsedMunicipality));
+    updatedMunicipalityKeys.add(municipalityKey);
   }
   // Log count of updated Municipalities
-  console.log(`⤷ Updated ${updatedMunicipalityCodes.length} Municipalities.`);
+  console.log(`⤷ Updated ${updatedMunicipalityKeys.size} Municipalities.`);
+  // Add the 'all' option
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  allMunicipalitiesData.sort((a, b) => collator.compare(a.code, b.code));
+  await SERVERDBREDIS.client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
+  updatedMunicipalityKeys.add('municipalities:all');
   // Delete all Municipalities not present in the current update
-  const deletedStaleMunicipalities = await SERVERDB.Municipality.deleteMany({ code: { $nin: updatedMunicipalityCodes } });
-  console.log(`⤷ Deleted ${deletedStaleMunicipalities.deletedCount} stale Municipalities.`);
+  const allSavedMunicipalityKeys = [];
+  for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
+    allSavedMunicipalityKeys.push(key);
+  }
+  const staleMunicipalityKeys = allSavedMunicipalityKeys.filter((code) => !updatedMunicipalityKeys.has(code));
+  if (staleMunicipalityKeys.length) await SERVERDBREDIS.client.del(staleMunicipalityKeys);
+  console.log(`⤷ Deleted ${staleMunicipalityKeys.length} stale Municipalities.`);
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Municipalities (${elapsedTime}).`);

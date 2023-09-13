@@ -1,17 +1,14 @@
-/* * */
-/* IMPORTS */
-const SERVERDB = require('../services/SERVERDB');
+//
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 
 //
 module.exports.all = async (request, reply) => {
-  const foundManyDocuments = await SERVERDB.Municipality.find().lean();
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  foundManyDocuments.sort((a, b) => collator.compare(a.name, b.name));
-  return reply.send(foundManyDocuments || []);
+  const allMunicipalitiesData = await SERVERDBREDIS.client.get('municipalities:all');
+  return reply.send(JSON.parse(allMunicipalitiesData) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
-  const foundOneDocument = await SERVERDB.Municipality.findOne({ code: { $eq: request.params.code } }).lean();
-  return reply.send(foundOneDocument || {});
+  const municipalityData = await SERVERDBREDIS.client.get(`municipalities:${request.params.code}`);
+  return reply.send(JSON.parse(municipalityData) || {});
 };
