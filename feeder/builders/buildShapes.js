@@ -1,5 +1,4 @@
 const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDB = require('../services/SERVERDB');
 const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 const timeCalc = require('../modules/timeCalc');
 const turf = require('@turf/turf');
@@ -62,9 +61,8 @@ module.exports = async () => {
   }
   const staleShapeCodes = allSavedShapeCodes.filter((code) => !updatedShapeCodes.has(code));
   SERVERDBREDIS.client.del(staleShapeCodes);
+  console.log(`⤷ Deleted ${staleShapeCodes.length} stale Shapes.`);
 
-  const deletedStaleShapes = await SERVERDB.Shape.deleteMany({ code: { $nin: updatedShapeCodes } });
-  console.log(`⤷ Deleted ${deletedStaleShapes.deletedCount} stale Shapes.`);
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Shapes (${updatedShapeCodes.length} in ${elapsedTime}).`);
