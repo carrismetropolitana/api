@@ -1,17 +1,14 @@
-/* * */
-/* IMPORTS */
-const SERVERDB = require('../services/SERVERDB');
+//
+const SERVERDBREDIS = require('../services/SERVERDBREDIS');
 
 //
 module.exports.all = async (request, reply) => {
-  const foundManyDocuments = await SERVERDB.Encm.find().lean();
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  foundManyDocuments.sort((a, b) => collator.compare(a.code, b.code));
-  return reply.send(foundManyDocuments || []);
+  const allEncmData = await SERVERDBREDIS.client.get('encm:all');
+  return reply.send(JSON.parse(allEncmData) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
-  const foundOneDocument = await SERVERDB.Encm.findOne({ code: { $eq: request.params.code } }).lean();
-  return reply.send(foundOneDocument || {});
+  const encmData = await SERVERDBREDIS.client.get(`encm:${request.params.code}`);
+  return reply.send(JSON.parse(encmData) || {});
 };
