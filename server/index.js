@@ -1,9 +1,13 @@
-/* * */
-/* IMPORTS */
+//
+// IMPORTS
+
 const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
 const SERVERDB = require('./services/SERVERDB');
+const SERVERDBREDIS = require('./services/SERVERDBREDIS');
 
-// GTFS
+//
+// IMPORT GTFS ENDPOINTS
+
 const alertsEndpoint = require('./endpoints/alerts.endpoint');
 const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
 const linesEndpoint = require('./endpoints/lines.endpoint');
@@ -11,9 +15,17 @@ const patternsEndpoint = require('./endpoints/patterns.endpoint');
 const shapesEndpoint = require('./endpoints/shapes.endpoint');
 const stopsEndpoint = require('./endpoints/stops.endpoint');
 const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
-// DATASETS
+
+//
+// IMPORT DATASETS ENDPOINTS
+
 const schoolsEndpoint = require('./endpoints/schools.endpoint');
 const encmEndpoint = require('./endpoints/encm.endpoint');
+
+//
+// REGISTER PLUGIN
+
+fastify.register(require('@fastify/redis'), { socket: { host: SERVERDBREDIS_HOST } });
 
 //
 // GTFS ENDPOINTS
@@ -50,9 +62,11 @@ fastify.get('/facilities/encm', encmEndpoint.all);
 fastify.get('/facilities/encm/:code', encmEndpoint.single);
 
 //
-// Start Fastify server
+// START FASTIFY SERVER
+
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
   if (err) throw err;
   console.log(`Server listening on ${address}`);
   await SERVERDB.connect();
+  await SERVERDBREDIS.connect();
 });

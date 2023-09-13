@@ -125,6 +125,7 @@ services:
       - SERVERDB_USER=serverdbuser
       - SERVERDB_PASSWORD=serverdbpassword
       - SERVERDB_NAME=serverdb
+      - SERVERDBREDIS_HOST=serverdbredis
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
