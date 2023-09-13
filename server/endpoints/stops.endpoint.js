@@ -43,7 +43,7 @@ function convertTimeStringTo25Hours(timeString) {
   const hoursInt = parseInt(hoursString);
   if (hoursInt < 4) {
     const hoursInt25 = hoursInt + 24;
-    const hoursString25 = hoursInt25.padStart(2, '0');
+    const hoursString25 = String(hoursInt25).padStart(2, '0');
     return `${hoursString25}${timeString.substring(2)}`;
   }
   return timeString;
