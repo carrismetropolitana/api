@@ -47,6 +47,7 @@ module.exports = async () => {
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = parseInt(shapeExtensionMeters);
       // Update or create new document
+      console.log(`shapes:${parsedShape.code}`);
       await SERVERDBREDIS.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
       // Store object code
       updatedShapeCodes.add(parsedShape.code);
@@ -57,6 +58,7 @@ module.exports = async () => {
   // Delete all Shapes not present in the current update
   const allSavedShapeCodes = [];
   for await (const key of SERVERDBREDIS.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
+    console.log(key);
     allSavedShapeCodes.push(key);
   }
   const staleShapeCodes = allSavedShapeCodes.filter((code) => !updatedShapeCodes.has(code));
