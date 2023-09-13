@@ -59,9 +59,8 @@ module.exports = async () => {
     };
     // Update or create new document
     allSchoolsData.push(parsedSchool);
-    const schoolKey = `schools:${parsedSchool.code}`;
-    await SERVERDBREDIS.client.set(schoolKey, JSON.stringify(parsedSchool));
-    updatedSchoolKeys.add(schoolKey);
+    await SERVERDBREDIS.client.set(`schools:${parsedSchool.code}`, JSON.stringify(parsedSchool));
+    updatedSchoolKeys.add(`schools:${parsedSchool.code}`);
     //
   }
   // Log count of updated Schools
