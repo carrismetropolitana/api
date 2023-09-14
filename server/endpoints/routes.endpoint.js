@@ -3,12 +3,12 @@ const SERVERDB = require('../services/SERVERDB');
 
 //
 module.exports.all = async (request, reply) => {
-  // Disabled endpoint
-  return reply.send([]);
+  const allItems = await SERVERDB.client.get('routes:all');
+  return reply.send(JSON.parse(allItems) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
-  const singleItem = await SERVERDB.client.get(`patterns:${request.params.code}`);
+  const singleItem = await SERVERDB.client.get(`routes:${request.params.code}`);
   return reply.send(JSON.parse(singleItem) || {});
 };

@@ -6,15 +6,15 @@ const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
 
 //
 module.exports.all = async (request, reply) => {
-  const allStopsData = await SERVERDB.client.get('stops:all');
-  return reply.send(JSON.parse(allStopsData) || []);
+  const allItems = await SERVERDB.client.get('stops:all');
+  return reply.send(JSON.parse(allItems) || []);
 };
 
 //
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const stopData = await SERVERDB.client.get(`stops:${request.params.code}`);
-  return reply.send(JSON.parse(stopData) || {});
+  const singleItem = await SERVERDB.client.get(`stops:${request.params.code}`);
+  return reply.send(JSON.parse(singleItem) || {});
 };
 
 //

@@ -9,6 +9,6 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  const shapeData = await SERVERDB.client.get(`shapes:${request.params.code}`);
-  return reply.send(JSON.parse(shapeData) || {});
+  const singleItem = await SERVERDB.client.get(`shapes:${request.params.code}`);
+  return reply.send(JSON.parse(singleItem) || {});
 };
