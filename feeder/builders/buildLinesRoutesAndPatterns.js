@@ -230,8 +230,8 @@ module.exports = async () => {
           prevArrivalTime = stopTimeRaw.arrival_time;
 
           // 9.4.4.4.5.
-          // Save formatted stop_time to path in no pattern with the unique combination exists
-          if (!pattern) {
+          // Save formatted stop_time to path if no pattern with the unique combination exists yet
+          if (!patternParsed) {
             formattedPath.push({
               stop: existingStopDocument,
               allow_pickup: stopTimeRaw.pickup_type ? false : true,
