@@ -272,7 +272,7 @@ module.exports = async () => {
 
         // 9.4.4.5.
         // Get dates in the YYYYMMDD format (GTFS Standard format)
-        const tripDates = allCalendarDatesHashmap.get(trip.service_id);
+        const tripDates = allCalendarDatesHashmap.get(tripRaw.service_id);
 
         // 9.4.4.6.
         // Create a new formatted trip object
