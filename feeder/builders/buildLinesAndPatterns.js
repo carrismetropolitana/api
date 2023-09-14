@@ -71,36 +71,43 @@ function formatArrivalTime(arrival_time) {
 module.exports = async () => {
   //
 
-  // 0.
+  // 1.
   // Record the start time to later calculate operation duration
   const startTime_global = process.hrtime();
 
-  //
-  //
-  //
+  // 2.
+  // Define the collator to sort arrays
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
-  // 1.
-  // GROUP LINES
-  // First group all routes into lines.
-  // Lorem ipsum dolor sit amet.
+  // 3.
+  // Get all stops and build a hashmap for quick retrieval
+  const allStopsTxt = await SERVERDB.client.get('stops:all');
+  const allStopsJson = JSON.parse(allStopsTxt);
+  const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.code, obj]));
 
-  // 1.1,
+  // 4.
+  // Query Postgres for all calendar dates and build a hashmap for quick retrieval
+  const allDatesRaw = await FEEDERDB.connection.query(`SELECT * FROM calendar_dates`);
+  const allCalendarDatesHashmap = new Map();
+  for (const row of allDatesRaw.rows) {
+    if (allCalendarDatesHashmap.has(row.service_id)) allCalendarDatesHashmap.get(row.service_id).push(row.date);
+    else allCalendarDatesHashmap.set(row.service_id, [row.date]);
+  }
+
+  // 5,
   // Query Postgres for all unique routes
   console.log(`⤷ Querying database...`);
-  const allRoutes = await FEEDERDB.connection.query('SELECT * FROM routes');
+  const allRoutesRaw = await FEEDERDB.connection.query('SELECT * FROM routes');
 
-  // 1.2.
-  // Sort allRoutes array by each route 'route_id' property, ascending
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allRoutes.rows.sort((a, b) => collator.compare(a.route_id, b.route_id));
-
-  // 1.3.
+  // 6.
   // Group all routes into lines by route_short_name
-  const allLines = allRoutes.rows.reduce((result, route) => {
-    // 1.3.1.
+  const allLinesParsed = allRoutesRaw.rows.reduce((result, route) => {
+    //
+    // 7.1.
     // Check if the route_short_name already exists as a line
     const existingLine = result.find((line) => line.short_name === route.route_short_name);
-    // 1.3.2.
+
+    // 7.2.
     // Add the route to the existing line or reate a new line with the route
     if (existingLine) {
       existingLine.routes.push(route);
@@ -111,91 +118,84 @@ module.exports = async () => {
         long_name: route.route_long_name,
         color: route.route_color ? `#${route.route_color}` : '#000000',
         text_color: route.route_text_color ? `#${route.route_text_color}` : '#FFFFFF',
+        routes: [route],
+        patterns: [],
         municipalities: [],
         localities: [],
         facilities: [],
-        patterns: [],
-        routes: [route],
       });
     }
-    // 1.3.3.
+
+    // 7.3.
     // Return result for the next iteration
     return result;
+
+    //
   }, []);
 
-  //
-  //
-  //
+  // 7.
+  // Initiate variables to hold all lines and routes
+  const allLinesFinal = [];
+  const allRoutesFinal = [];
 
-  // 2.
-  // PARSE LINES, ROUTES & PATTERNS
-  // Now, parse each line and create patterns.
-  // Lorem ipsum dolor sit amet.
-
-  const allStopsRaw = await SERVERDB.client.get('stops:all');
-  const allStopsArray = JSON.parse(allStopsRaw);
-  const allStops = new Map(allStopsArray.map((obj) => [obj.code, obj]));
-
-  const allDates = await FEEDERDB.connection.query(`SELECT * FROM calendar_dates`);
-  const allCalendarDates = new Map();
-  for (const row of allDates.rows) {
-    if (allCalendarDates.has(row.service_id)) allCalendarDates.get(row.service_id).push(row.date);
-    else allCalendarDates.set(row.service_id, [row.date]);
-  }
-
-  // 2.1.
+  // 8.
   // Initiate variables to keep track of updated _ids
-  const allLinesData = [];
   const updatedLineKeys = new Set();
+  const updatedRouteKeys = new Set();
   const updatedPatternKeys = new Set();
 
-  // 2.2.
+  // 9.
   // For all trips of all routes of each line,
-  // create unique patterns by grouping common trips
-  // by 'pattern_id', 'direction_id'. 'trip_headsign' and 'shape_id'.
-  for (const line of allLines) {
+  // group trips into unique patterns by their common 'pattern_id'.
+  for (const lineParsed of allLinesParsed) {
     //
-    // 2.2.0.
+    // 9.1.
     // Record the start time to later calculate operation duration
     const startTime_line = process.hrtime();
 
-    // 2.2.1.
-    // Initiate holding variables
-    let uniqueLinePatterns = [];
+    // 9.2.
+    // Initiate a variable to hold parsed routes
+    let parsedRoutesForThisLine = [];
 
+    // 9.3.
+    // Initiate other holding variables
     let linePassesByMunicipalities = new Set();
     let linePassesByLocalities = new Set();
     let linePassesByFacilities = new Set();
 
-    // 2.2.2.
+    // 9.4.
     // Iterate on each route for this line
-    for (const route of line.routes) {
+    for (const routeRaw of lineParsed.routes) {
       //
-      // 2.2.2.1.
-      // Get all trips associated with this route
-      const allTrips = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = $1`, [route.route_id]);
+      // 9.4.1.
+      // Initiate a variable to hold parsed patterns
+      let parsedPatternsForThisRoute = [];
 
-      // 2.2.2.2.
+      // 9.4.2.
+      // Initiate other holding variables
+      let routePassesByMunicipalities = new Set();
+      let routePassesByLocalities = new Set();
+      let routePassesByFacilities = new Set();
+
+      // 9.4.3.
+      // Get all trips associated with this route
+      const allTripsRaw = await FEEDERDB.connection.query(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
+
+      // 9.4.4.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
       // Patterns are combined by the unique combination of 'pattern_id', 'direction_id', 'trip_headsign' and 'shape_id'.
-      for (const trip of allTrips.rows) {
+      for (const tripRaw of allTripsRaw.rows) {
         //
 
-        // 2.2.2.2.1.
+        // 9.4.4.1.
         // Find the pattern that matches the unique combination for this trip
-        const pattern = uniqueLinePatterns.find((pattern) => {
-          const samePatternId = pattern.code === trip.pattern_id;
-          //   const sameDirectionId = pattern.direction === trip.direction_id;
-          //   const sameHeadsign = pattern.headsign === trip.trip_headsign;
-          //   const sameShapeId = pattern.shape.shape_code === trip.shape_id;
-          return samePatternId; // && sameDirectionId && sameHeadsign && sameShapeId;
-        });
+        const patternParsed = parsedPatternsForThisRoute.find((pattern) => pattern.code === tripRaw.pattern_id);
 
-        // 2.2.2.2.2.
+        // 9.4.4.2.
         // Get the current trip stop_times
-        const allStopTimes = await FEEDERDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${trip.trip_id}' ORDER BY stop_sequence`);
+        const allStopTimesRaw = await FEEDERDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${tripRaw.trip_id}' ORDER BY stop_sequence`);
 
-        // 2.2.2.2.3.
+        // 9.4.4.3.
         // Initiate temporary holding variables
         let formattedPath = [];
         let formattedSchedule = [];
@@ -207,102 +207,108 @@ module.exports = async () => {
         let patternPassesByLocalities = new Set();
         let patternPassesByFacilities = new Set();
 
-        // 2.2.2.2.4.
+        // 9.4.4.4.
         // For each path sequence
-        for (const currentStopTime of allStopTimes.rows) {
+        for (const stopTimeRaw of allStopTimesRaw.rows) {
           //
-          // 2.2.2.2.4.1.
+          // 9.4.4.4.1.
           // Get existing stop document from database
-          const existingStopDocument = allStops.get(currentStopTime.stop_id);
+          const existingStopDocument = allStopsHashmap.get(stopTimeRaw.stop_id);
 
-          // 2.2.2.2.4.2.
+          // 9.4.4.4.2.
           // Calculate distance delta and update variable
-          const currentDistanceDelta = Number(currentStopTime.shape_dist_traveled) - prevTravelDistance;
-          prevTravelDistance = Number(currentStopTime.shape_dist_traveled);
+          const currentDistanceDelta = Number(stopTimeRaw.shape_dist_traveled) - prevTravelDistance;
+          prevTravelDistance = Number(stopTimeRaw.shape_dist_traveled);
 
-          // 2.2.2.2.4.3.
+          // 9.4.4.4.3.
           // Format arrival_time
-          const arrivalTimeFormatted = formatArrivalTime(currentStopTime.arrival_time);
+          const arrivalTimeFormatted = formatArrivalTime(stopTimeRaw.arrival_time);
 
-          // 2.2.2.2.4.4.
+          // 9.4.4.4.4.
           // Calculate travel time
-          const currentTravelTime = calculateTimeDifference(prevArrivalTime, currentStopTime.arrival_time);
-          prevArrivalTime = currentStopTime.arrival_time;
+          const currentTravelTime = calculateTimeDifference(prevArrivalTime, stopTimeRaw.arrival_time);
+          prevArrivalTime = stopTimeRaw.arrival_time;
 
-          // 2.2.2.2.4.5.
+          // 9.4.4.4.5.
           // Save formatted stop_time to path in no pattern with the unique combination exists
           if (!pattern) {
             formattedPath.push({
               stop: existingStopDocument,
-              allow_pickup: currentStopTime.pickup_type ? false : true,
-              allow_drop_off: currentStopTime.drop_off_type ? false : true,
+              allow_pickup: stopTimeRaw.pickup_type ? false : true,
+              allow_drop_off: stopTimeRaw.drop_off_type ? false : true,
               distance_delta: currentDistanceDelta,
             });
           }
 
-          // 2.2.2.2.4.6.
+          // 9.4.4.4.6.
           // Save formatted stop_time to schedule
           formattedSchedule.push({
             stop_code: existingStopDocument.code,
             arrival_time: arrivalTimeFormatted,
-            arrival_time_operation: currentStopTime.arrival_time,
+            arrival_time_operation: stopTimeRaw.arrival_time,
             travel_time: currentTravelTime,
           });
 
-          // 2.2.2.2.4.7.
-          // Associate the current stop municipality to the current line and pattern
+          // 9.4.4.4.7.
+          // Associate the current stop municipality to the current line, route and pattern
           linePassesByMunicipalities.add(existingStopDocument.municipality_code);
+          routePassesByMunicipalities.add(existingStopDocument.municipality_code);
           patternPassesByMunicipalities.add(existingStopDocument.municipality_code);
 
-          // 2.2.2.2.4.7.
-          // Associate the current stop locality to the current line and pattern
+          // 9.4.4.4.8.
+          // Associate the current stop locality to the current line, route and pattern
           linePassesByLocalities.add(existingStopDocument.locality);
+          routePassesByLocalities.add(existingStopDocument.locality);
           patternPassesByLocalities.add(existingStopDocument.locality);
 
-          // 2.2.2.2.4.8. (TBD)
-          // Associate the current stop facility to the current line and pattern
+          // 9.4.4.4.9. (TBD)
+          // Associate the current stop facility to the current line, route and pattern
           //   linePassesByFacilities.add(existingStopDocument.locality);
+          //   routePassesByFacilities.add(existingStopDocument.locality);
           //   patternPassesByFacilities.add(existingStopDocument.locality);
 
           //
         }
 
-        // 2.2.2.2.5.
+        // 9.4.4.5.
         // Get dates in the YYYYMMDD format (GTFS Standard format)
-        const tripDates = allCalendarDates.get(trip.service_id);
+        const tripDates = allCalendarDatesHashmap.get(trip.service_id);
 
-        // 2.2.2.2.6.
+        // 9.4.4.6.
         // Create a new formatted trip object
-        const formattedTrip = {
-          code: trip.trip_id,
-          calendar_code: trip.service_id,
+        const tripParsed = {
+          code: tripRaw.trip_id,
+          calendar_code: tripRaw.service_id,
           dates: tripDates,
           schedule: formattedSchedule,
         };
 
-        // 2.2.2.2.7.
+        // 9.4.4.7.
         // If there is already a pattern matching the unique combination of trip values,
         // then update it with the current formatted trip and new valid_on dates
         // and skip to the next iteration.
-        if (pattern) {
-          pattern.valid_on = [...new Set([...pattern.valid_on, ...tripDates])];
-          pattern.trips.push(formattedTrip);
+        if (patternParsed) {
+          patternParsed.valid_on = [...new Set([...patternParsed.valid_on, ...tripDates])];
+          patternParsed.trips.push(tripParsed);
           continue;
         }
 
-        // 2.2.2.2.8.
+        // 9.4.4.8.
         // If no pattern was found matching the unique combination,
         // then create a new one with the formatted path and formatted trip values.
-        uniqueLinePatterns.push({
+        parsedPatternsForThisRoute.push({
           //
-          code: trip.pattern_id,
-          direction: trip.direction_id,
-          headsign: trip.trip_headsign,
+          code: tripRaw.pattern_id,
           //
-          line_code: line.code,
-          short_name: line.short_name,
-          color: line.color,
-          text_color: line.text_color,
+          line_code: lineParsed.code,
+          route_code: routeRaw.route_id,
+          //
+          short_name: lineParsed.short_name,
+          direction: tripRaw.direction_id,
+          headsign: tripRaw.trip_headsign,
+          //
+          color: lineParsed.color,
+          text_color: lineParsed.text_color,
           //
           valid_on: tripDates,
           //
@@ -310,78 +316,132 @@ module.exports = async () => {
           localities: Array.from(patternPassesByLocalities),
           facilities: Array.from(patternPassesByFacilities),
           //
-          shape_code: trip.shape_id,
+          shape_code: tripRaw.shape_id,
           //
           path: formattedPath,
           //
-          trips: [formattedTrip],
+          trips: [tripParsed],
           //
         });
 
         //
       }
 
+      // 9.4.5.
+      // Format final route object
+      const routeParsed = {
+        //
+        code: routeRaw.route_id,
+        //
+        line_code: lineParsed.code,
+        //
+        short_name: routeRaw.route_short_name,
+        long_name: routeRaw.route_long_name,
+        color: lineParsed.color,
+        text_color: lineParsed.text_color,
+        //
+        patterns: parsedPatternsForThisRoute,
+        //
+        municipalities: Array.from(routePassesByMunicipalities),
+        localities: Array.from(routePassesByLocalities),
+        facilities: Array.from(routePassesByFacilities),
+        //
+      };
+
+      // 9.4.6.
+      // Save all created patterns to the database and update parent route and line
+      for (const patternParsed of parsedPatternsForThisRoute) {
+        await SERVERDB.client.set(`patterns:${patternParsed.code}`, JSON.stringify(patternParsed));
+        updatedPatternKeys.add(`patterns:${patternParsed.code}`);
+        routeParsed.patterns.push(patternParsed.code);
+        lineParsed.patterns.push(patternParsed.code);
+      }
+
+      // 9.4.7.
+      // Add the current route to the routes:all REDIS key
+      allRoutesFinal.push(routeParsed);
+
+      // 9.4.8.
+      // Update the current line with the current route code
+      lineParsed.routes.push(routeParsed.code);
+
+      // 9.4.9.
+      // Save the current route to the database
+      await SERVERDB.client.set(`routes:${routeParsed.code}`, JSON.stringify(routeParsed));
+      updatedLineKeys.add(`routes:${routeParsed.code}`);
+
       //
     }
 
-    // 2.2.3.
+    // 9.5.
     // Update the current line with the associated municipalities and facilities
-    line.municipalities = Array.from(linePassesByMunicipalities);
-    line.localities = Array.from(linePassesByLocalities);
-    line.facilities = Array.from(linePassesByFacilities);
+    lineParsed.municipalities = Array.from(linePassesByMunicipalities);
+    lineParsed.localities = Array.from(linePassesByLocalities);
+    lineParsed.facilities = Array.from(linePassesByFacilities);
 
-    // 2.2.4.
-    // Save all created patterns to the database
-    for (const pattern of uniqueLinePatterns) {
-      await SERVERDB.client.set(`patterns:${pattern.code}`, JSON.stringify(pattern));
-      updatedPatternKeys.add(`patterns:${pattern.code}`);
-      line.patterns.push(pattern.code);
-    }
+    // 9.6.
+    // Add the current line to the lines:all REDIS key
+    allLinesFinal.push(lineParsed);
 
-    // 2.2.5.
-    // Save the current line to MongoDB and hold on to the returned _id value
-    allLinesData.push(line);
-    await SERVERDB.client.set(`lines:${line.code}`, JSON.stringify(line));
-    updatedLineKeys.add(`lines:${line.code}`);
+    // 9.7.
+    // Save the current line to the database
+    await SERVERDB.client.set(`lines:${lineParsed.code}`, JSON.stringify(lineParsed));
+    updatedLineKeys.add(`lines:${lineParsed.code}`);
 
-    // 2.2.6.
+    // 9.8.
     // Log operation details and elapsed time
     const elapsedTime_line = timeCalc.getElapsedTime(startTime_line);
-    console.log(`⤷ Updated Line ${line.code} and its ${uniqueLinePatterns.length} Patterns in ${elapsedTime_line}.`);
+    console.log(`⤷ Updated Line ${lineParsed.code} | ${lineParsed.routes.length} Routes | ${lineParsed.patterns.length} Patterns | ${elapsedTime_line}.`);
 
     //
   }
 
-  // 2.3.
-  // Add the 'all' option
-  allLinesData.sort((a, b) => collator.compare(a.code, b.code));
-  await SERVERDB.client.set('lines:all', JSON.stringify(allLinesData));
+  // 10.
+  // Save all routes to the routes:all REDIS key
+  allRoutesFinal.sort((a, b) => collator.compare(a.code, b.code));
+  await SERVERDB.client.set('routes:all', JSON.stringify(allRoutesFinal));
+  updatedRouteKeys.add('routes:all');
+
+  // 11.
+  // Save all lines to the lines:all REDIS key
+  allLinesFinal.sort((a, b) => collator.compare(a.code, b.code));
+  await SERVERDB.client.set('lines:all', JSON.stringify(allLinesFinal));
   updatedLineKeys.add('lines:all');
 
-  // 2.4.
-  // Delete all Lines not present in the current update
-  const allSavedLineKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
-    allSavedLineKeys.push(key);
-  }
-  const staleLineKeys = allSavedLineKeys.filter((code) => !updatedLineKeys.has(code));
-  if (staleLineKeys.length) await SERVERDB.client.del(staleLineKeys);
-  console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
-
-  // 2.5.
-  // Delete all Patterns not present in the current update
-  const allSavedPatternKeys = [];
+  // 12.
+  // Delete stale patterns not present in the current update
+  const allPatternKeysInTheDatabase = [];
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
-    allSavedPatternKeys.push(key);
+    allPatternKeysInTheDatabase.push(key);
   }
-  const stalePatternKeys = allSavedPatternKeys.filter((code) => !updatedPatternKeys.has(code));
+  const stalePatternKeys = allPatternKeysInTheDatabase.filter((key) => !updatedPatternKeys.has(key));
   if (stalePatternKeys.length) await SERVERDB.client.del(stalePatternKeys);
   console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
-  // 2.6.
+  // 13.
+  // Delete stale routes not present in the current update
+  const allRouteKeysInTheDatabase = [];
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) {
+    allRouteKeysInTheDatabase.push(key);
+  }
+  const staleRouteKeys = allRouteKeysInTheDatabase.filter((key) => !updatedRouteKeys.has(key));
+  if (staleRouteKeys.length) await SERVERDB.client.del(staleRouteKeys);
+  console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
+
+  // 14.
+  // Delete stale lines not present in the current update
+  const allLineKeysInTheDatabase = [];
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
+    allLineKeysInTheDatabase.push(key);
+  }
+  const staleLineKeys = allLineKeysInTheDatabase.filter((key) => !updatedLineKeys.has(key));
+  if (staleLineKeys.length) await SERVERDB.client.del(staleLineKeys);
+  console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
+
+  // 15.
   // Log elapsed time in the current operation
   const elapsedTime_global = timeCalc.getElapsedTime(startTime_global);
-  console.log(`⤷ Done updating Lines (${elapsedTime_global}).`);
+  console.log(`⤷ Done updating Lines, Routes and Patterns (${elapsedTime_global}).`);
 
   //
 };
