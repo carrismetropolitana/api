@@ -250,13 +250,12 @@ Returns information for routes. Each route can have at most two patterns, and se
         color: "#ED1944",
         text_color: "#FFFFFF",
 
-        municipalities: ["1115"],
-        localities: ["Alfragide", "Amadora", "Reboleira", "Buraca"],
-
         line_code: "1001",
 
         patterns: ["1001_0_1", "1001_0_2"],
 
+        municipalities: ["1115"],
+        localities: ["Alfragide", "Amadora", "Reboleira", "Buraca"],
         facilities: [],
 
     },
