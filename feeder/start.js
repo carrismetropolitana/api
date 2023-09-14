@@ -14,7 +14,7 @@ const buildSchools = require('./builders/buildSchools');
 const buildEncm = require('./builders/buildEncm');
 const buildStops = require('./builders/buildStops');
 const buildShapes = require('./builders/buildShapes');
-const buildLinesAndPatterns = require('./builders/buildLinesAndPatterns');
+const buildLinesRoutesAndPatterns = require('./builders/buildLinesRoutesAndPatterns');
 
 //
 
@@ -90,8 +90,8 @@ module.exports = async () => {
     await buildShapes();
 
     console.log();
-    console.log('STEP 2.6: Update Lines & Patterns');
-    await buildLinesAndPatterns();
+    console.log('STEP 2.6: Update Lines, Routes and Patterns');
+    await buildLinesRoutesAndPatterns();
 
     console.log();
     console.log('Disconnecting from databases...');
