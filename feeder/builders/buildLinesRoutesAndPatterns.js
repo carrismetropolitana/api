@@ -101,7 +101,7 @@ module.exports = async () => {
 
   // 6.
   // Group all routes into lines by route_short_name
-  const allLinesParsed = allRoutesRaw.rows.reduce((result, route) => {
+  const allLinesRaw = allRoutesRaw.rows.reduce((result, route) => {
     //
     // 7.1.
     // Check if the route_short_name already exists as a line
@@ -116,13 +116,9 @@ module.exports = async () => {
         code: route.route_short_name,
         short_name: route.route_short_name,
         long_name: route.route_long_name,
-        color: route.route_color ? `#${route.route_color}` : '#000000',
-        text_color: route.route_text_color ? `#${route.route_text_color}` : '#FFFFFF',
+        color: route.route_color,
+        text_color: route.route_text_color,
         routes: [route],
-        patterns: [],
-        municipalities: [],
-        localities: [],
-        facilities: [],
       });
     }
 
@@ -147,25 +143,41 @@ module.exports = async () => {
   // 9.
   // For all trips of all routes of each line,
   // group trips into unique patterns by their common 'pattern_id'.
-  for (const lineParsed of allLinesParsed) {
+  for (const lineRaw of allLinesRaw) {
     //
     // 9.1.
     // Record the start time to later calculate operation duration
     const startTime_line = process.hrtime();
 
     // 9.2.
-    // Initiate a variable to hold parsed routes
-    let parsedRoutesForThisLine = [];
-
-    // 9.3.
     // Initiate other holding variables
     let linePassesByMunicipalities = new Set();
     let linePassesByLocalities = new Set();
     let linePassesByFacilities = new Set();
 
     // 9.4.
+    // Build parsed line object
+    const lineParsed = {
+      //
+      code: lineRaw.code,
+      //
+      short_name: lineRaw.short_name,
+      long_name: lineRaw.long_name,
+      color: lineRaw.color ? `#${lineRaw.color}` : '#000000',
+      text_color: lineRaw.text_color ? `#${lineRaw.text_color}` : '#FFFFFF',
+      //
+      routes: [],
+      patterns: [],
+      //
+      municipalities: [],
+      localities: [],
+      facilities: [],
+      //
+    };
+
+    // 9.4.
     // Iterate on each route for this line
-    for (const routeRaw of lineParsed.routes) {
+    for (const routeRaw of lineRaw.routes) {
       //
       // 9.4.1.
       // Initiate a variable to hold parsed patterns
@@ -176,6 +188,27 @@ module.exports = async () => {
       let routePassesByMunicipalities = new Set();
       let routePassesByLocalities = new Set();
       let routePassesByFacilities = new Set();
+
+      // 9.4.5.
+      // Build parsed route object
+      const routeParsed = {
+        //
+        code: routeRaw.route_id,
+        //
+        line_code: lineParsed.code,
+        //
+        short_name: routeRaw.route_short_name,
+        long_name: routeRaw.route_long_name,
+        color: lineParsed.color,
+        text_color: lineParsed.text_color,
+        //
+        patterns: [],
+        //
+        municipalities: [],
+        localities: [],
+        facilities: [],
+        //
+      };
 
       // 9.4.3.
       // Get all trips associated with this route
@@ -327,27 +360,6 @@ module.exports = async () => {
         //
       }
 
-      // 9.4.5.
-      // Format final route object
-      const routeParsed = {
-        //
-        code: routeRaw.route_id,
-        //
-        line_code: lineParsed.code,
-        //
-        short_name: routeRaw.route_short_name,
-        long_name: routeRaw.route_long_name,
-        color: lineParsed.color,
-        text_color: lineParsed.text_color,
-        //
-        patterns: parsedPatternsForThisRoute,
-        //
-        municipalities: Array.from(routePassesByMunicipalities),
-        localities: Array.from(routePassesByLocalities),
-        facilities: Array.from(routePassesByFacilities),
-        //
-      };
-
       // 9.4.6.
       // Save all created patterns to the database and update parent route and line
       for (const patternParsed of parsedPatternsForThisRoute) {
@@ -358,14 +370,20 @@ module.exports = async () => {
       }
 
       // 9.4.7.
+      // Update the current route with the associated municipalities and facilities
+      routeParsed.municipalities = Array.from(routePassesByMunicipalities);
+      routeParsed.localities = Array.from(routePassesByLocalities);
+      routeParsed.facilities = Array.from(routePassesByFacilities);
+
+      // 9.4.8.
       // Add the current route to the routes:all REDIS key
       allRoutesFinal.push(routeParsed);
 
-      // 9.4.8.
+      // 9.4.9.
       // Update the current line with the current route code
       lineParsed.routes.push(routeParsed.code);
 
-      // 9.4.9.
+      // 9.4.10.
       // Save the current route to the database
       await SERVERDB.client.set(`routes:${routeParsed.code}`, JSON.stringify(routeParsed));
       updatedLineKeys.add(`routes:${routeParsed.code}`);
