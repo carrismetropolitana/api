@@ -20,7 +20,7 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 #### `GET /municipalities`
 
-#### `GET /municipalities/:code`
+#### `GET /municipalities/:id`
 
 Returns information for municipalities in the Lisbon metropolitan area, as well as adjacent municipalities where Carris Metropolitana also has service.
 
@@ -29,12 +29,12 @@ Returns information for municipalities in the Lisbon metropolitan area, as well 
 ```
 [
     {
-        code: "1502",
+        id: "1502",
         name: "Alcochete",
         prefix: "01",
-        district_code: "15",
+        district_id: "15",
         district_name: "Setúbal",
-        region_code: "PT170",
+        region_id: "PT170",
         region_name: "AML",
     },
     ...
@@ -53,7 +53,7 @@ Returns the service alerts in JSON and Protobuf format, following the GTFS-RT Se
 
 #### `GET /facilities/encm`
 
-#### `GET /facilities/encm/:code`
+#### `GET /facilities/encm/:id`
 
 Known as Espaços navegante® Carris Metropolitana, these endpoints return information for all or each location, including live estimated wait times.
 
@@ -63,7 +63,7 @@ Known as Espaços navegante® Carris Metropolitana, these endpoints return infor
 [
     {
 
-        code: "8400000000000001",
+        id: "8400000000000001",
         name: "Espaço navegante® Carris Metropolitana Queluz",
 
         lat: 38.756317,
@@ -76,13 +76,13 @@ Known as Espaços navegante® Carris Metropolitana, these endpoints return infor
         address: "Avenida José Elias Garcia 71",
         postal_code: "2745-155",
         locality: "Queluz",
-        parish_code: null,
+        parish_id: null,
         parish_name: null,
-        municipality_code: "1512",
+        municipality_id: "1512",
         municipality_name: "Setúbal",
-        district_code: "15",
+        district_id: "15",
         district_name: "Setúbal",
-        region_code: "PT170",
+        region_id: "PT170",
         region_name: "AML",
 
         hours_monday: ["08:00-19:00"],
@@ -108,7 +108,7 @@ Known as Espaços navegante® Carris Metropolitana, these endpoints return infor
 
 #### `GET /stops`
 
-#### `GET /stops/:code`
+#### `GET /stops/:id`
 
 Returns static information for all stops, as well as associated lines, routes and patterns that use each stop.
 
@@ -118,7 +118,7 @@ Returns static information for all stops, as well as associated lines, routes an
 [
     {
 
-        code: "010001",
+        id: "010001",
         name: "R Carlos M. R. Francisco 229 (Escola Monte Novo)",
         short_name: null,
         tts_name: "Rua Carlos Manuel Rodrigues Francisco 229 Escola Monte Novo",
@@ -127,13 +127,13 @@ Returns static information for all stops, as well as associated lines, routes an
         lon: -8.959557,
 
         locality: "Alcochete",
-        parish_code: null,
+        parish_id: null,
         parish_name: null,
-        municipality_code: "1502",
+        municipality_id: "1502",
         municipality_name: "Alcochete",
-        district_code: "15",
+        district_id: "15",
         district_name: "Setúbal",
-        region_code: "PT170",
+        region_id: "PT170",
         region_name: "AML",
 
         wheelchair_boarding: null,
@@ -149,7 +149,7 @@ Returns static information for all stops, as well as associated lines, routes an
 ]
 ```
 
-#### `GET /stops/:code/realtime`
+#### `GET /stops/:id/realtime`
 
 Returns realtime arrival estimations for a single stop.
 
@@ -158,14 +158,14 @@ Returns realtime arrival estimations for a single stop.
 ```
 [
     {
-        line_code: "2909",
-        pattern_code: "2909_0_1",
-        trip_code: "2909_0_1|130|2|0824",
+        line_id: "2909",
+        pattern_id: "2909_0_1",
+        trip_id: "2909_0_1|130|2|0824",
         headsign: "Freiria (E.B. 2-3)",
         scheduled_arrival: "08:56:00",
         estimated_arrival: "08:57:00",
         observed_arrival: "08:58:00",
-        vehicle_code: "42|2345"
+        vehicle_id: "42|2345"
     },
     ...
 ]
@@ -182,13 +182,13 @@ Returns information for all vehicles in service for Carris Metropolitana. Timest
 ```
 [
     {
-        code: "41|1153",
+        id: "41|1153",
         lat: 38.740165,
         lon: -9.268897,
         speed: 0,
         heading: 68.0999984741211,
-        trip_code: "1724_0_2_2030_2059_0_7",
-        pattern_code: "1724_0_2"
+        trip_id: "1724_0_2_2030_2059_0_7",
+        pattern_id: "1724_0_2"
         timestamp: 1693948520000,
     },
     ...
@@ -199,7 +199,7 @@ Returns information for all vehicles in service for Carris Metropolitana. Timest
 
 #### `GET /lines`
 
-#### `GET /lines/:code`
+#### `GET /lines/:id`
 
 Returns information for lines. Each line can have several routes and patterns, and serves a set of municipalities and localities.
 
@@ -209,7 +209,7 @@ Returns information for lines. Each line can have several routes and patterns, a
 [
     {
 
-        code: "1001",
+        id: "1001",
         short_name: "1001",
         long_name: "Alfragide (Estr Seminario) - Reboleira (Estação)",
         color: "#ED1944",
@@ -234,7 +234,7 @@ _This endpoint is not yet available._
 
 #### `GET /routes`
 
-#### `GET /routes/:code`
+#### `GET /routes/:id`
 
 Returns information for routes. Each route can have at most two patterns, and serves a set of municipalities and localities.
 
@@ -244,13 +244,13 @@ Returns information for routes. Each route can have at most two patterns, and se
 [
     {
 
-        code: "1001_0",
+        id: "1001_0",
         short_name: "1001",
         long_name: "Alfragide (Estr Seminario) - Reboleira (Estação)",
         color: "#ED1944",
         text_color: "#FFFFFF",
 
-        line_code: "1001",
+        line_id: "1001",
 
         patterns: ["1001_0_1", "1001_0_2"],
 
@@ -265,24 +265,24 @@ Returns information for routes. Each route can have at most two patterns, and se
 
 ## Patterns
 
-#### `GET /patterns/:code`
+#### `GET /patterns/:id`
 
-Returns information for a single pattern. Due to the size of each object, it is not possible to return all patterns at once. User interfaces should present a list of lines, and request each associated patterns when the user selects a line. It is the pattern that represents the set of equal journeys of a line. Each pattern has a set of dates when it is valid, a path with the sequence of stops, a set of trips with the arrival time to each stop, and an associated shape code.
+Returns information for a single pattern. Due to the size of each object, it is not possible to return all patterns at once. User interfaces should present a list of lines, and request each associated patterns when the user selects a line. It is the pattern that represents the set of equal journeys of a line. Each pattern has a set of dates when it is valid, a path with the sequence of stops, a set of trips with the arrival time to each stop, and an associated shape id.
 
 **Example Response:**
 
 ```
 {
 
-    code: "2708_0_1",
+    id: "2708_0_1",
     short_name: "2708",
     headsign: "Estação Oriente",
     direction: 0,
     color: "#ED1944",
     text_color: "#FFFFFF",
 
-    line_code: "2708",
-    route_code: "2708_0",
+    line_id: "2708",
+    route_id: "2708_0",
 
     valid_on: ["20230103", "20230104", "20230105", ...],
 
@@ -290,25 +290,25 @@ Returns information for a single pattern. Due to the size of each object, it is 
     localities: ["Loures", "Moscavide", "Parque das Nações"],
     facilities: [],
 
-    shape_code: "p1_2708_0_1",
+    shape_id: "p1_2708_0_1",
 
     path: [
         {
             stop: {
-                code: "010001",
+                id: "010001",
                 name: "R Carlos M. R. Francisco 229 (Escola Monte Novo)",
                 short_name: null,
                 tts_name: "Rua Carlos Manuel Rodrigues Francisco 229 Escola Monte Novo",
                 lat: 38.754244,
                 lon: -8.959557,
                 locality: "Alcochete",
-                parish_code: null,
+                parish_id: null,
                 parish_name: null,
-                municipality_code: "1502",
+                municipality_id: "1502",
                 municipality_name: "Alcochete",
-                district_code: "15",
+                district_id: "15",
                 district_name: "Setúbal",
-                region_code: "PT170",
+                region_id: "PT170",
                 region_name: "AML",
                 wheelchair_boarding: null,
                 facilities: [],
@@ -326,12 +326,12 @@ Returns information for a single pattern. Due to the size of each object, it is 
 
     trips: [
         {
-            trip_code: "p1_2708_0_1|1|1|0450",
-            calendar_code: "p1_11",
+            trip_id: "p1_2708_0_1|1|1|0450",
+            calendar_id: "p1_11",
             dates: ["20230103", "20230104", "20230105", ...],
             schedule: [
                 {
-                    stop_code: "071339",
+                    stop_id: "071339",
                     arrival_time: "04:50:00",
                     arrival_time_operation: "04:50:00",
                     travel_time: "0",
@@ -347,7 +347,7 @@ Returns information for a single pattern. Due to the size of each object, it is 
 
 ## Shapes
 
-#### `GET /shapes/:code`
+#### `GET /shapes/:id`
 
 Returns a single shape in GTFS and Geojson format. Extension is in meters.
 
@@ -356,7 +356,7 @@ Returns a single shape in GTFS and Geojson format. Extension is in meters.
 ```
 {
 
-    code: "p2_3701_0_1",
+    id: "p2_3701_0_1",
     extension: 12745,
 
     points: [
@@ -395,7 +395,7 @@ Returns a single shape in GTFS and Geojson format. Extension is in meters.
 
 #### `GET /facilities/schools`
 
-#### `GET /facilities/schools/:code`
+#### `GET /facilities/schools/:id`
 
 Returns a list of schools in the Lisbon metropolitan area. [Learn more about this dataset here](https://github.com/carrismetropolitana/datasets/tree/latest/facilities/schools).
 
@@ -405,7 +405,7 @@ Returns a list of schools in the Lisbon metropolitan area. [Learn more about thi
 [
     {
 
-        code: "200098",
+        id: "200098",
         name: "Escola Básica de A-das-Lebres",
 
         lat: 38.852917,
@@ -418,13 +418,13 @@ Returns a list of schools in the Lisbon metropolitan area. [Learn more about thi
         address: "R. da Liberdade 98",
         postal_code: "2660-001",
         locality: "FRIELAS",
-        parish_code: null,
+        parish_id: null,
         parish_name: null,
-        municipality_code: "1107",
+        municipality_id: "1107",
         municipality_name: "Loures",
-        district_code: "11",
+        district_id: "11",
         district_name: "Lisboa",
-        region_code: "PT170",
+        region_id: "PT170",
         region_name: "AML",
 
         url: null,
