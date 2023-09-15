@@ -11,7 +11,6 @@ class SERVERDB {
 
   async connect() {
     try {
-      console.log('SERVERDB_HOST', SERVERDB_HOST);
       await this.client.connect();
       console.log(`⤷ Connected to SERVERDB.`);
     } catch (err) {

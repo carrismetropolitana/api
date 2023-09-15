@@ -31,6 +31,8 @@ module.exports = async () => {
     // Query IXAPI for the status of the requested ENCM
     const allEncmStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Add realtime status to each ENCM
+    const allEncmData = [];
+    // Add realtime status to each ENCM
     for (const foundDocument of foundManyDocuments) {
       // Filter all waiting ticket by the current ENCM id
       const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.id);
@@ -43,11 +45,16 @@ module.exports = async () => {
         expected_wait_time: encmStatistics?.averageWaitTime || 0,
       };
       // Update the current document with the new values
+      allEncmData.push(updatedDocument);
       await SERVERDB.client.set(`encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
       // Log progress
       console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.id}): currently_waiting: ${updatedDocument.currently_waiting}; expected_wait_time: ${updatedDocument.expected_wait_time}`);
       //
     }
+    // Save all documents
+    const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+    allEncmData.sort((a, b) => collator.compare(a.id, b.id));
+    await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
     // Switch the flag OFF
     TASK_IS_RUNNING = false;
     // Log elapsed time in the current operation
