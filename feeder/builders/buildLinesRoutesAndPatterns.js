@@ -386,7 +386,7 @@ module.exports = async () => {
       // 9.4.10.
       // Save the current route to the database
       await SERVERDB.client.set(`routes:${routeParsed.code}`, JSON.stringify(routeParsed));
-      updatedLineKeys.add(`routes:${routeParsed.code}`);
+      updatedRouteKeys.add(`routes:${routeParsed.code}`);
 
       //
     }
