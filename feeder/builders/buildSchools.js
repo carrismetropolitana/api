@@ -34,7 +34,7 @@ module.exports = async () => {
     if (school.stops?.length) parsedSchoolStops = school.stops.split('|');
     // Initiate a variable to hold the parsed school
     const parsedSchool = {
-      code: school.id,
+      id: school.id,
       name: school.name,
       lat: school.lat,
       lon: school.lon,
@@ -44,13 +44,13 @@ module.exports = async () => {
       address: school.address,
       postal_code: school.postal_code,
       locality: school.locality,
-      parish_code: school.parish_id,
+      parish_id: school.parish_id,
       parish_name: school.parish_name,
-      municipality_code: school.municipality_id,
+      municipality_id: school.municipality_id,
       municipality_name: school.municipality_name,
-      district_code: school.district_id,
+      district_id: school.district_id,
       district_name: school.district_name,
-      region_code: school.region_id,
+      region_id: school.region_id,
       region_name: school.region_name,
       url: school.url,
       email: school.email,
@@ -59,15 +59,15 @@ module.exports = async () => {
     };
     // Update or create new document
     allSchoolsData.push(parsedSchool);
-    await SERVERDB.client.set(`schools:${parsedSchool.code}`, JSON.stringify(parsedSchool));
-    updatedSchoolKeys.add(`schools:${parsedSchool.code}`);
+    await SERVERDB.client.set(`schools:${parsedSchool.id}`, JSON.stringify(parsedSchool));
+    updatedSchoolKeys.add(`schools:${parsedSchool.id}`);
     //
   }
   // Log count of updated Schools
   console.log(`⤷ Updated ${updatedSchoolKeys.size} Schools.`);
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allSchoolsData.sort((a, b) => collator.compare(a.code, b.code));
+  allSchoolsData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('schools:all', JSON.stringify(allSchoolsData));
   updatedSchoolKeys.add('schools:all');
   // Delete all Schools not present in the current update
@@ -75,7 +75,7 @@ module.exports = async () => {
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'schools:*' })) {
     allSavedSchoolKeys.push(key);
   }
-  const staleSchoolKeys = allSavedSchoolKeys.filter((code) => !updatedSchoolKeys.has(code));
+  const staleSchoolKeys = allSavedSchoolKeys.filter((id) => !updatedSchoolKeys.has(id));
   if (staleSchoolKeys.length) await SERVERDB.client.del(staleSchoolKeys);
   console.log(`⤷ Deleted ${staleSchoolKeys.length} stale Schools.`);
   // Log elapsed time in the current operation

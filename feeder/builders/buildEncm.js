@@ -19,7 +19,7 @@ module.exports = async () => {
   for (const encm of allEncm.rows) {
     // Parse encm
     const parsedEncm = {
-      code: encm.id,
+      id: encm.id,
       name: encm.name,
       lat: encm.lat,
       lon: encm.lon,
@@ -29,13 +29,13 @@ module.exports = async () => {
       address: encm.address,
       postal_code: encm.postal_code,
       locality: encm.locality,
-      parish_code: encm.parish_id,
+      parish_id: encm.parish_id,
       parish_name: encm.parish_name,
-      municipality_code: encm.municipality_id,
+      municipality_id: encm.municipality_id,
       municipality_name: encm.municipality_name,
-      district_code: encm.district_id,
+      district_id: encm.district_id,
       district_name: encm.district_name,
-      region_code: encm.region_id,
+      region_id: encm.region_id,
       region_name: encm.region_name,
       hours_monday: encm.hours_monday?.length ? encm.hours_monday.split('|') : [],
       hours_tuesday: encm.hours_tuesday?.length ? encm.hours_tuesday.split('|') : [],
@@ -49,15 +49,15 @@ module.exports = async () => {
     };
     // Save to database
     allEncmData.push(parsedEncm);
-    await SERVERDB.client.set(`encm:${parsedEncm.code}`, JSON.stringify(parsedEncm));
-    updatedEncmKeys.add(`encm:${parsedEncm.code}`);
+    await SERVERDB.client.set(`encm:${parsedEncm.id}`, JSON.stringify(parsedEncm));
+    updatedEncmKeys.add(`encm:${parsedEncm.id}`);
     //
   }
   // Log count of updated ENCM
   console.log(`⤷ Updated ${updatedEncmKeys.size} ENCM.`);
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allEncmData.sort((a, b) => collator.compare(a.code, b.code));
+  allEncmData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
   updatedEncmKeys.add('encm:all');
   // Delete all ENCM not present in the current update
@@ -65,7 +65,7 @@ module.exports = async () => {
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'encm:*' })) {
     allSavedEncmKeys.push(key);
   }
-  const staleEncmKeys = allSavedEncmKeys.filter((code) => !updatedEncmKeys.has(code));
+  const staleEncmKeys = allSavedEncmKeys.filter((id) => !updatedEncmKeys.has(id));
   if (staleEncmKeys.length) await SERVERDB.client.del(staleEncmKeys);
   console.log(`⤷ Deleted ${staleEncmKeys.length} stale ENCM.`);
   // Log elapsed time in the current operation

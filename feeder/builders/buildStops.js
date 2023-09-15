@@ -61,20 +61,20 @@ module.exports = async () => {
     if (stop.car_parking) facilities.push('car_parking');
     // Initiate a variable to hold the parsed stop
     const parsedStop = {
-      code: stop.stop_id,
+      id: stop.stop_id,
       name: stop.stop_name,
       short_name: stop.stop_short_name,
       tts_name: stop.tts_stop_name,
       lat: stop.stop_lat,
       lon: stop.stop_lon,
       locality: stop.locality,
-      parish_code: stop.parish_id,
+      parish_id: stop.parish_id,
       parish_name: stop.parish_name,
-      municipality_code: stop.municipality_id,
+      municipality_id: stop.municipality_id,
       municipality_name: stop.municipality_name,
-      district_code: stop.district_id,
+      district_id: stop.district_id,
       district_name: stop.district_name,
-      region_code: stop.region_id,
+      region_id: stop.region_id,
       region_name: stop.region_name,
       wheelchair_boarding: stop.wheelchair_boarding,
       facilities: facilities,
@@ -84,15 +84,15 @@ module.exports = async () => {
     };
     // Update or create new document
     allStopsData.push(parsedStop);
-    await SERVERDB.client.set(`stops:${parsedStop.code}`, JSON.stringify(parsedStop));
-    updatedStopKeys.add(`stops:${parsedStop.code}`);
+    await SERVERDB.client.set(`stops:${parsedStop.id}`, JSON.stringify(parsedStop));
+    updatedStopKeys.add(`stops:${parsedStop.id}`);
     //
   }
   // Log count of updated Stops
   console.log(`⤷ Updated ${updatedStopKeys.size} Stops.`);
   // Add the 'all' option
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allStopsData.sort((a, b) => collator.compare(a.code, b.code));
+  allStopsData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
   updatedStopKeys.add('stops:all');
   // Delete all Stops not present in the current update
@@ -100,7 +100,7 @@ module.exports = async () => {
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
     allSavedStopKeys.push(key);
   }
-  const staleStopKeys = allSavedStopKeys.filter((code) => !updatedStopKeys.has(code));
+  const staleStopKeys = allSavedStopKeys.filter((id) => !updatedStopKeys.has(id));
   if (staleStopKeys.length) await SERVERDB.client.del(staleStopKeys);
   console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
   // Log elapsed time in the current operation

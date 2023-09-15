@@ -32,10 +32,10 @@ module.exports = async () => {
     const allEncmStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Add realtime status to each ENCM
     for (const foundDocument of foundManyDocuments) {
-      // Filter all waiting ticket by the current ENCM code
-      const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.code);
+      // Filter all waiting ticket by the current ENCM id
+      const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.id);
       // Find the entityReport entry for the current ENCM
-      const encmStatistics = allEncmStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.code);
+      const encmStatistics = allEncmStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.id);
       // Format the update query with the request results
       const updatedDocument = {
         ...foundDocument,
@@ -43,9 +43,9 @@ module.exports = async () => {
         expected_wait_time: encmStatistics?.averageWaitTime || 0,
       };
       // Update the current document with the new values
-      await SERVERDB.client.set(`encm:${updatedDocument.code}`, JSON.stringify(updatedDocument));
+      await SERVERDB.client.set(`encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
       // Log progress
-      console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.code}): currently_waiting: ${updatedDocument.currently_waiting}; expected_wait_time: ${updatedDocument.expected_wait_time}`);
+      console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.id}): currently_waiting: ${updatedDocument.currently_waiting}; expected_wait_time: ${updatedDocument.expected_wait_time}`);
       //
     }
     // Switch the flag OFF

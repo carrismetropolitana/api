@@ -83,7 +83,7 @@ module.exports = async () => {
   // Get all stops and build a hashmap for quick retrieval
   const allStopsTxt = await SERVERDB.client.get('stops:all');
   const allStopsJson = JSON.parse(allStopsTxt);
-  const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.code, obj]));
+  const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.id, obj]));
 
   // 4.
   // Query Postgres for all calendar dates and build a hashmap for quick retrieval
@@ -113,7 +113,7 @@ module.exports = async () => {
       existingLine.routes.push(route);
     } else {
       result.push({
-        code: route.route_short_name,
+        id: route.route_short_name,
         short_name: route.route_short_name,
         long_name: route.route_long_name,
         color: route.route_color,
@@ -159,7 +159,7 @@ module.exports = async () => {
     // Build parsed line object
     const lineParsed = {
       //
-      code: lineRaw.code,
+      id: lineRaw.id,
       //
       short_name: lineRaw.short_name,
       long_name: lineRaw.long_name,
@@ -193,9 +193,9 @@ module.exports = async () => {
       // Build parsed route object
       const routeParsed = {
         //
-        code: routeRaw.route_id,
+        id: routeRaw.route_id,
         //
-        line_code: lineParsed.code,
+        line_id: lineParsed.id,
         //
         short_name: routeRaw.route_short_name,
         long_name: routeRaw.route_long_name,
@@ -222,7 +222,7 @@ module.exports = async () => {
 
         // 9.4.4.1.
         // Find the pattern that matches the unique combination for this trip
-        const patternParsed = parsedPatternsForThisRoute.find((pattern) => pattern.code === tripRaw.pattern_id);
+        const patternParsed = parsedPatternsForThisRoute.find((pattern) => pattern.id === tripRaw.pattern_id);
 
         // 9.4.4.2.
         // Get the current trip stop_times
@@ -276,7 +276,7 @@ module.exports = async () => {
           // 9.4.4.4.6.
           // Save formatted stop_time to schedule
           formattedSchedule.push({
-            stop_code: existingStopDocument.code,
+            stop_id: existingStopDocument.id,
             arrival_time: arrivalTimeFormatted,
             arrival_time_operation: stopTimeRaw.arrival_time,
             travel_time: currentTravelTime,
@@ -284,9 +284,9 @@ module.exports = async () => {
 
           // 9.4.4.4.7.
           // Associate the current stop municipality to the current line, route and pattern
-          linePassesByMunicipalities.add(existingStopDocument.municipality_code);
-          routePassesByMunicipalities.add(existingStopDocument.municipality_code);
-          patternPassesByMunicipalities.add(existingStopDocument.municipality_code);
+          linePassesByMunicipalities.add(existingStopDocument.municipality_id);
+          routePassesByMunicipalities.add(existingStopDocument.municipality_id);
+          patternPassesByMunicipalities.add(existingStopDocument.municipality_id);
 
           // 9.4.4.4.8.
           // Associate the current stop locality to the current line, route and pattern
@@ -310,8 +310,8 @@ module.exports = async () => {
         // 9.4.4.6.
         // Create a new formatted trip object
         const tripParsed = {
-          code: tripRaw.trip_id,
-          calendar_code: tripRaw.service_id,
+          id: tripRaw.trip_id,
+          calendar_id: tripRaw.service_id,
           dates: tripDates,
           schedule: formattedSchedule,
         };
@@ -331,10 +331,10 @@ module.exports = async () => {
         // then create a new one with the formatted path and formatted trip values.
         parsedPatternsForThisRoute.push({
           //
-          code: tripRaw.pattern_id,
+          id: tripRaw.pattern_id,
           //
-          line_code: lineParsed.code,
-          route_code: routeRaw.route_id,
+          line_id: lineParsed.id,
+          route_id: routeRaw.route_id,
           //
           short_name: lineParsed.short_name,
           direction: tripRaw.direction_id,
@@ -349,7 +349,7 @@ module.exports = async () => {
           localities: Array.from(patternPassesByLocalities),
           facilities: Array.from(patternPassesByFacilities),
           //
-          shape_code: tripRaw.shape_id,
+          shape_id: tripRaw.shape_id,
           //
           path: formattedPath,
           //
@@ -363,10 +363,10 @@ module.exports = async () => {
       // 9.4.6.
       // Save all created patterns to the database and update parent route and line
       for (const patternParsed of parsedPatternsForThisRoute) {
-        await SERVERDB.client.set(`patterns:${patternParsed.code}`, JSON.stringify(patternParsed));
-        updatedPatternKeys.add(`patterns:${patternParsed.code}`);
-        routeParsed.patterns.push(patternParsed.code);
-        lineParsed.patterns.push(patternParsed.code);
+        await SERVERDB.client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
+        updatedPatternKeys.add(`patterns:${patternParsed.id}`);
+        routeParsed.patterns.push(patternParsed.id);
+        lineParsed.patterns.push(patternParsed.id);
       }
 
       // 9.4.7.
@@ -380,13 +380,13 @@ module.exports = async () => {
       allRoutesFinal.push(routeParsed);
 
       // 9.4.9.
-      // Update the current line with the current route code
-      lineParsed.routes.push(routeParsed.code);
+      // Update the current line with the current route id
+      lineParsed.routes.push(routeParsed.id);
 
       // 9.4.10.
       // Save the current route to the database
-      await SERVERDB.client.set(`routes:${routeParsed.code}`, JSON.stringify(routeParsed));
-      updatedRouteKeys.add(`routes:${routeParsed.code}`);
+      await SERVERDB.client.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
+      updatedRouteKeys.add(`routes:${routeParsed.id}`);
 
       //
     }
@@ -403,26 +403,26 @@ module.exports = async () => {
 
     // 9.7.
     // Save the current line to the database
-    await SERVERDB.client.set(`lines:${lineParsed.code}`, JSON.stringify(lineParsed));
-    updatedLineKeys.add(`lines:${lineParsed.code}`);
+    await SERVERDB.client.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
+    updatedLineKeys.add(`lines:${lineParsed.id}`);
 
     // 9.8.
     // Log operation details and elapsed time
     const elapsedTime_line = timeCalc.getElapsedTime(startTime_line);
-    console.log(`⤷ Updated Line ${lineParsed.code} | ${lineParsed.routes.length} Routes | ${lineParsed.patterns.length} Patterns | ${elapsedTime_line}.`);
+    console.log(`⤷ Updated Line ${lineParsed.id} | ${lineParsed.routes.length} Routes | ${lineParsed.patterns.length} Patterns | ${elapsedTime_line}.`);
 
     //
   }
 
   // 10.
   // Save all routes to the routes:all REDIS key
-  allRoutesFinal.sort((a, b) => collator.compare(a.code, b.code));
+  allRoutesFinal.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('routes:all', JSON.stringify(allRoutesFinal));
   updatedRouteKeys.add('routes:all');
 
   // 11.
   // Save all lines to the lines:all REDIS key
-  allLinesFinal.sort((a, b) => collator.compare(a.code, b.code));
+  allLinesFinal.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('lines:all', JSON.stringify(allLinesFinal));
   updatedLineKeys.add('lines:all');
 

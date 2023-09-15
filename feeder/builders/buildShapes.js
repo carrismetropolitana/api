@@ -35,7 +35,7 @@ module.exports = async () => {
     try {
       // Initiate a variable to hold the parsed shape
       let parsedShape = {
-        code: shape.shape_id,
+        id: shape.shape_id,
       };
       // Sort points to match sequence
       const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
@@ -47,8 +47,8 @@ module.exports = async () => {
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = parseInt(shapeExtensionMeters);
       // Update or create new document
-      await SERVERDB.client.set(`shapes:${parsedShape.code}`, JSON.stringify(parsedShape));
-      updatedShapeKeys.add(`shapes:${parsedShape.code}`);
+      await SERVERDB.client.set(`shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
+      updatedShapeKeys.add(`shapes:${parsedShape.id}`);
       //
     } catch (error) {
       console.log('ERROR parsing shape', shape, error);
@@ -59,7 +59,7 @@ module.exports = async () => {
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
     allSavedShapeKeys.push(key);
   }
-  const staleShapeKeys = allSavedShapeKeys.filter((code) => !updatedShapeKeys.has(code));
+  const staleShapeKeys = allSavedShapeKeys.filter((id) => !updatedShapeKeys.has(id));
   if (staleShapeKeys.length) await SERVERDB.client.del(staleShapeKeys);
   console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
