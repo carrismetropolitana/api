@@ -9,6 +9,6 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  const singleItem = await SERVERDB.client.get(`lines:${request.params.code}`);
+  const singleItem = await SERVERDB.client.get(`lines:${request.params.id}`);
   return reply.send(JSON.parse(singleItem) || {});
 };

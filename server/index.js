@@ -30,23 +30,23 @@ fastify.get('/alerts.pb', alertsEndpoint.protobuf);
 // fastify.get('/alerts.rss', alertsEndpoint.rss);
 
 fastify.get('/municipalities', municipalitiesEndpoint.all);
-fastify.get('/municipalities/:code', municipalitiesEndpoint.single);
+fastify.get('/municipalities/:id', municipalitiesEndpoint.single);
 
 fastify.get('/lines', linesEndpoint.all);
-fastify.get('/lines/:code', linesEndpoint.single);
+fastify.get('/lines/:id', linesEndpoint.single);
 
 fastify.get('/routes', routesEndpoint.all);
-fastify.get('/routes/:code', routesEndpoint.single);
+fastify.get('/routes/:id', routesEndpoint.single);
 
 fastify.get('/patterns', patternsEndpoint.all);
-fastify.get('/patterns/:code', patternsEndpoint.single);
+fastify.get('/patterns/:id', patternsEndpoint.single);
 
 fastify.get('/shapes', shapesEndpoint.all);
-fastify.get('/shapes/:code', shapesEndpoint.single);
+fastify.get('/shapes/:id', shapesEndpoint.single);
 
 fastify.get('/stops', stopsEndpoint.all);
-fastify.get('/stops/:code', stopsEndpoint.single);
-fastify.get('/stops/:code/realtime', stopsEndpoint.singleWithRealtime);
+fastify.get('/stops/:id', stopsEndpoint.single);
+fastify.get('/stops/:id/realtime', stopsEndpoint.singleWithRealtime);
 
 fastify.get('/vehicles', vehiclesEndpoint.all);
 
@@ -54,10 +54,10 @@ fastify.get('/vehicles', vehiclesEndpoint.all);
 // DATASETS ENDPOINTS
 
 fastify.get('/facilities/schools', schoolsEndpoint.all);
-fastify.get('/facilities/schools/:code', schoolsEndpoint.single);
+fastify.get('/facilities/schools/:id', schoolsEndpoint.single);
 
 fastify.get('/facilities/encm', encmEndpoint.all);
-fastify.get('/facilities/encm/:code', encmEndpoint.single);
+fastify.get('/facilities/encm/:id', encmEndpoint.single);
 
 //
 // START FASTIFY SERVER
