@@ -247,7 +247,7 @@ module.exports = {
         //
         // Initiate the formatted direction object
         let formattedDirection = {
-          direction_id: currentDirection.direction_id,
+          direction_id: currentDirection.pattern_id.substring(currentDirection.pattern_id.length-1),
           pattern_id: currentDirection.pattern_id,
           headsign: currentDirection.headsign,
           shape: [],
