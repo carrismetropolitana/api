@@ -459,7 +459,7 @@ module.exports = async () => {
   // 15.
   // Log elapsed time in the current operation
   const elapsedTime_global = timeCalc.getElapsedTime(startTime_global);
-  console.log(`⤷ Done updating Lines, Routes and Patterns (${elapsedTime_global}).`);
+  console.log(`⤷ Done! Updated ${updatedLineKeys.size} Lines | ${updatedRouteKeys.size} Routes | ${updatedPatternKeys.size} Patterns | ${elapsedTime_global}`);
 
   //
 };
