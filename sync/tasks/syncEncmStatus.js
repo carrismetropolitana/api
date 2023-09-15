@@ -34,8 +34,10 @@ module.exports = async () => {
     for (const foundDocument of foundManyDocuments) {
       // Filter all waiting ticket by the current ENCM id
       const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.id);
+      console.log(encmTicketsWaiting);
       // Find the entityReport entry for the current ENCM
       const encmStatistics = allEncmStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.id);
+      console.log(encmStatistics);
       // Format the update query with the request results
       const updatedDocument = {
         ...foundDocument,
