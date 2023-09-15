@@ -12,27 +12,27 @@ module.exports.all = async (request, reply) => {
 
 //
 module.exports.single = async (request, reply) => {
-  if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const singleItem = await SERVERDB.client.get(`stops:${request.params.code}`);
+  if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
+  const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
   return reply.send(JSON.parse(singleItem) || {});
 };
 
 //
 module.exports.singleWithRealtime = async (request, reply) => {
-  if (!regexPattern.test(request.params.code)) return reply.status(400).send([]);
-  const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.code}`);
+  if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
+  const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
   const result = response.map((estimate) => {
     return {
-      line_code: estimate.lineId,
-      pattern_code: estimate.patternId,
-      route_code: estimate.routeId,
-      trip_code: estimate.tripId,
+      line_id: estimate.lineId,
+      pattern_id: estimate.patternId,
+      route_id: estimate.routeId,
+      trip_id: estimate.tripId,
       headsign: estimate.tripHeadsign,
       stop_sequence: estimate.stopSequence,
       scheduled_arrival: convertTimeStringTo25Hours(estimate.stopScheduledArrivalTime) || convertTimeStringTo25Hours(estimate.stopScheduledDepartureTime),
       estimated_arrival: convertTimeStringTo25Hours(estimate.stopArrivalEta) || convertTimeStringTo25Hours(estimate.stopDepartureEta),
       observed_arrival: convertTimeStringTo25Hours(estimate.stopObservedArrivalTime) || convertTimeStringTo25Hours(estimate.stopObservedDepartureTime),
-      vehicle_code: estimate.observedVehicleId,
+      vehicle_id: estimate.observedVehicleId,
     };
   });
   return reply.send(result || []);
