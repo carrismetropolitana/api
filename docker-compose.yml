@@ -37,7 +37,8 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/uptime.conf:/etc/nginx/conf.d/uptime.conf
       - ./letsencrypt:/etc/letsencrypt
       - certbotdata:/var/www/certbot
     ports:
@@ -45,7 +46,7 @@ services:
       - 443:443
     env_file:
       - ./.env
-    command: '/bin/sh -c ''sed -i "s/UPTIME_MONITOR_HEADER/${UPTIME_MONITOR_HEADER}/g" "/etc/nginx/conf.d/nginx.conf" && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
