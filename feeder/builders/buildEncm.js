@@ -45,7 +45,7 @@ module.exports = async () => {
       hours_saturday: encm.hours_saturday?.length ? encm.hours_saturday.split('|') : [],
       hours_sunday: encm.hours_sunday?.length ? encm.hours_sunday.split('|') : [],
       hours_special: encm.hours_special,
-      stops: encm.stops?.length ? encm.encm_stops.split('|') : [],
+      stops: encm.stops?.length ? encm.stops.split('|') : [],
       currently_waiting: 0,
       expected_wait_time: 0,
     };
