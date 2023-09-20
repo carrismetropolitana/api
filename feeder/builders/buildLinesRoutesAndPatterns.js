@@ -267,6 +267,7 @@ module.exports = async () => {
           if (!patternParsed) {
             formattedPath.push({
               stop: existingStopDocument,
+              stop_sequence: stopTimeRaw.stop_sequence,
               allow_pickup: stopTimeRaw.pickup_type ? false : true,
               allow_drop_off: stopTimeRaw.drop_off_type ? false : true,
               distance_delta: currentDistanceDelta,
