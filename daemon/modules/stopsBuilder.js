@@ -80,7 +80,7 @@ module.exports = {
         }
       }
 
-      await GTFSAPIDB.Stop.findOneAndUpdate({ stop_id: formattedStop.stop_id }, formattedStop, { upsert: true });
+      await GTFSAPIDB.Stop.findOneAndReplace({ stop_id: formattedStop.stop_id }, formattedStop, { upsert: true });
 
       const elapsedTime = timeCalc.getElapsedTime(startTime);
       console.log(`⤷ [${allProcessedStopIds.length}/${allStopsWithRoutes.length}] Saved stop ${formattedStop.stop_id} to API Database in ${elapsedTime}.`);

@@ -402,7 +402,7 @@ module.exports = {
 
     // Update the database with the new group of route bases
     for (const routeBase of allRouteBasesInDatabase) {
-      await GTFSAPIDB.RouteSummary.findOneAndUpdate({ route_id: routeBase.route_id }, routeBase, { upsert: true });
+      await GTFSAPIDB.RouteSummary.findOneAndReplace({ route_id: routeBase.route_id }, routeBase, { upsert: true });
       console.log(`⤷ Saved route base ${routeBase.route_id} to API Database.`);
     }
 
