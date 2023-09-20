@@ -233,7 +233,12 @@ module.exports = {
 
       // Simplify trips array by removing non-common attributes
       const allTrips_simplified = allTrips_raw.map((trip) => {
-        return { direction_id: trip.direction_id, pattern_id: trip.pattern_id, headsign: trip.trip_headsign, shape_id: trip.shape_id };
+        return {
+          direction_id: trip.pattern_id.substring(trip.pattern_id.length - 1),
+          pattern_id: trip.pattern_id,
+          headsign: trip.trip_headsign,
+          shape_id: trip.shape_id,
+        };
       });
 
       // Deduplicate simplified trips array to keep only common attributes.
@@ -247,7 +252,7 @@ module.exports = {
         //
         // Initiate the formatted direction object
         let formattedDirection = {
-          direction_id: currentDirection.pattern_id.substring(currentDirection.pattern_id.length-1),
+          direction_id: currentDirection.direction_id,
           pattern_id: currentDirection.pattern_id,
           headsign: currentDirection.headsign,
           shape: [],
