@@ -350,7 +350,7 @@ module.exports = {
 
       // Save route to MongoDB
       try {
-        await GTFSAPIDB.Route.findOneAndUpdate({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
+        await GTFSAPIDB.Route.findOneAndReplace({ route_id: formattedRoute.route_id }, formattedRoute, { upsert: true });
       } catch (error) {
         console.log('ERROR UPDATING DOCUMENT IN MONGODB', error);
       }
