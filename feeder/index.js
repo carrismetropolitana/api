@@ -13,7 +13,7 @@ const start = require('./start');
   setInterval(async () => {
     //
     // Check if task is already running
-    if (TASK_IS_RUNNING) throw new Error('Force restart program.');
+    if (TASK_IS_RUNNING) throw new Error('Force restart: Overlapping tasks.');
 
     TASK_IS_RUNNING = true;
 
