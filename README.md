@@ -1,16 +1,15 @@
 # Schedules API
 
 [![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/ogvq.svg)](https://status.carrismetropolitana.pt)
-
 > [!IMPORTANT]
 > **Esta versão do API será descontinuada no final do ano de 2023.**
-> Todos os consumidores do API são convidados a consultar a [versão Beta](https://github.com/carrismetropolitana/api), com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos e estimativas de chegada para todas as paragens.
-> Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api)
+> Todos os consumidores do API são convidados a consultar a [versão Beta](https://github.com/carrismetropolitana/api/tree/beta), com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos e estimativas de chegada para todas as paragens.
+> Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api/tree/beta)
 
 > [!IMPORTANT]
 > **This API version will be discontinued at the end of the year 2023.**
-> All API users are invited to check out the [Beta version](https://github.com/carrismetropolitana/api), which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles and arrival estimates for all stops.
-> Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api)
+> All API users are invited to check out the [Beta version](https://github.com/carrismetropolitana/api/tree/beta), which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles and arrival estimates for all stops.
+> Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api/tree/beta)
 
 ---
 
