@@ -111,7 +111,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   server:
-    image: ghcr.io/carrismetropolitana/api-server:v2
+    image: ghcr.io/carrismetropolitana/api-server:beta
     restart: unless-stopped
     logging:
       options:
@@ -126,7 +126,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   feeder:
-    image: ghcr.io/carrismetropolitana/api-feeder:v2
+    image: ghcr.io/carrismetropolitana/api-feeder:beta
     restart: unless-stopped
     logging:
       options:
@@ -144,7 +144,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync:
-    image: ghcr.io/carrismetropolitana/api-sync:v2
+    image: ghcr.io/carrismetropolitana/api-sync:beta
     restart: unless-stopped
     logging:
       options:
