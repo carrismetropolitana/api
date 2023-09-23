@@ -1,4 +1,4 @@
-# API v2
+# Carris Metropolitana API (beta)
 
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/tf3p.svg)](https://status.carrismetropolitana.pt)
 
