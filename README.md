@@ -16,6 +16,12 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 ---
 
+## GTFS
+
+#### `GET /gtfs`
+
+Returns the zip archive for the currently live GTFS feed.
+
 ## Municipalities
 
 #### `GET /municipalities`
