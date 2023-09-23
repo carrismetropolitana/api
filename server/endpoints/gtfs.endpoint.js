@@ -3,7 +3,7 @@ const Buffer = require('buffer').Buffer;
 
 //
 module.exports.feed = async (request, reply) => {
-  const gtfsFeedResponse = await fetch('https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip');
+  const gtfsFeedResponse = await fetch(process.env.GTFS_URL);
   const gtfsFeed = await gtfsFeedResponse.arrayBuffer();
   const gtfsFeedBbuffer = Buffer.from(gtfsFeed, 'utf-8');
   reply.header('Content-Type', 'application/zip');

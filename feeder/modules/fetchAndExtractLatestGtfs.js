@@ -18,9 +18,9 @@ module.exports = async () => {
 
   // Download GTFS file to given destination
   const stream = fs.createWriteStream(filePath);
-  const { body } = await fetch(settings.GTFS_URL);
+  const { body } = await fetch(process.env.GTFS_URL);
   await finished(Readable.fromWeb(body).pipe(stream));
-  console.log(`⤷ Downloaded file from "${settings.GTFS_URL}" to "${filePath}" successfully.`);
+  console.log(`⤷ Downloaded file from "${process.env.GTFS_URL}" to "${filePath}" successfully.`);
 
   // Extract archive to directory
   const zip = new AdmZip(filePath);

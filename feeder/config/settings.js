@@ -9,7 +9,6 @@ module.exports = {
   GTFS_BASE_DIR: 'gtfs',
   GTFS_RAW_DIR: 'raw',
   GTFS_PREPARED_DIR: 'prepared',
-  GTFS_URL: 'https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip',
 
   //
   DATASETS_BASE_DIR: 'datasets',
