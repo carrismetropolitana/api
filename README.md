@@ -3,10 +3,11 @@
 [![Better Uptime Badge](https://betteruptime.com/status-badges/v1/monitor/ogvq.svg)](https://status.carrismetropolitana.pt)
 
 > [!IMPORTANT]
-> **Esta versão do API será descontinuada no final do ano de 2023.** Todos os consumidores do API são convidados a consultar a verão Beta, com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos e estimativas para todas as paragens.
+> **Esta versão do API será descontinuada no final do ano de 2023.** Todos os consumidores do API são convidados a consultar a verão Beta, com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos e estimativas para todas as paragens. Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api)
 
 > [!IMPORTANT]
-> **This API version will be discontinued at the end of the year 2023.** All API users are invited to check out the Beta version, which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles and arrival estimates for all stops.
+> **This API version will be discontinued at the end of the year 2023.** All API users are invited to check out the Beta version, which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles and arrival estimates for all stops. Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api)
+
 
 ---
 
