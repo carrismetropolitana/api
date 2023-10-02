@@ -88,8 +88,12 @@ module.exports = async () => {
   // 4.
   // Query Postgres for all calendar dates and build a hashmap for quick retrieval
   const allDatesRaw = await FEEDERDB.connection.query(`SELECT * FROM calendar_dates`);
+  const allDatesHashmap = new Map();
   const allCalendarDatesHashmap = new Map();
   for (const row of allDatesRaw.rows) {
+    // Build a hashmap for dates, periods and day_types
+    if (!allDatesHashmap.has(row.date)) allDatesHashmap.set(row.date, { period: row.period, day_type: row.day_type });
+    // Build a hashmap for calendar dates
     if (allCalendarDatesHashmap.has(row.service_id)) allCalendarDatesHashmap.get(row.service_id).push(row.date);
     else allCalendarDatesHashmap.set(row.service_id, [row.date]);
   }
@@ -108,7 +112,7 @@ module.exports = async () => {
     const existingLine = result.find((line) => line.short_name === route.route_short_name);
 
     // 7.2.
-    // Add the route to the existing line or reate a new line with the route
+    // Add the route to the existing line or create a new line with the route
     if (existingLine) {
       existingLine.routes.push(route);
     } else {
@@ -313,6 +317,7 @@ module.exports = async () => {
         const tripParsed = {
           id: tripRaw.trip_id,
           calendar_id: tripRaw.service_id,
+          calendar_description: tripRaw.calendar_desc || '',
           dates: tripDates,
           schedule: formattedSchedule,
         };
