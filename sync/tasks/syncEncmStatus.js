@@ -5,8 +5,12 @@ const timeCalc = require('../services/timeCalc');
 
 /* * */
 
-const ENCM_CATEGORY_WAIT_TIME = {
-  '': 1,
+const ENCM_TIME_BY_CATEGORY = {
+  A: { category_code: 'A', category_name: 'Cartões', avg_seconds_per_ticket: 300 },
+  B: { category_code: 'B', category_name: 'Carregamentos', avg_seconds_per_ticket: 200 },
+  C: { category_code: 'C', category_name: 'Perdidos e Achados', avg_seconds_per_ticket: 180 },
+  D: { category_code: 'D', category_name: 'Prioritário', avg_seconds_per_ticket: 230 },
+  default: { category_code: 'N/A', category_name: 'Unknown', avg_seconds_per_ticket: 200 },
 };
 
 /* * */
@@ -32,22 +36,23 @@ module.exports = async () => {
     const foundManyDocuments = JSON.parse(foundManyDocuments_raw);
     // Query IXAPI for the status of the requested ENCM
     const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    // Query IXAPI for the status of the requested ENCM
-    const allEncmStatistics = await IXAPI.request({ reportType: 'entityReport', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Add realtime status to each ENCM
     const allEncmData = [];
     // Add realtime status to each ENCM
     for (const foundDocument of foundManyDocuments) {
-      // Filter all waiting ticket by the current ENCM id
+      // Filter all waiting tickets by the current ENCM id
       const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.id);
-      console.log('encmTicketsWaiting', encmTicketsWaiting);
-      // Find the entityReport entry for the current ENCM
-      const encmStatistics = allEncmStatistics?.content?.entityReport?.find((item) => item.siteEID === foundDocument.id);
+      // Calculate the average wait time for the total tickets by category
+      let encmTotalWaitTime = 0;
+      encmTicketsWaiting?.forEach((ticket) => {
+        if (ENCM_TIME_BY_CATEGORY[ticket.categoryCode]) encmTotalWaitTime += ENCM_TIME_BY_CATEGORY[ticket.categoryCode].avg_seconds_per_ticket;
+        else encmTotalWaitTime += ENCM_TIME_BY_CATEGORY.default.avg_seconds_per_ticket;
+      });
       // Format the update query with the request results
       const updatedDocument = {
         ...foundDocument,
         currently_waiting: encmTicketsWaiting?.length || 0,
-        expected_wait_time: encmStatistics?.averageWaitTime || 0,
+        expected_wait_time: encmTotalWaitTime || 0,
       };
       // Update the current document with the new values
       allEncmData.push(updatedDocument);
