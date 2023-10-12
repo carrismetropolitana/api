@@ -38,7 +38,7 @@ module.exports = async () => {
     const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Get open counters in each store
     const allEncmCounters = await IXAPI.request({ reportType: 'siteReportByCounter', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    console.log('allEncmCounters', allEncmCounters);
+    console.log('allEncmCounters?.content?.siteReport', allEncmCounters?.content?.siteReport);
     // Add realtime status to each ENCM
     const allEncmData = [];
     // Add realtime status to each ENCM
