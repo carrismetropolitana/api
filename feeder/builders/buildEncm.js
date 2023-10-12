@@ -48,6 +48,7 @@ module.exports = async () => {
       stops: encm.stops?.length ? encm.stops.split('|') : [],
       currently_waiting: 0,
       expected_wait_time: 0,
+      is_open: false,
     };
     // Save to database
     allEncmData.push(parsedEncm);

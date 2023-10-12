@@ -38,30 +38,33 @@ module.exports = async () => {
     const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
     // Get open counters in each store
     const allEncmCounters = await IXAPI.request({ reportType: 'siteReportByCounter', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
-    console.log('allEncmCounters?.content?.siteReport', allEncmCounters?.content?.siteReport);
     // Add realtime status to each ENCM
     const allEncmData = [];
     // Add realtime status to each ENCM
     for (const foundDocument of foundManyDocuments) {
       // Filter all waiting tickets by the current ENCM id
       const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.id);
+      // Filter active counters for the current ENCM id, and deduplicate them
+      const encmActiveCounters = allEncmCounters?.content?.siteReport?.filter((item) => item.siteEID === foundDocument.id && (item.counterStatus === 'S' || item.counterStatus === 'O'));
+      const encmActiveCountersUnique = Array.from(new Set(encmActiveCounters.map((obj) => obj.counterSID))).map((counterSID) => encmActiveCounters.find((obj) => obj.counterSID === counterSID));
       // Calculate the average wait time for the total tickets by category
       let encmTotalWaitTime = 0;
       encmTicketsWaiting?.forEach((ticket) => {
-        if (ENCM_TIME_BY_CATEGORY[ticket.categoryCode]) encmTotalWaitTime += ENCM_TIME_BY_CATEGORY[ticket.categoryCode].avg_seconds_per_ticket;
-        else encmTotalWaitTime += ENCM_TIME_BY_CATEGORY.default.avg_seconds_per_ticket;
+        if (ENCM_TIME_BY_CATEGORY[ticket.categoryCode]) encmTotalWaitTime += ENCM_TIME_BY_CATEGORY[ticket.categoryCode].avg_seconds_per_ticket / (encmActiveCountersUnique.length || 1);
+        else encmTotalWaitTime += ENCM_TIME_BY_CATEGORY.default.avg_seconds_per_ticket / (encmActiveCountersUnique.length || 1);
       });
       // Format the update query with the request results
       const updatedDocument = {
         ...foundDocument,
         currently_waiting: encmTicketsWaiting?.length || 0,
         expected_wait_time: encmTotalWaitTime || 0,
+        is_open: encmActiveCountersUnique.length > 0 ? true : false,
       };
       // Update the current document with the new values
       allEncmData.push(updatedDocument);
       await SERVERDB.client.set(`encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
       // Log progress
-      console.log(`→ Updated Encm ${foundDocument.name} (${foundDocument.id}): currently_waiting: ${updatedDocument.currently_waiting}; expected_wait_time: ${updatedDocument.expected_wait_time}`);
+      console.log(`→ ${foundDocument.name} (${foundDocument.id}) | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | is_open: ${updatedDocument.is_open}`);
       //
     }
     // Save all documents
