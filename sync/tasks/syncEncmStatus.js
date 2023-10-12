@@ -58,13 +58,16 @@ module.exports = async () => {
         ...foundDocument,
         currently_waiting: encmTicketsWaiting?.length || 0,
         expected_wait_time: encmTotalWaitTime || 0,
+        active_counters: encmActiveCountersUnique.length,
         is_open: encmActiveCountersUnique.length > 0 ? true : false,
       };
       // Update the current document with the new values
       allEncmData.push(updatedDocument);
       await SERVERDB.client.set(`encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
       // Log progress
-      console.log(`→ ${foundDocument.name} (${foundDocument.id}) | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | is_open: ${updatedDocument.is_open}`);
+      console.log(
+        `→ ${foundDocument.name} (${foundDocument.id}) | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | active_counters: ${updatedDocument.active_counters} | is_open: ${updatedDocument.is_open}`
+      );
       //
     }
     // Save all documents
