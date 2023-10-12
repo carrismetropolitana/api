@@ -66,7 +66,7 @@ module.exports = async () => {
       await SERVERDB.client.set(`encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
       // Log progress
       console.log(
-        `→ ${foundDocument.name} (${foundDocument.id}) | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | active_counters: ${updatedDocument.active_counters} | is_open: ${updatedDocument.is_open}`
+        `→ id: ${foundDocument.id} | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | active_counters: ${updatedDocument.active_counters} | is_open: ${updatedDocument.is_open} | name: ${foundDocument.name}`
       );
       //
     }
