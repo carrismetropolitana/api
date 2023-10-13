@@ -45,7 +45,7 @@ module.exports = async () => {
       // Filter all waiting tickets by the current ENCM id
       const encmTicketsWaiting = allEncmTicketsWaiting?.content?.ticket?.filter((item) => item.siteEID === foundDocument.id);
       // Filter active counters for the current ENCM id, and deduplicate them
-      const encmActiveCounters = allEncmCounters?.content?.siteReport?.filter((item) => item.siteEID === foundDocument.id && (item.counterStatus === 'A' || item.counterStatus === 'O' || item.counterStatus === 'S'));
+      const encmActiveCounters = allEncmCounters?.content?.siteReport?.filter((item) => item.siteEID === foundDocument.id && (item.counterStatus === 'A' || item.counterStatus === 'P' || item.counterStatus === 'O' || item.counterStatus === 'S'));
       const encmActiveCountersUnique = Array.from(new Set(encmActiveCounters.map((obj) => obj.counterSID))).map((counterSID) => encmActiveCounters.find((obj) => obj.counterSID === counterSID));
       // Calculate the average wait time for the total tickets by category
       let encmTotalWaitTime = 0;
