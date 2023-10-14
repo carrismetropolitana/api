@@ -12,7 +12,7 @@ function convertToUTC(localUnixTimestampMili) {
 module.exports.all = async (request, reply) => {
   // Fetch all vehicles
   const allVehiclesData = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');
-  // Filter vehicles that do not match conditions
+  // Keep only vehicles that match conditions
   const allVehiclesFiltered = allVehiclesData.filter((vehicle) => {
     const vehicleIsInTrip = vehicle.Ss === 'STARTED' || vehicle.Ss === 'RUNNING';
     return vehicleIsInTrip;
