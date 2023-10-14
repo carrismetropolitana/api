@@ -10,8 +10,15 @@ function convertToUTC(localUnixTimestampMili) {
 
 //
 module.exports.all = async (request, reply) => {
+  // Fetch all vehicles
   const allVehiclesData = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');
-  const allVehiclesFormatted = allVehiclesData.map((vehicle) => {
+  // Filter vehicles that do not match conditions
+  const allVehiclesFiltered = allVehiclesData.filter((vehicle) => {
+    const vehicleIsInTrip = vehicle.Ss === 'STARTED' || vehicle.Ss === 'RUNNING';
+    return vehicleIsInTrip;
+  });
+  // Map to API format
+  const allVehiclesFormatted = allVehiclesFiltered.map((vehicle) => {
     return {
       id: vehicle.Vid,
       lat: vehicle.Lat,
@@ -23,5 +30,6 @@ module.exports.all = async (request, reply) => {
       pattern_id: vehicle.Lna?.substring(0, 8),
     };
   });
+  // Return response
   return reply.send(allVehiclesFormatted || []);
 };
