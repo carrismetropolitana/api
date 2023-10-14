@@ -24,6 +24,7 @@ module.exports.all = async (request, reply) => {
       lat: vehicle.Lat,
       lon: vehicle.Lng,
       speed: vehicle.Spd,
+      status: vehicle.Ss,
       timestamp: convertToUTC(vehicle.Ts),
       heading: vehicle.Coa,
       trip_id: vehicle.Lna,
