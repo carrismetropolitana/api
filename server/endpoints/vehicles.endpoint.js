@@ -14,6 +14,7 @@ module.exports.all = async (request, reply) => {
   const allVehiclesData = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');
   // Keep only vehicles that match conditions
   const allVehiclesFiltered = allVehiclesData.filter((vehicle) => {
+    return true;
     const vehicleIsInTrip = vehicle.Ss === 'STARTED' || vehicle.Ss === 'RUNNING';
     return vehicleIsInTrip;
   });
