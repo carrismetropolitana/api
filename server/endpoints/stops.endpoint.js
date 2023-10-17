@@ -7,14 +7,16 @@ const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
 //
 module.exports.all = async (request, reply) => {
   const allItems = await SERVERDB.client.get('stops:all');
-  return reply.send(JSON.parse(allItems) || []);
+  reply.header('Content-Type', 'application/json');
+  return reply.send(allItems || '[]');
 };
 
 //
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
-  return reply.send(JSON.parse(singleItem) || {});
+  reply.header('Content-Type', 'application/json');
+  return reply.send(singleItem || '{}');
 };
 
 //
