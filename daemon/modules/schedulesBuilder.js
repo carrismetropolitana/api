@@ -323,7 +323,6 @@ module.exports = {
                 return municipalityId === item.id;
               });
               if (stopMunicipality.length) {
-                console.log('stopMunicipality', stopMunicipality);
                 formattedRoute.municipalities.push(stopMunicipality[0]);
               }
             }
