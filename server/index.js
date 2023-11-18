@@ -16,6 +16,7 @@ const patternsEndpoint = require('./endpoints/patterns.endpoint');
 const shapesEndpoint = require('./endpoints/shapes.endpoint');
 const stopsEndpoint = require('./endpoints/stops.endpoint');
 const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
+const vehiclesEventsEndpoint = require('./endpoints/vehicleEvents.endpoint');
 
 //
 // IMPORT DATASETS ENDPOINTS
@@ -52,6 +53,7 @@ fastify.get('/stops/:id', stopsEndpoint.single);
 fastify.get('/stops/:id/realtime', stopsEndpoint.singleWithRealtime);
 
 fastify.get('/vehicles', vehiclesEndpoint.all);
+fastify.get('/vehicles.pb', vehiclesEventsEndpoint.protobuf);
 
 //
 // DATASETS ENDPOINTS
