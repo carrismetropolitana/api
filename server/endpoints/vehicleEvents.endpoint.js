@@ -79,7 +79,7 @@ module.exports.protobuf = async (request, reply) => {
           latitude: event.content.entity[0].vehicle.position.latitude,
           longitude: event.content.entity[0].vehicle.position.longitude,
           bearing: event.content.entity[0].vehicle.position.bearing,
-          speed: event.content.entity[0].vehicle.position.speed,
+          speed: event.content.entity[0].vehicle.position.speed / 3.6,
         },
         stop_id: event.content.entity[0].vehicle.stopId,
         current_status: event.content.entity[0].vehicle.currentStatus,
