@@ -29,6 +29,7 @@ module.exports.protobuf = async (request, reply) => {
   // Get all events from the last hour
   const allVehicleEvents = await PCGIAPI.request('opcoreconsole/vehicle-events/filtered', {
     method: 'POST',
+    contentType: 'application/x-www-form-urlencoded',
     body: formData,
   });
 

@@ -39,7 +39,7 @@ class PCGIAPI {
     const response = await fetch(`${PCGI_BASE_URL_PROD}/${service}`, {
       method: options.method || 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': options.contentType || 'application/json',
         Authorization: `Bearer ${this.access_token}`,
       },
       body: options.body || undefined,
