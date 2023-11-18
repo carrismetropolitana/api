@@ -59,7 +59,7 @@ module.exports.protobuf = async (request, reply) => {
     if (seenVehicles[event.content.entity[0].vehicle.vehicle.id] && seenVehicles[event.content.entity[0].vehicle.vehicle.id].vehicle.timestamp > event.content.entity[0].vehicle.vehicle.id) continue;
 
     seenVehicles.set(event.content.entity[0].vehicle.vehicle.id, {
-      id: `${event.content.entity[0].vehicle.agencyId}|${event.content.entity[0].vehicle.vehicle.id}-${event.content.entity[0].vehicle.position.trip.tripId}`,
+      id: `${event.content.entity[0].vehicle.agencyId}|${event.content.entity[0].vehicle.vehicle.id}-${event.content.entity[0].vehicle.trip.tripId}`,
       vehicle: {
         trip: {
           trip_id: event.content.entity[0].vehicle.trip.tripId,
