@@ -18,6 +18,8 @@ function getLocalTimeString() {
 module.exports.protobuf = async (request, reply) => {
   //
 
+  console.log('getLocalTimeString()', getLocalTimeString());
+
   const formData = new URLSearchParams();
   formData.append('limit', '10000');
   formData.append('operatorId', '');
