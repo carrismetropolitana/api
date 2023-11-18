@@ -58,6 +58,10 @@ module.exports.protobuf = async (request, reply) => {
     // If there is already a vehicle and if that vehicle has an older timestamp
     if (seenVehicles[event.content.entity[0].vehicle.vehicle.id] && seenVehicles[event.content.entity[0].vehicle.vehicle.id].vehicle.timestamp > event.content.entity[0].vehicle.vehicle.id) continue;
 
+    if (!event.content.entity[0].vehicle.trip?.tripId?.length) continue;
+
+    console.log('event.content.entity[0].vehicle.trip', event.content.entity[0].vehicle.trip);
+
     seenVehicles.set(event.content.entity[0].vehicle.vehicle.id, {
       id: `${event.content.entity[0].vehicle.agencyId}|${event.content.entity[0].vehicle.vehicle.id}-${event.content.entity[0].vehicle.trip.tripId}`,
       vehicle: {
