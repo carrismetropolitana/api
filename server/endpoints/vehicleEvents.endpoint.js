@@ -30,6 +30,8 @@ module.exports.protobuf = async (request, reply) => {
     body: formData,
   });
 
+  console.log('allVehicleEvents', allVehicleEvents);
+
   // Parse the json
 
   const rtFeed = {
