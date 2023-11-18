@@ -68,8 +68,8 @@ module.exports.protobuf = async (request, reply) => {
       id: `${event.content.entity[0].vehicle.agencyId}|${event.content.entity[0].vehicle.vehicle.id}-${event.content.entity[0].vehicle.trip.tripId}`,
       vehicle: {
         trip: {
-          trip_id: event.content.entity[0].vehicle.trip.tripId,
-          route_id: event.content.entity[0].vehicle.trip.routeId,
+          tripId: event.content.entity[0].vehicle.trip.tripId,
+          routeId: event.content.entity[0].vehicle.trip.routeId,
           scheduleRelationship: event.content.entity[0].vehicle.trip.scheduleRelationship,
         },
         vehicle: {
@@ -81,9 +81,8 @@ module.exports.protobuf = async (request, reply) => {
           bearing: event.content.entity[0].vehicle.position.bearing,
           speed: event.content.entity[0].vehicle.position.speed / 3.6,
         },
-        stop_id: event.content.entity[0].vehicle.stopId,
-        current_status: event.content.entity[0].vehicle.currentStatus,
-        // timestamp: convertToUTC(event.content.entity[0].vehicle.timestamp),
+        stopId: event.content.entity[0].vehicle.stopId,
+        currentStatus: event.content.entity[0].vehicle.currentStatus,
         timestamp: event.content.entity[0].vehicle.timestamp,
       },
     });
