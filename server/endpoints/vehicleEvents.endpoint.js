@@ -2,6 +2,7 @@
 
 const { DateTime } = require('luxon');
 const PCGIAPI = require('../services/PCGIAPI_prod');
+const protobuf = require('protobufjs');
 const gtfsRealtime = protobuf.loadSync(`${process.env.PWD}/services/gtfs-realtime.proto`);
 
 function convertToUTC(localUnixTimestampMili) {
