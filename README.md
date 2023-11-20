@@ -195,8 +195,6 @@ Returns information for lines. Each line can have several routes and patterns, a
 
 ## Routes
 
-_This endpoint is not yet available._
-
 #### `GET /routes`
 
 #### `GET /routes/:id`
