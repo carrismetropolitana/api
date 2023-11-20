@@ -32,31 +32,6 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 Returns the zip archive for the currently live GTFS feed.
 
-## Municipalities
-
-#### `GET /municipalities`
-
-#### `GET /municipalities/:id`
-
-Returns information for municipalities in the Lisbon metropolitan area, as well as adjacent municipalities where Carris Metropolitana also has service.
-
-**Example Response:**
-
-```
-[
-    {
-        id: "1502",
-        name: "Alcochete",
-        prefix: "01",
-        district_id: "15",
-        district_name: "Setúbal",
-        region_id: "PT170",
-        region_name: "AML",
-    },
-    ...
-]
-```
-
 ## Alerts
 
 #### `GET /alerts`
@@ -92,6 +67,31 @@ Returns information for all vehicles in service for Carris Metropolitana. Timest
 #### `GET /vehicles.pb`
 
 Returns the vehicle locations in Protobuf format, following the GTFS-RT Vehicle Locations standard. [Please refer to the documentation available here.](https://gtfs.org/realtime/feed-entities/vehicle-positions)
+
+## Municipalities
+
+#### `GET /municipalities`
+
+#### `GET /municipalities/:id`
+
+Returns information for municipalities in the Lisbon metropolitan area, as well as adjacent municipalities where Carris Metropolitana also has service.
+
+**Example Response:**
+
+```
+[
+    {
+        id: "1502",
+        name: "Alcochete",
+        prefix: "01",
+        district_id: "15",
+        district_name: "Setúbal",
+        region_id: "PT170",
+        region_name: "AML",
+    },
+    ...
+]
+```
 
 ## Stops
 
