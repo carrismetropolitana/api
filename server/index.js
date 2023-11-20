@@ -28,6 +28,7 @@ const encmEndpoint = require('./endpoints/encm.endpoint');
 // GTFS ENDPOINTS
 
 fastify.get('/gtfs', gtfsEndpoint.feed);
+// fastify.get('/netex', gtfsEndpoint.feed);
 
 fastify.get('/alerts', alertsEndpoint.json);
 fastify.get('/alerts.pb', alertsEndpoint.protobuf);
@@ -49,6 +50,7 @@ fastify.get('/shapes', shapesEndpoint.all);
 fastify.get('/shapes/:id', shapesEndpoint.single);
 
 fastify.get('/stops', stopsEndpoint.all);
+// fastify.get('/stops.pb', stopsEndpoint.protobuf);
 fastify.get('/stops/:id', stopsEndpoint.single);
 fastify.get('/stops/:id/realtime', stopsEndpoint.singleWithRealtime);
 
