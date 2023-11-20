@@ -2,7 +2,15 @@
 
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/tf3p.svg)](https://status.carrismetropolitana.pt)
 
-Welcome to the Carris Metropolitana API, an open-source service that provides network information in JSON format. This service reads and converts the [official Carris Metropolitana GTFS file](https://github.com/carrismetropolitana/gtfs). This API covers bus transit data for 15 of the 18 municipalities comprising the Lisbon metropolitan area. This is the same set of endpoints used by [carrismetropolitana.pt](https://www.carrismetropolitana.pt). With this API, developers can easily build applications that provide users with up-to-date bus schedules and route information.
+> [!IMPORTANT] > **A versão 1 do API será descontinuada no final do ano de 2023.**
+> Todos os consumidores do API são convidados a consultar a [versão Beta](https://github.com/carrismetropolitana/api), com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos, estimativas de chegada para todas as paragens e respetivos endpoints GTFS-RT.
+> Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api)
+
+> [!IMPORTANT] > **The API version 1 will be discontinued at the end of the year 2023.**
+> All API users are invited to check out the [Beta version](https://github.com/carrismetropolitana/api), which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles, arrival estimates for all stops and GTFS-RT endpoints.
+> Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api)
+
+Welcome to the Carris Metropolitana API, an open-source service that provides network information in JSON or Protocol Buffers format. This service reads and converts the [official Carris Metropolitana GTFS file](https://github.com/carrismetropolitana/gtfs). This API covers bus transit data for 15 of the 18 municipalities comprising the Lisbon metropolitan area. This is the same set of endpoints used by [carrismetropolitana.pt](https://www.carrismetropolitana.pt). With this API, developers can easily build applications that provide users with up-to-date bus schedules and route information.
 
 If you have something in mind or already built using this API we'd very much like to hear about it. [Get in touch!](https://github.com/carrismetropolitana/schedules-api/issues)
 
@@ -53,62 +61,35 @@ Returns information for municipalities in the Lisbon metropolitan area, as well 
 
 #### `GET /alerts.pb`
 
-Returns the service alerts in JSON and Protobuf format, following the GTFS-RT Service Alerts standard. [Please refer to the documentation available here.](https://gtfs.org/realtime/feed-entities/#service-alerts)
+Returns the service alerts in JSON and Protobuf format, following the GTFS-RT Service Alerts standard. [Please refer to the documentation available here.](https://gtfs.org/realtime/feed-entities/service-alerts)
 
-## ENCM
+## Vehicles
 
-#### `GET /facilities/encm`
+#### `GET /vehicles`
 
-#### `GET /facilities/encm/:id`
-
-Known as Espaços navegante® Carris Metropolitana, these endpoints return information for all or each location, including live estimated wait times.
+Returns information for all vehicles in service for Carris Metropolitana. Timestamp for the last known position is in milliseconds, with seconds precision, and is adjusted for Lisbon time (GMT+01 WEST). Each vehicle has speed and heading, and has information for the current serviced trip and pattern.
 
 **Example Response:**
 
 ```
 [
     {
-
-        id: "8400000000000001",
-        name: "Espaço navegante® Carris Metropolitana Queluz",
-
-        lat: 38.756317,
-        lon: -9.253332,
-
-        phone: "210410400",
-        email: null,
-        url: null,
-
-        address: "Avenida José Elias Garcia 71",
-        postal_code: "2745-155",
-        locality: "Queluz",
-        parish_id: null,
-        parish_name: null,
-        municipality_id: "1512",
-        municipality_name: "Setúbal",
-        district_id: "15",
-        district_name: "Setúbal",
-        region_id: "PT170",
-        region_name: "AML",
-
-        hours_monday: ["08:00-19:00"],
-        hours_tuesday: ["08:00-19:00"],
-        hours_wednesday": ["08:00-19:00"],
-        hours_thursday: ["08:00-19:00"],
-        hours_friday: ["08:00-19:00"],
-        hours_saturday: [],
-        hours_sunday": [],
-        hours_special: null,
-
-        currently_waiting: 0,
-        expected_wait_time: 0,
-
-        stops: [],
-
+        id: "41|1153",
+        lat: 38.740165,
+        lon: -9.268897,
+        speed: 0,
+        heading: 68.0999984741211,
+        trip_id: "1724_0_2_2030_2059_0_7",
+        pattern_id: "1724_0_2"
+        timestamp: 1693948520000,
     },
     ...
 ]
 ```
+
+#### `GET /vehicles.pb`
+
+Returns the vehicle locations in Protobuf format, following the GTFS-RT Vehicle Locations standard. [Please refer to the documentation available here.](https://gtfs.org/realtime/feed-entities/vehicle-positions)
 
 ## Stops
 
@@ -172,30 +153,6 @@ Returns realtime arrival estimations for a single stop.
         estimated_arrival: "08:57:00",
         observed_arrival: "08:58:00",
         vehicle_id: "42|2345"
-    },
-    ...
-]
-```
-
-## Vehicles
-
-#### `GET /vehicles`
-
-Returns information for all vehicles in service for Carris Metropolitana. Timestamp for the last known position is in milliseconds, with seconds precision, and is adjusted for Lisbon time (GMT+01 WEST). Each vehicle has speed and heading, and has information for the current serviced trip and pattern.
-
-**Example Response:**
-
-```
-[
-    {
-        id: "41|1153",
-        lat: 38.740165,
-        lon: -9.268897,
-        speed: 0,
-        heading: 68.0999984741211,
-        trip_id: "1724_0_2_2030_2059_0_7",
-        pattern_id: "1724_0_2"
-        timestamp: 1693948520000,
     },
     ...
 ]
@@ -395,6 +352,61 @@ Returns a single shape in GTFS and Geojson format. Extension is in meters.
     }
 
 }
+```
+
+## ENCM
+
+#### `GET /facilities/encm`
+
+#### `GET /facilities/encm/:id`
+
+Known as Espaços navegante® Carris Metropolitana, these endpoints return information for all or each location, including live estimated wait times.
+
+**Example Response:**
+
+```
+[
+    {
+
+        id: "8400000000000001",
+        name: "Espaço navegante® Carris Metropolitana Queluz",
+
+        lat: 38.756317,
+        lon: -9.253332,
+
+        phone: "210410400",
+        email: null,
+        url: null,
+
+        address: "Avenida José Elias Garcia 71",
+        postal_code: "2745-155",
+        locality: "Queluz",
+        parish_id: null,
+        parish_name: null,
+        municipality_id: "1512",
+        municipality_name: "Setúbal",
+        district_id: "15",
+        district_name: "Setúbal",
+        region_id: "PT170",
+        region_name: "AML",
+
+        hours_monday: ["08:00-19:00"],
+        hours_tuesday: ["08:00-19:00"],
+        hours_wednesday": ["08:00-19:00"],
+        hours_thursday: ["08:00-19:00"],
+        hours_friday: ["08:00-19:00"],
+        hours_saturday: [],
+        hours_sunday": [],
+        hours_special: null,
+
+        currently_waiting: 0,
+        expected_wait_time: 0,
+
+        stops: [],
+
+    },
+    ...
+]
 ```
 
 ## Schools
