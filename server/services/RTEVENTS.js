@@ -207,7 +207,7 @@ class RTEVENTS {
       pattern_id: savedEvent.trip_id?.substring(0, 8),
       stop_id: savedEvent.stop_id,
       //
-      status: 'DEPREACTED PROPERTY', // deprecated
+      status: 'DEPRECATED PROPERTY', // deprecated
       heading: vehicle.bearing, // deprecated
     }));
 
