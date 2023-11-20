@@ -205,7 +205,7 @@ class RTEVENTS {
       timestamp: savedEvent.timestamp,
       trip_id: savedEvent.trip_id,
       pattern_id: savedEvent.trip_id?.substring(0, 8),
-      stopId: savedEvent.stopId,
+      stop_id: savedEvent.stop_id,
       //
       status: 'DEPREACTED PROPERTY', // deprecated
       heading: vehicle.bearing, // deprecated
