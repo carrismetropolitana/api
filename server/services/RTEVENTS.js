@@ -23,7 +23,7 @@ class RTEVENTS {
     //
     // 1. Skip if last update happened in the past 20 seconds
 
-    if (this.last_update + 20 > DateTime.now().toUnixInteger()) return;
+    if (this.last_update > DateTime.now().minus({ seconds: 20 }).toUnixInteger()) return;
 
     //
     // 2. Prepare the request to PCGI to get all events received in the last 5 minutes
@@ -68,7 +68,7 @@ class RTEVENTS {
       // Does this event has a valid latitude and longitude
       if (!Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
       // Is this event older than 90 seconds
-      if (rtEvent?.content?.entity[0]?.vehicle?.timestamp + 90 > DateTime.now().toUnixInteger()) continue;
+      if (rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
       //
       // 6.2. Prepare the most used variables
@@ -167,7 +167,7 @@ class RTEVENTS {
           bearing: savedEvent.bearing,
           speed: savedEvent.speed,
         },
-        stopId: savedEvent.stopId,
+        stopId: savedEvent.stop_id,
         currentStatus: savedEvent.current_status,
         timestamp: savedEvent.timestamp,
       },
