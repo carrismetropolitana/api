@@ -10,6 +10,7 @@ const SERVERDB = require('./services/SERVERDB');
 const gtfsEndpoint = require('./endpoints/gtfs.endpoint');
 const alertsEndpoint = require('./endpoints/alerts.endpoint');
 const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
+const periodsEndpoint = require('./endpoints/periods.endpoint');
 const linesEndpoint = require('./endpoints/lines.endpoint');
 const routesEndpoint = require('./endpoints/routes.endpoint');
 const patternsEndpoint = require('./endpoints/patterns.endpoint');
@@ -36,6 +37,8 @@ fastify.get('/alerts.pb', alertsEndpoint.protobuf);
 
 fastify.get('/municipalities', municipalitiesEndpoint.all);
 fastify.get('/municipalities/:id', municipalitiesEndpoint.single);
+
+fastify.get('/periods', periodsEndpoint.all);
 
 fastify.get('/lines', linesEndpoint.all);
 fastify.get('/lines/:id', linesEndpoint.single);
