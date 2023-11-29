@@ -12,14 +12,20 @@ const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
 module.exports.all = async (request, reply) => {
   const allItems = await SERVERDB.client.get('stops:all');
   reply.header('Content-Type', 'application/json');
-  return reply.send(allItems || '[]');
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(allItems || '[]');
 };
 
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
   reply.header('Content-Type', 'application/json');
-  return reply.send(singleItem || '{}');
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(singleItem || '{}');
 };
 
 module.exports.singleWithRealtime = async (request, reply) => {
@@ -39,7 +45,10 @@ module.exports.singleWithRealtime = async (request, reply) => {
       vehicle_id: estimate.observedVehicleId,
     };
   });
-  return reply.send(result || []);
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(result || []);
 };
 
 /* * */

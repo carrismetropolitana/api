@@ -36,5 +36,8 @@ module.exports.all = async (request, reply) => {
     };
   });
   // Return response
-  return reply.send(allVehiclesFormatted || []);
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(allVehiclesFormatted || []);
 };

@@ -6,10 +6,16 @@ const SERVERDB = require('../services/SERVERDB');
 
 module.exports.all = async (request, reply) => {
   const allItems = await SERVERDB.client.get('routes:all');
-  return reply.send(allItems || []);
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(allItems || []);
 };
 
 module.exports.single = async (request, reply) => {
   const singleItem = await SERVERDB.client.get(`routes:${request.params.id}`);
-  return reply.send(singleItem || {});
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(singleItem || {});
 };
