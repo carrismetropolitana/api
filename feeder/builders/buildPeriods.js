@@ -16,6 +16,7 @@ module.exports = async () => {
   console.log(`⤷ Updating Periods...`);
   // Reduce calendar dates into periods
   let allPeriods = allCalendarDates.rows.reduce((accumulator, calendarDate) => {
+    console.log('calendarDate.period', calendarDate.period);
     // Find the corresponding period in the accumulator array
     const periodIndex = accumulator.findIndex((period) => period.id === calendarDate.period);
     // If the period is found, add the date to its dates array
