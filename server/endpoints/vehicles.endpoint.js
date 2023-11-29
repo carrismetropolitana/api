@@ -1,14 +1,17 @@
-//
+/* * */
 
 const { DateTime } = require('luxon');
 const PCGIAPI = require('../services/PCGIAPI');
+
+/* * */
 
 function convertToUTC(localUnixTimestampMili) {
   // Create a Date object with the local Unix timestamp and local timezone
   return DateTime.fromMillis(localUnixTimestampMili, { zone: 'UTC' }).setZone('Europe/Lisbon', { keepLocalTime: true }).toUTC().toUnixInteger();
 }
 
-//
+/* * */
+
 module.exports.all = async (request, reply) => {
   // Fetch all vehicles
   const allVehiclesData = await PCGIAPI.request('vehiclelocation/vehiclePosition/mapVehicles');

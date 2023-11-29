@@ -1,17 +1,20 @@
-//
+/* * */
+
 const SERVERDB = require('../services/SERVERDB');
 const PCGIAPI = require('../services/PCGIAPI');
 
+/* * */
+
 const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
 
-//
+/* * */
+
 module.exports.all = async (request, reply) => {
   const allItems = await SERVERDB.client.get('stops:all');
   reply.header('Content-Type', 'application/json');
   return reply.send(allItems || '[]');
 };
 
-//
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
@@ -19,7 +22,6 @@ module.exports.single = async (request, reply) => {
   return reply.send(singleItem || '{}');
 };
 
-//
 module.exports.singleWithRealtime = async (request, reply) => {
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
@@ -39,6 +41,8 @@ module.exports.singleWithRealtime = async (request, reply) => {
   });
   return reply.send(result || []);
 };
+
+/* * */
 
 function convertTimeStringTo25Hours(timeString) {
   if (!timeString) return;
