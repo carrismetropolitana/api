@@ -19,16 +19,16 @@ module.exports = async () => {
     // Find the corresponding period in the accumulator array
     const periodIndex = accumulator.findIndex((period) => period.id === calendarDate.period);
     // If the period is found, add the date to its dates array
-    if (periodIndex !== -1) accumulator[periodIndex].dates.push(calendarDate.date);
+    if (periodIndex !== -1) accumulator[periodIndex].dates.add(calendarDate.date);
     // If the period is not found, add it to the accumulator with an empty dates array
-    else accumulator.push({ id: calendarDate.period, name: `Period Name ${calendarDate.period}`, dates: [calendarDate.date] });
+    else accumulator.push({ id: calendarDate.period || 'empty', name: `Period Name ${calendarDate.period}`, dates: new Set([calendarDate.date]) });
     // Return the accumulator
     return accumulator;
   }, []);
   // Sort the dates for each period, as well each period in the array
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allPeriods = allPeriods.map((period) => ({ ...period, dates: period.dates.sort((a, b) => collator.compare(a, b)) }));
-  allPeriods.sort((a, b) => collator.compare(a.id, b.id));
+  allPeriods = allPeriods.map((period) => ({ ...period, dates: Array.from(period.dates).sort((a, b) => collator.compare(a, b)) }));
+  //   allPeriods.sort((a, b) => collator.compare(a.id, b.id))
   // Log count of updated Periods
   console.log(`⤷ Updated ${allPeriods.length} Periods.`);
   // Save the array to the database
