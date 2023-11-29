@@ -17,11 +17,11 @@ module.exports = async () => {
   // Reduce calendar dates into periods
   let allPeriods = allCalendarDates.rows.reduce((accumulator, calendarDate) => {
     // Find the corresponding period in the accumulator array
-    const periodIndex = accumulator.findIndex((item) => item.id === calendarDate.period);
+    const periodIndex = accumulator.findIndex((period) => period.id === calendarDate.period);
     // If the period is found, add the date to its dates array
-    if (periodIndex > -1) accumulator[periodIndex].dates.push(calendarDate.date);
+    if (periodIndex !== -1) accumulator[periodIndex].dates.push(calendarDate.date);
     // If the period is not found, add it to the accumulator with an empty dates array
-    else accumulator.push({ id: calendarDate.period, name: 'Period Name', dates: [calendarDate.date] });
+    else accumulator.push({ id: calendarDate.period, name: `Period Name ${calendarDate.period}`, dates: [calendarDate.date] });
     // Return the accumulator
     return accumulator;
   }, []);
