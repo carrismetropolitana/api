@@ -19,7 +19,7 @@ module.exports = async () => {
     // Find the corresponding period in the accumulator array
     const periodIndex = accumulator.findIndex((item) => item.id === calendarDate.period);
     // If the period is found, add the date to its dates array
-    if (periodIndex > 0) accumulator[periodIndex].dates.push(calendarDate.date);
+    if (periodIndex > -1) accumulator[periodIndex].dates.push(calendarDate.date);
     // If the period is not found, add it to the accumulator with an empty dates array
     else accumulator.push({ id: calendarDate.period, name: 'Period Name', dates: [calendarDate.date] });
     // Return the accumulator
