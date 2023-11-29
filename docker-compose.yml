@@ -39,8 +39,8 @@ services:
     env_file:
       - ./.env
     volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers
-      - ./promtail/docker-config.yml:/etc/promtail/docker-config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./promtail/docker-config.yml:/etc/promtail/docker-config.yml:ro
     command: -config.expand-env=true -config.file=/etc/promtail/docker-config.yml
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -54,10 +54,10 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/uptime.conf:/etc/nginx/conf.d/uptime.conf
-      - ./letsencrypt:/etc/letsencrypt
-      - certbotdata:/var/www/certbot
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/uptime.conf:/etc/nginx/conf.d/uptime.conf:ro
+      - ./letsencrypt:/etc/letsencrypt:ro
+      - certbotdata:/var/www/certbot:ro
     ports:
       - 80:80
       - 443:443
