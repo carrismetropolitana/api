@@ -30,10 +30,13 @@ module.exports = [
     type: 'gtfs',
     file_name: 'calendar_dates',
     file_extension: 'txt',
-    file_headers: ['service_id', 'date'],
+    file_headers: ['service_id', 'date', 'period', 'day_type', 'holiday'],
     table_query: `CREATE TABLE calendar_dates (
         service_id VARCHAR(255),
-        date VARCHAR(8)
+        date VARCHAR(8),
+        period VARCHAR(1),
+        day_type VARCHAR(1),
+        holiday VARCHAR(1)
     );`,
     index_queries: ['CREATE INDEX calendar_dates_service_id_idx ON calendar_dates ("service_id");'],
     raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
