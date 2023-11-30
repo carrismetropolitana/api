@@ -80,10 +80,13 @@ module.exports = async () => {
           const scheduleHours = tripSchedule.arrival_time.split(':')[0];
           const scheduleMinutes = tripSchedule.arrival_time.split(':')[1];
 
+          console.log('scheduleHours', scheduleHours);
+          console.log('scheduleMinutes', scheduleMinutes);
+
           // Now we check in which period and which day_type we should put the trip
 
           for (const tripDate of patternTrip.dates) {
-            console.log(periodDatesSet);
+            console.log('periodDatesSet.has(tripDate)', periodDatesSet.has(tripDate));
             if (periodDatesSet.has(tripDate)) {
               const dateInfo = allDatesMap.get(tripDate);
               switch (dateInfo.day_type) {
@@ -110,6 +113,8 @@ module.exports = async () => {
               }
             }
           }
+
+          console.log('periodResult', periodResult);
 
           //
         }
