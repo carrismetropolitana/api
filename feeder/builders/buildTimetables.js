@@ -81,6 +81,7 @@ module.exports = async () => {
           // Now we check in which period and which day_type we should put the trip
 
           for (const tripDate of patternTrip.dates) {
+            console.log(periodData);
             if (periodData.has(tripDate)) {
               const dateInfo = allDatesMap.get(tripDate);
               switch (dateInfo.day_type) {
