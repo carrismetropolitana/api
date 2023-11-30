@@ -12,6 +12,7 @@ const alertsEndpoint = require('./endpoints/alerts.endpoint');
 const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
 const periodsEndpoint = require('./endpoints/periods.endpoint');
 const datesEndpoint = require('./endpoints/dates.endpoint');
+const timetablesEndpoint = require('./endpoints/timetables.endpoint');
 const linesEndpoint = require('./endpoints/lines.endpoint');
 const routesEndpoint = require('./endpoints/routes.endpoint');
 const patternsEndpoint = require('./endpoints/patterns.endpoint');
@@ -43,6 +44,7 @@ fastify.get('/periods', periodsEndpoint.all);
 
 fastify.get('/dates', datesEndpoint.all);
 fastify.get('/dates/:date', datesEndpoint.single);
+fastify.get('/timetables/:pattern_id/:stop_id/:stop_sequence', timetablesEndpoint.single);
 
 fastify.get('/lines', linesEndpoint.all);
 fastify.get('/lines/:id', linesEndpoint.single);
