@@ -3,6 +3,7 @@
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
+const collator = require('../modules/sortCollator');
 
 /* * */
 
@@ -51,7 +52,6 @@ module.exports = async () => {
 
   // 7.
   // Add the 'all' option
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allMunicipalitiesData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
   updatedMunicipalityKeys.add('municipalities:all');
