@@ -1,10 +1,11 @@
+/* * */
+
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
+const collator = require('../modules/sortCollator');
 
-//
-//
-//
+/* * */
 
 /**
  * Calculate time difference
@@ -74,10 +75,6 @@ module.exports = async () => {
   // 1.
   // Record the start time to later calculate operation duration
   const startTime_global = process.hrtime();
-
-  // 2.
-  // Define the collator to sort arrays
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
   // 3.
   // Get all stops and build a hashmap for quick retrieval
@@ -282,6 +279,7 @@ module.exports = async () => {
           // Save formatted stop_time to schedule
           formattedSchedule.push({
             stop_id: existingStopDocument.id,
+            stop_sequence: stopTimeRaw.stop_sequence,
             arrival_time: arrivalTimeFormatted,
             arrival_time_operation: stopTimeRaw.arrival_time,
             travel_time: currentTravelTime,
