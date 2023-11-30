@@ -1,21 +1,33 @@
+/* * */
+
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const collator = require('../modules/sortCollator');
 
-/* UPDATE HELPDESKS */
+/* * */
 
 module.exports = async () => {
+  //
+  // 1.
   // Record the start time to later calculate operation duration
   const startTime = process.hrtime();
+
+  // 2.
   // Fetch all ENCM from Postgres
   console.log(`⤷ Querying database...`);
   const allEncm = await FEEDERDB.connection.query('SELECT * FROM encm');
+
+  // 3.
   // Initate a temporary variable to hold updated ENCM
   const allEncmData = [];
   const updatedEncmKeys = new Set();
+
+  // 4.
   // Log progress
   console.log(`⤷ Updating ENCM...`);
+
+  // 5.
   // For each facility, update its entry in the database
   for (const encm of allEncm.rows) {
     // Parse encm
@@ -58,12 +70,18 @@ module.exports = async () => {
     updatedEncmKeys.add(`encm:${parsedEncm.id}`);
     //
   }
+
+  // 6.
   // Log count of updated ENCM
   console.log(`⤷ Updated ${updatedEncmKeys.size} ENCM.`);
+
+  // 7.
   // Add the 'all' option
   allEncmData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
   updatedEncmKeys.add('encm:all');
+
+  // 8.
   // Delete all ENCM not present in the current update
   const allSavedEncmKeys = [];
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'encm:*' })) {
@@ -72,8 +90,11 @@ module.exports = async () => {
   const staleEncmKeys = allSavedEncmKeys.filter((id) => !updatedEncmKeys.has(id));
   if (staleEncmKeys.length) await SERVERDB.client.del(staleEncmKeys);
   console.log(`⤷ Deleted ${staleEncmKeys.length} stale ENCM.`);
+
+  // 9.
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating ENCM (${elapsedTime}).`);
+
   //
 };

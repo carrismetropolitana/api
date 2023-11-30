@@ -1,21 +1,33 @@
+/* * */
+
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const collator = require('../modules/sortCollator');
 
-/* UPDATE STOPS */
+/* * */
 
 module.exports = async () => {
+  //
+  // 1.
   // Record the start time to later calculate operation duration
   const startTime = process.hrtime();
+
+  // 2.
   // Query Postgres for all unique schools by school_id
   console.log(`⤷ Querying database...`);
   const allSchools = await FEEDERDB.connection.query(`SELECT * FROM schools;`);
+
+  // 3.
   // Log progress
   console.log(`⤷ Updating Schools...`);
+
+  // 4.
   // Initate a temporary variable to hold updated Schools
   const allSchoolsData = [];
   const updatedSchoolKeys = new Set();
+
+  // 5.
   // For each school, update its entry in the database
   for (const school of allSchools.rows) {
     // Discover which cicles this school has
@@ -64,12 +76,18 @@ module.exports = async () => {
     updatedSchoolKeys.add(`schools:${parsedSchool.id}`);
     //
   }
+
+  // 6.
   // Log count of updated Schools
   console.log(`⤷ Updated ${updatedSchoolKeys.size} Schools.`);
+
+  // 7.
   // Add the 'all' option
   allSchoolsData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('schools:all', JSON.stringify(allSchoolsData));
   updatedSchoolKeys.add('schools:all');
+
+  // 8.
   // Delete all Schools not present in the current update
   const allSavedSchoolKeys = [];
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'schools:*' })) {
@@ -78,8 +96,11 @@ module.exports = async () => {
   const staleSchoolKeys = allSavedSchoolKeys.filter((id) => !updatedSchoolKeys.has(id));
   if (staleSchoolKeys.length) await SERVERDB.client.del(staleSchoolKeys);
   console.log(`⤷ Deleted ${staleSchoolKeys.length} stale Schools.`);
+
+  // 9.
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Schools (${elapsedTime}).`);
+
   //
 };

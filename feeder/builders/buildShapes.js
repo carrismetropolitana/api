@@ -1,14 +1,20 @@
+/* * */
+
+const turf = require('@turf/turf');
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const collator = require('../modules/sortCollator');
-const turf = require('@turf/turf');
 
-/* UPDATE SHAPES */
+/* * */
 
 module.exports = async () => {
+  //
+  // 1.
   // Record the start time to later calculate operation duration
   const startTime = process.hrtime();
+
+  // 2.
   // Query Postgres for all unique shapes by shape_id
   console.log(`⤷ Querying database...`);
   const allShapes = await FEEDERDB.connection.query(`
@@ -27,10 +33,16 @@ module.exports = async () => {
         GROUP BY
             shape_id
     `);
+
+  // 3.
   // Log progress
   console.log(`⤷ Updating Shapes...`);
+
+  // 4.
   // Initiate variable to keep track of updated _ids
   const updatedShapeKeys = new Set();
+
+  // 5.
   // Loop through each object in each chunk
   for (const shape of allShapes.rows) {
     try {
@@ -54,6 +66,8 @@ module.exports = async () => {
       console.log('ERROR parsing shape', shape, error);
     }
   }
+
+  // 6.
   // Delete all Shapes not present in the current update
   const allSavedShapeKeys = [];
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
@@ -63,7 +77,10 @@ module.exports = async () => {
   if (staleShapeKeys.length) await SERVERDB.client.del(staleShapeKeys);
   console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
+  // 7.
   // Log how long it took to process everything
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Shapes (${updatedShapeKeys.size} in ${elapsedTime}).`);
+
+  //
 };

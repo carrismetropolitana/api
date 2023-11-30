@@ -1,13 +1,19 @@
+/* * */
+
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const collator = require('../modules/sortCollator');
 
-/* UPDATE STOPS */
+/* * */
 
 module.exports = async () => {
+  //
+  // 1.
   // Record the start time to later calculate operation duration
   const startTime = process.hrtime();
+
+  // 2.
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
   const allStops = await FEEDERDB.connection.query(`
@@ -34,11 +40,17 @@ module.exports = async () => {
             stop_id
     ) r ON s.stop_id = r.stop_id;
   `);
+
+  // 3.
   // Log progress
   console.log(`⤷ Updating Stops...`);
+
+  // 4.
   // Initate a temporary variable to hold updated Stops
   const allStopsData = [];
   const updatedStopKeys = new Set();
+
+  // 5.
   // For each stop, update its entry in the database
   for (const stop of allStops.rows) {
     // Discover which facilities this stop is near to
@@ -89,12 +101,18 @@ module.exports = async () => {
     updatedStopKeys.add(`stops:${parsedStop.id}`);
     //
   }
+
+  // 6.
   // Log count of updated Stops
   console.log(`⤷ Updated ${updatedStopKeys.size} Stops.`);
+
+  // 7.
   // Add the 'all' option
   allStopsData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
   updatedStopKeys.add('stops:all');
+
+  // 8.
   // Delete all Stops not present in the current update
   const allSavedStopKeys = [];
   for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
@@ -103,8 +121,11 @@ module.exports = async () => {
   const staleStopKeys = allSavedStopKeys.filter((id) => !updatedStopKeys.has(id));
   if (staleStopKeys.length) await SERVERDB.client.del(staleStopKeys);
   console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
+
+  // 9.
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Stops (${elapsedTime}).`);
+
   //
 };
