@@ -25,6 +25,41 @@ module.exports = [
   },
 
   //
+  // GTFS / PERIODS
+  {
+    type: 'gtfs',
+    file_name: 'periods',
+    file_extension: 'txt',
+    file_headers: ['period_id', 'period_name'],
+    table_query: `CREATE TABLE periods (
+        period_id VARCHAR(1),
+        period_name VARCHAR(255)
+    );`,
+    index_queries: ['CREATE INDEX periods_period_id_idx ON periods ("period_id");'],
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
+    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+  },
+
+  //
+  // GTFS / DATES
+  {
+    type: 'gtfs',
+    file_name: 'dates',
+    file_extension: 'txt',
+    file_headers: ['date', 'period', 'day_type', 'holiday', 'description'],
+    table_query: `CREATE TABLE dates (
+        date VARCHAR(8),
+        period VARCHAR(1),
+        day_type VARCHAR(1),
+        holiday VARCHAR(1),
+        description VARCHAR(255)
+    );`,
+    index_queries: ['CREATE INDEX dates_date_idx ON dates ("date");'],
+    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
+    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+  },
+
+  //
   // GTFS / CALENDAR_DATES
   {
     type: 'gtfs',

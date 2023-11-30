@@ -3,6 +3,7 @@
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
+const collator = require('../modules/sortCollator');
 
 /* * */
 
@@ -11,28 +12,53 @@ module.exports = async () => {
   const startTime = process.hrtime();
   // Fetch all calendar dates from Postgres
   console.log(`⤷ Querying database...`);
-  const allCalendarDates = await FEEDERDB.connection.query('SELECT * FROM calendar_dates');
-  // Log progress
-  console.log(`⤷ Updating Periods...`);
-  // Reduce calendar dates into periods
-  let allPeriods = allCalendarDates.rows.reduce((accumulator, calendarDate) => {
-    // Find the corresponding period in the accumulator array
-    const periodIndex = accumulator.findIndex((period) => period.id === calendarDate.period);
-    // If the period is found, add the date to its dates array
-    if (periodIndex !== -1) accumulator[periodIndex].dates.add(calendarDate.date);
-    // If the period is not found, add it to the accumulator with an empty dates array
-    else accumulator.push({ id: calendarDate.period || 'empty', name: `Period Name ${calendarDate.period}`, dates: new Set([calendarDate.date]) });
-    // Return the accumulator
-    return accumulator;
-  }, []);
-  // Sort the dates for each period, as well each period in the array
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  allPeriods = allPeriods.map((period) => ({ ...period, dates: Array.from(period.dates).sort((a, b) => collator.compare(a, b)) }));
-  //   allPeriods.sort((a, b) => collator.compare(a.id, b.id))
+  const allPeriods = await FEEDERDB.connection.query('SELECT * FROM periods');
+  const allDates = await FEEDERDB.connection.query('SELECT * FROM dates');
+  // Build periods hashmap
+  const allPeriodsParsed = allPeriods.rows.map((period) => {
+    // Parse the dates associated with this period
+    const datesForThisPeriod = allDates.rows
+      .filter((date) => date.period === period.period_id)
+      .map((date) => date.date)
+      .sort((a, b) => collator.compare(a, b));
+    // Initiate a variable to hold the active blocks for this period
+    const validFromUntil = [];
+    // Start the block with the first date for this period
+    let currentBlock = {
+      from: datesForThisPeriod[0],
+    };
+    // Iterate on all dates for this period
+    for (let i = 1; i < datesForThisPeriod.length; i++) {
+      // Setup the current and previous dates
+      const prevDate = datesForThisPeriod[i - 1];
+      const currDate = datesForThisPeriod[i];
+      // Add a new block if the current date is not sequential to the previous date
+      if (currDate - prevDate !== 1) {
+        currentBlock.until = prevDate;
+        validFromUntil.push(currentBlock);
+        currentBlock = {
+          from: currDate,
+        };
+      }
+    }
+    // Add the last block
+    currentBlock.until = datesForThisPeriod[datesForThisPeriod.length - 1];
+    validFromUntil.push(currentBlock);
+    // Return the parsed period
+    return {
+      id: period.period_id,
+      name: period.period_name,
+      dates: datesForThisPeriod,
+      valid: validFromUntil,
+    };
+  });
+
+  // Sort each period in the array
+  allPeriodsParsed.sort((a, b) => collator.compare(a.id, b.id));
   // Log count of updated Periods
-  console.log(`⤷ Updated ${allPeriods.length} Periods.`);
+  console.log(`⤷ Updated ${allPeriodsParsed.length} Periods.`);
   // Save the array to the database
-  await SERVERDB.client.set('periods:all', JSON.stringify(allPeriods));
+  await SERVERDB.client.set('periods:all', JSON.stringify(allPeriodsParsed));
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating Periods (${elapsedTime}).`);
