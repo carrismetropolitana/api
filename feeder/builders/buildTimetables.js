@@ -55,7 +55,7 @@ module.exports = async () => {
       exceptions: [],
     };
 
-    for (const periodData of allPeriodsMap.entries()) {
+    for (const periodData of allPeriodsJson) {
       //
 
       const periodResult = {
@@ -65,6 +65,8 @@ module.exports = async () => {
         saturdays: [],
         sundays_holidays: [],
       };
+
+      const periodDatesSet = new Set(periodData.dates);
 
       for (const patternTrip of patternJson.trips) {
         //
@@ -81,8 +83,8 @@ module.exports = async () => {
           // Now we check in which period and which day_type we should put the trip
 
           for (const tripDate of patternTrip.dates) {
-            console.log(periodData);
-            if (periodData.has(tripDate)) {
+            console.log(periodDatesSet);
+            if (periodDatesSet.has(tripDate)) {
               const dateInfo = allDatesMap.get(tripDate);
               switch (dateInfo.day_type) {
                 case 1:
