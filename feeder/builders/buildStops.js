@@ -1,6 +1,7 @@
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
+const collator = require('../modules/sortCollator');
 
 /* UPDATE STOPS */
 
@@ -91,7 +92,6 @@ module.exports = async () => {
   // Log count of updated Stops
   console.log(`⤷ Updated ${updatedStopKeys.size} Stops.`);
   // Add the 'all' option
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allStopsData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
   updatedStopKeys.add('stops:all');

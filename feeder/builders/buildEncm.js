@@ -1,6 +1,7 @@
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
+const collator = require('../modules/sortCollator');
 
 /* UPDATE HELPDESKS */
 
@@ -60,7 +61,6 @@ module.exports = async () => {
   // Log count of updated ENCM
   console.log(`⤷ Updated ${updatedEncmKeys.size} ENCM.`);
   // Add the 'all' option
-  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
   allEncmData.sort((a, b) => collator.compare(a.id, b.id));
   await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
   updatedEncmKeys.add('encm:all');

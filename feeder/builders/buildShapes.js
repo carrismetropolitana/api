@@ -1,6 +1,7 @@
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
+const collator = require('../modules/sortCollator');
 const turf = require('@turf/turf');
 
 /* UPDATE SHAPES */
@@ -38,7 +39,6 @@ module.exports = async () => {
         id: shape.shape_id,
       };
       // Sort points to match sequence
-      const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
       parsedShape.points = shape.points.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
       // Create geojson feature using turf
       parsedShape.geojson = turf.lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
