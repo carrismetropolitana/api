@@ -114,6 +114,8 @@ module.exports = async () => {
         //
       }
 
+      finalTimetableForThisStop.periods.push(periodResult);
+
       //
     }
 
