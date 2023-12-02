@@ -1,7 +1,9 @@
-//
+/* * */
+
 const Buffer = require('buffer').Buffer;
 
-//
+/* * */
+
 module.exports.feed = async (request, reply) => {
   const gtfsFeedResponse = await fetch(process.env.GTFS_URL);
   const gtfsFeed = await gtfsFeedResponse.arrayBuffer();

@@ -1,9 +1,10 @@
 /* * */
-/* IMPORTS */
+
 const protobuf = require('protobufjs');
 const gtfsRealtime = protobuf.loadSync(`${process.env.PWD}/services/gtfs-realtime.proto`);
 
-//
+/* * */
+
 module.exports.json = async (request, reply) => {
   const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
   const allAlerts = await allAlertsResponse.json();
@@ -13,7 +14,8 @@ module.exports.json = async (request, reply) => {
     .send(allAlerts || []);
 };
 
-//
+/* * */
+
 module.exports.protobuf = async (request, reply) => {
   const allAlertsResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
   const allAlerts = await allAlertsResponse.json();

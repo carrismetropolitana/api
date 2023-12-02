@@ -1,9 +1,9 @@
-// auth.js
-
 /* * */
-/* IMPORTS */
+
 require('dotenv').config();
 const { PCGI_AUTH_URL, PCGI_CLIENT_ID, PCGI_CLIENT_SECRET, PCGI_BASE_URL } = process.env;
+
+/* * */
 
 class PCGIAPI {
   //
@@ -90,5 +90,7 @@ class PCGIAPI {
 
   //
 }
+
+/* * */
 
 module.exports = new PCGIAPI();

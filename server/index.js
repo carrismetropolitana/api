@@ -1,10 +1,10 @@
-//
-// IMPORTS
+/* * */
 
 const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
 const SERVERDB = require('./services/SERVERDB');
 
-//
+/* * */
+
 // IMPORT GTFS ENDPOINTS
 
 const gtfsEndpoint = require('./endpoints/gtfs.endpoint');
@@ -19,15 +19,16 @@ const patternsEndpoint = require('./endpoints/patterns.endpoint');
 const shapesEndpoint = require('./endpoints/shapes.endpoint');
 const stopsEndpoint = require('./endpoints/stops.endpoint');
 const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
-const vehiclesEventsEndpoint = require('./endpoints/vehicleEvents.endpoint');
 
-//
+/* * */
+
 // IMPORT DATASETS ENDPOINTS
 
 const schoolsEndpoint = require('./endpoints/schools.endpoint');
 const encmEndpoint = require('./endpoints/encm.endpoint');
 
-//
+/* * */
+
 // GTFS ENDPOINTS
 
 fastify.get('/gtfs', gtfsEndpoint.feed);
@@ -63,10 +64,11 @@ fastify.get('/stops', stopsEndpoint.all);
 fastify.get('/stops/:id', stopsEndpoint.single);
 fastify.get('/stops/:id/realtime', stopsEndpoint.singleWithRealtime);
 
-fastify.get('/vehicles', vehiclesEndpoint.all);
-fastify.get('/vehicles.pb', vehiclesEventsEndpoint.protobuf);
+fastify.get('/vehicles', vehiclesEndpoint.json);
+fastify.get('/vehicles.pb', vehiclesEndpoint.protobuf);
 
-//
+/* * */
+
 // DATASETS ENDPOINTS
 
 fastify.get('/facilities/schools', schoolsEndpoint.all);
@@ -75,7 +77,8 @@ fastify.get('/facilities/schools/:id', schoolsEndpoint.single);
 fastify.get('/facilities/encm', encmEndpoint.all);
 fastify.get('/facilities/encm/:id', encmEndpoint.single);
 
-//
+/* * */
+
 // START FASTIFY SERVER
 
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {

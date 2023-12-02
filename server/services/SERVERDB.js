@@ -1,7 +1,9 @@
 /* * */
-/* IMPORTS */
+
 const redis = require('redis');
 const { SERVERDB_HOST } = process.env;
+
+/* * */
 
 class SERVERDB {
   constructor() {
@@ -27,5 +29,7 @@ class SERVERDB {
     }
   }
 }
+
+/* * */
 
 module.exports = new SERVERDB();
