@@ -1,7 +1,7 @@
 /* * */
 
 const { DateTime } = require('luxon');
-const PCGIAPI = require('./PCGIAPI_prod');
+const PCGIAPI = require('./PCGIAPI');
 
 /* * */
 
