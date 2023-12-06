@@ -84,33 +84,18 @@ function convert24HourPlusOperationTimeStringToUnixTimestamp(operationTimeString
   const minutesConverted = minutesOperation;
   const secondsConverted = secondsOperation;
 
-  const currentDay = DateTime.local().startOf('day');
-  const currentMonth = currentDay.month;
-  const currentYear = currentDay.year;
+  const theDateObject = DateTime.local({ zone: 'Europe/Lisbon' });
 
-  // If the current server time is between 00 and 04, then do not add a day, else add the day
+  // If the current server time (now) is between 00 and 04, then consider the datetime object as the day before
+  if (theDateObject.hour >= 0 && theDateObject.hour < 4) theDateObject.set({ day: theDateObject.day - 1 });
 
-  // Create a Luxon DateTime object in the Europe/Lisbon timezone
-  const dateTime = DateTime.fromObject(
-    {
-      year: currentYear,
-      month: currentMonth,
-      day: currentDay.day,
-      hour: hoursConverted,
-      minute: minutesConverted,
-      second: secondsConverted,
-    },
-    {
-      zone: 'Europe/Lisbon',
-    }
-  );
+  // Now set the date components
+  theDateObject.set({ hour: hoursConverted, minute: minutesConverted, second: secondsConverted });
 
   // If the hours are greater than or equal to 24, add a day
-  if (hoursOperation >= 24) {
-    dateTime.plus({ days: 1 });
-  }
+  if (hoursOperation >= 24) theDateObject.plus({ days: 1 });
 
-  const unixTimestampUtc = dateTime.toUTC().toUnixInteger();
+  const unixTimestampUtc = theDateObject.toUTC().toUnixInteger();
 
   // Create a Date object with the local Unix timestamp and local timezone
   return unixTimestampUtc;
