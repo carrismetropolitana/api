@@ -86,8 +86,6 @@ function convert24HourPlusOperationTimeStringToUnixTimestamp(operationTimeString
   const daysInTheHourComponent = Math.floor(hoursOperation / 24);
   const hoursLeftAfterDayConversion = hoursOperation % 24;
 
-  console.log(hoursLeftAfterDayConversion);
-
   // Setup a new DateTime (luxon) object
   let theDateTimeObject = DateTime.local({ zone: 'Europe/Lisbon' });
 
