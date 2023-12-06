@@ -9,10 +9,10 @@
     "dependencies": {
         "@turf/turf": "6.5.0",
         "adm-zip": "0.5.10",
-        "csv-parse": "5.5.0",
-        "csv-stringify": "6.4.2",
+        "csv-parse": "5.5.2",
+        "csv-stringify": "6.4.4",
         "pg": "8.11.3",
         "pg-copy-streams": "6.0.6",
-        "redis": "4.6.8"
+        "redis": "4.6.11"
     }
 }
