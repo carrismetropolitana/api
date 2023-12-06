@@ -40,14 +40,11 @@ module.exports.singleWithRealtime = async (request, reply) => {
       trip_id: estimate.tripId,
       headsign: estimate.tripHeadsign,
       stop_sequence: estimate.stopSequence,
-      scheduled_arrival: convertTimeStringTo25Hours(estimate.stopScheduledArrivalTime) || convertTimeStringTo25Hours(estimate.stopScheduledDepartureTime),
-      scheduled_arrival_raw: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+      scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
       scheduled_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
-      estimated_arrival: convertTimeStringTo25Hours(estimate.stopArrivalEta) || convertTimeStringTo25Hours(estimate.stopDepartureEta),
-      estimated_arrival_raw: estimate.stopArrivalEta || estimate.stopDepartureEta,
+      estimated_arrival: estimate.stopArrivalEta || estimate.stopDepartureEta,
       estimated_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta),
-      observed_arrival: convertTimeStringTo25Hours(estimate.stopObservedArrivalTime) || convertTimeStringTo25Hours(estimate.stopObservedDepartureTime),
-      observed_arrival_raw: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+      observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
       observed_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedDepartureTime),
       vehicle_id: estimate.observedVehicleId,
     };
@@ -59,18 +56,6 @@ module.exports.singleWithRealtime = async (request, reply) => {
 };
 
 /* * */
-
-function convertTimeStringTo25Hours(timeString) {
-  if (!timeString) return;
-  const hoursString = timeString.substring(0, 2);
-  const hoursInt = parseInt(hoursString);
-  if (hoursInt < 4) {
-    const hoursInt25 = hoursInt + 24;
-    const hoursString25 = String(hoursInt25).padStart(2, '0');
-    return `${hoursString25}${timeString.substring(2)}`;
-  }
-  return timeString;
-}
 
 function convert24HourPlusOperationTimeStringToUnixTimestamp(operationTimeString) {
   //
