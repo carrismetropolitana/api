@@ -74,31 +74,40 @@ function convertTimeStringTo25Hours(timeString) {
 
 function convert24HourPlusOperationTimeStringToUnixTimestamp(operationTimeString) {
   //
+
+  // Return early if no time string is provided
   if (!operationTimeString) return null;
 
-  // Start by extracting the components of the timestring
+  // Extract the individual components of the time string (HH:MM:SS)
   const [hoursOperation, minutesOperation, secondsOperation] = operationTimeString.split(':').map(Number);
 
-  // If the hours are greater than 24, then subtract 24 hours
-  const hoursConverted = hoursOperation >= 24 ? hoursOperation - 24 : hoursOperation;
-  const minutesConverted = minutesOperation;
-  const secondsConverted = secondsOperation;
+  // Because the operational time string can be greater than 24 (expressing an operational day after midnight, or longer),
+  // calculate how many days are in the hour component, and how many hours are left after the parsing
+  const daysInTheHourComponent = Math.floor(hoursOperation / 24);
+  const hoursLeftAfterDayConversion = hoursOperation % 24;
 
-  const theDateObject = DateTime.local({ zone: 'Europe/Lisbon' });
+  console.log(hoursLeftAfterDayConversion);
 
-  // If the current server time (now) is between 00 and 04, then consider the datetime object as the day before
-  if (theDateObject.hour >= 0 && theDateObject.hour < 4) theDateObject.set({ day: theDateObject.day - 1 });
+  // Setup a new DateTime (luxon) object
+  let theDateTimeObject = DateTime.local({ zone: 'Europe/Lisbon' });
 
-  // Now set the date components
-  theDateObject.set({ hour: hoursConverted, minute: minutesConverted, second: secondsConverted });
+  // Since this is a on-the-fly conversion, there is the case where the server time will be between 00 and 04,
+  // in which case we need to set the DateTime object as the day before, before applying the actual time component calculations
+  if (theDateTimeObject.hour >= 0 && theDateTimeObject.hour < 4) theDateTimeObject = theDateTimeObject.set({ day: theDateTimeObject.day - 1 });
 
-  // If the hours are greater than or equal to 24, add a day
-  if (hoursOperation >= 24) theDateObject.plus({ days: 1 });
+  // Apply the date components previously calculated
+  theDateTimeObject = theDateTimeObject.set({
+    hour: hoursLeftAfterDayConversion,
+    minute: minutesOperation,
+    second: secondsOperation,
+  });
 
-  const unixTimestampUtc = theDateObject.toUTC().toUnixInteger();
+  // If the time string represents a service in another day (but in the same operational day),
+  // add the corresponding amount of days to the DateTime object
+  if (daysInTheHourComponent > 0) theDateTimeObject = theDateTimeObject.plus({ days: daysInTheHourComponent });
 
-  // Create a Date object with the local Unix timestamp and local timezone
-  return unixTimestampUtc;
+  // Return the DateTime object as a Unix timestamp in the UTC timezone
+  return theDateTimeObject.toUTC().toUnixInteger();
 
   //
 }
