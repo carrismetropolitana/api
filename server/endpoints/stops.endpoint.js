@@ -2,6 +2,7 @@
 
 const SERVERDB = require('../services/SERVERDB');
 const PCGIAPI = require('../services/PCGIAPI');
+const { DateTime } = require('luxon');
 
 /* * */
 
@@ -41,10 +42,13 @@ module.exports.singleWithRealtime = async (request, reply) => {
       stop_sequence: estimate.stopSequence,
       scheduled_arrival: convertTimeStringTo25Hours(estimate.stopScheduledArrivalTime) || convertTimeStringTo25Hours(estimate.stopScheduledDepartureTime),
       scheduled_arrival_raw: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+      scheduled_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
       estimated_arrival: convertTimeStringTo25Hours(estimate.stopArrivalEta) || convertTimeStringTo25Hours(estimate.stopDepartureEta),
       estimated_arrival_raw: estimate.stopArrivalEta || estimate.stopDepartureEta,
+      estimated_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta),
       observed_arrival: convertTimeStringTo25Hours(estimate.stopObservedArrivalTime) || convertTimeStringTo25Hours(estimate.stopObservedDepartureTime),
       observed_arrival_raw: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+      observed_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedDepartureTime),
       vehicle_id: estimate.observedVehicleId,
     };
   });
@@ -66,4 +70,37 @@ function convertTimeStringTo25Hours(timeString) {
     return `${hoursString25}${timeString.substring(2)}`;
   }
   return timeString;
+}
+
+function convert24HourPlusOperationTimeStringToUnixTimestamp(operationTimeString) {
+  //
+  if (!operationTimeString) return null;
+
+  // Start by extracting the components of the timestring
+  const [hoursOperation, minutesOperation, secondsOperation] = operationTimeString.split(':').map(Number);
+
+  // If the hours are greater than 24, then subtract 24 hours and add a day
+  const hoursConverted = hoursOperation > 24 ? hoursOperation - 24 : hoursOperation;
+  const minutesConverted = minutesOperation;
+  const secondsConverted = secondsOperation;
+
+  // Create a Luxon DateTime object in the Europe/Lisbon timezone
+  const dateTime = DateTime.fromObject({
+    hour: hoursConverted,
+    minute: minutesConverted,
+    second: secondsConverted,
+    zone: 'Europe/Lisbon',
+  });
+
+  // If the hours are greater than or equal to 24, add a day
+  if (hoursOperation >= 24) {
+    dateTime.plus({ days: 1 });
+  }
+
+  const unixTimestampUtc = dateTime.toUTC().toUnixInteger();
+
+  // Create a Date object with the local Unix timestamp and local timezone
+  return unixTimestampUtc;
+
+  //
 }
