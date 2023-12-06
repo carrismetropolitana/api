@@ -79,18 +79,31 @@ function convert24HourPlusOperationTimeStringToUnixTimestamp(operationTimeString
   // Start by extracting the components of the timestring
   const [hoursOperation, minutesOperation, secondsOperation] = operationTimeString.split(':').map(Number);
 
-  // If the hours are greater than 24, then subtract 24 hours and add a day
-  const hoursConverted = hoursOperation > 24 ? hoursOperation - 24 : hoursOperation;
+  // If the hours are greater than 24, then subtract 24 hours
+  const hoursConverted = hoursOperation >= 24 ? hoursOperation - 24 : hoursOperation;
   const minutesConverted = minutesOperation;
   const secondsConverted = secondsOperation;
 
+  const currentDay = DateTime.local().startOf('day');
+  const currentMonth = currentDay.month;
+  const currentYear = currentDay.year;
+
+  // If the current server time is between 00 and 04, then do not add a day, else add the day
+
   // Create a Luxon DateTime object in the Europe/Lisbon timezone
-  const dateTime = DateTime.fromObject({
-    hour: hoursConverted,
-    minute: minutesConverted,
-    second: secondsConverted,
-    zone: 'Europe/Lisbon',
-  });
+  const dateTime = DateTime.fromObject(
+    {
+      year: currentYear,
+      month: currentMonth,
+      day: currentDay.day,
+      hour: hoursConverted,
+      minute: minutesConverted,
+      second: secondsConverted,
+    },
+    {
+      zone: 'Europe/Lisbon',
+    }
+  );
 
   // If the hours are greater than or equal to 24, add a day
   if (hoursOperation >= 24) {
