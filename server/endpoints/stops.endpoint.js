@@ -40,8 +40,11 @@ module.exports.singleWithRealtime = async (request, reply) => {
       headsign: estimate.tripHeadsign,
       stop_sequence: estimate.stopSequence,
       scheduled_arrival: convertTimeStringTo25Hours(estimate.stopScheduledArrivalTime) || convertTimeStringTo25Hours(estimate.stopScheduledDepartureTime),
+      scheduled_arrival_raw: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
       estimated_arrival: convertTimeStringTo25Hours(estimate.stopArrivalEta) || convertTimeStringTo25Hours(estimate.stopDepartureEta),
+      estimated_arrival_raw: estimate.stopArrivalEta || estimate.stopDepartureEta,
       observed_arrival: convertTimeStringTo25Hours(estimate.stopObservedArrivalTime) || convertTimeStringTo25Hours(estimate.stopObservedDepartureTime),
+      observed_arrival_raw: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
       vehicle_id: estimate.observedVehicleId,
     };
   });
