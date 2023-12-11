@@ -86,7 +86,7 @@ class RTEVENTS {
         // Current status can be 'IN_TRANSIT_TO', 'INCOMMING_AT' or 'STOPPED_AT' at the current stop_id
         current_status: rtEvent.content.entity[0].vehicle.currentStatus,
         // Schedule relationship can be SCHEDULED for planned trips or ADDED for new trips created by the driver
-        schedule_relationship: rtEvent.content.entity[0].vehicle.trip.scheduleRelationship,
+        schedule_relationship: rtEvent.content.entity[0].vehicle.trip.scheduleRelationship === 'SCHEDULED' ? 'SCHEDULED' : 'DUPLICATED',
         // Trip ID, route ID and stop ID should always be a known entity in the scheduled GTFS
         trip_id: vehicleTripId,
         route_id: rtEvent.content.entity[0].vehicle.trip.routeId,
