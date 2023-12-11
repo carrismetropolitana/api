@@ -10,6 +10,7 @@ const fetchAndExtractLatestDataset = require('./modules/fetchAndExtractLatestDat
 const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
 
 const buildMunicipalities = require('./builders/buildMunicipalities');
+const buildLocalities = require('./builders/buildLocalities');
 const buildPeriods = require('./builders/buildPeriods');
 const buildDates = require('./builders/buildDates');
 const buildTimetables = require('./builders/buildTimetables');
@@ -83,6 +84,10 @@ module.exports = async () => {
     console.log();
     console.log('STEP 2.2: Update Municipalities');
     await buildMunicipalities();
+
+    console.log();
+    console.log('STEP 2.3: Update Localities');
+    await buildLocalities();
 
     console.log();
     console.log('STEP 2.3: Update Periods');
