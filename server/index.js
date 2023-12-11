@@ -25,6 +25,7 @@ const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
 
 // IMPORT DATASETS ENDPOINTS
 
+const facilitiesEndpoint = require('./endpoints/facilities.endpoint');
 const schoolsEndpoint = require('./endpoints/schools.endpoint');
 const encmEndpoint = require('./endpoints/encm.endpoint');
 
@@ -74,6 +75,8 @@ fastify.get('/vehicles.pb', vehiclesEndpoint.protobuf);
 /* * */
 
 // DATASETS ENDPOINTS
+
+fastify.get('/facilities', facilitiesEndpoint.all);
 
 fastify.get('/facilities/schools', schoolsEndpoint.all);
 fastify.get('/facilities/schools/:id', schoolsEndpoint.single);
