@@ -1,5 +1,6 @@
 /* * */
 
+const { DateTime } = require('luxon');
 const FEEDERDB = require('../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
@@ -43,15 +44,18 @@ module.exports = async () => {
     // 3.4.
     // Iterate on all dates for this period
     for (let i = 1; i < datesForThisPeriod.length; i++) {
-      // Setup the current and previous dates
-      const prevDate = datesForThisPeriod[i - 1];
-      const currDate = datesForThisPeriod[i];
-      // Add a new block if the current date is not sequential to the previous date
-      if (currDate - prevDate !== 1) {
-        currentBlock.until = prevDate;
+      // Setup the next and previous date strings
+      const prevDateString = datesForThisPeriod[i - 1];
+      const nextDateString = datesForThisPeriod[i];
+      // Setup the next and previous date objects
+      const prevDate = DateTime.fromFormat(prevDateString, 'yyyyMMdd');
+      const nextDate = DateTime.fromFormat(nextDateString, 'yyyyMMdd');
+      // Add a new block if the next date is not sequential to the previous date
+      if (prevDate !== nextDate.minus({ days: 1 })) {
+        currentBlock.until = prevDateString;
         validFromUntil.push(currentBlock);
         currentBlock = {
-          from: currDate,
+          from: nextDateString,
         };
       }
     }
