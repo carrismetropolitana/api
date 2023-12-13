@@ -49,6 +49,8 @@ class RTEVENTS {
     // SORT EVENTS BY TIMESTAMP ASCENDING
     allRtEvents.sort((a, b) => a.content?.entity[0]?.vehicle?.timestamp - b.content?.entity[0]?.vehicle?.timestamp);
 
+    console.log('RTEVENTS: allRtEvents.length:', allRtEvents.length);
+
     // 6.
     // Update vehicles with the latest events
     for (const rtEvent of allRtEvents) {
