@@ -51,7 +51,7 @@ module.exports = async () => {
       const prevDate = DateTime.fromFormat(prevDateString, 'yyyyMMdd');
       const nextDate = DateTime.fromFormat(nextDateString, 'yyyyMMdd');
       // Add a new block if the next date is not sequential to the previous date
-      if (prevDate !== nextDate.minus({ days: 1 })) {
+      if (prevDate.toFormat('yyyyMMdd') !== nextDate.minus({ days: 1 }).toFormat('yyyyMMdd')) {
         currentBlock.until = prevDateString;
         validFromUntil.push(currentBlock);
         currentBlock = {
