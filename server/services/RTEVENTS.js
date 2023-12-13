@@ -59,6 +59,8 @@ class RTEVENTS {
       if (!rtEvent?.content?.entity[0]?.vehicle?.trip?.tripId?.length) continue;
       // Does this event has a valid latitude and longitude
       if (!Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
+      // Skip if the trip is not scheduled
+      if (rtEvent.content.entity[0].vehicle.trip.scheduleRelationship !== 'SCHEDULED') continue;
       // Is this event older than 90 seconds
       //   if (rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
