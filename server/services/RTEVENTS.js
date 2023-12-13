@@ -62,9 +62,9 @@ class RTEVENTS {
       if (!Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
       // Skip if the trip is not scheduled
       if (rtEvent.content?.entity[0]?.vehicle?.trip?.scheduleRelationship !== 'SCHEDULED') continue;
-      // Skip if the route_id is excessively long
+      // Skip if the route id is excessively long
       if (rtEvent.content?.entity[0]?.vehicle?.trip?.routeId?.length > 8) continue;
-      // Skip if the stop is not 6 digits
+      // Skip if the stop id is not 6 digits
       if (rtEvent.content?.entity[0]?.vehicle?.stopId.length !== 6) continue;
       // Is this event older than 90 seconds
       //   if (rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
