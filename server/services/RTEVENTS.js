@@ -26,8 +26,9 @@ class RTEVENTS {
     // 2.
     // Prepare the request to PCGI to get all events received in the last 5 minutes
     const formData = new URLSearchParams();
-    formData.append('timeRange', DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 10 }).toFormat('yyyyLLddHHmm'));
-    console.log('RTEVENTS: timeRange', DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 10 }).toFormat('yyyyLLddHHmm'));
+    formData.append('limit', 50000);
+    formData.append('timeRange', DateTime.now().setZone('Europe/Lisbon').toFormat('yyyyLLddHHmm'));
+    console.log('RTEVENTS: timeRange', DateTime.now().setZone('Europe/Lisbon').toFormat('yyyyLLddHHmm'));
 
     // 3.
     // Perform the request to PCGI
