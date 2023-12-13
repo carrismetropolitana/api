@@ -29,8 +29,7 @@ class RTEVENTS {
     formData.append('limit', 50000);
     formData.append('operatorId', '');
     formData.append('vehicleId', '');
-    formData.append('timeRange', DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 10 }).toFormat('yyyyLLddHHmm'));
-    console.log('RTEVENTS: timeRange', DateTime.now().setZone('Europe/Lisbon').toFormat('yyyyLLddHHmm'));
+    formData.append('timeRange', DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toFormat('yyyyLLddHHmm'));
 
     // 3.
     // Perform the request to PCGI
@@ -49,9 +48,7 @@ class RTEVENTS {
     const updatedRtEvents = new Map();
 
     // SORT EVENTS BY TIMESTAMP ASCENDING
-    allRtEvents.sort((a, b) => a.content?.entity[0]?.vehicle?.timestamp - b.content?.entity[0]?.vehicle?.timestamp);
-
-    console.log('RTEVENTS: allRtEvents.length:', allRtEvents.length);
+    // allRtEvents.sort((a, b) => a.content?.entity[0]?.vehicle?.timestamp - b.content?.entity[0]?.vehicle?.timestamp);
 
     // 6.
     // Update vehicles with the latest events
@@ -75,9 +72,7 @@ class RTEVENTS {
       // Skip if the stop id is not 6 digits
       if (rtEvent.content?.entity[0]?.vehicle?.stopId.length !== 6) continue;
       // Is this event older than 90 seconds
-      //   if (rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
-
-      console.log('RTEVENTS: timestamp, unix-90, timestamp < unix-90:', rtEvent.content.entity[0].vehicle.timestamp, DateTime.now().minus({ seconds: 90 }).toUnixInteger(), rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger());
+      if (rtEvent?.content?.entity[0]?.vehicle?.timestamp < DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
       // 6.2.
       // Prepare the most used variables
