@@ -60,12 +60,12 @@ class RTEVENTS {
       // Does this event has a valid latitude and longitude
       if (!Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
       // Is this event older than 90 seconds
-      if (rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
+      if (rtEvent?.content?.entity[0]?.vehicle?.timestamp / 1000 < DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
       // 6.2.
       // Prepare the most used variables
       const vehicleId = `${rtEvent.content.entity[0].vehicle.agencyId}|${rtEvent.content.entity[0].vehicle.vehicle.id}`;
-      const vehicleTimestamp = rtEvent.content.entity[0].vehicle.timestamp;
+      const vehicleTimestamp = rtEvent.content.entity[0].vehicle.timestamp / 1000;
       const vehicleTripId = rtEvent.content.entity[0].vehicle.trip.tripId;
       const vehicleBearing = Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.bearing || 0);
       const vehicleSpeed = rtEvent?.content?.entity[0]?.vehicle?.position?.speed / 3.6 || 0; // in meters per second
