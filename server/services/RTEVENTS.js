@@ -60,7 +60,7 @@ class RTEVENTS {
       // Does this event has a valid latitude and longitude
       if (!Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
       // Is this event older than 90 seconds
-      if (rtEvent?.content?.entity[0]?.vehicle?.timestamp / 1000 > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
+      //   if (rtEvent?.content?.entity[0]?.vehicle?.timestamp / 1000 > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
       // 6.2.
       // Prepare the most used variables
