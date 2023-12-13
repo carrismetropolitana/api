@@ -45,6 +45,9 @@ class RTEVENTS {
     // Reset the Map variable
     const updatedRtEvents = new Map();
 
+    // SORT EVENTS BY TIMESTAMP ASCENDING
+    allRtEvents.sort((a, b) => a.content?.entity[0]?.vehicle?.timestamp - b.content?.entity[0]?.vehicle?.timestamp);
+
     // 6.
     // Update vehicles with the latest events
     for (const rtEvent of allRtEvents) {
