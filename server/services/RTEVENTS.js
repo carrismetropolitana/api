@@ -69,6 +69,8 @@ class RTEVENTS {
       // Is this event older than 90 seconds
       //   if (rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
+      console.log('RTEVENTS: timestamp, unix-90, timestamp < unix-90:', rtEvent.content.entity[0].vehicle.timestamp, DateTime.now().minus({ seconds: 90 }).toUnixInteger(), rtEvent?.content?.entity[0]?.vehicle?.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger());
+
       // 6.2.
       // Prepare the most used variables
       const vehicleId = `${rtEvent.content.entity[0].vehicle.agencyId}|${rtEvent.content.entity[0].vehicle.vehicle.id}`;
