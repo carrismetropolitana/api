@@ -7,6 +7,8 @@ const SERVERDB = require('./services/SERVERDB');
 
 // IMPORT GTFS ENDPOINTS
 
+const timeEndpoint = require('./endpoints/time.endpoint');
+
 const gtfsEndpoint = require('./endpoints/gtfs.endpoint');
 const alertsEndpoint = require('./endpoints/alerts.endpoint');
 const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
@@ -32,6 +34,8 @@ const encmEndpoint = require('./endpoints/encm.endpoint');
 /* * */
 
 // GTFS ENDPOINTS
+
+fastify.get('/time', timeEndpoint.test);
 
 fastify.get('/gtfs', gtfsEndpoint.feed);
 // fastify.get('/netex', gtfsEndpoint.feed);
