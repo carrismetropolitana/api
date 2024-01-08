@@ -1,6 +1,6 @@
 /* * */
 
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDB = require('../../services/SERVERDB');
 
 /* * */
 

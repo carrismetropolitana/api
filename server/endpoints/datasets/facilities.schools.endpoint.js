@@ -1,11 +1,11 @@
 /* * */
 
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDB = require('../../services/SERVERDB');
 
 /* * */
 
 module.exports.all = async (request, reply) => {
-  const allItems = await SERVERDB.client.get('dates:all');
+  const allItems = await SERVERDB.client.get('schools:all');
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')
@@ -13,7 +13,7 @@ module.exports.all = async (request, reply) => {
 };
 
 module.exports.single = async (request, reply) => {
-  const singleItem = await SERVERDB.client.get(`dates:${request.params.date}`);
+  const singleItem = await SERVERDB.client.get(`schools:${request.params.id}`);
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')

@@ -1,9 +1,9 @@
 /* * */
 
 const { DateTime } = require('luxon');
-const PCGIAPI = require('../services/PCGIAPI');
+const PCGIAPI = require('../../services/PCGIAPI');
 const protobuf = require('protobufjs');
-const RTEVENTS = require('../services/RTEVENTS');
+const RTEVENTS = require('../../services/RTEVENTS');
 const gtfsRealtime = protobuf.loadSync(`${process.env.PWD}/services/gtfs-realtime.proto`);
 
 /* * */

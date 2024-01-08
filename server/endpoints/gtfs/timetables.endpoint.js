@@ -1,6 +1,6 @@
 /* * */
 
-const SERVERDB = require('../services/SERVERDB');
+const SERVERDB = require('../../services/SERVERDB');
 
 /* * */
 
@@ -10,7 +10,7 @@ module.exports.all = async (request, reply) => {
 };
 
 module.exports.single = async (request, reply) => {
-  const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
+  const singleItem = await SERVERDB.client.get(`timetables:${request.params.pattern_id}-${request.params.stop_id}-${request.params.stop_sequence}`);
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')

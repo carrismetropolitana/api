@@ -5,31 +5,30 @@ const SERVERDB = require('./services/SERVERDB');
 
 /* * */
 
+const timeEndpoint = require('./endpoints/gtfs/time.endpoint');
+
 // IMPORT GTFS ENDPOINTS
 
-const timeEndpoint = require('./endpoints/time.endpoint');
-
-const gtfsEndpoint = require('./endpoints/gtfs.endpoint');
-const alertsEndpoint = require('./endpoints/alerts.endpoint');
-const municipalitiesEndpoint = require('./endpoints/municipalities.endpoint');
-const localitiesEndpoint = require('./endpoints/localities.endpoint');
-const periodsEndpoint = require('./endpoints/periods.endpoint');
-const datesEndpoint = require('./endpoints/dates.endpoint');
-const timetablesEndpoint = require('./endpoints/timetables.endpoint');
-const linesEndpoint = require('./endpoints/lines.endpoint');
-const routesEndpoint = require('./endpoints/routes.endpoint');
-const patternsEndpoint = require('./endpoints/patterns.endpoint');
-const shapesEndpoint = require('./endpoints/shapes.endpoint');
-const stopsEndpoint = require('./endpoints/stops.endpoint');
-const vehiclesEndpoint = require('./endpoints/vehicles.endpoint');
+const gtfsEndpoint = require('./endpoints/gtfs/gtfs.endpoint');
+const alertsEndpoint = require('./endpoints/gtfs/alerts.endpoint');
+const municipalitiesEndpoint = require('./endpoints/gtfs/municipalities.endpoint');
+const localitiesEndpoint = require('./endpoints/gtfs/localities.endpoint');
+const periodsEndpoint = require('./endpoints/gtfs/periods.endpoint');
+const datesEndpoint = require('./endpoints/gtfs/dates.endpoint');
+const timetablesEndpoint = require('./endpoints/gtfs/timetables.endpoint');
+const linesEndpoint = require('./endpoints/gtfs/lines.endpoint');
+const routesEndpoint = require('./endpoints/gtfs/routes.endpoint');
+const patternsEndpoint = require('./endpoints/gtfs/patterns.endpoint');
+const shapesEndpoint = require('./endpoints/gtfs/shapes.endpoint');
+const stopsEndpoint = require('./endpoints/gtfs/stops.endpoint');
+const vehiclesEndpoint = require('./endpoints/gtfs/vehicles.endpoint');
 
 /* * */
 
 // IMPORT DATASETS ENDPOINTS
 
-const facilitiesEndpoint = require('./endpoints/facilities.endpoint');
-const schoolsEndpoint = require('./endpoints/schools.endpoint');
-const encmEndpoint = require('./endpoints/encm.endpoint');
+const schoolsEndpoint = require('./endpoints/datasets/facilities.schools.endpoint');
+const encmEndpoint = require('./endpoints/datasets/facilities.encm.endpoint');
 
 /* * */
 
@@ -80,7 +79,7 @@ fastify.get('/vehicles.pb', vehiclesEndpoint.protobuf);
 
 // DATASETS ENDPOINTS
 
-fastify.get('/facilities', facilitiesEndpoint.all);
+fastify.get('/facilities', require('./endpoints/datasets/facilities.endpoint').all);
 
 fastify.get('/facilities/schools', schoolsEndpoint.all);
 fastify.get('/facilities/schools/:id', schoolsEndpoint.single);

@@ -1,7 +1,7 @@
 /* * */
 
-const SERVERDB = require('../services/SERVERDB');
-const PCGIAPI = require('../services/PCGIAPI');
+const SERVERDB = require('../../services/SERVERDB');
+const PCGIAPI = require('../../services/PCGIAPI');
 const { DateTime } = require('luxon');
 
 /* * */
