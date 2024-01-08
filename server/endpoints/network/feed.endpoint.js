@@ -4,7 +4,7 @@ const Buffer = require('buffer').Buffer;
 
 /* * */
 
-module.exports.feed = async (request, reply) => {
+module.exports.gtfs = async (request, reply) => {
   const gtfsFeedResponse = await fetch(process.env.GTFS_URL);
   const gtfsFeed = await gtfsFeedResponse.arrayBuffer();
   const gtfsFeedBbuffer = Buffer.from(gtfsFeed, 'utf-8');

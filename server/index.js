@@ -5,75 +5,52 @@ const SERVERDB = require('./services/SERVERDB');
 
 /* * */
 
-const timeEndpoint = require('./endpoints/gtfs/time.endpoint');
+// DEBUG ENDPOINTS
 
-// IMPORT GTFS ENDPOINTS
-
-const gtfsEndpoint = require('./endpoints/gtfs/gtfs.endpoint');
-const alertsEndpoint = require('./endpoints/gtfs/alerts.endpoint');
-const municipalitiesEndpoint = require('./endpoints/gtfs/municipalities.endpoint');
-const localitiesEndpoint = require('./endpoints/gtfs/localities.endpoint');
-const periodsEndpoint = require('./endpoints/gtfs/periods.endpoint');
-const datesEndpoint = require('./endpoints/gtfs/dates.endpoint');
-const timetablesEndpoint = require('./endpoints/gtfs/timetables.endpoint');
-const linesEndpoint = require('./endpoints/gtfs/lines.endpoint');
-const routesEndpoint = require('./endpoints/gtfs/routes.endpoint');
-const patternsEndpoint = require('./endpoints/gtfs/patterns.endpoint');
-const shapesEndpoint = require('./endpoints/gtfs/shapes.endpoint');
-const stopsEndpoint = require('./endpoints/gtfs/stops.endpoint');
-const vehiclesEndpoint = require('./endpoints/gtfs/vehicles.endpoint');
+fastify.get('/time', require('./endpoints/network/debug/time.endpoint').test);
 
 /* * */
 
-// IMPORT DATASETS ENDPOINTS
+// NETWORK ENDPOINTS
 
-const schoolsEndpoint = require('./endpoints/datasets/facilities.schools.endpoint');
-const encmEndpoint = require('./endpoints/datasets/facilities.encm.endpoint');
+fastify.get('/gtfs', require('./endpoints/network/feed.endpoint').gtfs);
+// fastify.get('/netex', require('./endpoints/network/feed.endpoint').netex);
 
-/* * */
+fastify.get('/alerts', require('./endpoints/network/alerts.endpoint').json);
+fastify.get('/alerts.pb', require('./endpoints/network/alerts.endpoint').protobuf);
+// fastify.get('/alerts.rss', require('./endpoints/network/alerts.endpoint').rss);
 
-// GTFS ENDPOINTS
+fastify.get('/municipalities', require('./endpoints/network/municipalities.endpoint').all);
+fastify.get('/municipalities/:id', require('./endpoints/network/municipalities.endpoint').single);
 
-fastify.get('/time', timeEndpoint.test);
+fastify.get('/localities', require('./endpoints/network/localities.endpoint').all);
+fastify.get('/localities/:id', require('./endpoints/network/localities.endpoint').single);
 
-fastify.get('/gtfs', gtfsEndpoint.feed);
-// fastify.get('/netex', gtfsEndpoint.feed);
+fastify.get('/periods', require('./endpoints/network/periods.endpoint').all);
 
-fastify.get('/alerts', alertsEndpoint.json);
-fastify.get('/alerts.pb', alertsEndpoint.protobuf);
-// fastify.get('/alerts.rss', alertsEndpoint.rss);
+fastify.get('/dates', require('./endpoints/network/dates.endpoint').all);
+fastify.get('/dates/:date', require('./endpoints/network/dates.endpoint').single);
+fastify.get('/timetables/:pattern_id/:stop_id/:stop_sequence', require('./endpoints/network/timetables.endpoint').single);
 
-fastify.get('/municipalities', municipalitiesEndpoint.all);
-fastify.get('/municipalities/:id', municipalitiesEndpoint.single);
+fastify.get('/lines', require('./endpoints/network/lines.endpoint').all);
+fastify.get('/lines/:id', require('./endpoints/network/lines.endpoint').single);
 
-fastify.get('/localities', localitiesEndpoint.all);
-fastify.get('/localities/:id', localitiesEndpoint.single);
+fastify.get('/routes', require('./endpoints/network/routes.endpoint').all);
+fastify.get('/routes/:id', require('./endpoints/network/routes.endpoint').single);
 
-fastify.get('/periods', periodsEndpoint.all);
+fastify.get('/patterns', require('./endpoints/network/patterns.endpoint').all);
+fastify.get('/patterns/:id', require('./endpoints/network/patterns.endpoint').single);
 
-fastify.get('/dates', datesEndpoint.all);
-fastify.get('/dates/:date', datesEndpoint.single);
-fastify.get('/timetables/:pattern_id/:stop_id/:stop_sequence', timetablesEndpoint.single);
+fastify.get('/shapes', require('./endpoints/network/shapes.endpoint').all);
+fastify.get('/shapes/:id', require('./endpoints/network/shapes.endpoint').single);
 
-fastify.get('/lines', linesEndpoint.all);
-fastify.get('/lines/:id', linesEndpoint.single);
+fastify.get('/stops', require('./endpoints/network/stops.endpoint').all);
+// fastify.get('/stops.pb', require('./endpoints/network/stops.endpoint').protobuf);
+fastify.get('/stops/:id', require('./endpoints/network/stops.endpoint').single);
+fastify.get('/stops/:id/realtime', require('./endpoints/network/stops.endpoint').singleWithRealtime);
 
-fastify.get('/routes', routesEndpoint.all);
-fastify.get('/routes/:id', routesEndpoint.single);
-
-fastify.get('/patterns', patternsEndpoint.all);
-fastify.get('/patterns/:id', patternsEndpoint.single);
-
-fastify.get('/shapes', shapesEndpoint.all);
-fastify.get('/shapes/:id', shapesEndpoint.single);
-
-fastify.get('/stops', stopsEndpoint.all);
-// fastify.get('/stops.pb', stopsEndpoint.protobuf);
-fastify.get('/stops/:id', stopsEndpoint.single);
-fastify.get('/stops/:id/realtime', stopsEndpoint.singleWithRealtime);
-
-fastify.get('/vehicles', vehiclesEndpoint.json);
-fastify.get('/vehicles.pb', vehiclesEndpoint.protobuf);
+fastify.get('/vehicles', require('./endpoints/network/vehicles.endpoint').json);
+fastify.get('/vehicles.pb', require('./endpoints/network/vehicles.endpoint').protobuf);
 
 /* * */
 
@@ -81,11 +58,11 @@ fastify.get('/vehicles.pb', vehiclesEndpoint.protobuf);
 
 fastify.get('/facilities', require('./endpoints/datasets/facilities.endpoint').all);
 
-fastify.get('/facilities/schools', schoolsEndpoint.all);
-fastify.get('/facilities/schools/:id', schoolsEndpoint.single);
+fastify.get('/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all);
+fastify.get('/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single);
 
-fastify.get('/facilities/encm', encmEndpoint.all);
-fastify.get('/facilities/encm/:id', encmEndpoint.single);
+fastify.get('/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
+fastify.get('/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
 
 /* * */
 

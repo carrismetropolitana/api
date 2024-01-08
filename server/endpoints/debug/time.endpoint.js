@@ -4,7 +4,7 @@ const { DateTime } = require('luxon');
 
 /* * */
 
-module.exports.test = async (request, reply) => {
+module.exports.time = async (request, reply) => {
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')
