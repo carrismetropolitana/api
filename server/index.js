@@ -7,7 +7,7 @@ const SERVERDB = require('./services/SERVERDB');
 
 // DEBUG ENDPOINTS
 
-fastify.get('/time', require('./endpoints/network/debug/time.endpoint').test);
+fastify.get('/time', require('./endpoints/debug/time.endpoint').test);
 
 /* * */
 
