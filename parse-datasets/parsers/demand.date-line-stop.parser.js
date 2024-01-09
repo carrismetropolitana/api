@@ -10,20 +10,21 @@ const settings = require('../config/settings');
 
 module.exports = async () => {
   //
-  // 1.
-  // Record the start time to later calculate operation duration
-  const startTime = process.hrtime();
 
-  // 2.
+  const startTime = process.hrtime();
+  console.log(`⤷ Parsing datasets/demand/date-line-stop...`);
+
   // Read directory from cloned repository
-  console.log(`⤷ Open directory...`);
   const allDirectoryFilenames = fs.readdirSync(`${settings.BASE_DIR}/demand/date-line-stop`, { encoding: 'utf-8' });
 
-  // 3.
-  // Create the different views
+  //
+  console.log(`⤷ Parsing "viewByTotalForEachDateForEachStop"...`);
   await viewByTotalForEachDateForEachStop(allDirectoryFilenames);
 
-  // 4.
+  //
+  //   console.log(`⤷ Parsing "another view"...`);
+  //   await viewAnother(allDirectoryFilenames);
+
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
   console.log(`⤷ Done updating datasets/demand/date-line-stop (${elapsedTime}).`);
