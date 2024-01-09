@@ -1,9 +1,9 @@
 /* * */
 
-const FEEDERDB = require('../services/FEEDERDB');
-const SERVERDB = require('../services/SERVERDB');
-const timeCalc = require('../modules/timeCalc');
-const collator = require('../modules/sortCollator');
+const FEEDERDB = require('../../services/FEEDERDB');
+const SERVERDB = require('../../services/SERVERDB');
+const timeCalc = require('../../modules/timeCalc');
+const collator = require('../../modules/sortCollator');
 
 /* * */
 

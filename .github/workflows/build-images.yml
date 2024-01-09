@@ -42,8 +42,8 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-feeder:
-    name: 'Docker Build - feeder'
+  api-parse-datasets:
+    name: 'Docker Build - parse-datasets'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -66,9 +66,40 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          context: ./feeder
-          file: ./feeder/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-feeder:${{ github.ref_name }}
+          context: ./parse-datasets
+          file: ./parse-datasets/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-parse-datasets:${{ github.ref_name }}
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  api-parse-network:
+    name: 'Docker Build - parse-network'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          context: ./parse-network
+          file: ./parse-network/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-parse-network:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
