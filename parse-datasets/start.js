@@ -6,6 +6,7 @@ const SERVERDB = require('./services/SERVERDB');
 
 const timeCalc = require('./modules/timeCalc');
 const setupBaseDirectory = require('./modules/setupBaseDirectory');
+const cloneGitRepository = require('./modules/cloneGitRepository');
 // const fetchAndExtractLatestDataset = require('./modules/fetchAndExtractLatestDataset');
 // const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
 
