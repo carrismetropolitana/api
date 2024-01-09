@@ -6,8 +6,8 @@ const SERVERDB = require('./services/SERVERDB');
 
 const timeCalc = require('./modules/timeCalc');
 const setupBaseDirectory = require('./modules/setupBaseDirectory');
-const fetchAndExtractLatestDataset = require('./modules/fetchAndExtractLatestDataset');
-const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
+// const fetchAndExtractLatestDataset = require('./modules/fetchAndExtractLatestDataset');
+// const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
 
 /* * */
 
@@ -43,24 +43,23 @@ module.exports = async () => {
     console.log('STEP 1.0: Clone GIT repository');
     await cloneGitRepository();
 
-    console.log();
-    console.log('STEP 1.0: Clone GIT repository');
-    for (const fileOptions of files) {
-      if (fileOptions.type !== 'datasets') continue;
-      await fetchAndExtractLatestDataset(fileOptions);
-      await setupPrepareAndImportFile(fileOptions);
-    }
+    // console.log();
+    // console.log('STEP 1.0: Clone GIT repository');
+    // for (const fileOptions of files) {
+    //   if (fileOptions.type !== 'datasets') continue;
+    //   await fetchAndExtractLatestDataset(fileOptions);
+    //   await setupPrepareAndImportFile(fileOptions);
+    // }
 
-    console.log();
-    console.log('STEP 1.1: Update Facilities');
-    await require('./builders/datasets/facilities.schools.builder')();
-    await require('./builders/datasets/facilities.encm.builder')();
+    // console.log();
+    // console.log('STEP 1.1: Update Facilities');
+    // await require('./builders/datasets/facilities.schools.builder')();
+    // await require('./builders/datasets/facilities.encm.builder')();
 
     //
 
     console.log();
     console.log('Disconnecting from databases...');
-    await FEEDERDB.disconnect();
     await SERVERDB.disconnect();
 
     console.log();
