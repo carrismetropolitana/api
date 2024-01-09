@@ -19,7 +19,7 @@ module.exports = async () => {
   // Fetch file from cloned repository
   console.log(`⤷ Open data file...`);
   const allEncmRaw = fs.readFileSync(`${settings.BASE_DIR}/facilities/encm/encm.csv`, { encoding: 'utf-8' });
-  const allEncmCsv = Papa.unparse(allEncmRaw);
+  const allEncmCsv = Papa.parse(allEncmRaw);
 
   console.log(allEncmCsv);
 
