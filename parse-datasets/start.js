@@ -32,17 +32,17 @@ module.exports = async () => {
     await setupBaseDirectory();
 
     console.log();
-    console.log('STEP 0.3: Clone GIT repository');
+    console.log('STEP 0.3: Clone Git repository');
     await cloneGitRepository();
 
     //
 
     console.log();
-    console.log('STEP 1.1: Update Facilities > ENCM');
+    console.log('STEP 1.1: Parse Datasets/Facilities/ENCM');
     await require('./parsers/facilities.encm.parser')();
 
     console.log();
-    console.log('STEP 1.2: Update Facilities > Schools');
+    console.log('STEP 1.2: Parse Datasets/Facilities/Schools');
     await require('./parsers/facilities.schools.parser')();
 
     //
