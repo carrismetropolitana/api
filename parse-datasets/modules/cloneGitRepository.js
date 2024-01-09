@@ -19,7 +19,7 @@ module.exports = async () => {
 
   // Check if git is installed
   if (!shell.which('git')) {
-    shell.echo('ERROR: Git is not installed.');
+    shell.echo('Error: Git is not installed.');
     shell.exit(1);
   }
 

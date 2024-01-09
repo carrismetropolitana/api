@@ -1,3 +1,5 @@
+/* * */
+
 module.exports = {
   getElapsedTime: (startTime) => {
     const interval = process.hrtime(startTime);

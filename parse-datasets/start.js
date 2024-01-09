@@ -2,7 +2,6 @@
 
 const SERVERDB = require('./services/SERVERDB');
 const timeCalc = require('./modules/timeCalc');
-const setupBaseDirectory = require('./modules/setupBaseDirectory');
 const cloneGitRepository = require('./modules/cloneGitRepository');
 
 /* * */
@@ -28,11 +27,7 @@ module.exports = async () => {
     await SERVERDB.connect();
 
     console.log();
-    console.log('STEP 0.2: Setup working directory');
-    await setupBaseDirectory();
-
-    console.log();
-    console.log('STEP 0.3: Clone Git repository');
+    console.log('STEP 0.2: Clone Git repository');
     await cloneGitRepository();
 
     //
