@@ -2,13 +2,11 @@
 
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/tf3p.svg)](https://status.carrismetropolitana.pt)
 
-> [!IMPORTANT]
-> **A versão 1 do API será descontinuada no final do ano de 2023.**
+> [!IMPORTANT] > **A versão 1 do API será descontinuada no final do ano de 2023.**
 > Todos os consumidores do API são convidados a consultar a [versão Beta](https://github.com/carrismetropolitana/api), com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos, estimativas de chegada para todas as paragens e respetivos endpoints GTFS-RT.
 > Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api)
 
-> [!IMPORTANT]
-> **The API version 1 will be discontinued at the end of the year 2023.**
+> [!IMPORTANT] > **The API version 1 will be discontinued at the end of the year 2023.**
 > All API users are invited to check out the [Beta version](https://github.com/carrismetropolitana/api), which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles, arrival estimates for all stops and GTFS-RT endpoints.
 > Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api)
 
@@ -356,9 +354,9 @@ Returns a single shape in GTFS and Geojson format. Extension is in meters.
 
 ## ENCM
 
-#### `GET /facilities/encm`
+#### `GET /datasets/facilities/encm`
 
-#### `GET /facilities/encm/:id`
+#### `GET /datasets/facilities/encm/:id`
 
 Known as Espaços navegante® Carris Metropolitana, these endpoints return information for all or each location, including live estimated wait times.
 
@@ -411,9 +409,9 @@ Known as Espaços navegante® Carris Metropolitana, these endpoints return infor
 
 ## Schools
 
-#### `GET /facilities/schools`
+#### `GET /datasets/facilities/schools`
 
-#### `GET /facilities/schools/:id`
+#### `GET /datasets/facilities/schools/:id`
 
 Returns a list of schools in the Lisbon metropolitan area. [Learn more about this dataset here](https://github.com/carrismetropolitana/datasets/tree/latest/facilities/schools).
 

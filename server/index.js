@@ -56,13 +56,18 @@ fastify.get('/vehicles.pb', require('./endpoints/network/vehicles.endpoint').pro
 
 // DATASETS ENDPOINTS
 
-fastify.get('/facilities', require('./endpoints/datasets/facilities.endpoint').all);
+/* DEPRECATED */ fastify.get('/facilities', require('./endpoints/datasets/facilities.endpoint').all); /* DEPRECATED */
+fastify.get('/datasets/facilities', require('./endpoints/datasets/facilities.endpoint').all);
 
-fastify.get('/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all);
-fastify.get('/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single);
+/* DEPRECATED */ fastify.get('/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all); /* DEPRECATED */
+/* DEPRECATED */ fastify.get('/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single); /* DEPRECATED */
+fastify.get('/datasets/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all);
+fastify.get('/datasets/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single);
 
-fastify.get('/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
-fastify.get('/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
+/* DEPRECATED */ fastify.get('/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all); /* DEPRECATED */
+/* DEPRECATED */ fastify.get('/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single); /* DEPRECATED */
+fastify.get('/datasets/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
+fastify.get('/datasets/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
 
 /* * */
 
