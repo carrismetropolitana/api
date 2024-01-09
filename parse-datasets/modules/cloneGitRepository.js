@@ -24,7 +24,7 @@ module.exports = async () => {
   }
 
   // Run external tool synchronously
-  if (shell.exec(`git clone https://github.com/carrismetropolitana/datasets.git settings.BASE_DIR`).code !== 0) {
+  if (shell.exec(`git clone https://github.com/carrismetropolitana/datasets.git ${settings.BASE_DIR}`).code !== 0) {
     shell.echo('Error: Git clone failed');
     shell.exit(1);
   }
