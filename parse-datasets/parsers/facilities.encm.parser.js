@@ -34,6 +34,7 @@ module.exports = async () => {
   // For each facility, update its entry in the database
   for (const encmData of allEncmCsv.data) {
     // Parse encm
+    console.log(encmData);
     const parsedEncm = {
       id: encmData.id,
       name: encmData.name,
