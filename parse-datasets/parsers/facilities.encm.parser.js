@@ -16,7 +16,7 @@ module.exports = async () => {
   const startTime = process.hrtime();
 
   // 2.
-  // Fetch file from cloned repository
+  // Open file from cloned repository
   console.log(`⤷ Open data file...`);
   const allEncmRaw = fs.readFileSync(`${settings.BASE_DIR}/facilities/encm/encm.csv`, { encoding: 'utf-8' });
   const allEncmCsv = Papa.parse(allEncmRaw, { header: true });
@@ -34,7 +34,6 @@ module.exports = async () => {
   // For each facility, update its entry in the database
   for (const encmData of allEncmCsv.data) {
     // Parse encm
-    console.log(encmData);
     const parsedEncm = {
       id: encmData.id,
       name: encmData.name,

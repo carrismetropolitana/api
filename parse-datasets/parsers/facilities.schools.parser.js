@@ -1,6 +1,5 @@
 /* * */
 
-const FEEDERDB = require('../../services/FEEDERDB');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const collator = require('../modules/sortCollator');
@@ -14,9 +13,10 @@ module.exports = async () => {
   const startTime = process.hrtime();
 
   // 2.
-  // Query Postgres for all unique schools by school_id
-  console.log(`⤷ Querying database...`);
-  const allSchools = await FEEDERDB.connection.query(`SELECT * FROM schools;`);
+  // Open file from cloned repository
+  console.log(`⤷ Open data file...`);
+  const allSchoolsRaw = fs.readFileSync(`${settings.BASE_DIR}/facilities/schools/schools.csv`, { encoding: 'utf-8' });
+  const allSchoolsCsv = Papa.parse(allSchoolsRaw, { header: true });
 
   // 3.
   // Log progress
@@ -29,45 +29,45 @@ module.exports = async () => {
 
   // 5.
   // For each school, update its entry in the database
-  for (const school of allSchools.rows) {
+  for (const schoolData of allSchoolsCsv.data) {
     // Discover which cicles this school has
     const cicles = [];
-    if (school.pre_school) cicles.push('pre_school');
-    if (school.basic_1) cicles.push('basic_1');
-    if (school.basic_2) cicles.push('basic_2');
-    if (school.basic_3) cicles.push('basic_3');
-    if (school.high_school) cicles.push('high_school');
-    if (school.professional) cicles.push('professional');
-    if (school.special) cicles.push('special');
-    if (school.artistic) cicles.push('artistic');
-    if (school.university) cicles.push('university');
-    if (school.other) cicles.push('other');
+    if (schoolData.pre_school) cicles.push('pre_school');
+    if (schoolData.basic_1) cicles.push('basic_1');
+    if (schoolData.basic_2) cicles.push('basic_2');
+    if (schoolData.basic_3) cicles.push('basic_3');
+    if (schoolData.high_school) cicles.push('high_school');
+    if (schoolData.professional) cicles.push('professional');
+    if (schoolData.special) cicles.push('special');
+    if (schoolData.artistic) cicles.push('artistic');
+    if (schoolData.university) cicles.push('university');
+    if (schoolData.other) cicles.push('other');
     // Split stops into discrete IDs
     let parsedSchoolStops = [];
-    if (school.stops?.length) parsedSchoolStops = school.stops.split('|');
+    if (schoolData.stops?.length) parsedSchoolStops = schoolData.stops.split('|');
     // Initiate a variable to hold the parsed school
     const parsedSchool = {
-      id: school.id,
-      name: school.name,
-      lat: school.lat,
-      lon: school.lon,
-      nature: school.nature,
-      grouping: school.grouping,
+      id: schoolData.id,
+      name: schoolData.name,
+      lat: schoolData.lat,
+      lon: schoolData.lon,
+      nature: schoolData.nature,
+      grouping: schoolData.grouping,
       cicles: cicles,
-      address: school.address,
-      postal_code: school.postal_code,
-      locality: school.locality,
-      parish_id: school.parish_id,
-      parish_name: school.parish_name,
-      municipality_id: school.municipality_id,
-      municipality_name: school.municipality_name,
-      district_id: school.district_id,
-      district_name: school.district_name,
-      region_id: school.region_id,
-      region_name: school.region_name,
-      url: school.url,
-      email: school.email,
-      phone: school.phone,
+      address: schoolData.address,
+      postal_code: schoolData.postal_code,
+      locality: schoolData.locality,
+      parish_id: schoolData.parish_id,
+      parish_name: schoolData.parish_name,
+      municipality_id: schoolData.municipality_id,
+      municipality_name: schoolData.municipality_name,
+      district_id: schoolData.district_id,
+      district_name: schoolData.district_name,
+      region_id: schoolData.region_id,
+      region_name: schoolData.region_name,
+      url: schoolData.url,
+      email: schoolData.email,
+      phone: schoolData.phone,
       stops: parsedSchoolStops,
     };
     // Update or create new document
