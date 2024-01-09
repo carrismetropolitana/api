@@ -63,6 +63,7 @@ fastify.get('/facilities/schools/:id', require('./endpoints/datasets/facilities.
 
 fastify.get('/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
 fastify.get('/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
+fastify.get('/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').test);
 
 /* * */
 
