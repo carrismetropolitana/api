@@ -72,8 +72,8 @@ module.exports = async () => {
     };
     // Update or create new document
     allSchoolsData.push(parsedSchool);
-    await SERVERDB.client.set(`schools:${parsedSchool.id}`, JSON.stringify(parsedSchool));
-    updatedSchoolKeys.add(`schools:${parsedSchool.id}`);
+    await SERVERDB.client.set(`datasets/facilities/schools/${parsedSchool.id}`, JSON.stringify(parsedSchool));
+    updatedSchoolKeys.add(`datasets/facilities/schools/${parsedSchool.id}`);
     //
   }
 
@@ -84,13 +84,13 @@ module.exports = async () => {
   // 7.
   // Add the 'all' option
   allSchoolsData.sort((a, b) => collator.compare(a.id, b.id));
-  await SERVERDB.client.set('schools:all', JSON.stringify(allSchoolsData));
-  updatedSchoolKeys.add('schools:all');
+  await SERVERDB.client.set('datasets/facilities/schools/all', JSON.stringify(allSchoolsData));
+  updatedSchoolKeys.add('datasets/facilities/schools/all');
 
   // 8.
   // Delete all Schools not present in the current update
   const allSavedSchoolKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'schools:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'datasets/facilities/schools/*' })) {
     allSavedSchoolKeys.push(key);
   }
   const staleSchoolKeys = allSavedSchoolKeys.filter((id) => !updatedSchoolKeys.has(id));

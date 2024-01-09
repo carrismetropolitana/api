@@ -1,9 +1,11 @@
 /* * */
 
-const FEEDERDB = require('../../services/FEEDERDB');
+const fs = require('fs');
+const Papa = require('papaparse');
 const SERVERDB = require('../services/SERVERDB');
 const timeCalc = require('../modules/timeCalc');
 const collator = require('../modules/sortCollator');
+const settings = require('../config/settings');
 
 /* * */
 
@@ -14,9 +16,14 @@ module.exports = async () => {
   const startTime = process.hrtime();
 
   // 2.
-  // Fetch all ENCM from Postgres
-  console.log(`⤷ Querying database...`);
-  const allEncm = await FEEDERDB.connection.query('SELECT * FROM encm');
+  // Fetch file from cloned repository
+  console.log(`⤷ Open data file...`);
+  const allEncmRaw = fs.readFileSync(`${settings.BASE_DIR}/facilities/encm/encm.csv`, { encoding: 'utf-8' });
+  const allEncmCsv = Papa.unparse(allEncmRaw);
+
+  console.log(allEncmCsv);
+
+  return;
 
   // 3.
   // Initate a temporary variable to hold updated ENCM
@@ -29,7 +36,7 @@ module.exports = async () => {
 
   // 5.
   // For each facility, update its entry in the database
-  for (const encm of allEncm.rows) {
+  for (const encm of allEncmCsv) {
     // Parse encm
     const parsedEncm = {
       id: encm.id,
@@ -66,8 +73,8 @@ module.exports = async () => {
     };
     // Save to database
     allEncmData.push(parsedEncm);
-    await SERVERDB.client.set(`encm:${parsedEncm.id}`, JSON.stringify(parsedEncm));
-    updatedEncmKeys.add(`encm:${parsedEncm.id}`);
+    await SERVERDB.client.set(`datasets/facilities/encm/${parsedEncm.id}`, JSON.stringify(parsedEncm));
+    updatedEncmKeys.add(`datasets/facilities/encm/${parsedEncm.id}`);
     //
   }
 
@@ -78,13 +85,13 @@ module.exports = async () => {
   // 7.
   // Add the 'all' option
   allEncmData.sort((a, b) => collator.compare(a.id, b.id));
-  await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
-  updatedEncmKeys.add('encm:all');
+  await SERVERDB.client.set('datasets/facilities/encm/all', JSON.stringify(allEncmData));
+  updatedEncmKeys.add('datasets/facilities/encm/all');
 
   // 8.
   // Delete all ENCM not present in the current update
   const allSavedEncmKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'encm:*' })) {
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'datasets/facilities/encm/*' })) {
     allSavedEncmKeys.push(key);
   }
   const staleEncmKeys = allSavedEncmKeys.filter((id) => !updatedEncmKeys.has(id));

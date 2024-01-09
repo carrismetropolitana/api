@@ -12,6 +12,7 @@
         "csv-parse": "5.5.3",
         "csv-stringify": "6.4.5",
         "luxon": "3.4.4",
+        "papaparse": "^5.4.1",
         "pg": "8.11.3",
         "pg-copy-streams": "6.0.6",
         "redis": "4.6.12",
