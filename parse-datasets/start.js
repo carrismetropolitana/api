@@ -33,12 +33,18 @@ module.exports = async () => {
     //
 
     console.log();
-    console.log('STEP 1.1: Parse Datasets/Facilities/ENCM');
+    console.log('STEP 1.1: Parse datasets/facilities/encm');
     await require('./parsers/facilities.encm.parser')();
 
     console.log();
-    console.log('STEP 1.2: Parse Datasets/Facilities/Schools');
+    console.log('STEP 1.2: Parse datasets/facilities/schools');
     await require('./parsers/facilities.schools.parser')();
+
+    //
+
+    console.log();
+    console.log('STEP 2.1: Parse datasets/demand/date-line-stop');
+    await require('./parsers/demand.date-line-stop.parser')();
 
     //
 
