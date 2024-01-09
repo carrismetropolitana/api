@@ -21,10 +21,6 @@ module.exports = async () => {
   const allEncmRaw = fs.readFileSync(`${settings.BASE_DIR}/facilities/encm/encm.csv`, { encoding: 'utf-8' });
   const allEncmCsv = Papa.parse(allEncmRaw);
 
-  console.log(allEncmCsv);
-
-  return;
-
   // 3.
   // Initate a temporary variable to hold updated ENCM
   const allEncmData = [];
@@ -36,36 +32,36 @@ module.exports = async () => {
 
   // 5.
   // For each facility, update its entry in the database
-  for (const encm of allEncmCsv) {
+  for (const encmData of allEncmCsv.data) {
     // Parse encm
     const parsedEncm = {
-      id: encm.id,
-      name: encm.name,
-      lat: encm.lat,
-      lon: encm.lon,
-      phone: encm.phone,
-      email: encm.email,
-      url: encm.url,
-      address: encm.address,
-      postal_code: encm.postal_code,
-      locality: encm.locality,
-      parish_id: encm.parish_id,
-      parish_name: encm.parish_name,
-      municipality_id: encm.municipality_id,
-      municipality_name: encm.municipality_name,
-      district_id: encm.district_id,
-      district_name: encm.district_name,
-      region_id: encm.region_id,
-      region_name: encm.region_name,
-      hours_monday: encm.hours_monday?.length ? encm.hours_monday.split('|') : [],
-      hours_tuesday: encm.hours_tuesday?.length ? encm.hours_tuesday.split('|') : [],
-      hours_wednesday: encm.hours_wednesday?.length ? encm.hours_wednesday.split('|') : [],
-      hours_thursday: encm.hours_thursday?.length ? encm.hours_thursday.split('|') : [],
-      hours_friday: encm.hours_friday?.length ? encm.hours_friday.split('|') : [],
-      hours_saturday: encm.hours_saturday?.length ? encm.hours_saturday.split('|') : [],
-      hours_sunday: encm.hours_sunday?.length ? encm.hours_sunday.split('|') : [],
-      hours_special: encm.hours_special,
-      stops: encm.stops?.length ? encm.stops.split('|') : [],
+      id: encmData.id,
+      name: encmData.name,
+      lat: encmData.lat,
+      lon: encmData.lon,
+      phone: encmData.phone,
+      email: encmData.email,
+      url: encmData.url,
+      address: encmData.address,
+      postal_code: encmData.postal_code,
+      locality: encmData.locality,
+      parish_id: encmData.parish_id,
+      parish_name: encmData.parish_name,
+      municipality_id: encmData.municipality_id,
+      municipality_name: encmData.municipality_name,
+      district_id: encmData.district_id,
+      district_name: encmData.district_name,
+      region_id: encmData.region_id,
+      region_name: encmData.region_name,
+      hours_monday: encmData.hours_monday?.length ? encmData.hours_monday.split('|') : [],
+      hours_tuesday: encmData.hours_tuesday?.length ? encmData.hours_tuesday.split('|') : [],
+      hours_wednesday: encmData.hours_wednesday?.length ? encmData.hours_wednesday.split('|') : [],
+      hours_thursday: encmData.hours_thursday?.length ? encmData.hours_thursday.split('|') : [],
+      hours_friday: encmData.hours_friday?.length ? encmData.hours_friday.split('|') : [],
+      hours_saturday: encmData.hours_saturday?.length ? encmData.hours_saturday.split('|') : [],
+      hours_sunday: encmData.hours_sunday?.length ? encmData.hours_sunday.split('|') : [],
+      hours_special: encmData.hours_special,
+      stops: encmData.stops?.length ? encmData.stops.split('|') : [],
       currently_waiting: 0,
       expected_wait_time: 0,
       active_counters: 0,
