@@ -48,7 +48,7 @@ async function viewByTotalForEachDateForEachStop(allFilenames) {
       // Create an entry for the current stop_id if it was not seen before
       if (!result[row.date][row.stop_id]) result[row.date][row.stop_id] = 0;
       // If the date and stop_id combination was seen before, add the validations value
-      result[row.date][row.stop_id] += row.validations;
+      result[row.date][row.stop_id] += Number(row.validations);
       //
     });
     //
