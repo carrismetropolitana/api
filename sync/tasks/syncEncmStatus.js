@@ -32,7 +32,7 @@ module.exports = async () => {
     console.log(`→ Updating ENCM status...`);
     const startTime = process.hrtime();
     // Retrieve ENCM from database
-    const foundManyDocuments_raw = await SERVERDB.client.get('encm:all');
+    const foundManyDocuments_raw = await SERVERDB.client.get('datasets/facilities/encm/all');
     const foundManyDocuments = JSON.parse(foundManyDocuments_raw);
     // Query IXAPI for the status of the requested ENCM
     const allEncmTicketsWaiting = await IXAPI.request({ reportType: 'ticket', status: 'W', initialDate: getIxDateString(-7200), finalDate: getIxDateString() });
@@ -63,7 +63,7 @@ module.exports = async () => {
       };
       // Update the current document with the new values
       allEncmData.push(updatedDocument);
-      await SERVERDB.client.set(`encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
+      await SERVERDB.client.set(`datasets/facilities/encm/${updatedDocument.id}`, JSON.stringify(updatedDocument));
       // Log progress
       console.log(`→ id: ${foundDocument.id} | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | active_counters: ${updatedDocument.active_counters} | is_open: ${updatedDocument.is_open} | name: ${foundDocument.name}`);
       //
@@ -71,7 +71,7 @@ module.exports = async () => {
     // Save all documents
     const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
     allEncmData.sort((a, b) => collator.compare(a.id, b.id));
-    await SERVERDB.client.set('encm:all', JSON.stringify(allEncmData));
+    await SERVERDB.client.set('datasets/facilities/encm/all', JSON.stringify(allEncmData));
     // Switch the flag OFF
     TASK_IS_RUNNING = false;
     // Log elapsed time in the current operation
@@ -86,11 +86,10 @@ module.exports = async () => {
   //
 };
 
-//
-//
-//
+/* * */
 
 function getIxDateString(adjustmentSeconds = 0) {
+  // Create a new date object
   const dateObj = new Date();
   // Apply the adjustment to the current date
   dateObj.setSeconds(dateObj.getSeconds() + adjustmentSeconds);
@@ -105,4 +104,5 @@ function getIxDateString(adjustmentSeconds = 0) {
   const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   // Return result
   return formattedDate;
+  //
 }
