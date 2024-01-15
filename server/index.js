@@ -69,7 +69,8 @@ fastify.get('/datasets/facilities/schools/:id', require('./endpoints/datasets/fa
 fastify.get('/datasets/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
 fastify.get('/datasets/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
 
-fastify.get('/datasets/demand/date-line-stop', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByTotalForEachDateForEachStop);
+fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStop', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachStop);
+fastify.get('/datasets/demand/date-line-stop/viewByDateForEachLine', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachLine);
 
 /* * */
 

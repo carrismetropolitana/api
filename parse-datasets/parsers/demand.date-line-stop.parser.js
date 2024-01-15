@@ -18,12 +18,12 @@ module.exports = async () => {
   const allDirectoryFilenames = fs.readdirSync(`${settings.BASE_DIR}/demand/date-line-stop`, { encoding: 'utf-8' });
 
   //
-  console.log(`⤷ Parsing "viewByTotalForEachDateForEachStop"...`);
-  await viewByTotalForEachDateForEachStop(allDirectoryFilenames);
+  console.log(`⤷ Parsing "viewByDateForEachStop"...`);
+  await viewByDateForEachStop(allDirectoryFilenames);
 
   //
-  //   console.log(`⤷ Parsing "another view"...`);
-  //   await viewAnother(allDirectoryFilenames);
+  console.log(`⤷ Parsing "viewByDateForEachLine"...`);
+  await viewByDateForEachLine(allDirectoryFilenames);
 
   // Log elapsed time in the current operation
   const elapsedTime = timeCalc.getElapsedTime(startTime);
@@ -34,7 +34,7 @@ module.exports = async () => {
 
 /* * */
 
-async function viewByTotalForEachDateForEachStop(allFilenames) {
+async function viewByDateForEachStop(allFilenames) {
   // Setup result variable
   const result = {};
   // Open each file from directory
@@ -55,6 +55,31 @@ async function viewByTotalForEachDateForEachStop(allFilenames) {
     //
   }
   // Save the result to the database
-  await SERVERDB.client.set('datasets/demand/date-line-stop/view-by-date-by-stop', JSON.stringify(result));
+  await SERVERDB.client.set('datasets/demand/date-line-stop/viewByDateForEachStop', JSON.stringify(result));
+  //
+}
+
+async function viewByDateForEachLine(allFilenames) {
+  // Setup result variable
+  const result = {};
+  // Open each file from directory
+  for (const filename of allFilenames) {
+    // Open and parse file
+    const fileDataRaw = fs.readFileSync(`${settings.BASE_DIR}/demand/date-line-stop/${filename}`, { encoding: 'utf-8' });
+    const fileDataCsv = Papa.parse(fileDataRaw, { header: true });
+    // Parse file contents
+    fileDataCsv.data.forEach((row) => {
+      // Create an entry for the current date if it was not seen before
+      if (!result[row.date]) result[row.date] = {};
+      // Create an entry for the current line_id if it was not seen before
+      if (!result[row.date][row.line_id]) result[row.date][row.line_id] = 0;
+      // If the date and line_id combination was seen before, add the validations value
+      result[row.date][row.line_id] += Number(row.validations);
+      //
+    });
+    //
+  }
+  // Save the result to the database
+  await SERVERDB.client.set('datasets/demand/date-line-stop/viewByDateForEachLine', JSON.stringify(result));
   //
 }
