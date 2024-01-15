@@ -3,12 +3,12 @@
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/tf3p.svg)](https://status.carrismetropolitana.pt)
 
 > [!IMPORTANT]
-> **A versão 1 do API será descontinuada no final do ano de 2023.**
+> **A versão 1 do API será descontinuada em breve.**
 > Todos os consumidores do API são convidados a consultar a [versão Beta](https://github.com/carrismetropolitana/api), com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos, estimativas de chegada para todas as paragens e respetivos endpoints GTFS-RT.
 > Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api)
 
 > [!IMPORTANT]
-> **The API version 1 will be discontinued at the end of the year 2023.**
+> **The API version 1 will be discontinued soon.**
 > All API users are invited to check out the [Beta version](https://github.com/carrismetropolitana/api), which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles, arrival estimates for all stops and GTFS-RT endpoints.
 > Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api)
 
