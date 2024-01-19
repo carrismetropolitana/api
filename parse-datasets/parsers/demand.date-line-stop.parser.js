@@ -48,6 +48,8 @@ async function viewByDateForEachStop(allFilenames) {
     const fileDataCsv = Papa.parse(fileDataRaw, { header: true });
     // Parse file contents
     fileDataCsv.data.forEach((row) => {
+      // Skip if no row data
+      if (!row || !row.date || !row.line_id || !row.stop_id) return;
       // Create an entry for the current date if it was not seen before
       if (!result[row.date]) result[row.date] = {};
       // Create an entry for the current stop_id if it was not seen before
@@ -75,6 +77,8 @@ async function viewByDateForEachLine(allFilenames) {
     const fileDataCsv = Papa.parse(fileDataRaw, { header: true });
     // Parse file contents
     fileDataCsv.data.forEach((row) => {
+      // Skip if no row data
+      if (!row || !row.date || !row.line_id || !row.stop_id) return;
       // Create an entry for the current date if it was not seen before
       if (!result[row.date]) result[row.date] = {};
       // Create an entry for the current line_id if it was not seen before
@@ -102,6 +106,8 @@ async function viewByDateForEachStopForEachLine(allFilenames) {
     const fileDataCsv = Papa.parse(fileDataRaw, { header: true });
     // Parse file contents
     fileDataCsv.data.forEach((row) => {
+      // Skip if no row data
+      if (!row || !row.date || !row.line_id || !row.stop_id) return;
       // Create an entry for the current date if it was not seen before
       if (!result[row.date]) result[row.date] = {};
       // Create an entry for the current stop_id if it was not seen before
