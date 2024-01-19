@@ -71,6 +71,7 @@ fastify.get('/datasets/facilities/encm/:id', require('./endpoints/datasets/facil
 
 fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStop', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachStop);
 fastify.get('/datasets/demand/date-line-stop/viewByDateForEachLine', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachLine);
+fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachStopForEachLine);
 
 /* * */
 

@@ -19,3 +19,11 @@ module.exports.viewByDateForEachLine = async (request, reply) => {
     .header('Content-Type', 'application/json; charset=utf-8')
     .send(viewData || []);
 };
+
+module.exports.viewByDateForEachStopForEachLine = async (request, reply) => {
+  const viewData = await SERVERDB.client.get('datasets/demand/date-line-stop/viewByDateForEachStopForEachLine');
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(viewData || []);
+};
