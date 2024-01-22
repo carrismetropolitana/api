@@ -35,6 +35,8 @@ module.exports.json = async (request, reply) => {
       timestamp: convertToUTC(vehicle.Ts),
       heading: vehicle.Coa,
       trip_id: vehicle.Lna,
+      line_id: vehicle.Lna?.substring(0, 4),
+      route_id: vehicle.Lna?.substring(0, 6),
       pattern_id: vehicle.Lna?.substring(0, 8),
     };
   });
