@@ -30,9 +30,6 @@ module.exports.single = async (request, reply) => {
 };
 
 module.exports.singleWithRealtime = async (request, reply) => {
-  // TEMPORARY DISABLE
-  return reply.code(503).header('Content-Type', 'application/json; charset=utf-8').send([]);
-  //
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
   const result = response.map((estimate) => {
