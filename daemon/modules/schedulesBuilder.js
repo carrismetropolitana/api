@@ -332,11 +332,11 @@ module.exports = {
               stop_name: currentStopTime.stop_name,
               stop_lon: currentStopTime.stop_lon,
               stop_lat: currentStopTime.stop_lat,
-              //   arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
-              //   arrival_time_operation: currentStopTime.arrival_time,
+              arrival_time: `${arrival_time_hours}:${arrival_time_minutes}:${arrival_time_seconds}`,
+              arrival_time_operation: currentStopTime.arrival_time,
               departure_time: `${departure_time_hours}:${departure_time_minutes}:${departure_time_seconds}`,
               departure_time_operation: currentStopTime.departure_time,
-              //   shape_dist_traveled: currentStopTime.shape_dist_traveled,
+              shape_dist_traveled: currentStopTime.shape_dist_traveled,
             });
           }
 
