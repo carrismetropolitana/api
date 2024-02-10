@@ -31,7 +31,7 @@ class RTEVENTS {
         $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
       },
     })
-      .sort({ millis: -1 })
+      .sort({ millis: 1 })
       .limit(50000)
       .toArray();
 
