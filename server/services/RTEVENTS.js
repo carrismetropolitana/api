@@ -233,14 +233,14 @@ class RTEVENTS {
       lat: savedEvent.latitude,
       lon: savedEvent.longitude,
       speed: savedEvent.speed,
-      bearing: vehicle.bearing,
+      bearing: savedEvent.bearing,
       timestamp: savedEvent.timestamp,
       trip_id: savedEvent.trip_id,
       pattern_id: savedEvent.trip_id?.substring(0, 8),
       stop_id: savedEvent.stop_id,
       //
       status: 'DEPRECATED PROPERTY', // deprecated
-      heading: vehicle.bearing, // deprecated
+      heading: 0, // deprecated
     }));
 
     //
