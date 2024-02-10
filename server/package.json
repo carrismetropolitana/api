@@ -11,6 +11,8 @@
         "fastify": "4.24.3",
         "luxon": "3.4.4",
         "protobufjs": "7.2.5",
-        "redis": "4.6.11"
+        "redis": "4.6.11",
+        "tunnel-ssh": "5.1.2",
+        "mongodb": "6.3.0"
     }
 }
