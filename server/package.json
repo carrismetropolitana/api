@@ -7,12 +7,12 @@
         "start": "node index.js"
     },
     "dependencies": {
-        "dotenv": "16.3.1",
-        "fastify": "4.24.3",
+        "dotenv": "16.4.1",
+        "fastify": "4.26.0",
         "luxon": "3.4.4",
-        "protobufjs": "7.2.5",
-        "redis": "4.6.11",
-        "tunnel-ssh": "5.1.2",
-        "mongodb": "6.3.0"
+        "mongodb": "6.3.0",
+        "protobufjs": "7.2.6",
+        "redis": "4.6.13",
+        "tunnel-ssh": "5.1.2"
     }
 }

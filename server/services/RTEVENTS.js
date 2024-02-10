@@ -41,7 +41,7 @@ class RTEVENTS {
     // 3.
     // Perform the request to PCGI
 
-    const allRtEvents2 = await REALTIMEDB.VehicleEvents.find({
+    const allRtEvents = await REALTIMEDB.VehicleEvents.find({
       millis: {
         $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
       },
@@ -53,12 +53,12 @@ class RTEVENTS {
     console.log('---------------------------------------------------------------------------------');
     console.log('---------------------------------------------------------------------------------');
     console.log('---------------------------------------------------------------------------------');
-    console.log('MONGODB EVENTS LENGTH', allRtEvents2.length);
+    console.log('MONGODB EVENTS LENGTH', allRtEvents.length);
     console.log('---------------------------------------------------------------------------------');
     console.log('---------------------------------------------------------------------------------');
     console.log('---------------------------------------------------------------------------------');
 
-    const allRtEvents = await PCGIAPI.request('opcoreconsole/vehicle-events/filtered', {
+    const allRtEvents2 = await PCGIAPI.request('opcoreconsole/vehicle-events/filtered', {
       method: 'POST',
       contentType: 'application/x-www-form-urlencoded',
       body: formData,
