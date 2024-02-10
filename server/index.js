@@ -1,6 +1,7 @@
 /* * */
 
-const fastify = require('fastify')({ logger: true, requestTimeout: 20000 });
+const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
+const REALTIMEDB = require('./services/REALTIMEDB');
 const SERVERDB = require('./services/SERVERDB');
 
 /* * */
@@ -81,4 +82,5 @@ fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
   if (err) throw err;
   console.log(`Server listening on ${address}`);
   await SERVERDB.connect();
+  await REALTIMEDB.connect();
 });

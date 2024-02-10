@@ -2,6 +2,7 @@
 
 const { DateTime } = require('luxon');
 const PCGIAPI = require('./PCGIAPI');
+const REALTIMEDB = require('./REALTIMEDB');
 
 /* * */
 
@@ -39,6 +40,24 @@ class RTEVENTS {
 
     // 3.
     // Perform the request to PCGI
+
+    const allRtEvents2 = await REALTIMEDB.VehicleEvents.find({
+      millis: {
+        $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
+      },
+    })
+      .sort({ millis: -1 })
+      .limit(50000)
+      .toArray();
+
+    console.log('---------------------------------------------------------------------------------');
+    console.log('---------------------------------------------------------------------------------');
+    console.log('---------------------------------------------------------------------------------');
+    console.log('MONGODB EVENTS LENGTH', allRtEvents2.length);
+    console.log('---------------------------------------------------------------------------------');
+    console.log('---------------------------------------------------------------------------------');
+    console.log('---------------------------------------------------------------------------------');
+
     const allRtEvents = await PCGIAPI.request('opcoreconsole/vehicle-events/filtered', {
       method: 'POST',
       contentType: 'application/x-www-form-urlencoded',
@@ -229,5 +248,7 @@ class RTEVENTS {
 
   //
 }
+
+/* * */
 
 module.exports = new RTEVENTS();
