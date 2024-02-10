@@ -33,7 +33,7 @@ class RTEVENTS {
     // 3.
     // Perform the request to PCGI
 
-    const allRtEvents2 = await REALTIMEDB.VehicleEvents.find({
+    const allRtEvents = await REALTIMEDB.VehicleEvents.find({
       millis: {
         $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
       },
@@ -42,23 +42,23 @@ class RTEVENTS {
       .limit(50000)
       .toArray();
 
-    const allRtEvents = await PCGIAPI.request('opcoreconsole/vehicle-events/filtered', {
+    const allRtEvents2 = await PCGIAPI.request('opcoreconsole/vehicle-events/filtered', {
       method: 'POST',
       contentType: 'application/x-www-form-urlencoded',
       body: formData,
     });
 
-    console.log('---------------------------------------------------------------------------------');
-    console.log('---------------------------------------------------------------------------------');
-    console.log('---------------------------------------------------------------------------------');
-    console.log('EVENTS LENGTH');
-    console.log('---------------------------------------------------------------------------------');
-    console.log('allRtEvents', JSON.stringify(allRtEvents, null, 2));
-    console.log('---------------------------------------------------------------------------------');
-    console.log('allRtEvents2', JSON.stringify(allRtEvents2, null, 2));
-    console.log('---------------------------------------------------------------------------------');
-    console.log('---------------------------------------------------------------------------------');
-    console.log('---------------------------------------------------------------------------------');
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('EVENTS LENGTH');
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('allRtEvents', JSON.stringify(allRtEvents, null, 2));
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('allRtEvents2', JSON.stringify(allRtEvents2, null, 2));
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('---------------------------------------------------------------------------------');
+    // console.log('---------------------------------------------------------------------------------');
 
     // 4.
     // Set the current time to the last_update flag to avoid over fetching
@@ -79,7 +79,7 @@ class RTEVENTS {
       // Perform basic event validations
 
       // Does this event has a valid vehicle id
-      if (!rtEvent.content?.entity[0]?.vehicle?.vehicle?.id?.length) continue;
+      if (!rtEvent.content?.entity[0]?.vehicle?.vehicle?._id?.length) continue;
       // Does this event has a valid agency id
       if (!rtEvent.content?.entity[0]?.vehicle?.agencyId?.length) continue;
       // Does this event has an associated trip
@@ -97,7 +97,7 @@ class RTEVENTS {
 
       // 6.2.
       // Prepare the most used variables
-      const vehicleId = `${rtEvent.content.entity[0].vehicle.agencyId}|${rtEvent.content.entity[0].vehicle.vehicle.id}`;
+      const vehicleId = `${rtEvent.content.entity[0].vehicle.agencyId}|${rtEvent.content.entity[0].vehicle.vehicle._id}`;
       const vehicleTimestamp = rtEvent.content.entity[0].vehicle.timestamp;
       const vehicleTripId = rtEvent.content.entity[0].vehicle.trip.tripId;
       const vehicleBearing = Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.bearing || 0);
