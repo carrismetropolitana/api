@@ -32,9 +32,11 @@ class RTEVENTS {
         $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
       },
     })
-      .sort({ millis: 1 })
-      .limit(50000)
+      //   .sort({ millis: 1 })
+      //   .limit(50000)
       .toArray();
+
+    console.log('HERERERERRERE allRtEvents.length', allRtEvents.length);
 
     // 3.
     // Set the current time to the last_update flag to avoid over fetching
@@ -87,9 +89,9 @@ class RTEVENTS {
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
       console.log('vehicleId', vehicleId);
-      console.log('this.rt_events[vehicleId].timestamp', this.rt_events[vehicleId].timestamp);
+      console.log('this.rt_events[vehicleId].timestamp', this.rt_events[vehicleId]?.timestamp);
       console.log('vehicleTimestamp', vehicleTimestamp);
-      console.log('this.rt_events[vehicleId].timestamp >= vehicleTimestamp', this.rt_events[vehicleId].timestamp >= vehicleTimestamp);
+      console.log('this.rt_events[vehicleId].timestamp >= vehicleTimestamp', this.rt_events[vehicleId]?.timestamp >= vehicleTimestamp);
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
