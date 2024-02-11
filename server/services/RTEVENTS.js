@@ -37,7 +37,7 @@ class RTEVENTS {
       .toArray();
 
     console.log('HERERERERRERE allRtEvents.length', allRtEvents.length);
-    console.log('HERERERERRERE rt_events', rt_events);
+    console.log('HERERERERRERE rt_events', this.rt_events);
 
     // 3.
     // Set the current time to the last_update flag to avoid over fetching
