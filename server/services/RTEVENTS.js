@@ -37,6 +37,7 @@ class RTEVENTS {
       .toArray();
 
     console.log('HERERERERRERE allRtEvents.length', allRtEvents.length);
+    console.log('HERERERERRERE rt_events', rt_events);
 
     // 3.
     // Set the current time to the last_update flag to avoid over fetching
@@ -89,6 +90,7 @@ class RTEVENTS {
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
       console.log('vehicleId', vehicleId);
+      console.log('this.rt_events[vehicleId]', this.rt_events[vehicleId]);
       console.log('this.rt_events[vehicleId].timestamp', this.rt_events[vehicleId]?.timestamp);
       console.log('vehicleTimestamp', vehicleTimestamp);
       console.log('this.rt_events[vehicleId].timestamp >= vehicleTimestamp', this.rt_events[vehicleId]?.timestamp >= vehicleTimestamp);
