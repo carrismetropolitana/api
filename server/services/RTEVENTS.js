@@ -9,6 +9,7 @@ class RTEVENTS {
   //
 
   last_update = null;
+
   rt_events = new Map();
 
   /* * *
@@ -31,7 +32,7 @@ class RTEVENTS {
         $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
       },
     })
-      .sort({ millis: 1 })
+      //   .sort({ millis: 1 })
       .limit(50000)
       .toArray();
 
@@ -82,6 +83,16 @@ class RTEVENTS {
 
       // 5.3.
       // Check if there is a vehicle already saved and that it has an older timestamp than the current event
+      console.log('-------------------------------------------');
+      console.log('-------------------------------------------');
+      console.log('-------------------------------------------');
+      console.log('vehicleId', vehicleId);
+      console.log('this.rt_events[vehicleId].timestamp', this.rt_events[vehicleId].timestamp);
+      console.log('vehicleTimestamp', vehicleTimestamp);
+      console.log('this.rt_events[vehicleId].timestamp >= vehicleTimestamp', this.rt_events[vehicleId].timestamp >= vehicleTimestamp);
+      console.log('-------------------------------------------');
+      console.log('-------------------------------------------');
+      console.log('-------------------------------------------');
 
       if (this.rt_events[vehicleId] && this.rt_events[vehicleId].timestamp >= vehicleTimestamp) continue;
 
