@@ -90,15 +90,15 @@ class RTEVENTS {
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
       console.log('vehicleId', vehicleId);
-      console.log('this.rt_events[vehicleId]', this.rt_events[vehicleId]);
-      console.log('this.rt_events[vehicleId].timestamp', this.rt_events[vehicleId]?.timestamp);
+      console.log('this.rt_events.get(vehicleId)', this.rt_events.get(vehicleId));
+      console.log('this.rt_events.get(vehicleId).timestamp', this.rt_events.get(vehicleId)?.timestamp);
       console.log('vehicleTimestamp', vehicleTimestamp);
-      console.log('this.rt_events[vehicleId].timestamp >= vehicleTimestamp', this.rt_events[vehicleId]?.timestamp >= vehicleTimestamp);
+      console.log('this.rt_events.get(vehicleId).timestamp >= vehicleTimestamp', this.rt_events.get(vehicleId)?.timestamp >= vehicleTimestamp);
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
       console.log('-------------------------------------------');
 
-      if (this.rt_events[vehicleId] && this.rt_events[vehicleId].timestamp >= vehicleTimestamp) continue;
+      if (this.rt_events.get(vehicleId) && this.rt_events.get(vehicleId).timestamp >= vehicleTimestamp) continue;
 
       // 5.4.
       // Save the current event
