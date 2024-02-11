@@ -29,11 +29,9 @@ class RTEVENTS {
 
     const allRtEvents = await REALTIMEDB.VehicleEvents.find({
       millis: {
-        $gte: DateTime.now().setZone('Europe/Lisbon').minus({ minutes: 5 }).toMillis(),
+        $gte: DateTime.now().minus({ minutes: 5 }).toMillis(),
       },
-    })
-      //   .sort({ millis: -1 })
-      .toArray();
+    }).toArray();
 
     // 3.
     // Set the current time to the last_update flag to avoid over fetching
