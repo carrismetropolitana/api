@@ -68,10 +68,6 @@ module.exports = async () => {
     await require('./parsers/dates.parsers')();
 
     console.log();
-    console.log('STEP 1.3: Parse Timetables');
-    await require('./parsers/timetables.parser')();
-
-    console.log();
     console.log('STEP 1.4: Parse Stops');
     await require('./parsers/stops.parser')();
 
@@ -82,6 +78,10 @@ module.exports = async () => {
     console.log();
     console.log('STEP 1.6: Parse Lines, Routes and Patterns');
     await require('./parsers/linesRoutesPatterns.parser')();
+
+    console.log();
+    console.log('STEP 1.3: Parse Timetables');
+    await require('./parsers/timetables.parser')();
 
     console.log();
     console.log('Disconnecting from databases...');
