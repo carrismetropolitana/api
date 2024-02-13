@@ -48,43 +48,43 @@ export default async () => {
 
     console.log();
     console.log('STEP 0.1: Setup working directory');
-    // await setupBaseDirectory();
+    await setupBaseDirectory();
 
     //
 
     console.log();
     console.log('STEP 1.0: Fetch and Extract latest GTFS');
-    // await fetchAndExtractLatestGtfs();
+    await fetchAndExtractLatestGtfs();
 
     console.log();
     console.log('STEP 1.1: Import each GTFS file');
     for (const fileOptions of files) {
-      // await setupPrepareAndImportFile(fileOptions);
+      await setupPrepareAndImportFile(fileOptions);
     }
 
     console.log();
     console.log('STEP 1.2: Parse Municipalities');
-    // await municipalitiesParser();
+    await municipalitiesParser();
 
     console.log();
     console.log('STEP 1.3: Parse Localities');
-    // await localitiesParser();
+    await localitiesParser();
 
     console.log();
     console.log('STEP 1.3: Parse Periods');
-    // await periodsParser();
+    await periodsParser();
 
     console.log();
     console.log('STEP 1.3: Parse Dates');
-    // await datesParser();
+    await datesParser();
 
     console.log();
     console.log('STEP 1.4: Parse Stops');
-    // await stopsParser();
+    await stopsParser();
 
     console.log();
     console.log('STEP 1.5: Parse Shapes');
-    // await shapesParser();
+    await shapesParser();
 
     console.log();
     console.log('STEP 1.6: Parse Lines, Routes and Patterns');

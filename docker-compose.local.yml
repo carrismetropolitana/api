@@ -46,17 +46,17 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  # parse-network:
-  #   image: ghcr.io/carrismetropolitana/api-parse-network:beta
-  #   restart: unless-stopped
-  #   logging:
-  #     options:
-  #       max-size: '1m'
-  #       max-file: '1'
-  #   env_file:
-  #     - ./.env
-  #   environment:
-  #     - SERVERDB_HOST=serverdb
-  #     - NETWORKDB_HOST=networkdb
-  #     - NETWORKDB_USER=networkdbuser
-  #     - NETWORKDB_PASSWORD=networkdbpassword
+  parse-network:
+    build: ./parse-network
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+    environment:
+      - SERVERDB_HOST=serverdb
+      - NETWORKDB_HOST=networkdb
+      - NETWORKDB_USER=networkdbuser
+      - NETWORKDB_PASSWORD=networkdbpassword
