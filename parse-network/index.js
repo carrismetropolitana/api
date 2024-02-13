@@ -1,7 +1,9 @@
 /* * */
 
-const settings = require('./config/settings');
-const start = require('./start');
+import dotenv from 'dotenv';
+dotenv.config();
+import { RUN_INTERVAL } from './config/settings';
+import start from './start';
 
 /* * */
 
@@ -28,7 +30,7 @@ const start = require('./start');
   runOnInterval();
 
   // Set the interval
-  setInterval(runOnInterval, settings.RUN_INTERVAL);
+  setInterval(runOnInterval, RUN_INTERVAL);
 
   //
 })();

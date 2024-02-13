@@ -1,19 +1,31 @@
 {
-    "name": "@carrismetropolitana/api-feeder",
-    "version": "2023.2.1",
-    "private": true,
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "@turf/turf": "6.5.0",
-        "adm-zip": "0.5.10",
-        "csv-parse": "5.5.3",
-        "csv-stringify": "6.4.5",
-        "luxon": "3.4.4",
-        "pg": "8.11.3",
-        "pg-copy-streams": "6.0.6",
-        "redis": "4.6.12"
-    }
+  "name": "@carrismetropolitana/api-feeder",
+  "version": "2023.2.1",
+  "private": true,
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "tsc && node build/index.js",
+    "lint": "eslint . --ext .ts",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@turf/turf": "6.5.0",
+    "@types/node": "^20.11.17",
+    "adm-zip": "0.5.10",
+    "csv-parse": "5.5.3",
+    "csv-stringify": "6.4.5",
+    "dotenv": "^16.4.2",
+    "luxon": "3.4.4",
+    "pg": "8.11.3",
+    "pg-copy-streams": "6.0.6",
+    "redis": "4.6.12"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.5",
+    "@types/luxon": "^3.4.2",
+    "@types/pg": "^8.11.0",
+    "@types/pg-copy-streams": "^1.2.5",
+    "typescript": "^5.3.3"
+  }
 }

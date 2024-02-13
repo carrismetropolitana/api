@@ -1,17 +1,10 @@
 /* * */
 
-module.exports = {
-  //
-  RUN_INTERVAL: 1200000, // 20 minutes
-  //
-  BASE_DIR: '/tmp/base',
-  //
-  GTFS_BASE_DIR: 'gtfs',
-  GTFS_RAW_DIR: 'raw',
-  GTFS_PREPARED_DIR: 'prepared',
-  //
-  NETEX_BASE_DIR: 'netex',
-  NETEX_RAW_DIR: 'raw',
-  NETEX_PREPARED_DIR: 'prepared',
-  //
-};
+export const RUN_INTERVAL = 1200000;
+export const BASE_DIR = '/tmp/base';
+export const GTFS_BASE_DIR = 'gtfs';
+export const GTFS_RAW_DIR = 'raw';
+export const GTFS_PREPARED_DIR = 'prepared';
+export const NETEX_BASE_DIR = 'netex';
+export const NETEX_RAW_DIR = 'raw';
+export const NETEX_PREPARED_DIR = 'prepared';

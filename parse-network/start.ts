@@ -1,18 +1,29 @@
 /* * */
 
-const files = require('./config/files');
+import files from './config/files';
 
-const NETWORKDB = require('./services/NETWORKDB');
-const SERVERDB = require('./services/SERVERDB');
+import { connect, disconnect } from './services/NETWORKDB';
+import { connect as _connect, disconnect as _disconnect } from './services/SERVERDB';
 
-const timeCalc = require('./modules/timeCalc');
-const setupBaseDirectory = require('./modules/setupBaseDirectory');
-const fetchAndExtractLatestGtfs = require('./modules/fetchAndExtractLatestGtfs');
-const setupPrepareAndImportFile = require('./modules/setupPrepareAndImportFile');
+import { getElapsedTime } from './modules/timeCalc';
+import setupBaseDirectory from './modules/setupBaseDirectory';
+import fetchAndExtractLatestGtfs from './modules/fetchAndExtractLatestGtfs';
+import setupPrepareAndImportFile from './modules/setupPrepareAndImportFile';
+
+
+import municipalitiesParser from './parsers/municipalities.parser';
+import localitiesParser from './parsers/localities.parser';
+import periodsParser from './parsers/periods.parser';
+import datesParser from './parsers/dates.parsers';
+import stopsParser from './parsers/stops.parser';
+import shapesParser from './parsers/shapes.parser';
+import linesRoutesPatternsParser from './parsers/linesRoutesPatterns.parser';
+import timetablesParser from './parsers/timetables.parser';
+
 
 /* * */
 
-module.exports = async () => {
+export default async () => {
   //
 
   try {
@@ -30,8 +41,8 @@ module.exports = async () => {
 
     console.log();
     console.log('STEP 0.0: Connect to databases');
-    await NETWORKDB.connect();
-    await SERVERDB.connect();
+    await connect();
+    await _connect();
 
     //
 
@@ -53,44 +64,44 @@ module.exports = async () => {
 
     console.log();
     console.log('STEP 1.2: Parse Municipalities');
-    await require('./parsers/municipalities.parser')();
+    municipalitiesParser();
 
     console.log();
     console.log('STEP 1.3: Parse Localities');
-    await require('./parsers/localities.parser')();
+    localitiesParser();
 
     console.log();
     console.log('STEP 1.3: Parse Periods');
-    await require('./parsers/periods.parser')();
+    periodsParser();
 
     console.log();
     console.log('STEP 1.3: Parse Dates');
-    await require('./parsers/dates.parsers')();
+    datesParser();
 
     console.log();
     console.log('STEP 1.4: Parse Stops');
-    await require('./parsers/stops.parser')();
+    stopsParser();
 
     console.log();
     console.log('STEP 1.5: Parse Shapes');
-    await require('./parsers/shapes.parser')();
+    shapesParser();
 
     console.log();
     console.log('STEP 1.6: Parse Lines, Routes and Patterns');
-    await require('./parsers/linesRoutesPatterns.parser')();
+    linesRoutesPatternsParser()
 
     console.log();
     console.log('STEP 1.3: Parse Timetables');
-    await require('./parsers/timetables.parser')();
+    timetablesParser();
 
     console.log();
     console.log('Disconnecting from databases...');
-    await NETWORKDB.disconnect();
-    await SERVERDB.disconnect();
+    await disconnect();
+    await _disconnect();
 
     console.log();
     console.log('- - - - - - - - - - - - - - - - - - - - -');
-    console.log(`Run took ${timeCalc.getElapsedTime(startTime)}.`);
+    console.log(`Run took ${getElapsedTime(startTime)}.`);
     console.log('- - - - - - - - - - - - - - - - - - - - -');
     console.log();
 

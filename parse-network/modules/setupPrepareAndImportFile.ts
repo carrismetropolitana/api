@@ -1,37 +1,37 @@
 /* * */
 
-const fs = require('fs');
-const FEEDERDB = require('../services/NETWORKDB');
-const { parse } = require('csv-parse');
-const { stringify } = require('csv-stringify/sync');
-const copyFrom = require('pg-copy-streams').from;
-const timeCalc = require('./timeCalc');
+import { existsSync, mkdirSync, writeFileSync, createReadStream, appendFileSync } from 'fs';
+import { connection } from '../services/NETWORKDB';
+import { parse } from 'csv-parse';
+import { stringify } from 'csv-stringify/sync';
+import { from as copyFrom } from 'pg-copy-streams';
+import { getElapsedTime } from './timeCalc';
 
 /* * */
 
-module.exports = async (FILE_OPTIONS) => {
+export default async (FILE_OPTIONS) => {
   //
 
   console.log(`⤷ Importing "${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 
   // Drop existing table
-  await FEEDERDB.connection.query(`DROP TABLE IF EXISTS ${FILE_OPTIONS.file_name};`);
+  await connection.query(`DROP TABLE IF EXISTS ${FILE_OPTIONS.file_name};`);
   console.log(`⤷ Dropped existing SQL table "${FILE_OPTIONS.file_name}".`);
 
   // Create table
-  await FEEDERDB.connection.query(FILE_OPTIONS.table_query);
+  await connection.query(FILE_OPTIONS.table_query);
   console.log(`⤷ Created SQL table "${FILE_OPTIONS.file_name}".`);
 
   // Create indexes
   for (const indexQuery of FILE_OPTIONS.index_queries) {
-    await FEEDERDB.connection.query(indexQuery);
+    await connection.query(indexQuery);
     console.log(`⤷ Created index on SQL table "${FILE_OPTIONS.file_name}".`);
   }
 
   // Create prepared directory if it does not already exist
-  if (!fs.existsSync(FILE_OPTIONS.prepared_dir)) {
+  if (!existsSync(FILE_OPTIONS.prepared_dir)) {
     console.log(`⤷ Creating directory "${FILE_OPTIONS.prepared_dir}"...`);
-    fs.mkdirSync(FILE_OPTIONS.prepared_dir);
+    mkdirSync(FILE_OPTIONS.prepared_dir);
   }
 
   // Prepare file
@@ -48,13 +48,13 @@ module.exports = async (FILE_OPTIONS) => {
 /* * */
 
 // Parse the files first
-async function prepareFile(FILE_OPTIONS) {
+async function prepareFile(FILE_OPTIONS: { prepared_dir: any; file_name: any; file_extension: any; file_headers: any[]; raw_dir: any; }) {
   const startTime = process.hrtime();
   console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
   const headersString = FILE_OPTIONS.file_headers.join(',');
-  fs.writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
+  writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
   console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
-  const parserStream = fs.createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
+  const parserStream = createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
   let rowCount = 0;
   for await (const rowObject of parserStream) {
     let rowArray = [];
@@ -62,11 +62,11 @@ async function prepareFile(FILE_OPTIONS) {
       const colString = rowObject[key];
       rowArray.push(colString);
     }
-    const rowString = stringify([rowArray], { trim: true });
-    fs.appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
+    const rowString = stringify([rowArray]);
+    appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
     rowCount++;
   }
-  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  const elapsedTime = getElapsedTime(startTime);
   console.log(`⤷ Prepared "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" (${rowCount} rows in ${elapsedTime})`);
   //
 }
@@ -78,15 +78,15 @@ async function importFileToTable(FILE_OPTIONS) {
   const startTime = process.hrtime();
   console.log(`⤷ Importing "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table...`);
   // Setup the query and a filesystem connection using 'pg-copy-streams' and 'fs'
-  const stream = FEEDERDB.connection.query(copyFrom(`COPY ${FILE_OPTIONS.file_name} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
-  const fileStream = fs.createReadStream(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`);
+  const stream = connection.query(copyFrom(`COPY ${FILE_OPTIONS.file_name} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
+  const fileStream = createReadStream(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`);
   // Pipe the contents of the file into the pg-copy-stream function
-  const { rowCount } = await new Promise((resolve, reject) => {
+  const { rowCount } = await new Promise<{ rowCount: number }>((resolve, reject) => {
     fileStream
       .pipe(stream)
       .on('finish', () => resolve(stream))
       .on('error', reject);
   });
-  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  const elapsedTime = getElapsedTime(startTime);
   console.log(`⤷ Saved "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table (${rowCount} rows in ${elapsedTime})`);
 }

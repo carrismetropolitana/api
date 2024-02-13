@@ -1,13 +1,13 @@
 /* * */
 
-const NETWORKDB = require('../services/NETWORKDB');
-const SERVERDB = require('../services/SERVERDB');
-const timeCalc = require('../modules/timeCalc');
-const collator = require('../modules/sortCollator');
+import { connection } from '../services/NETWORKDB';
+import { client } from '../services/SERVERDB';
+import { getElapsedTime } from '../modules/timeCalc';
+import collator from '../modules/sortCollator';
 
 /* * */
 
-module.exports = async () => {
+export default async () => {
   //
   // 1.
   // Record the start time to later calculate operation duration
@@ -16,7 +16,7 @@ module.exports = async () => {
   // 2.
   // Fetch all Dates from Postgres
   console.log(`⤷ Querying database...`);
-  const allDates = await NETWORKDB.connection.query('SELECT * FROM dates');
+  const allDates = await connection.query('SELECT * FROM dates');
 
   // 3.
   // Initate a temporary variable to hold updated Dates
@@ -40,7 +40,7 @@ module.exports = async () => {
     };
     // Update or create new document
     allDatesData.push(parsedDate);
-    await SERVERDB.client.set(`dates:${parsedDate.date}`, JSON.stringify(parsedDate));
+    await client.set(`dates:${parsedDate.date}`, JSON.stringify(parsedDate));
     updatedDateKeys.add(`dates:${parsedDate.date}`);
   }
 
@@ -51,22 +51,22 @@ module.exports = async () => {
   // 7.
   // Add the 'all' option
   allDatesData.sort((a, b) => collator.compare(a.date, b.date));
-  await SERVERDB.client.set('dates:all', JSON.stringify(allDatesData));
+  await client.set('dates:all', JSON.stringify(allDatesData));
   updatedDateKeys.add('dates:all');
 
   // 8.
   // Delete all Dates not present in the current update
   const allSavedDateKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) {
+  for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) {
     allSavedDateKeys.push(key);
   }
   const staleDateKeys = allSavedDateKeys.filter((date) => !updatedDateKeys.has(date));
-  if (staleDateKeys.length) await SERVERDB.client.del(staleDateKeys);
+  if (staleDateKeys.length) await client.del(staleDateKeys);
   console.log(`⤷ Deleted ${staleDateKeys.length} stale Dates.`);
 
   // 9.
   // Log elapsed time in the current operation
-  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  const elapsedTime = getElapsedTime(startTime);
   console.log(`⤷ Done updating Dates (${elapsedTime}).`);
 
   //

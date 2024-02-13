@@ -1,13 +1,13 @@
 /* * */
 
-const NETWORKDB = require('../services/NETWORKDB');
-const SERVERDB = require('../services/SERVERDB');
-const timeCalc = require('../modules/timeCalc');
-const collator = require('../modules/sortCollator');
+import { connection } from '../services/NETWORKDB';
+import { client } from '../services/SERVERDB';
+import { getElapsedTime } from '../modules/timeCalc';
+import collator from '../modules/sortCollator';
 
 /* * */
 
-module.exports = async () => {
+export default async () => {
   //
   // 1.
   // Record the start time to later calculate operation duration
@@ -16,7 +16,7 @@ module.exports = async () => {
   // 2.
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
-  const allStops = await NETWORKDB.connection.query(`
+  const allStops = await connection.query(`
     SELECT
         s.*,
         r.route_ids,
@@ -97,7 +97,7 @@ module.exports = async () => {
     };
     // Update or create new document
     allStopsData.push(parsedStop);
-    await SERVERDB.client.set(`stops:${parsedStop.id}`, JSON.stringify(parsedStop));
+    await client.set(`stops:${parsedStop.id}`, JSON.stringify(parsedStop));
     updatedStopKeys.add(`stops:${parsedStop.id}`);
     //
   }
@@ -109,22 +109,22 @@ module.exports = async () => {
   // 7.
   // Add the 'all' option
   allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-  await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
+  await client.set('stops:all', JSON.stringify(allStopsData));
   updatedStopKeys.add('stops:all');
 
   // 8.
   // Delete all Stops not present in the current update
   const allSavedStopKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
+  for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
     allSavedStopKeys.push(key);
   }
   const staleStopKeys = allSavedStopKeys.filter((id) => !updatedStopKeys.has(id));
-  if (staleStopKeys.length) await SERVERDB.client.del(staleStopKeys);
+  if (staleStopKeys.length) await client.del(staleStopKeys);
   console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
 
   // 9.
   // Log elapsed time in the current operation
-  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  const elapsedTime = getElapsedTime(startTime);
   console.log(`⤷ Done updating Stops (${elapsedTime}).`);
 
   //

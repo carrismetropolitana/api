@@ -59,50 +59,44 @@ const timetable = {
       period_name: 'Período de Férias Escolares',
       weekdays: [
         {
-          hour: '08',
-          minutes: [
-            { minute: '01', exceptions: [] },
-            { minute: '23', exceptions: [{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' }] },
-          ],
+          time: '08:01', exceptions: [],
         },
         {
-          hour: '09',
-          minutes: [
-            { minute: '04', exceptions: [] },
-            { minute: '23', exceptions: [{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' }] },
-          ],
+          time: '08:23', exceptions: [{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' }],
+        },
+        {
+          time: '09:04', exceptions: [],
+        },
+        {
+          time: '09:23', exceptions: [{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' }],
         },
       ],
       saturdays: [
         {
-          hour: '08',
-          minutes: [
-            { minute: '01', exceptions: [] },
-            { minute: '23', exceptions: [{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' }] },
-          ],
+          time: '08:01', exceptions: []
         },
         {
-          hour: '09',
-          minutes: [
-            { minute: '04', exceptions: [] },
-            { minute: '23', exceptions: [{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' }] },
-          ],
+          time: '08:23', exceptions: [{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' }],
+        },
+        {
+          time: '09:04', exceptions: [],
+        },
+        {
+          time: '09:23', exceptions: [{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' }],
         },
       ],
       sundays_holidays: [
         {
-          hour: '08',
-          minutes: [
-            { minute: '01', exceptions: [] },
-            { minute: '23', exceptions: [{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' }] },
-          ],
+          time: '08:01', exceptions: [],
         },
         {
-          hour: '09',
-          minutes: [
-            { minute: '04', exceptions: [] },
-            { minute: '23', exceptions: [{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' }] },
-          ],
+          time: '08:23', exceptions: [{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' }],
+        },
+        {
+          time: '09:04', exceptions: [],
+        },
+        {
+          time: '09:23', exceptions: [{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' }],
         },
       ],
     },

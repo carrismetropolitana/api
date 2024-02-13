@@ -1,9 +1,9 @@
 /* * */
 
-const NETWORKDB = require('../services/NETWORKDB');
-const SERVERDB = require('../services/SERVERDB');
-const timeCalc = require('../modules/timeCalc');
-const collator = require('../modules/sortCollator');
+import { connection } from '../services/NETWORKDB';
+import { client } from '../services/SERVERDB';
+import { getElapsedTime } from '../modules/timeCalc';
+import collator from '../modules/sortCollator';
 
 /* * */
 
@@ -69,7 +69,7 @@ function formatArrivalTime(arrival_time) {
  * Save each result in MongoDB.
  * @async
  */
-module.exports = async () => {
+export default async () => {
   //
 
   // 1.
@@ -78,13 +78,13 @@ module.exports = async () => {
 
   // 3.
   // Get all stops and build a hashmap for quick retrieval
-  const allStopsTxt = await SERVERDB.client.get('stops:all');
+  const allStopsTxt = await client.get('stops:all');
   const allStopsJson = JSON.parse(allStopsTxt);
   const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.id, obj]));
 
   // 4.
   // Query Postgres for all calendar dates and build a hashmap for quick retrieval
-  const allDatesRaw = await NETWORKDB.connection.query(`SELECT * FROM calendar_dates`);
+  const allDatesRaw = await connection.query(`SELECT * FROM calendar_dates`);
   const allDatesHashmap = new Map();
   const allCalendarDatesHashmap = new Map();
   for (const row of allDatesRaw.rows) {
@@ -98,7 +98,7 @@ module.exports = async () => {
   // 5,
   // Query Postgres for all unique routes
   console.log(`⤷ Querying database...`);
-  const allRoutesRaw = await NETWORKDB.connection.query('SELECT * FROM routes');
+  const allRoutesRaw = await connection.query('SELECT * FROM routes');
 
   // 6.
   // Group all routes into lines by route_short_name
@@ -213,7 +213,7 @@ module.exports = async () => {
 
       // 9.4.3.
       // Get all trips associated with this route
-      const allTripsRaw = await NETWORKDB.connection.query(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
+      const allTripsRaw = await connection.query(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
 
       // 9.4.4.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -227,7 +227,7 @@ module.exports = async () => {
 
         // 9.4.4.2.
         // Get the current trip stop_times
-        const allStopTimesRaw = await NETWORKDB.connection.query(`SELECT * FROM stop_times WHERE trip_id = '${tripRaw.trip_id}' ORDER BY stop_sequence`);
+        const allStopTimesRaw = await connection.query(`SELECT * FROM stop_times WHERE trip_id = '${tripRaw.trip_id}' ORDER BY stop_sequence`);
 
         // 9.4.4.3.
         // Initiate temporary holding variables
@@ -367,7 +367,7 @@ module.exports = async () => {
       // 9.4.6.
       // Save all created patterns to the database and update parent route and line
       for (const patternParsed of parsedPatternsForThisRoute) {
-        await SERVERDB.client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
+        await client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
         updatedPatternKeys.add(`patterns:${patternParsed.id}`);
         routeParsed.patterns.push(patternParsed.id);
         lineParsed.patterns.push(patternParsed.id);
@@ -389,7 +389,7 @@ module.exports = async () => {
 
       // 9.4.10.
       // Save the current route to the database
-      await SERVERDB.client.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
+      await client.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
       updatedRouteKeys.add(`routes:${routeParsed.id}`);
 
       //
@@ -407,12 +407,12 @@ module.exports = async () => {
 
     // 9.7.
     // Save the current line to the database
-    await SERVERDB.client.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
+    await client.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
     updatedLineKeys.add(`lines:${lineParsed.id}`);
 
     // 9.8.
     // Log operation details and elapsed time
-    const elapsedTime_line = timeCalc.getElapsedTime(startTime_line);
+    const elapsedTime_line = getElapsedTime(startTime_line);
     console.log(`⤷ Updated Line ${lineParsed.id} | ${lineParsed.routes.length} Routes | ${lineParsed.patterns.length} Patterns | ${elapsedTime_line}.`);
 
     //
@@ -421,48 +421,48 @@ module.exports = async () => {
   // 10.
   // Save all routes to the routes:all REDIS key
   allRoutesFinal.sort((a, b) => collator.compare(a.id, b.id));
-  await SERVERDB.client.set('routes:all', JSON.stringify(allRoutesFinal));
+  await client.set('routes:all', JSON.stringify(allRoutesFinal));
   updatedRouteKeys.add('routes:all');
 
   // 11.
   // Save all lines to the lines:all REDIS key
   allLinesFinal.sort((a, b) => collator.compare(a.id, b.id));
-  await SERVERDB.client.set('lines:all', JSON.stringify(allLinesFinal));
+  await client.set('lines:all', JSON.stringify(allLinesFinal));
   updatedLineKeys.add('lines:all');
 
   // 12.
   // Delete stale patterns not present in the current update
   const allPatternKeysInTheDatabase = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
+  for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
     allPatternKeysInTheDatabase.push(key);
   }
   const stalePatternKeys = allPatternKeysInTheDatabase.filter((key) => !updatedPatternKeys.has(key));
-  if (stalePatternKeys.length) await SERVERDB.client.del(stalePatternKeys);
+  if (stalePatternKeys.length) await client.del(stalePatternKeys);
   console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
   // 13.
   // Delete stale routes not present in the current update
   const allRouteKeysInTheDatabase = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) {
+  for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) {
     allRouteKeysInTheDatabase.push(key);
   }
   const staleRouteKeys = allRouteKeysInTheDatabase.filter((key) => !updatedRouteKeys.has(key));
-  if (staleRouteKeys.length) await SERVERDB.client.del(staleRouteKeys);
+  if (staleRouteKeys.length) await client.del(staleRouteKeys);
   console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
 
   // 14.
   // Delete stale lines not present in the current update
   const allLineKeysInTheDatabase = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
+  for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
     allLineKeysInTheDatabase.push(key);
   }
   const staleLineKeys = allLineKeysInTheDatabase.filter((key) => !updatedLineKeys.has(key));
-  if (staleLineKeys.length) await SERVERDB.client.del(staleLineKeys);
+  if (staleLineKeys.length) await client.del(staleLineKeys);
   console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 
   // 15.
   // Log elapsed time in the current operation
-  const elapsedTime_global = timeCalc.getElapsedTime(startTime_global);
+  const elapsedTime_global = getElapsedTime(startTime_global);
   console.log(`⤷ Done! Updated ${updatedLineKeys.size} Lines | ${updatedRouteKeys.size} Routes | ${updatedPatternKeys.size} Patterns | ${elapsedTime_global}`);
 
   //

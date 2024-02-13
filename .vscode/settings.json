@@ -1,0 +1,6 @@
+{
+  "eslint.options": {
+    "extensions": [".ts", ".js"]
+  },
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+}
