@@ -131,7 +131,7 @@ const files: File[] = [
   {
     file_name: 'trips',
     file_extension: 'txt',
-    file_headers: ['route_id', 'pattern_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id'],
+    file_headers: ['route_id', 'pattern_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id', 'calendar_desc'],
     table_query: `CREATE TABLE trips (
         route_id VARCHAR(255),
         pattern_id VARCHAR(255),
@@ -139,7 +139,8 @@ const files: File[] = [
         trip_id VARCHAR(255),
         trip_headsign VARCHAR(255),
         direction_id SMALLINT,
-        shape_id VARCHAR(255)
+        shape_id VARCHAR(255),
+        calendar_desc VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX trips_route_id_idx ON trips ("route_id");', 'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");'],
     raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
@@ -151,13 +152,15 @@ const files: File[] = [
   {
     file_name: 'stop_times',
     file_extension: 'txt',
-    file_headers: ['trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled'],
+    file_headers: ['trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled', 'pickup_type', 'drop_off_type'],
     table_query: `CREATE TABLE stop_times (
         trip_id VARCHAR(255),
         arrival_time VARCHAR(8),
         stop_id VARCHAR(6),
         stop_sequence SMALLINT,
-        shape_dist_traveled VARCHAR(255)
+        shape_dist_traveled VARCHAR(255),
+        pickup_type VARCHAR(1),
+        drop_off_type VARCHAR(1)
     );`,
     index_queries: ['CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");', 'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");'],
     raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,

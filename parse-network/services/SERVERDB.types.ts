@@ -55,6 +55,7 @@ type GTFSTrip = {
   trip_headsign: string;
   direction_id: number;
   shape_id: string;
+  calendar_desc: string;
 };
 
 type GTFSStopTime = {
@@ -63,6 +64,8 @@ type GTFSStopTime = {
   stop_id: string;
   stop_sequence: number;
   shape_dist_traveled: string;
+  pickup_type: string;
+  drop_off_type: string;
 };
 
 type GTFSStop = {

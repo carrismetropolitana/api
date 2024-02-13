@@ -4,6 +4,7 @@ import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
+import { MonStop } from '../services/NETWORKDB.types';
 
 /* * */
 
@@ -21,8 +22,8 @@ export default async () => {
     stop_name: string;
     stop_short_name: string;
     tts_stop_name: string;
-    stop_lat: number;
-    stop_lon: number;
+    stop_lat: string;
+    stop_lon: string;
     locality: string;
     parish_id: string;
     parish_name: string;
@@ -32,7 +33,7 @@ export default async () => {
     district_name: string;
     region_id: string;
     region_name: string;
-    wheelchair_boarding: number;
+    wheelchair_boarding: string;
     near_health_clinic: boolean;
     near_hospital: boolean;
     near_university: boolean;
@@ -77,7 +78,6 @@ export default async () => {
             stop_id
     ) r ON s.stop_id = r.stop_id;
   `);
-  console.log(allStops.rows[0])
 
   // 3.
   // Log progress
@@ -85,7 +85,7 @@ export default async () => {
 
   // 4.
   // Initate a temporary variable to hold updated Stops
-  const allStopsData = [];
+  const allStopsData: MonStop[] = [];
   const updatedStopKeys = new Set();
 
   // 5.

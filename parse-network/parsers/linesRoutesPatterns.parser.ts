@@ -1,16 +1,16 @@
-// @ts-nocheck
 /* * */
 
 import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
+import { MonStop } from '../services/NETWORKDB.types';
 
 /* * */
 
 function calculateTimeDifference(time1: string, time2: string): string {
   // Handle the case where time1 is zero
-  if (time1 === 0) return 0;
+  if (time1 === "00:00:00") return "00:00:00";
   // Convert time strings to seconds
   const [h1, m1, s1] = time1.split(':').map(Number);
   const [h2, m2, s2] = time2.split(':').map(Number);
@@ -74,8 +74,8 @@ export default async () => {
   // 3.
   // Get all stops and build a hashmap for quick retrieval
   const allStopsTxt = await client.get('stops:all');
-  const allStopsJson = JSON.parse(allStopsTxt);
-  const allStopsHashmap = new Map(allStopsJson.map((obj: { id: any; }) => [obj.id, obj]));
+  const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
+  const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.id, obj]));
 
   // 4.
   // Query Postgres for all calendar dates and build a hashmap for quick retrieval
@@ -230,7 +230,7 @@ export default async () => {
         let formattedSchedule = [];
 
         let prevTravelDistance = 0;
-        let prevArrivalTime = 0;
+        let prevArrivalTime = "00:00:00";
 
         let patternPassesByMunicipalities = new Set();
         let patternPassesByLocalities = new Set();
@@ -257,13 +257,12 @@ export default async () => {
           // Calculate travel time
           const currentTravelTime = calculateTimeDifference(prevArrivalTime, stopTimeRaw.arrival_time);
           prevArrivalTime = stopTimeRaw.arrival_time;
-          console.log('stopTimeRaw', stopTimeRaw.arrival_time);
 
           // 9.4.4.4.5.
           // Save formatted stop_time to path if no pattern with the unique combination exists yet
           if (!patternParsed) {
             formattedPath.push({
-              stop: existingStopDocument,
+              Stop: existingStopDocument,
               stop_sequence: stopTimeRaw.stop_sequence,
               allow_pickup: stopTimeRaw.pickup_type ? false : true,
               allow_drop_off: stopTimeRaw.drop_off_type ? false : true,
