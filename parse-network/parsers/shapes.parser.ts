@@ -17,7 +17,16 @@ export default async () => {
   // 2.
   // Query Postgres for all unique shapes by shape_id
   console.log(`⤷ Querying database...`);
-  const allShapes = await connection.query(`
+  const allShapes = await connection.query<{
+    shape_id: string,
+    points: {
+      shape_pt_lat: string,
+      shape_pt_lon: string,
+      shape_pt_sequence: string,
+      shape_dist_traveled: string,
+    }[]
+  }>
+    (`
         SELECT
             shape_id,
             ARRAY_AGG(
@@ -47,7 +56,13 @@ export default async () => {
   for (const shape of allShapes.rows) {
     try {
       // Initiate a variable to hold the parsed shape
-      let parsedShape = {
+      let parsedShape: {
+        id: string,
+        points?: any[],
+        geojson?: any,
+        extension?: number,
+      }
+        = {
         id: shape.shape_id,
       };
       // Sort points to match sequence
@@ -57,7 +72,8 @@ export default async () => {
       // Calculate shape extension
       const shapeExtensionKm = length(parsedShape.geojson, { units: 'kilometers' });
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
-      parsedShape.extension = parseInt(shapeExtensionMeters);
+      parsedShape.extension = Math.floor(shapeExtensionMeters);
+      console.log(`⤷ Updated Shape ${shapeExtensionMeters} (${parsedShape.extension}m).`);
       // Update or create new document
       await client.set(`shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
       updatedShapeKeys.add(`shapes:${parsedShape.id}`);

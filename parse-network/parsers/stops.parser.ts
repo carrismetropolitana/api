@@ -16,7 +16,44 @@ export default async () => {
   // 2.
   // Query Postgres for all unique stops by stop_id
   console.log(`⤷ Querying database...`);
-  const allStops = await connection.query(`
+  const allStops = await connection.query<{
+    stop_id: string;
+    stop_name: string;
+    stop_short_name: string;
+    tts_stop_name: string;
+    stop_lat: number;
+    stop_lon: number;
+    locality: string;
+    parish_id: string;
+    parish_name: string;
+    municipality_id: string;
+    municipality_name: string;
+    district_id: string;
+    district_name: string;
+    region_id: string;
+    region_name: string;
+    wheelchair_boarding: number;
+    near_health_clinic: boolean;
+    near_hospital: boolean;
+    near_university: boolean;
+    near_school: boolean;
+    near_police_station: boolean;
+    near_fire_station: boolean;
+    near_shopping: boolean;
+    near_historic_building: boolean;
+    near_transit_office: boolean;
+    light_rail: boolean;
+    subway: boolean;
+    train: boolean;
+    boat: boolean;
+    airport: boolean;
+    bike_sharing: boolean;
+    bike_parking: boolean;
+    car_parking: boolean;
+    route_ids: string[];
+    line_ids: string[];
+    pattern_ids: string[];
+  }>(`
     SELECT
         s.*,
         r.route_ids,
@@ -40,6 +77,7 @@ export default async () => {
             stop_id
     ) r ON s.stop_id = r.stop_id;
   `);
+  console.log(allStops.rows[0])
 
   // 3.
   // Log progress

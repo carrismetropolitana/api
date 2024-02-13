@@ -1,10 +1,21 @@
 /* * */
 
-const settings = require('./settings');
+import { BASE_DIR, GTFS_BASE_DIR, GTFS_RAW_DIR, GTFS_PREPARED_DIR } from './settings';
 
 /* * */
 
-module.exports = [
+
+type File = {
+  file_name: string;
+  file_extension: string;
+  file_headers: string[];
+  table_query: string;
+  index_queries: string[];
+  raw_dir: string;
+  prepared_dir: string;
+};
+
+const files: File[] = [
   //
 
   //
@@ -23,8 +34,8 @@ module.exports = [
         region_name VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -38,8 +49,8 @@ module.exports = [
         period_name VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX periods_period_id_idx ON periods ("period_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -56,8 +67,8 @@ module.exports = [
         description VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX dates_date_idx ON dates ("date");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -74,8 +85,8 @@ module.exports = [
         holiday VARCHAR(1)
     );`,
     index_queries: ['CREATE INDEX calendar_dates_service_id_idx ON calendar_dates ("service_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -93,8 +104,8 @@ module.exports = [
         route_text_color VARCHAR(6)
     );`,
     index_queries: ['CREATE INDEX routes_route_id_idx ON routes ("route_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -111,8 +122,8 @@ module.exports = [
         shape_dist_traveled FLOAT(6)
     );`,
     index_queries: ['CREATE INDEX shapes_shape_id_idx ON shapes ("shape_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -131,8 +142,8 @@ module.exports = [
         shape_id VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX trips_route_id_idx ON trips ("route_id");', 'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -149,8 +160,8 @@ module.exports = [
         shape_dist_traveled VARCHAR(255)
     );`,
     index_queries: ['CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");', 'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
@@ -229,9 +240,10 @@ module.exports = [
         car_parking BOOLEAN
     );`,
     index_queries: ['CREATE INDEX stops_stop_id_idx ON stops ("stop_id");'],
-    raw_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_RAW_DIR}`,
-    prepared_dir: `${settings.BASE_DIR}/${settings.GTFS_BASE_DIR}/${settings.GTFS_PREPARED_DIR}`,
+    raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
+    prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
   },
 
   //
 ];
+export default files

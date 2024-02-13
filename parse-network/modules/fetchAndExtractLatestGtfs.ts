@@ -22,7 +22,9 @@ export default async () => {
 
   // Download GTFS file to given destination
   const stream = createWriteStream(filePath);
-  const { body } = await fetch(process.env.GTFS_URL);
+  const resp: Response = await fetch(process.env.GTFS_URL);
+  const body: ReadableStream<Uint8Array> = resp.body;
+  //@ts-ignore
   await finished(Readable.fromWeb(body).pipe(stream));
   console.log(`⤷ Downloaded file from "${process.env.GTFS_URL}" to "${filePath}" successfully.`);
 

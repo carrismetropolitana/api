@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* * */
 
 import { connection } from '../services/NETWORKDB';
@@ -7,15 +8,9 @@ import collator from '../modules/sortCollator';
 
 /* * */
 
-/**
- * Calculate time difference
- * @async
- * @param {String} service_id The service_id to retrieve
- * @returns {Array} Array of date strings
- */
-function calculateTimeDifference(time1, time2) {
+function calculateTimeDifference(time1: string, time2: string): string {
   // Handle the case where time1 is zero
-  if (!time1) return 0;
+  if (time1 === 0) return 0;
   // Convert time strings to seconds
   const [h1, m1, s1] = time1.split(':').map(Number);
   const [h2, m2, s2] = time2.split(':').map(Number);
@@ -46,7 +41,7 @@ function calculateTimeDifference(time1, time2) {
 //
 //
 
-function formatArrivalTime(arrival_time) {
+function formatArrivalTime(arrival_time: string) {
   const arrival_time_array = arrival_time.split(':');
   let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
   if (arrival_time_hours && Number(arrival_time_hours) > 23) {
@@ -80,11 +75,11 @@ export default async () => {
   // Get all stops and build a hashmap for quick retrieval
   const allStopsTxt = await client.get('stops:all');
   const allStopsJson = JSON.parse(allStopsTxt);
-  const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.id, obj]));
+  const allStopsHashmap = new Map(allStopsJson.map((obj: { id: any; }) => [obj.id, obj]));
 
   // 4.
   // Query Postgres for all calendar dates and build a hashmap for quick retrieval
-  const allDatesRaw = await connection.query(`SELECT * FROM calendar_dates`);
+  const allDatesRaw = await connection.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
   const allDatesHashmap = new Map();
   const allCalendarDatesHashmap = new Map();
   for (const row of allDatesRaw.rows) {
@@ -98,7 +93,7 @@ export default async () => {
   // 5,
   // Query Postgres for all unique routes
   console.log(`⤷ Querying database...`);
-  const allRoutesRaw = await connection.query('SELECT * FROM routes');
+  const allRoutesRaw = await connection.query<GTFSRoute>('SELECT * FROM routes');
 
   // 6.
   // Group all routes into lines by route_short_name
@@ -213,7 +208,7 @@ export default async () => {
 
       // 9.4.3.
       // Get all trips associated with this route
-      const allTripsRaw = await connection.query(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
+      const allTripsRaw = await connection.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
 
       // 9.4.4.
       // Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -227,7 +222,7 @@ export default async () => {
 
         // 9.4.4.2.
         // Get the current trip stop_times
-        const allStopTimesRaw = await connection.query(`SELECT * FROM stop_times WHERE trip_id = '${tripRaw.trip_id}' ORDER BY stop_sequence`);
+        const allStopTimesRaw = await connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = '${tripRaw.trip_id}' ORDER BY stop_sequence`);
 
         // 9.4.4.3.
         // Initiate temporary holding variables
@@ -262,6 +257,7 @@ export default async () => {
           // Calculate travel time
           const currentTravelTime = calculateTimeDifference(prevArrivalTime, stopTimeRaw.arrival_time);
           prevArrivalTime = stopTimeRaw.arrival_time;
+          console.log('stopTimeRaw', stopTimeRaw.arrival_time);
 
           // 9.4.4.4.5.
           // Save formatted stop_time to path if no pattern with the unique combination exists yet

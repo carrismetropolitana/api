@@ -17,8 +17,8 @@ export default async () => {
   // 2.
   // Fetch all calendar dates from Postgres
   console.log(`⤷ Querying database...`);
-  const allPeriods = await connection.query('SELECT * FROM periods');
-  const allDates = await connection.query('SELECT * FROM dates');
+  const allPeriods = await connection.query<GTFSPeriod>('SELECT * FROM periods');
+  const allDates = await connection.query<GTFSDate>('SELECT * FROM dates');
 
   // 3.
   // Build periods hashmap
@@ -37,7 +37,10 @@ export default async () => {
 
     // 3.3.
     // Start the block with the first date for this period
-    let currentBlock = {
+    let currentBlock: {
+      from: string;
+      until?: string;
+    } = {
       from: datesForThisPeriod[0],
     };
 
