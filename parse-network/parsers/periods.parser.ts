@@ -33,7 +33,10 @@ export default async () => {
 
     // 3.2.
     // Initiate a variable to hold the active blocks for this period
-    const validFromUntil = [];
+    const validFromUntil: {
+      from: string;
+      until?: string;
+    }[] = [];
 
     // 3.3.
     // Start the block with the first date for this period

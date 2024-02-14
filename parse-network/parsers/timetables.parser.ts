@@ -4,15 +4,18 @@ import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
+import { MonPeriod, MonStop } from '../services/NETWORKDB.types';
+import { Timetable } from './timetableExample';
+import { QueryResult } from 'pg';
 
 /* * */
 
 export default async () => {
   //
 
-  const LINE_ID = '4205';
+  const LINE_ID = '4701';
 
-  const STOP_ID = '100027'
+  const STOP_ID = '090003'
 
   // 1.
   // Record the start time to later calculate operation duration
@@ -21,7 +24,7 @@ export default async () => {
   // 2.
   // Fetch all Periods from Redis
   console.log(`⤷ Querying Periods...`);
-  const stop = JSON.parse(await client.get(`stops:${STOP_ID}`));
+  const stop: MonStop = JSON.parse(await client.get(`stops:${STOP_ID}`));
   // Sanity check
   if (!stop.lines.includes(LINE_ID)) {
     console.log(`⤷ Stop ${STOP_ID} does not belong to line ${LINE_ID}.`);
@@ -31,146 +34,88 @@ export default async () => {
   console.log('patterns', patterns);
   const routes = stop.routes.filter((route) => route.startsWith(LINE_ID));
   const line = JSON.parse(await client.get(`lines:${LINE_ID}`));
-  const relevantTrips = await connection.query(`SELECT * FROM trips WHERE pattern_id = ANY($1)`, [patterns]);
-  const relevantDates = await connection.query(`SELECT * FROM calendar_dates WHERE service_id = ANY($1)`, [relevantTrips.rows.map((trip) => trip.service_id)]);
-  const relevantStopTimes = await connection.query(`SELECT * FROM stop_times WHERE trip_id = ANY($1) AND stop_id = ($2)`, [relevantTrips.rows.map((trip) => trip.trip_id), STOP_ID]);
-  // console.log('relevantTrips', relevantTrips.rows);
-  // console.log('relevantDates', relevantDates.rows);
-  console.log('relevantStopTimes', relevantStopTimes.rows);
+  const relevantTrips = await connection.query<GTFSTrip>(`SELECT * FROM trips WHERE pattern_id = ANY($1)`, [patterns]);
+  const relevantDates = await connection.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates WHERE service_id = ANY($1)`, [relevantTrips.rows.map((trip) => trip.service_id)]);
+  const relevantStopTimes = await connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = ANY($1) AND stop_id = ($2)`, [relevantTrips.rows.map((trip) => trip.trip_id), STOP_ID]);
+  const periods = new Map((await connection.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
+    .map((period) => [period.period_id, period.period_name]));
 
-  const patternsInfo = await Promise.all(
-    patterns.map((pattern) => client.get(`patterns:${pattern}`).then(JSON.parse))
-  )
-  // console.log('patternsInfo', patternsInfo);
-  const allPeriodsTxt = await client.get('periods:all');
-  const allPeriodsJson = JSON.parse(allPeriodsTxt);
-  const allPeriodsMap = new Map(allPeriodsJson.map((period) => [period.id, new Set(period.dates)]));
+  const dayTypes = new Map<string, "weekdays" | "saturdays" | "sundays_holidays">([["1", "weekdays"], ["2", "saturdays"], ["3", "sundays_holidays"]]);
 
-  // // 2.
-  // // Fetch all Dates from Redis
-  // console.log(`⤷ Querying Dates...`);
-  // const allDatesTxt = await SERVERDB.client.get('dates:all');
-  // const allDatesJson = JSON.parse(allDatesTxt);
-  // const allDatesMap = new Map(allDatesJson.map((date) => [date.date, date]));
+  console.log('relevantTrips', relevantTrips.rows.slice(0, 3))
+  console.log('relevantDates', relevantDates.rows.slice(0, 3))
+  console.log('relevantStopTimes', relevantStopTimes.rows.slice(0, 3))
 
-  // // 2.
-  // // Fetch given pattern from Redis
-  // console.log(`⤷ Querying patterns...`);
-  // const patternsTxt = await SERVERDB.client.get(`patterns:${LINE_ID}`);
-  // const patternJson = JSON.parse(patternsTxt);
 
-  // // 3.
-  // // Initate a temporary variable to hold updated Municipalities
-  // const allMunicipalitiesData = [];
-  // const updatedMunicipalityKeys = new Set();
-  // console.log(`⤷ Updating Timetables for this pattern...`);
 
-  // // 4.
-  // // Log progress
-  // console.log(`⤷ Updating Timetables for this pattern...`);
+  // stop_times[trip_id] -> trips[trip_id]-[service_id] -> calendar_dates[service_id]-[period] 
+  const timesByPeriodByDayType: {
+    [period: string]: {
+      weekdays?: {
+        [time: string]: string[]
+      },
+      saturdays?: {
+        [time: string]: string[]
+      },
+      sundays_holidays?: {
+        [time: string]: string[]
+      }
+    }
+  }
+    = {
+  };
+  for (const stopTime of relevantStopTimes.rows) {
+    const trip = relevantTrips.rows.find((trip) => trip.trip_id === stopTime.trip_id);
+    const date = relevantDates.rows.find((date) => date.service_id === trip.service_id);
+    const day_type = dayTypes.get(date.day_type);
+    const periodName = periods.get(date.period);
+    if (!timesByPeriodByDayType[date.period]) {
+      timesByPeriodByDayType[date.period] = {};
+    }
+    if (!timesByPeriodByDayType[date.period][day_type]) {
+      timesByPeriodByDayType[date.period][day_type] = {};
+    }
+    if (!timesByPeriodByDayType[date.period][day_type][stopTime.arrival_time]) {
+      timesByPeriodByDayType[date.period][day_type][stopTime.arrival_time] = [];
+    }
+    if (trip.calendar_desc) {
+      timesByPeriodByDayType[date.period][day_type][stopTime.arrival_time].push(trip.calendar_desc);
+    }
+  }
 
-  // // 6.
-  // // For each stop in the trip
-  // for (const patternPath of patternJson.path) {
-  //   //
+  const exceptions = new Map(Array.from(relevantTrips.rows.reduce((acc, trip) => {
+    if (trip.calendar_desc) {
+      acc.add(trip.calendar_desc);
+    }
+    return acc;
+  }, new Set<string>()).values()).map((exception, index) => {
+    return [exception, {
+      id: String.fromCharCode(97 + index),
+      label: String.fromCharCode(97 + index) + ")",
+      text: exception
+    }]
+  }))
 
-  //   const finalTimetableForThisStop = {
-  //     periods: [],
-  //     exceptions: [],
-  //   };
+  const timetable: Timetable = {
+    periods: Object.entries(timesByPeriodByDayType).map(([period, dayTypes]) => {
+      const getPeriod = (time: string, _exceptions: string[]) => ({
+        time,
+        exceptions: _exceptions.map((ex) => exceptions.get(ex))
+      });
 
-  //   for (const periodData of allPeriodsJson) {
-  //     //
+      return {
+        period_id: period,
+        period_name: periods.get(period),
+        weekdays: dayTypes.weekdays ? Object.entries(dayTypes.weekdays).map(([time, exceptions]) => getPeriod(time, exceptions)) : [],
+        saturdays: dayTypes.saturdays ? Object.entries(dayTypes.saturdays).map(([time, exceptions]) => getPeriod(time, exceptions)) : [],
+        sundays_holidays: dayTypes.sundays_holidays ? Object.entries(dayTypes.sundays_holidays).map(([time, exceptions]) => getPeriod(time, exceptions)) : [],
+      }
+    }),
+    exceptions: Array.from(exceptions.values())
+  }
+  console.log('timetable', JSON.stringify(timetable, null, 2));
 
-  //     const periodResult = {
-  //       period_id: periodData.id,
-  //       period_name: periodData.name,
-  //       weekdays: [],
-  //       saturdays: [],
-  //       sundays_holidays: [],
-  //     };
 
-  //     const periodDatesSet = new Set(periodData.dates);
-
-  //     for (const patternTrip of patternJson.trips) {
-  //       //
-
-  //       for (const tripSchedule of patternTrip.schedule) {
-  //         //
-  //         // skip if the schedule is not for the current path stop and stop_sequence
-  //         if (tripSchedule.stop_id !== patternPath.stop.id || tripSchedule.stop_sequence !== patternPath.stop_sequence) continue;
-
-  //         // Prepare schedule info
-  //         const scheduleHours = tripSchedule.arrival_time.split(':')[0];
-  //         const scheduleMinutes = tripSchedule.arrival_time.split(':')[1];
-
-  //         console.log('scheduleHours', scheduleHours);
-  //         console.log('scheduleMinutes', scheduleMinutes);
-
-  //         // Now we check in which period and which day_type we should put the trip
-
-  //         for (const tripDate of patternTrip.dates) {
-  //           console.log('periodDatesSet.has(tripDate)', periodDatesSet.has(tripDate));
-  //           if (periodDatesSet.has(tripDate)) {
-  //             const dateInfo = allDatesMap.get(tripDate);
-  //             switch (dateInfo.day_type) {
-  //               case 1:
-  //                 // Check if there is already an object with the same hours
-  //                 const hoursIndex1 = periodResult.weekdays.find((item) => item.hour === scheduleHours);
-  //                 if (hoursIndex1 > -1) periodResult.weekdays[hoursIndex1].minutes.push({ minute: scheduleMinutes, trip_id: patternTrip.trip_id });
-  //                 else periodResult.weekdays.push({ hour: scheduleHours, minutes: [{ minute: scheduleMinutes, trip_id: patternTrip.trip_id }] });
-  //                 break;
-  //               case 2:
-  //                 const hoursIndex2 = periodResult.saturdays.find((item) => item.hour === scheduleHours);
-  //                 if (hoursIndex2 > -1) periodResult.saturdays[hoursIndex2].minutes.push({ minute: scheduleMinutes, trip_id: patternTrip.trip_id });
-  //                 else periodResult.saturdays.push({ hour: scheduleHours, minutes: [{ minute: scheduleMinutes, trip_id: patternTrip.trip_id }] });
-  //                 break;
-  //               case 3:
-  //                 const hoursIndex3 = periodResult.sundays_holidays.find((item) => item.hour === scheduleHours);
-  //                 if (hoursIndex3 > -1) periodResult.sundays_holidays[hoursIndex3].minutes.push({ minute: scheduleMinutes, trip_id: patternTrip.trip_id });
-  //                 else periodResult.sundays_holidays.push({ hour: scheduleHours, minutes: [{ minute: scheduleMinutes, trip_id: patternTrip.trip_id }] });
-  //                 periodResult.saturdays.push(tripDate);
-  //                 break;
-  //               default:
-  //                 console.log(`⤷ Unknown day_type: ${dateInfo.day_type}`);
-  //                 break;
-  //             }
-  //           }
-  //         }
-
-  //         console.log('periodResult', periodResult);
-
-  //         //
-  //       }
-
-  //       //
-  //     }
-
-  //     finalTimetableForThisStop.periods.push(periodResult);
-
-  //     //
-  //   }
-
-  //   // Update or create new document
-  //   await SERVERDB.client.set(`timetables:${LINE_ID}-${patternPath.stop.id}-${patternPath.stop_sequence}`, JSON.stringify(finalTimetableForThisStop));
-  //   updatedMunicipalityKeys.add(`timetables:${LINE_ID}-${patternPath.stop.id}-${patternPath.stop_sequence}`);
-
-  //   //
-  // }
-
-  // // 6.
-  // // Log count of updated Municipalities
-  // console.log(`⤷ Updated ${updatedMunicipalityKeys.size} Municipalities.`);
-
-  // // 8.
-  // // Delete all Municipalities not present in the current update
-  // const allSavedMunicipalityKeys = [];
-  // for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'timetables:*' })) {
-  //   allSavedMunicipalityKeys.push(key);
-  // }
-  // const staleMunicipalityKeys = allSavedMunicipalityKeys.filter((id) => !updatedMunicipalityKeys.has(id));
-  // if (staleMunicipalityKeys.length) await SERVERDB.client.del(staleMunicipalityKeys);
-  // console.log(`⤷ Deleted ${staleMunicipalityKeys.length} stale Municipalities.`);
 
   // 9.
   // Log elapsed time in the current operation

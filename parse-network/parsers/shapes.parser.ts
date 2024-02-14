@@ -73,7 +73,6 @@ export default async () => {
       const shapeExtensionKm = length(parsedShape.geojson, { units: 'kilometers' });
       const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
       parsedShape.extension = Math.floor(shapeExtensionMeters);
-      console.log(`⤷ Updated Shape ${shapeExtensionMeters} (${parsedShape.extension}m).`);
       // Update or create new document
       await client.set(`shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
       updatedShapeKeys.add(`shapes:${parsedShape.id}`);

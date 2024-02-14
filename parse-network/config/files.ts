@@ -76,13 +76,14 @@ const files: File[] = [
   {
     file_name: 'calendar_dates',
     file_extension: 'txt',
-    file_headers: ['service_id', 'date', 'period', 'day_type', 'holiday'],
+    file_headers: ['service_id', 'date', 'period', 'day_type', 'holiday','exception_type'],
     table_query: `CREATE TABLE calendar_dates (
         service_id VARCHAR(255),
         date VARCHAR(8),
         period VARCHAR(1),
         day_type VARCHAR(1),
-        holiday VARCHAR(1)
+        holiday VARCHAR(1),
+        exception_type VARCHAR(1)
     );`,
     index_queries: ['CREATE INDEX calendar_dates_service_id_idx ON calendar_dates ("service_id");'],
     raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,

@@ -21,3 +21,13 @@ export type MonStop = {
     routes: string[];
     patterns: string[];
 };
+
+export type MonPeriod = {
+    id: string;
+    name: string;
+    dates: string[];
+    valid: {
+        from: string;
+        until?: string;
+    }[];
+}
