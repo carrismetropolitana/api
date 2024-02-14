@@ -48,7 +48,36 @@ export default async () => {
 
 
 
-  // stop_times[trip_id] -> trips[trip_id]-[service_id] -> calendar_dates[service_id]-[period] 
+  const timesByPeriodByDayTypeQuery = `
+    SELECT
+      periods.period_id,
+      calendar_dates.day_type,
+      stop_times.arrival_time,
+      trips.calendar_desc
+    FROM
+      stop_times
+      JOIN trips ON stop_times.trip_id = trips.trip_id
+      JOIN calendar_dates ON trips.service_id = calendar_dates.service_id
+      JOIN periods ON calendar_dates.period = periods.period_id
+    WHERE
+      stop_times.stop_id = $1
+      AND trips.pattern_id = ANY($2)
+      AND stop_times.arrival_time IS NOT NULL
+    GROUP BY
+      periods.period_id,
+      periods.period_name,
+      calendar_dates.day_type,
+      stop_times.arrival_time,
+      trips.calendar_desc
+  `;
+
+  const timesByPeriodByDayTypeResult = await connection.query<{
+    period_id: string,
+    day_type: string,
+    arrival_time: string,
+    calendar_desc: null | string
+  }>(timesByPeriodByDayTypeQuery, [STOP_ID, patterns]);
+
   const timesByPeriodByDayType: {
     [period: string]: {
       weekdays?: {
@@ -61,27 +90,25 @@ export default async () => {
         [time: string]: string[]
       }
     }
-  }
-    = {
-  };
-  for (const stopTime of relevantStopTimes.rows) {
-    const trip = relevantTrips.rows.find((trip) => trip.trip_id === stopTime.trip_id);
-    const date = relevantDates.rows.find((date) => date.service_id === trip.service_id);
-    const day_type = dayTypes.get(date.day_type);
-    const periodName = periods.get(date.period);
-    if (!timesByPeriodByDayType[date.period]) {
-      timesByPeriodByDayType[date.period] = {};
+  } = {};
+
+  timesByPeriodByDayTypeResult.rows.forEach((row) => {
+    const { period_id, day_type, arrival_time, calendar_desc } = row;
+    const dt = dayTypes.get(day_type);
+
+    if (!timesByPeriodByDayType[period_id]) {
+      timesByPeriodByDayType[period_id] = {};
     }
-    if (!timesByPeriodByDayType[date.period][day_type]) {
-      timesByPeriodByDayType[date.period][day_type] = {};
+    if (!timesByPeriodByDayType[period_id][dt]) {
+      timesByPeriodByDayType[period_id][dt] = {};
     }
-    if (!timesByPeriodByDayType[date.period][day_type][stopTime.arrival_time]) {
-      timesByPeriodByDayType[date.period][day_type][stopTime.arrival_time] = [];
+    if (!timesByPeriodByDayType[period_id][dt][arrival_time]) {
+      timesByPeriodByDayType[period_id][dt][arrival_time] = [];
     }
-    if (trip.calendar_desc) {
-      timesByPeriodByDayType[date.period][day_type][stopTime.arrival_time].push(trip.calendar_desc);
+    if (calendar_desc) {
+      timesByPeriodByDayType[period_id][dt][arrival_time].push(calendar_desc);
     }
-  }
+  });
 
   const exceptions = new Map(Array.from(relevantTrips.rows.reduce((acc, trip) => {
     if (trip.calendar_desc) {
