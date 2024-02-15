@@ -1,4 +1,3 @@
-
 export type MonStop = {
     id: string;
     name: string;

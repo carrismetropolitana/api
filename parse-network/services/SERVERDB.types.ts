@@ -1,4 +1,3 @@
-
 type GTFSMunicipality = {
   municipality_prefix: string;
   municipality_id: string;
