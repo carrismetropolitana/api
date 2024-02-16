@@ -20,7 +20,7 @@ import linesRoutesPatternsParser from './parsers/linesRoutesPatterns.parser';
 import timetablesParser from './parsers/timetables.parser';
 
 /* * */
-const SKIP_INIT = true;
+const SKIP_INIT = false;
 
 export default async () => {
 	//
@@ -38,10 +38,10 @@ export default async () => {
 
 		//
 
-		console.log();
-		console.log('STEP 0.0: Connect to databases');
-		await connect();
-		await _connect();
+		// console.log();
+		// console.log('STEP 0.0: Connect to databases');
+		// await connect();
+		// await _connect();
 
 		//
 
@@ -98,10 +98,10 @@ export default async () => {
 		console.log('STEP 1.3: Parse Timetables');
 		await timetablesParser();
 
-		console.log();
-		console.log('Disconnecting from databases...');
-		await disconnect();
-		await _disconnect();
+		// console.log();
+		// console.log('Disconnecting from databases...');
+		// await disconnect();
+		// await _disconnect();
 
 		console.log();
 		console.log('- - - - - - - - - - - - - - - - - - - - -');

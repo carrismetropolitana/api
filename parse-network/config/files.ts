@@ -94,14 +94,15 @@ const files: File[] = [
 	{
 		file_name: 'routes',
 		file_extension: 'txt',
-		file_headers: ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color'],
+		file_headers: ['route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color', 'line_id'],
 		table_query: `CREATE TABLE routes (
         route_id VARCHAR(10),
         route_short_name VARCHAR(10),
         route_long_name VARCHAR(255),
         route_type VARCHAR(255),
         route_color VARCHAR(6),
-        route_text_color VARCHAR(6)
+        route_text_color VARCHAR(6),
+				line_id VARCHAR(10)
     );`,
 		index_queries: ['CREATE INDEX routes_route_id_idx ON routes ("route_id");'],
 		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
@@ -142,7 +143,9 @@ const files: File[] = [
         shape_id VARCHAR(255),
         calendar_desc VARCHAR(255)
     );`,
-		index_queries: ['CREATE INDEX trips_route_id_idx ON trips ("route_id");', 'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");'],
+		index_queries: ['CREATE INDEX trips_route_id_idx ON trips ("route_id");',
+			'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");',
+			'CREATE INDEX trips_pattern_id_idx ON trips (pattern_id);'],
 		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
 	},
@@ -162,7 +165,8 @@ const files: File[] = [
         pickup_type VARCHAR(1),
         drop_off_type VARCHAR(1)
     );`,
-		index_queries: ['CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");', 'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");'],
+		index_queries: ['CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");',
+			'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");'],
 		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
 	},

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { RUN_INTERVAL } from './config/settings';
 import start from './start';
+import { connect, disconnect } from './services/NETWORKDB';
+import { connect as _connect, disconnect as _disconnect } from './services/SERVERDB';
 
 /* * */
 
@@ -27,6 +29,10 @@ import start from './start';
 	}
 
 	// Run immediately on init
+	console.log();
+	console.log('STEP 0.0: Connect to databases');
+	await connect();
+	await _connect();
 	runOnInterval();
 
 	// Set the interval
