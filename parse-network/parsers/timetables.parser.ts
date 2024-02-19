@@ -41,7 +41,7 @@ export default async () => {
 	JOIN stop_times_without_last_STOP AS stop_times ON stops.stop_id = stop_times.stop_id 
 	JOIN trips ON stop_times.trip_id = trips.trip_id
 	JOIN routes ON trips.route_id = routes.route_id
-	`)).rows.slice(0, 1000);
+	`)).rows;
 	// console.log('lineStops', lineStops.rows);
 	const lineStopPairs = lineStops.map(row => [row.line_id, row.stop_id]);
 	const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays']]);
