@@ -1,6 +1,6 @@
 /* * */
 
-import { existsSync, mkdirSync, writeFileSync, createReadStream, appendFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, createReadStream, appendFileSync, readFileSync } from 'fs';
 import { connection } from '../services/NETWORKDB';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
@@ -46,13 +46,12 @@ export default async FILE_OPTIONS => {
 };
 
 /* * */
-
-// Parse the files first
-async function prepareFile(FILE_OPTIONS: { prepared_dir: any; file_name: any; file_extension: any; file_headers: any[]; raw_dir: any; }) {
+async function prepareFile1(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
 	const startTime = process.hrtime();
 	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const headersString = FILE_OPTIONS.file_headers.join(',');
-	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
+	// writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
+	const fileLines = [headersString + '\n'];
 	console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const parserStream = createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
 	let rowCount = 0;
@@ -63,11 +62,65 @@ async function prepareFile(FILE_OPTIONS: { prepared_dir: any; file_name: any; fi
 			rowArray.push(colString);
 		}
 		const rowString = stringify([rowArray]);
-		appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
+		// appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
+		fileLines.push(rowString);
 		rowCount++;
 	}
+	console.log(`⤷ Done transforming file in ${getElapsedTime(startTime)}`);
+	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, fileLines.join(''));
 	const elapsedTime = getElapsedTime(startTime);
 	console.log(`⤷ Prepared "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" (${rowCount} rows in ${elapsedTime})`);
+	//
+}
+
+// Parse the files first
+async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
+	const startTime = process.hrtime();
+	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
+	// writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
+	console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
+
+	// Read file into memory
+	const lines = readFileSync(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, 'utf8').split('\n');
+	// Get the header and create a map of header to index
+	const inputHeader = lines[0].split(',');
+	const headerToIndex = new Map(inputHeader.map((key, index) => [key, index]));
+
+	// outputLines contains each row as a string
+	const headersString = FILE_OPTIONS.file_headers.join(',');
+	const outputLines = [headersString];
+	for (let i = 1; i < lines.length; i++) {
+		const line = lines[i];
+		const columns = [];
+		// Manually parse it into columns, can't just split by ',' because of the possibility of commas inside a column
+		// Use indexes instead of splitting because its much faster to not copy the string
+		let lastScannedIndex = 0;
+		while (lastScannedIndex < line.length) {
+			let nextDelimiterIndex = line[lastScannedIndex] === '"' ? line.indexOf('",', lastScannedIndex + 1) + 1 : line.indexOf(',', lastScannedIndex);
+			if (nextDelimiterIndex === -1) {
+				nextDelimiterIndex = line.length;
+			}
+			const column = line.slice(lastScannedIndex, nextDelimiterIndex);
+			columns.push(column);
+			lastScannedIndex = nextDelimiterIndex + 1;
+		}
+		const rowArray = [];
+		for (const key of FILE_OPTIONS.file_headers) {
+			const colString = columns[headerToIndex.get(key)];
+			if (colString === undefined) {
+				rowArray.push('');
+			} else {
+				rowArray.push(colString);
+			}
+		}
+		const rowString = rowArray.join(',');
+		outputLines.push(rowString);
+	}
+	const output = outputLines.join('\n');
+	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, output);
+
+	const elapsedTime = getElapsedTime(startTime);
+	console.log(`⤷ Prepared "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" (${outputLines.length} rows in ${elapsedTime})`);
 	//
 }
 
