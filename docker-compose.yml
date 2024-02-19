@@ -101,7 +101,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   server:
-    image: ghcr.io/carrismetropolitana/api-server:beta
+    image: ghcr.io/carrismetropolitana/api-server:alpha
     restart: unless-stopped
     logging:
       options:
@@ -118,7 +118,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   parse-datasets:
-    image: ghcr.io/carrismetropolitana/api-parse-datasets:beta
+    image: ghcr.io/carrismetropolitana/api-parse-datasets:alpha
     restart: unless-stopped
     logging:
       options:
@@ -147,7 +147,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   parse-network:
-    image: ghcr.io/carrismetropolitana/api-parse-network:beta
+    image: ghcr.io/carrismetropolitana/api-parse-network:alpha
     restart: unless-stopped
     logging:
       options:
@@ -165,7 +165,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync:
-    image: ghcr.io/carrismetropolitana/api-sync:beta
+    image: ghcr.io/carrismetropolitana/api-sync:alpha
     restart: unless-stopped
     logging:
       options:
