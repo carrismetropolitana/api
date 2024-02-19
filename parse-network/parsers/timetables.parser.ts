@@ -192,7 +192,7 @@ export default async () => {
 			exceptions: Array.from(mergedExceptions.values()),
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
-		console.timeEnd(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
+		console.timeEnd(`${i}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
 	}
 	const allLineTime = process.hrtime.bigint() - allLineStartTime;
 	console.log(`Spent ${formatTime(cumulativeQueryTime)} on ${lineStops.length} queries`);
