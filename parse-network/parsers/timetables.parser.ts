@@ -1,23 +1,19 @@
 /* * */
 
+import { getElapsedTime } from '../modules/timeCalc';
 import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
-import { getElapsedTime } from '../modules/timeCalc';
-import { MonPeriod, MonStop } from '../services/NETWORKDB.types';
 import { Timetable } from './timetableExample';
-import { QueryResult } from 'pg';
-import { exit } from 'process';
-import { stringify } from 'querystring';
-import { fstat, writeFileSync } from 'fs';
+import progress from 'progress';
 
 /* * */
 
 export default async () => {
 	//
 
-	const LINE_ID = '4701';
+	// const LINE_ID = '4701';
 
-	const STOP_ID = '090207';
+	// const STOP_ID = '090207';
 
 	// 1.
 	// Record the start time to later calculate operation duration
@@ -39,6 +35,9 @@ export default async () => {
 		CREATE INDEX idx_stop_times_trip_id ON stop_times_without_last_stop (trip_id);
 		CREATE INDEX idx_stop_times_stop_id ON stop_times_without_last_stop (stop_id);
 		CREATE INDEX idx_stop_times_arrival_time ON stop_times_without_last_stop (arrival_time);
+		CREATE INDEX IF NOT EXISTS idx_stop_times_on_trip_id_stop_sequence_arrival_time ON stop_times(trip_id, stop_sequence, arrival_time);
+		CREATE INDEX IF NOT EXISTS idx_stop_times_on_stop_id_arrival_time ON stop_times(stop_id, arrival_time);
+		CREATE INDEX IF NOT EXISTS idx_trips_on_route_id_service_id_pattern_id ON trips(route_id, service_id, pattern_id);
 			`);
 	console.timeEnd('Make new table');
 	// 2.
@@ -46,37 +45,23 @@ export default async () => {
 	const lineStops = await connection.query<{stop_id:string, line_id:string}>(`
 	SELECT DISTINCT stops.stop_id, routes.line_id
 	FROM stops
-	JOIN stop_times ON stops.stop_id = stop_times.stop_id
+	JOIN stop_times_without_last_STOP AS stop_times ON stops.stop_id = stop_times.stop_id 
 	JOIN trips ON stop_times.trip_id = trips.trip_id
 	JOIN routes ON trips.route_id = routes.route_id;
 	`);
 	console.log('lineStops', lineStops.rows);
 	const lineStopPairs = lineStops.rows.map(row => [row.line_id, row.stop_id]);
+	const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays']]);
+	const periods = new Map((await connection.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
+		.map(period => [period.period_id, period.period_name]));
+
+	const bar = new progress('  Updating Timetables [:bar] :percent :etas', {
+		total: lineStopPairs.length,
+	});
 
 	for (const [LINE_ID, STOP_ID] of lineStopPairs) {
-		console.time(`Line ${LINE_ID} stop ${STOP_ID}`);
-		// console.log(`⤷ Querying Periods...`);
-		const stop: MonStop = JSON.parse(await client.get(`stops:${STOP_ID}`));
-		// Sanity check
-		if (!stop.lines.includes(LINE_ID)) {
-			console.log(`⤷ Stop ${STOP_ID} does not belong to line ${LINE_ID}.`);
-			continue;
-		}
-		const patterns = stop.patterns.filter(pattern => pattern.startsWith(LINE_ID));
-
-		const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays']]);
-		const periods = new Map((await connection.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
-			.map(period => [period.period_id, period.period_name]));
-		// console.log('relevantTrips', relevantTrips.rows.slice(0, 3))
-		// console.log('relevantDates', relevantDates.rows.slice(0, 3))
-		// console.log('relevantStopTimes', relevantStopTimes.rows.slice(0, 3))
-
-		const exceptionsQuery = `
-    SELECT DISTINCT trips.calendar_desc
-    FROM trips
-    WHERE trips.pattern_id = ANY($1)
-      AND trips.calendar_desc IS NOT NULL
-  `;
+		// console.time(`Line ${LINE_ID} stop ${STOP_ID}`);
+		bar.tick();
 
 		const timesByPeriodByDayTypeQuery = `
     SELECT
@@ -84,8 +69,9 @@ export default async () => {
       calendar_dates.day_type,
       stop_times.arrival_time,
       trips.calendar_desc,
-		trips.route_id,
-		routes.route_long_name
+			trips.route_id,
+			routes.route_long_name,
+			trips.pattern_id
     FROM
       stop_times_without_last_stop AS stop_times
       JOIN trips ON stop_times.trip_id = trips.trip_id
@@ -94,16 +80,14 @@ export default async () => {
 		JOIN routes ON trips.route_id = routes.route_id
     WHERE
       stop_times.stop_id = $1
-      AND trips.pattern_id = ANY($2)
+      AND trips.pattern_id = ANY(
+				SELECT DISTINCT trips.pattern_id
+				FROM trips
+				JOIN stop_times_without_last_stop AS stop_times ON trips.trip_id = stop_times.trip_id
+				JOIN routes ON trips.route_id = routes.route_id
+				WHERE stop_times.stop_id = $1 AND routes.line_id = $2
+			)
       AND stop_times.arrival_time IS NOT NULL
-    GROUP BY
-      periods.period_id,
-      periods.period_name,
-      calendar_dates.day_type,
-      stop_times.arrival_time,
-      trips.calendar_desc,
-		trips.route_id,
-		routes.route_long_name
   `;
 
 		// console.time('timesByPeriodByDayType query');
@@ -113,19 +97,22 @@ export default async () => {
 			arrival_time: string,
 			calendar_desc: null | string,
 			route_id: string,
-			route_long_name: string
-		}>(timesByPeriodByDayTypeQuery, [STOP_ID, patterns]);
+			route_long_name: string,
+			pattern_id: string
+		}>(timesByPeriodByDayTypeQuery, [STOP_ID, LINE_ID]);
+		if (!timesByPeriodByDayTypeResult.rows.length) {
+			console.log(`⤷ Stop ${STOP_ID} has no times for line ${LINE_ID}.`);
+			return;
+		}
+
 		const variants = new Map<string, string>(timesByPeriodByDayTypeResult.rows.map(row => [row.route_id, row.route_long_name]));
 
-		// console.timeEnd('timesByPeriodByDayType query');
-		// return;
-
-		const exceptionsResult = await connection.query<{ calendar_desc: string }>(exceptionsQuery, [patterns]);
-		const exceptions = new Map(exceptionsResult.rows.map((row, index) => {
-			return [row.calendar_desc, {
+		const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.rows.filter(row => row.calendar_desc != null).map(row => row.calendar_desc)).values());
+		const exceptions = new Map(uniqueExceptionsArray.map((calendar_desc, index) => {
+			return [calendar_desc, {
 				id: String.fromCharCode(97 + index),
 				label: String.fromCharCode(97 + index) + ')',
-				text: row.calendar_desc,
+				text: calendar_desc,
 			}];
 		}));
 
@@ -193,10 +180,12 @@ export default async () => {
 			periods: Object.entries(timesByPeriodByDayType).map(([period, dayTypes]) => {
 				const getPeriod = (time: string, _exceptions: string[]) => ({
 					time,
-					exceptions: _exceptions.map(ex => {
-						const exp = mergedExceptions.get(ex);
-						return { id: exp.id };
-					}),
+					// deduplicate exceptions
+					exceptions: _exceptions.reduce((acc, ex) => acc.includes(ex) ? acc : acc.concat(ex), [] as string[])
+						.map(ex => {
+							const exp = mergedExceptions.get(ex);
+							return { id: exp.id };
+						}),
 				});
 
 				return {
@@ -212,8 +201,9 @@ export default async () => {
 		// console.log('timetable', JSON.stringify(timetable, null, 2));
 		// writeFileSync(`./timetables/${LINE_ID}-${STOP_ID}.json`, JSON.stringify(timetable, null, 2));
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
-		console.timeEnd(`Line ${LINE_ID} stop ${STOP_ID}`);
+		// console.timeEnd(`Line ${LINE_ID} stop ${STOP_ID}`);
 	}
+	bar.terminate();
 	await client.mSet(bulkData);
 	// 9.
 	// Log elapsed time in the current operation
