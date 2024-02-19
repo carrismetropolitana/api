@@ -94,7 +94,7 @@ export default async () => {
 		}>(timesByPeriodByDayTypeQuery, [STOP_ID, LINE_ID]);
 		if (!timesByPeriodByDayTypeResult.rows.length) {
 			console.log(`⤷ Stop ${STOP_ID} has no times for line ${LINE_ID}.`);
-			return;
+			continue;
 		}
 		const queryDelta = process.hrtime.bigint() - queryStartTime;
 		cumulativeQueryTime += queryDelta;
