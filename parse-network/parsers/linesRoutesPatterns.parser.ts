@@ -222,7 +222,7 @@ export default async () => {
 
 				// 9.4.4.2.
 				// Get the current trip stop_times
-				const allStopTimesRaw = await connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = '${tripRaw.trip_id}' ORDER BY stop_sequence`);
+				const allStopTimesRaw = await connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRaw.trip_id]);
 
 				// 9.4.4.3.
 				// Initiate temporary holding variables

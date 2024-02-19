@@ -1,20 +1,13 @@
 /* * */
 
-import { getElapsedTime } from '../modules/timeCalc';
+import { formatTime, getElapsedTime } from '../modules/timeCalc';
 import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
 import { Timetable } from './timetableExample';
-import progress from 'progress';
 
 /* * */
 
 export default async () => {
-	//
-
-	// const LINE_ID = '4701';
-
-	// const STOP_ID = '090207';
-
 	// 1.
 	// Record the start time to later calculate operation duration
 	const startTime = process.hrtime();
@@ -42,26 +35,24 @@ export default async () => {
 	console.timeEnd('Make new table');
 	// 2.
 	// Fetch all Periods from Redis
-	const lineStops = await connection.query<{stop_id:string, line_id:string}>(`
+	const lineStops = (await connection.query<{stop_id:string, line_id:string}>(`
 	SELECT DISTINCT stops.stop_id, routes.line_id
 	FROM stops
 	JOIN stop_times_without_last_STOP AS stop_times ON stops.stop_id = stop_times.stop_id 
 	JOIN trips ON stop_times.trip_id = trips.trip_id
-	JOIN routes ON trips.route_id = routes.route_id;
-	`);
-	console.log('lineStops', lineStops.rows);
-	const lineStopPairs = lineStops.rows.map(row => [row.line_id, row.stop_id]);
+	JOIN routes ON trips.route_id = routes.route_id
+	`)).rows.slice(0, 1000);
+	// console.log('lineStops', lineStops.rows);
+	const lineStopPairs = lineStops.map(row => [row.line_id, row.stop_id]);
 	const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays']]);
 	const periods = new Map((await connection.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
 		.map(period => [period.period_id, period.period_name]));
 
-	const bar = new progress('  Updating Timetables [:bar] :percent :etas', {
-		total: lineStopPairs.length,
-	});
-
+	let cumulativeQueryTime = 0n;
+	const allLineStartTime = process.hrtime.bigint();
+	let i = 0;
 	for (const [LINE_ID, STOP_ID] of lineStopPairs) {
-		// console.time(`Line ${LINE_ID} stop ${STOP_ID}`);
-		bar.tick();
+		console.time(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
 
 		const timesByPeriodByDayTypeQuery = `
     SELECT
@@ -88,8 +79,9 @@ export default async () => {
 				WHERE stop_times.stop_id = $1 AND routes.line_id = $2
 			)
       AND stop_times.arrival_time IS NOT NULL
-  `;
+		`;
 
+		const queryStartTime = process.hrtime.bigint();
 		// console.time('timesByPeriodByDayType query');
 		const timesByPeriodByDayTypeResult = await connection.query<{
 			period_id: string,
@@ -104,7 +96,8 @@ export default async () => {
 			console.log(`⤷ Stop ${STOP_ID} has no times for line ${LINE_ID}.`);
 			return;
 		}
-
+		const queryDelta = process.hrtime.bigint() - queryStartTime;
+		cumulativeQueryTime += queryDelta;
 		const variants = new Map<string, string>(timesByPeriodByDayTypeResult.rows.map(row => [row.route_id, row.route_long_name]));
 
 		const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.rows.filter(row => row.calendar_desc != null).map(row => row.calendar_desc)).values());
@@ -203,8 +196,12 @@ export default async () => {
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
 		// console.timeEnd(`Line ${LINE_ID} stop ${STOP_ID}`);
 	}
-	bar.terminate();
+	const allLineTime = process.hrtime.bigint() - allLineStartTime;
+	console.log(`Spent ${formatTime(cumulativeQueryTime)} on ${lineStops.length} queries`);
+	// and now for the rest of the time
+	console.log(`Spent ${formatTime(allLineTime - cumulativeQueryTime)} on other stuff`);
 	await client.mSet(bulkData);
+
 	// 9.
 	// Log elapsed time in the current operation
 	const elapsedTime = getElapsedTime(startTime);
