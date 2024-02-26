@@ -4,10 +4,10 @@ module.exports.tests = async (request, reply) => {
   return reply.code(200).header('Content-Type', 'application/json; charset=utf-8').send([
     {
       "stopId": "172170",
-      "stopHeadsign": "Casal Rebentão (Rotunda)",
+      "stopHeadsign": "Teste 1",
       "journeyId": "1517_0_2_1000_1029_0_1",
-      "estimatedArrivalTime": "10:56:05",
-      "estimatedDepartureTime": "10:56:05",
+      "estimatedArrivalTime": "07:05:00",
+      "estimatedDepartureTime": "07:05:00",
       "observedArrivalTime": null,
       "observedDepartureTime": null,
       "observedDriverId": "1104",
@@ -15,15 +15,15 @@ module.exports.tests = async (request, reply) => {
       "operatorId": "41",
       "lineId": "1517",
       "patternId": "1517_0_2",
-      "timetabledArrivalTime": "10:55:00",
-      "timetabledDepartureTime": "10:15:00"
+      "timetabledArrivalTime": "07:03:00",
+      "timetabledDepartureTime": "07:03:00"
     },
     {
       "stopId": "172170",
-      "stopHeadsign": "Pontinha (Metro)",
+      "stopHeadsign": "Teste 2",
       "journeyId": "1711_0_1_1000_1029_0_1",
-      "estimatedArrivalTime": null,
-      "estimatedDepartureTime": null,
+      "estimatedArrivalTime": "08:21:00",
+      "estimatedDepartureTime": "08:21:00",
       "observedArrivalTime": null,
       "observedDepartureTime": null,
       "observedDriverId": null,
@@ -31,12 +31,12 @@ module.exports.tests = async (request, reply) => {
       "operatorId": "41",
       "lineId": "1711",
       "patternId": "1711_0_1",
-      "timetabledArrivalTime": "10:57:00",
-      "timetabledDepartureTime": "10:29:00"
+      "timetabledArrivalTime": "08:20:00",
+      "timetabledDepartureTime": "08:20:00"
     },
     {
       "stopId": "172170",
-      "stopHeadsign": "Pontinha (Metro)",
+      "stopHeadsign": "Teste 3",
       "journeyId": "1711_0_1_1100_1129_0_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
@@ -52,7 +52,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172170",
-      "stopHeadsign": "Casal Rebentão (Rotunda)",
+      "stopHeadsign": "Teste 4",
       "journeyId": "1517_0_2_1100_1129_0_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
@@ -68,7 +68,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172170",
-      "stopHeadsign": "Pontinha (Metro)",
+      "stopHeadsign": "Teste 5",
       "journeyId": "1711_0_1_1100_1129_1_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
@@ -84,7 +84,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172171",
-      "stopHeadsign": "Reboleira (Metro)",
+      "stopHeadsign": "Teste 6",
       "journeyId": "1517_0_1_1000_1029_0_1",
       "estimatedArrivalTime": "10:18:21",
       "estimatedDepartureTime": "10:18:21",
@@ -100,7 +100,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172171",
-      "stopHeadsign": "Caneças (Escola Secundária)",
+      "stopHeadsign": "Teste 7",
       "journeyId": "1711_0_2_0930_0959_1_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
@@ -116,7 +116,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172171",
-      "stopHeadsign": "Caneças (Escola Secundária)",
+      "stopHeadsign": "Teste 8",
       "journeyId": "1711_0_2_1000_1029_0_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
@@ -132,7 +132,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172171",
-      "stopHeadsign": "Caneças (Escola Secundária)",
+      "stopHeadsign": "Teste 9",
       "journeyId": "1711_0_2_1030_1059_0_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
@@ -148,7 +148,7 @@ module.exports.tests = async (request, reply) => {
     },
     {
       "stopId": "172171",
-      "stopHeadsign": "Reboleira (Metro)",
+      "stopHeadsign": "Teste 10",
       "journeyId": "1517_0_1_1100_1129_0_1",
       "estimatedArrivalTime": null,
       "estimatedDepartureTime": null,
