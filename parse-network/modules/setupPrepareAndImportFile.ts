@@ -6,6 +6,7 @@ import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
 import { from as copyFrom } from 'pg-copy-streams';
 import { getElapsedTime } from './timeCalc';
+import Papa from 'papaparse';
 
 /* * */
 
@@ -76,47 +77,34 @@ async function prepareFile1(FILE_OPTIONS: { prepared_dir: string; file_name: str
 // Parse the files first
 async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
 	const startTime = process.hrtime();
-	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
-	// writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
-	console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
-
-	// Read file into memory
-	const lines = readFileSync(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, 'utf8').split('\n');
-	// Get the header and create a map of header to index
-	const inputHeader = lines[0].split(',');
-	const headerToIndex = new Map(inputHeader.map((key, index) => [key, index]));
-
-	// outputLines contains each row as a string
+	const newFilePath = `${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`;
+	const oldFilePath = `${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`;
+	console.log(`⤷ Creating file "${newFilePath}"...`);
+	// console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
+	console.log(`⤷ Preparing "${oldFilePath}" to "${newFilePath}"...`);
+	const k = Papa.parse(readFileSync(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, 'utf8'), {
+		header: true,
+		skipEmptyLines: true,
+	});
 	const headersString = FILE_OPTIONS.file_headers.join(',');
 	const outputLines = [headersString];
-	for (let i = 1; i < lines.length; i++) {
-		const line = lines[i];
-		const columns = [];
-		// Manually parse it into columns, can't just split by ',' because of the possibility of commas inside a column
-		// Use indexes instead of splitting because its much faster to not copy the string
-		let lastScannedIndex = 0;
-		while (lastScannedIndex < line.length) {
-			let nextDelimiterIndex = line[lastScannedIndex] === '"' ? line.indexOf('",', lastScannedIndex + 1) + 1 : line.indexOf(',', lastScannedIndex);
-			if (nextDelimiterIndex === -1) {
-				nextDelimiterIndex = line.length;
-			}
-			const column = line.slice(lastScannedIndex, nextDelimiterIndex);
-			columns.push(column);
-			lastScannedIndex = nextDelimiterIndex + 1;
-		}
-		const rowArray = [];
+	for (const line of k.data) {
+		const outputArray = [];
 		for (const key of FILE_OPTIONS.file_headers) {
-			const colString = columns[headerToIndex.get(key)];
-			if (colString === undefined) {
-				rowArray.push('');
-			} else {
-				rowArray.push(colString);
+			let colString = line[key];
+			if (colString == undefined) {
+				colString = '';
+			} else if (colString.includes(',')) {
+				colString = `"${colString}"`;
 			}
+			outputArray.push(colString);
 		}
-		const rowString = rowArray.join(',');
-		outputLines.push(rowString);
+		outputLines.push(outputArray.join(','));
 	}
+	// Can't use papa unparse because it allocates all of node's memory :D
+	// const output = Papa.unparse(outputLines);
 	const output = outputLines.join('\n');
+
 	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, output);
 
 	const elapsedTime = getElapsedTime(startTime);
