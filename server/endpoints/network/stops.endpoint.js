@@ -30,6 +30,8 @@ module.exports.single = async (request, reply) => {
 };
 
 module.exports.singleWithRealtime = async (request, reply) => {
+  return reply.code(503).send([]);
+  //
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
   const result = response.map((estimate) => {
