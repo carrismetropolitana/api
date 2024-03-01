@@ -4,7 +4,7 @@ import sortCollator from '../modules/sortCollator';
 import { formatTime, getElapsedTime } from '../modules/timeCalc';
 import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
-import { Facility, Timetable, TimetableStop } from './timetableExample';
+import { Timetable, TimetableStop } from './timetableExample';
 
 /* * */
 

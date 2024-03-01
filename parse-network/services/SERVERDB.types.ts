@@ -1,5 +1,3 @@
-import { Facility } from '../parsers/timetableExample';
-
 type GTFSMunicipality = {
   municipality_prefix: string;
   municipality_id: string;
@@ -105,7 +103,7 @@ type GTFSStop = {
   car_parking: boolean;
 };
 
-export interface MonPattern {
+interface MonPattern {
   id: string
   line_id: string
   route_id: string
@@ -123,7 +121,7 @@ export interface MonPattern {
   trips: Trip[]
 }
 
-export interface Path {
+interface Path {
   Stop: Stop
   stop_sequence: number
   allow_pickup: boolean
@@ -131,7 +129,7 @@ export interface Path {
   distance_delta: number
 }
 
-export interface Stop {
+interface Stop {
   id: string
   name: string
   short_name: any
@@ -154,7 +152,7 @@ export interface Stop {
   patterns: string[]
 }
 
-export interface Trip {
+interface Trip {
   id: string
   calendar_id: string
   calendar_description: string
@@ -162,10 +160,29 @@ export interface Trip {
   schedule: Schedule[]
 }
 
-export interface Schedule {
+interface Schedule {
   stop_id: string
   stop_sequence: number
   arrival_time: string
   arrival_time_operation: string
   travel_time: string
+}
+enum Facility {
+	NEAR_HEALTH_CLINIC = 'near_health_clinic',
+	NEAR_HOSPITAL = 'near_hospital',
+	NEAR_UNIVERSITY = 'near_university',
+	NEAR_SCHOOL = 'near_school',
+	NEAR_POLICE_STATION = 'near_police_station',
+	NEAR_FIRE_STATION = 'near_fire_station',
+	NEAR_SHOPPING = 'near_shopping',
+	NEAR_HISTORIC_BUILDING = 'near_historic_building',
+	NEAR_TRANSIT_OFFICE = 'near_transit_office',
+	LIGHT_RAIL = 'light_rail',
+	SUBWAY = 'subway',
+	TRAIN = 'train',
+	BOAT = 'boat',
+	AIRPORT = 'airport',
+	BIKE_SHARING = 'bike_sharing',
+	BIKE_PARKING = 'bike_parking',
+	CAR_PARKING = 'car_parking',
 }
