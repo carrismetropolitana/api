@@ -1,9 +1,10 @@
 /* * */
 
+import sortCollator from '../modules/sortCollator';
 import { formatTime, getElapsedTime } from '../modules/timeCalc';
 import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
-import { Timetable } from './timetableExample';
+import { Facility, Timetable, TimetableStop } from './timetableExample';
 
 /* * */
 
@@ -61,6 +62,7 @@ export default async () => {
       stop_times.arrival_time,
       trips.calendar_desc,
 			trips.route_id,
+			trips.trip_id,
 			routes.route_long_name,
 			trips.pattern_id
     FROM
@@ -89,6 +91,7 @@ export default async () => {
 			arrival_time: string,
 			calendar_desc: null | string,
 			route_id: string,
+			trip_id: string,
 			route_long_name: string,
 			pattern_id: string
 		}>(timesByPeriodByDayTypeQuery, [STOP_ID, LINE_ID]);
@@ -99,6 +102,150 @@ export default async () => {
 		const queryDelta = process.hrtime.bigint() - queryStartTime;
 		cumulativeQueryTime += queryDelta;
 		const variants = new Map<string, string>(timesByPeriodByDayTypeResult.rows.map(row => [row.route_id, row.route_long_name]));
+		let variantForLineStops = '';
+		if (variants.size == 1) {
+			variantForLineStops = variants.keys().next().value;
+		} else {
+			for (const [variant, route] of variants) {
+				if (variant.endsWith('0')) {
+					variantForLineStops = variant;
+					break;
+				}
+			}
+		}
+		if (variantForLineStops === '') {
+			// count how many times each variant appears
+			const variantCounts = new Map<string, number>;
+			for (const row of timesByPeriodByDayTypeResult.rows) {
+				const count = variantCounts.get(row.route_id) || 0;
+				variantCounts.set(row.route_id, count + 1);
+			}
+			// find the variant with the most appearances, else sort them by route_id
+			const sortedVariants = Array.from(variantCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+			variantForLineStops = sortedVariants[0][0];
+		}
+		// Select which trip to use for getting stops, getting a trip that includes the current stop
+		const tripForStopsQuery = `
+		SELECT
+			trips.trip_id
+		FROM
+			trips
+			JOIN stop_times ON trips.trip_id = stop_times.trip_id
+		WHERE
+			trips.route_id = $1
+			AND stop_times.stop_id = $2
+		LIMIT 1`;
+
+		const tripForStopsResult = await connection.query<{ trip_id: string }>(tripForStopsQuery, [variantForLineStops, STOP_ID]);
+		// if (tripForStopsResult.rows[0].trip_id != tripForStops) {
+		// 	console.log(`${tripForStopsResult.rows[0].trip_id} != ${tripForStops}`);
+		// 	continue;
+		// }
+
+		const lineStopsByTripIdQuery = `
+		SELECT
+			stop_times.stop_id,
+			stop_times.stop_sequence,
+			stops.stop_short_name,
+			stops.stop_name,
+			stops.locality,
+			stops.municipality_name,
+			stops.near_health_clinic,
+			stops.near_hospital,
+			stops.near_university,
+			stops.near_school,
+			stops.near_police_station,
+			stops.near_fire_station,
+			stops.near_shopping,
+			stops.near_historic_building,
+			stops.near_transit_office,
+			stops.light_rail,
+			stops.subway,
+			stops.train,
+			stops.boat,
+			stops.airport,
+			stops.bike_sharing,
+			stops.bike_parking,
+			stops.car_parking
+		FROM
+			stop_times
+			JOIN stops ON stop_times.stop_id = stops.stop_id
+		WHERE
+			stop_times.trip_id = $1
+		ORDER BY
+			stop_times.stop_sequence
+		`;
+
+		const lineStopsByTripIdResult = await connection.query<
+		{
+				stop_id: string,
+				stop_sequence: number,
+				stop_short_name: string,
+				stop_name: string,
+				locality: string,
+				municipality_name: string,
+				near_health_clinic: boolean,
+				near_hospital: boolean,
+				near_university: boolean,
+				near_school: boolean,
+				near_police_station: boolean,
+				near_fire_station: boolean,
+				near_shopping: boolean,
+				near_historic_building: boolean,
+				near_transit_office: boolean,
+				light_rail: boolean,
+				subway: boolean,
+				train: boolean,
+				boat: boolean,
+				airport: boolean,
+				bike_sharing: boolean,
+				bike_parking: boolean,
+				car_parking: boolean
+			}>(lineStopsByTripIdQuery, [tripForStopsResult.rows[0].trip_id]);
+		// console.log('lineStopsByTripIdResult', lineStopsByTripIdResult.rows);
+		// group by trip_id and sort by stop_sequence
+		if (lineStopsByTripIdResult.rows.length <= 0) {
+			console.log(`⤷ Stop ${STOP_ID} has no stops for line ${tripForStopsResult}.`);
+			continue;
+		}
+		const joinedProperties:Facility[] = [
+			Facility.NEAR_HEALTH_CLINIC,
+			Facility.NEAR_HOSPITAL,
+			Facility.NEAR_UNIVERSITY,
+			Facility.NEAR_SCHOOL,
+			Facility.NEAR_POLICE_STATION,
+			Facility.NEAR_FIRE_STATION,
+			Facility.NEAR_SHOPPING,
+			Facility.NEAR_HISTORIC_BUILDING,
+			Facility.NEAR_TRANSIT_OFFICE,
+			Facility.LIGHT_RAIL,
+			Facility.SUBWAY,
+			Facility.TRAIN,
+			Facility.BOAT,
+			Facility.AIRPORT,
+			Facility.BIKE_SHARING,
+			Facility.BIKE_PARKING,
+			Facility.CAR_PARKING,
+		];
+		const stops:TimetableStop[] =
+		[];
+		for (const row of lineStopsByTripIdResult.rows) {
+			const newRow = {
+				stop_id: row.stop_id,
+				stop_sequence: row.stop_sequence,
+				stop_short_name: row.stop_short_name,
+				stop_name: row.stop_name,
+				locality: row.locality,
+				municipality_name: row.municipality_name,
+				facilities: joinedProperties.filter(prop => row[prop]),
+			};
+			stops.push(newRow);
+		}
+
+		if (stops.find(stop => stop.stop_id === STOP_ID) === undefined) {
+			console.log('tripId', tripForStopsResult.rows[0].trip_id);
+			console.table(stops);
+		}
 
 		const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.rows.filter(row => row.calendar_desc != null).map(row => row.calendar_desc)).values());
 		const exceptions = new Map(uniqueExceptionsArray.map((calendar_desc, index) => {
@@ -190,6 +337,7 @@ export default async () => {
 				};
 			}),
 			exceptions: Array.from(mergedExceptions.values()),
+			stops: stops,
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
 		console.timeEnd(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);

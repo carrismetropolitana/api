@@ -15,6 +15,34 @@ export type TimetablePeriod = {
   sundays_holidays: TimetableEntry[];
 };
 
+export enum Facility {
+	NEAR_HEALTH_CLINIC = 'near_health_clinic',
+	NEAR_HOSPITAL = 'near_hospital',
+	NEAR_UNIVERSITY = 'near_university',
+	NEAR_SCHOOL = 'near_school',
+	NEAR_POLICE_STATION = 'near_police_station',
+	NEAR_FIRE_STATION = 'near_fire_station',
+	NEAR_SHOPPING = 'near_shopping',
+	NEAR_HISTORIC_BUILDING = 'near_historic_building',
+	NEAR_TRANSIT_OFFICE = 'near_transit_office',
+	LIGHT_RAIL = 'light_rail',
+	SUBWAY = 'subway',
+	TRAIN = 'train',
+	BOAT = 'boat',
+	AIRPORT = 'airport',
+	BIKE_SHARING = 'bike_sharing',
+	BIKE_PARKING = 'bike_parking',
+	CAR_PARKING = 'car_parking',
+}
+export type TimetableStop = {
+	stop_id: string;
+	stop_short_name: string;
+	stop_name: string;
+	locality: string;
+	municipality_name: string;
+	facilities: Facility[];
+};
+
 export type Timetable = {
   periods: TimetablePeriod[],
   exceptions: {
@@ -22,6 +50,7 @@ export type Timetable = {
     label: string;
     text: string;
   }[];
+	stops:TimetableStop[]
 };
 
 // Example of a timetable
@@ -124,4 +153,5 @@ const timetable: Timetable = {
 		{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' },
 		{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' },
 	],
+	stops: [],
 };

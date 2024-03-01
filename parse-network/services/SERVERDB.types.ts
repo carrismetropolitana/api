@@ -1,3 +1,5 @@
+import { Facility } from '../parsers/timetableExample';
+
 type GTFSMunicipality = {
   municipality_prefix: string;
   municipality_id: string;
@@ -102,3 +104,68 @@ type GTFSStop = {
   bike_parking: boolean;
   car_parking: boolean;
 };
+
+export interface MonPattern {
+  id: string
+  line_id: string
+  route_id: string
+  short_name: string
+  direction: number
+  headsign: string
+  color: string
+  text_color: string
+  valid_on: string[]
+  municipalities: string[]
+  localities: string[]
+  facilities: Facility[]
+  shape_id: string
+  path: Path[]
+  trips: Trip[]
+}
+
+export interface Path {
+  Stop: Stop
+  stop_sequence: number
+  allow_pickup: boolean
+  allow_drop_off: boolean
+  distance_delta: number
+}
+
+export interface Stop {
+  id: string
+  name: string
+  short_name: any
+  tts_name: string
+  lat: string
+  lon: string
+  locality: string
+  parish_id: any
+  parish_name: any
+  municipality_id: string
+  municipality_name: string
+  district_id: string
+  district_name: string
+  region_id: string
+  region_name: string
+  wheelchair_boarding: any
+  facilities: string[]
+  lines: string[]
+  routes: string[]
+  patterns: string[]
+}
+
+export interface Trip {
+  id: string
+  calendar_id: string
+  calendar_description: string
+  dates: string[]
+  schedule: Schedule[]
+}
+
+export interface Schedule {
+  stop_id: string
+  stop_sequence: number
+  arrival_time: string
+  arrival_time_operation: string
+  travel_time: string
+}
