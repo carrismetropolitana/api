@@ -10,7 +10,7 @@ module.exports.all = async (request, reply) => {
 };
 
 module.exports.single = async (request, reply) => {
-  const singleItem = await SERVERDB.client.get(`timetables:${request.params.pattern_id}-${request.params.stop_id}-${request.params.stop_sequence}`);
+  const singleItem = await SERVERDB.client.get(`timetables:${request.params.line_id}/${request.params.stop_id}`);
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')

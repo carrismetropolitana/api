@@ -50,7 +50,7 @@ export type Timetable = {
     label: string;
     text: string;
   }[];
-	stops:TimetableStop[]
+	variantForDisplay: string;
 };
 
 // Example of a timetable
@@ -153,5 +153,5 @@ const timetable: Timetable = {
 		{ id: 'a', label: 'a)', text: 'Apenas no primeiro domingo do mês.' },
 		{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' },
 	],
-	stops: [],
+	variantForDisplay: '1000_1',
 };
