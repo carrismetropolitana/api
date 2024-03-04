@@ -236,7 +236,8 @@ export default async () => {
 				};
 			}),
 			exceptions: Array.from(mergedExceptions.values()),
-			variantForDisplay,
+			// TODO HAS TO BE CORRECTED
+			patternForDisplay: variantForDisplay,
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
 		console.timeEnd(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
