@@ -11,6 +11,7 @@ module.exports.all = async (request, reply) => {
 
 module.exports.single = async (request, reply) => {
   // const singleItem = await SERVERDB.client.get(`timetables:${request.params.line_id}/${request.params.stop_id}`);
+  //4512/010136
   const singleItem = {
     "periods": [
       {
@@ -18,55 +19,55 @@ module.exports.single = async (request, reply) => {
         "period_name": "Período Escolar",
         "weekdays": [
           {
-            "time": "06:42:00",
+            "time": "06:15:00",
             "exceptions": []
           },
           {
-            "time": "10:12:00",
+            "time": "09:45:00",
             "exceptions": []
           },
           {
-            "time": "13:12:00",
+            "time": "12:45:00",
             "exceptions": []
           },
           {
-            "time": "13:42:00",
+            "time": "13:15:00",
             "exceptions": []
           },
           {
-            "time": "14:12:00",
+            "time": "13:45:00",
             "exceptions": []
           },
           {
-            "time": "14:32:00",
+            "time": "14:05:00",
             "exceptions": []
           },
           {
-            "time": "16:42:00",
+            "time": "16:15:00",
             "exceptions": []
           },
           {
-            "time": "17:27:00",
+            "time": "17:00:00",
             "exceptions": []
           },
           {
-            "time": "19:12:00",
+            "time": "18:45:00",
             "exceptions": []
           },
           {
-            "time": "19:42:00",
+            "time": "19:15:00",
             "exceptions": []
           },
           {
-            "time": "20:12:00",
+            "time": "19:45:00",
             "exceptions": []
           },
           {
-            "time": "22:12:00",
+            "time": "21:45:00",
             "exceptions": []
           },
           {
-            "time": "24:12:00",
+            "time": "23:45:00",
             "exceptions": [
               {
                 "id": "a"
@@ -74,7 +75,7 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "07:27:00",
+            "time": "07:00:00",
             "exceptions": [
               {
                 "id": "b"
@@ -82,71 +83,71 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "07:42:00",
+            "time": "07:15:00",
             "exceptions": []
           },
           {
-            "time": "08:12:00",
+            "time": "07:45:00",
             "exceptions": []
           },
           {
-            "time": "08:27:00",
+            "time": "08:00:00",
             "exceptions": []
           },
           {
-            "time": "08:42:00",
+            "time": "08:15:00",
             "exceptions": []
           },
           {
-            "time": "08:57:00",
+            "time": "08:30:00",
             "exceptions": []
           },
           {
-            "time": "09:17:00",
+            "time": "08:50:00",
             "exceptions": []
           },
           {
-            "time": "10:52:00",
+            "time": "10:25:00",
             "exceptions": []
           },
           {
-            "time": "15:42:00",
+            "time": "15:15:00",
             "exceptions": []
           },
           {
-            "time": "16:12:00",
+            "time": "15:45:00",
             "exceptions": []
           },
           {
-            "time": "09:57:00",
+            "time": "09:30:00",
             "exceptions": []
           },
           {
-            "time": "10:27:00",
+            "time": "10:00:00",
             "exceptions": []
           },
           {
-            "time": "07:57:00",
+            "time": "07:30:00",
             "exceptions": []
           },
           {
-            "time": "09:42:00",
+            "time": "09:15:00",
             "exceptions": []
           },
           {
-            "time": "11:42:00",
+            "time": "11:15:00",
             "exceptions": []
           },
           {
-            "time": "14:42:00",
+            "time": "14:15:00",
             "exceptions": []
           },
           {
-            "time": "18:37:00",
+            "time": "18:10:00",
             "exceptions": []
           },
           {
-            "time": "18:13:00",
+            "time": "17:45:00",
             "exceptions": [
               {
                 "id": "c"
@@ -154,7 +155,7 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "07:13:00",
+            "time": "06:45:00",
             "exceptions": [
               {
                 "id": "c"
@@ -162,7 +163,7 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "12:43:00",
+            "time": "12:15:00",
             "exceptions": [
               {
                 "id": "c"
@@ -172,59 +173,59 @@ module.exports.single = async (request, reply) => {
         ],
         "saturdays": [
           {
-            "time": "17:57:00",
+            "time": "17:30:00",
             "exceptions": []
           },
           {
-            "time": "22:12:00",
+            "time": "21:45:00",
             "exceptions": []
           },
           {
-            "time": "06:57:00",
+            "time": "06:30:00",
             "exceptions": []
           },
           {
-            "time": "07:57:00",
+            "time": "07:30:00",
             "exceptions": []
           },
           {
-            "time": "08:27:00",
+            "time": "08:00:00",
             "exceptions": []
           },
           {
-            "time": "09:12:00",
+            "time": "08:45:00",
             "exceptions": []
           },
           {
-            "time": "10:27:00",
+            "time": "10:00:00",
             "exceptions": []
           },
           {
-            "time": "12:42:00",
+            "time": "12:15:00",
             "exceptions": []
           },
           {
-            "time": "14:27:00",
+            "time": "14:00:00",
             "exceptions": []
           },
           {
-            "time": "15:27:00",
+            "time": "15:00:00",
             "exceptions": []
           },
           {
-            "time": "17:27:00",
+            "time": "17:00:00",
             "exceptions": []
           },
           {
-            "time": "18:57:00",
+            "time": "18:30:00",
             "exceptions": []
           },
           {
-            "time": "19:57:00",
+            "time": "19:30:00",
             "exceptions": []
           },
           {
-            "time": "24:12:00",
+            "time": "23:45:00",
             "exceptions": [
               {
                 "id": "a"
@@ -234,11 +235,11 @@ module.exports.single = async (request, reply) => {
         ],
         "sundays_holidays": [
           {
-            "time": "17:57:00",
+            "time": "17:30:00",
             "exceptions": []
           },
           {
-            "time": "07:27:00",
+            "time": "07:00:00",
             "exceptions": [
               {
                 "id": "b"
@@ -246,39 +247,39 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "08:27:00",
+            "time": "08:00:00",
             "exceptions": []
           },
           {
-            "time": "10:57:00",
+            "time": "10:30:00",
             "exceptions": []
           },
           {
-            "time": "12:42:00",
+            "time": "12:15:00",
             "exceptions": []
           },
           {
-            "time": "14:27:00",
+            "time": "14:00:00",
             "exceptions": []
           },
           {
-            "time": "15:27:00",
+            "time": "15:00:00",
             "exceptions": []
           },
           {
-            "time": "18:57:00",
+            "time": "18:30:00",
             "exceptions": []
           },
           {
-            "time": "20:12:00",
+            "time": "19:45:00",
             "exceptions": []
           },
           {
-            "time": "22:12:00",
+            "time": "21:45:00",
             "exceptions": []
           },
           {
-            "time": "24:12:00",
+            "time": "23:45:00",
             "exceptions": [
               {
                 "id": "a"
@@ -292,11 +293,11 @@ module.exports.single = async (request, reply) => {
         "period_name": "Período de Férias Escolares",
         "weekdays": [
           {
-            "time": "06:42:00",
+            "time": "06:15:00",
             "exceptions": []
           },
           {
-            "time": "07:27:00",
+            "time": "07:00:00",
             "exceptions": [
               {
                 "id": "b"
@@ -304,103 +305,103 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "07:57:00",
+            "time": "07:30:00",
             "exceptions": []
           },
           {
-            "time": "08:12:00",
+            "time": "07:45:00",
             "exceptions": []
           },
           {
-            "time": "08:27:00",
+            "time": "08:00:00",
             "exceptions": []
           },
           {
-            "time": "08:57:00",
+            "time": "08:30:00",
             "exceptions": []
           },
           {
-            "time": "09:17:00",
+            "time": "08:50:00",
             "exceptions": []
           },
           {
-            "time": "09:42:00",
+            "time": "09:15:00",
             "exceptions": []
           },
           {
-            "time": "09:57:00",
+            "time": "09:30:00",
             "exceptions": []
           },
           {
-            "time": "10:27:00",
+            "time": "10:00:00",
             "exceptions": []
           },
           {
-            "time": "10:52:00",
+            "time": "10:25:00",
             "exceptions": []
           },
           {
-            "time": "11:42:00",
+            "time": "11:15:00",
             "exceptions": []
           },
           {
-            "time": "13:12:00",
+            "time": "12:45:00",
             "exceptions": []
           },
           {
-            "time": "13:42:00",
+            "time": "13:15:00",
             "exceptions": []
           },
           {
-            "time": "14:12:00",
+            "time": "13:45:00",
             "exceptions": []
           },
           {
-            "time": "14:32:00",
+            "time": "14:05:00",
             "exceptions": []
           },
           {
-            "time": "14:42:00",
+            "time": "14:15:00",
             "exceptions": []
           },
           {
-            "time": "15:42:00",
+            "time": "15:15:00",
             "exceptions": []
           },
           {
-            "time": "16:12:00",
+            "time": "15:45:00",
             "exceptions": []
           },
           {
-            "time": "16:42:00",
+            "time": "16:15:00",
             "exceptions": []
           },
           {
-            "time": "17:27:00",
+            "time": "17:00:00",
             "exceptions": []
           },
           {
-            "time": "18:37:00",
+            "time": "18:10:00",
             "exceptions": []
           },
           {
-            "time": "19:12:00",
+            "time": "18:45:00",
             "exceptions": []
           },
           {
-            "time": "19:42:00",
+            "time": "19:15:00",
             "exceptions": []
           },
           {
-            "time": "20:12:00",
+            "time": "19:45:00",
             "exceptions": []
           },
           {
-            "time": "22:12:00",
+            "time": "21:45:00",
             "exceptions": []
           },
           {
-            "time": "24:12:00",
+            "time": "23:45:00",
             "exceptions": [
               {
                 "id": "a"
@@ -408,7 +409,7 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "07:13:00",
+            "time": "06:45:00",
             "exceptions": [
               {
                 "id": "c"
@@ -416,7 +417,7 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "12:43:00",
+            "time": "12:15:00",
             "exceptions": [
               {
                 "id": "c"
@@ -424,7 +425,7 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "18:13:00",
+            "time": "17:45:00",
             "exceptions": [
               {
                 "id": "c"
@@ -434,59 +435,59 @@ module.exports.single = async (request, reply) => {
         ],
         "saturdays": [
           {
-            "time": "09:12:00",
+            "time": "08:45:00",
             "exceptions": []
           },
           {
-            "time": "06:57:00",
+            "time": "06:30:00",
             "exceptions": []
           },
           {
-            "time": "07:57:00",
+            "time": "07:30:00",
             "exceptions": []
           },
           {
-            "time": "08:27:00",
+            "time": "08:00:00",
             "exceptions": []
           },
           {
-            "time": "10:27:00",
+            "time": "10:00:00",
             "exceptions": []
           },
           {
-            "time": "12:42:00",
+            "time": "12:15:00",
             "exceptions": []
           },
           {
-            "time": "14:27:00",
+            "time": "14:00:00",
             "exceptions": []
           },
           {
-            "time": "15:27:00",
+            "time": "15:00:00",
             "exceptions": []
           },
           {
-            "time": "17:27:00",
+            "time": "17:00:00",
             "exceptions": []
           },
           {
-            "time": "17:57:00",
+            "time": "17:30:00",
             "exceptions": []
           },
           {
-            "time": "18:57:00",
+            "time": "18:30:00",
             "exceptions": []
           },
           {
-            "time": "19:57:00",
+            "time": "19:30:00",
             "exceptions": []
           },
           {
-            "time": "22:12:00",
+            "time": "21:45:00",
             "exceptions": []
           },
           {
-            "time": "24:12:00",
+            "time": "23:45:00",
             "exceptions": [
               {
                 "id": "a"
@@ -496,15 +497,15 @@ module.exports.single = async (request, reply) => {
         ],
         "sundays_holidays": [
           {
-            "time": "08:27:00",
+            "time": "08:00:00",
             "exceptions": []
           },
           {
-            "time": "15:27:00",
+            "time": "15:00:00",
             "exceptions": []
           },
           {
-            "time": "07:27:00",
+            "time": "07:00:00",
             "exceptions": [
               {
                 "id": "b"
@@ -512,35 +513,35 @@ module.exports.single = async (request, reply) => {
             ]
           },
           {
-            "time": "10:57:00",
+            "time": "10:30:00",
             "exceptions": []
           },
           {
-            "time": "12:42:00",
+            "time": "12:15:00",
             "exceptions": []
           },
           {
-            "time": "14:27:00",
+            "time": "14:00:00",
             "exceptions": []
           },
           {
-            "time": "17:57:00",
+            "time": "17:30:00",
             "exceptions": []
           },
           {
-            "time": "18:57:00",
+            "time": "18:30:00",
             "exceptions": []
           },
           {
-            "time": "20:12:00",
+            "time": "19:45:00",
             "exceptions": []
           },
           {
-            "time": "22:12:00",
+            "time": "21:45:00",
             "exceptions": []
           },
           {
-            "time": "24:12:00",
+            "time": "23:45:00",
             "exceptions": [
               {
                 "id": "a"
@@ -567,7 +568,7 @@ module.exports.single = async (request, reply) => {
         "text": "Percurso Alcochete (Freeport) - Setúbal (ITS) via Alto Estanqueiro"
       }
     ],
-    "variantForDisplay": "4512_0"
+    "patternForDisplay": "4512_0"
   }
   return reply
     .code(200)
