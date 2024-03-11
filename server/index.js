@@ -48,7 +48,7 @@ fastify.get('/patterns/:id', require('./endpoints/network/patterns.endpoint').si
 
 // fastify.get('/stops', require('./endpoints/network/stops.endpoint').all);
 // // fastify.get('/stops.pb', require('./endpoints/network/stops.endpoint').protobuf);
-// fastify.get('/stops/:id', require('./endpoints/network/stops.endpoint').single);
+fastify.get('/stops/:id', require('./endpoints/network/stops.endpoint').single);
 // fastify.get('/stops/:id/realtime', require('./endpoints/network/stops.endpoint').singleWithRealtime);
 
 // fastify.get('/vehicles', require('./endpoints/network/vehicles.endpoint').json);
