@@ -5,10 +5,12 @@ WORKDIR /app
 
 # Copy package.json and install app dependencies
 COPY package.json ./
-RUN npm --omit=dev install
+RUN npm install
 
 # Copy the rest of the repo
 COPY . .
 
 # Start the program
-CMD ["node", "index.js"]
+RUN ["npm", "run", "build"]
+
+CMD ["node", "build/index.js"]

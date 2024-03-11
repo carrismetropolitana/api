@@ -17,5 +17,9 @@
         "pg-copy-streams": "6.0.6",
         "redis": "4.6.12",
         "shelljs": "^0.8.5"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^7.0.1",
+        "eslint": "^8.56.0"
     }
 }
