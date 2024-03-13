@@ -82,8 +82,11 @@ module.exports.realtimeForPips = async (request, reply) => {
       const hasScheduledTime = (estimate.stopScheduledArrivalTime !== null && estimate.stopScheduledArrivalTime !== undefined) || (estimate.stopScheduledDepartuteTime !== null && estimate.stopScheduledDepartuteTime !== undefined);
       const hasEstimatedTime = (estimate.stopArrivalEta !== null && estimate.stopArrivalEta !== undefined) || (estimate.stopDepartureEta !== null && estimate.stopDepartureEta !== undefined);
       const hasObservedTime = (estimate.stopObservedArrivalTime !== null && estimate.stopObservedArrivalTime !== undefined) || (estimate.stopObservedDepartureTime !== null && estimate.stopObservedDepartureTime !== undefined);
-      // Return true only if estimate has scheduled time, estimated time and no observed time
-      return hasScheduledTime && hasEstimatedTime && !hasObservedTime;
+      // Check if the estimated time for this estimate is in the past
+      const estimatedTimeInUnixSeconds = convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta);
+      const isThisEstimateInThePast = estimatedTimeInUnixSeconds < DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
+      // Return true only if estimate has scheduled time, estimated time and no observed time, and if the estimated time is in not the past
+      return hasScheduledTime && hasEstimatedTime && !hasObservedTime && !isThisEstimateInThePast;
     })
     .map((estimate) => {
       return {
