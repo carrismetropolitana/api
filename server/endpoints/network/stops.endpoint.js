@@ -19,6 +19,8 @@ module.exports.all = async (request, reply) => {
     .send(allItems || '[]');
 };
 
+/* * */
+
 module.exports.single = async (request, reply) => {
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
@@ -29,10 +31,50 @@ module.exports.single = async (request, reply) => {
     .send(singleItem || '{}');
 };
 
+/* * */
+
 module.exports.singleWithRealtime = async (request, reply) => {
   //
   //   return reply.code(503).send([]);
   //
+  if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
+  const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
+  const result = response.map((estimate) => {
+    return {
+      line_id: estimate.lineId,
+      pattern_id: estimate.patternId,
+      route_id: estimate.routeId,
+      trip_id: estimate.tripId,
+      headsign: estimate.tripHeadsign,
+      stop_sequence: estimate.stopSequence,
+      scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+      scheduled_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
+      estimated_arrival: estimate.stopArrivalEta || estimate.stopDepartureEta,
+      estimated_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta),
+      observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+      observed_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedDepartureTime),
+      vehicle_id: estimate.observedVehicleId,
+    };
+  });
+  return reply
+    .code(200)
+    .header('Content-Type', 'application/json; charset=utf-8')
+    .send(result || []);
+};
+
+/* * */
+
+module.exports.singleWithRealtimeForPips = async (request, reply) => {
+  //
+  //   return reply.code(503).send([]);
+  //
+
+  console.log(request.body);
+  return reply.code(503).send([]);
+  //
+
+  //
+
   if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
   const result = response.map((estimate) => {
