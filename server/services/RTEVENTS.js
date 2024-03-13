@@ -52,13 +52,13 @@ class RTEVENTS {
       // 5.1.
       // Perform basic event validations
 
-      // Does this event has a valid vehicle id
+      // Does this event have a valid vehicle id
       if (!rtEvent.content?.entity[0]?.vehicle?.vehicle?._id?.length) continue;
-      // Does this event has a valid agency id
+      // Does this event have a valid agency id
       if (!rtEvent.content?.entity[0]?.vehicle?.agencyId?.length) continue;
-      // Does this event has an associated trip
+      // Does this event have an associated trip
       if (!rtEvent.content?.entity[0]?.vehicle?.trip?.tripId?.length) continue;
-      // Does this event has a valid latitude and longitude
+      // Does this event have a valid latitude and longitude
       if (!Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
       // Skip if the trip is not scheduled
       if (rtEvent.content?.entity[0]?.vehicle?.trip?.scheduleRelationship !== 'SCHEDULED') continue;
