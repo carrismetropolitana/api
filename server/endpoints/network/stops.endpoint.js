@@ -6,7 +6,7 @@ const { DateTime } = require('luxon');
 
 /* * */
 
-const regexPattern = /^\d{6}$/; // String with exactly 6 numeric digits
+const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 /* * */
 
@@ -22,7 +22,7 @@ module.exports.all = async (request, reply) => {
 /* * */
 
 module.exports.single = async (request, reply) => {
-  if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
+  if (!regexPatternForStopId.test(request.params.id)) return reply.status(400).send([]);
   const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
   reply.header('Content-Type', 'application/json');
   return reply
@@ -37,7 +37,7 @@ module.exports.singleWithRealtime = async (request, reply) => {
   //
   //   return reply.code(503).send([]);
   //
-  if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
+  if (!regexPatternForStopId.test(request.params.id)) return reply.status(400).send([]);
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
   const result = response.map((estimate) => {
     return {
@@ -64,36 +64,45 @@ module.exports.singleWithRealtime = async (request, reply) => {
 
 /* * */
 
-module.exports.singleWithRealtimeForPips = async (request, reply) => {
-  //
-  //   return reply.code(503).send([]);
-  //
-
-  console.log(request.body);
-  return reply.code(503).send([]);
-  //
-
-  //
-
-  if (!regexPattern.test(request.params.id)) return reply.status(400).send([]);
-  const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
-  const result = response.map((estimate) => {
-    return {
-      line_id: estimate.lineId,
-      pattern_id: estimate.patternId,
-      route_id: estimate.routeId,
-      trip_id: estimate.tripId,
-      headsign: estimate.tripHeadsign,
-      stop_sequence: estimate.stopSequence,
-      scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
-      scheduled_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
-      estimated_arrival: estimate.stopArrivalEta || estimate.stopDepartureEta,
-      estimated_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta),
-      observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
-      observed_arrival_unix: convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedArrivalTime) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedDepartureTime),
-      vehicle_id: estimate.observedVehicleId,
-    };
-  });
+module.exports.realtimeForPips = async (request, reply) => {
+  // Validate request body
+  if (!request.body?.stops || request.body.stops.length === 0) return reply.code(400).send([]);
+  // Validate each requested Stop ID
+  for (const stopId of request.body.stops) {
+    if (!regexPatternForStopId.test(stopId)) return reply.status(400).send([]);
+  }
+  // Parse requested stop into a comma-separated list
+  const stopIdsList = request.body.stops.join(',');
+  // Fetch the estimates for this stop list
+  const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsList}`);
+  // Parse the result into the expected PIP style
+  const result = response
+    .filter((estimate) => {
+      // Check if this estimate has all required fields
+      const hasScheduledTime = (estimate.stopScheduledArrivalTime !== null && estimate.stopScheduledArrivalTime !== undefined) || (estimate.stopScheduledDepartuteTime !== null && estimate.stopScheduledDepartuteTime !== undefined);
+      const hasEstimatedTime = (estimate.stopArrivalEta !== null && estimate.stopArrivalEta !== undefined) || (estimate.stopDepartureEta !== null && estimate.stopDepartureEta !== undefined);
+      const hasObservedTime = (estimate.stopObservedArrivalTime !== null && estimate.stopObservedArrivalTime !== undefined) || (estimate.stopObservedDepartureTime !== null && estimate.stopObservedDepartureTime !== undefined);
+      // Return true only if estimate has scheduled time, estimated time and no observed time
+      return hasScheduledTime && hasEstimatedTime && !hasObservedTime;
+    })
+    .map((estimate) => {
+      return {
+        lineId: estimate.lineId,
+        patternId: estimate.patternId,
+        stopHeadsign: estimate.tripHeadsign,
+        journeyId: estimate.tripId,
+        timetabledArrivalTime: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+        timetabledDepartureTime: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+        estimatedArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+        estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+        observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+        observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+        observedVehicleId: estimate.observedVehicleId,
+        stopId: '', // Deprecated
+        operatorId: '', // Deprecated
+        observedDriverId: '', // Deprecated
+      };
+    });
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')

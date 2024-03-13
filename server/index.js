@@ -49,7 +49,7 @@ fastify.get('/stops', require('./endpoints/network/stops.endpoint').all);
 // fastify.get('/stops.pb', require('./endpoints/network/stops.endpoint').protobuf);
 fastify.get('/stops/:id', require('./endpoints/network/stops.endpoint').single);
 fastify.get('/stops/:id/realtime', require('./endpoints/network/stops.endpoint').singleWithRealtime);
-fastify.post('/stops/:id/realtime/pip', require('./endpoints/network/stops.endpoint').singleWithRealtimeForPips);
+fastify.post('/stops/pip', require('./endpoints/network/stops.endpoint').realtimeForPips);
 
 fastify.get('/vehicles', require('./endpoints/network/vehicles.endpoint').json);
 fastify.get('/vehicles.pb', require('./endpoints/network/vehicles.endpoint').protobuf);
