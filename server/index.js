@@ -32,6 +32,7 @@ fastify.get('/time', require('./endpoints/debug/time.endpoint').time);
 
 // fastify.get('/dates', require('./endpoints/network/dates.endpoint').all);
 // fastify.get('/dates/:date', require('./endpoints/network/dates.endpoint').single);
+fastify.get('/timetables', require('./endpoints/network/timetables.endpoint').index);
 fastify.get('/timetables/:line_id/:stop_id', require('./endpoints/network/timetables.endpoint').single);
 
 // fastify.get('/lines', require('./endpoints/network/lines.endpoint').all);
@@ -83,9 +84,9 @@ fastify.post('/pips', require('./endpoints/network/pips.endpoint').tests);
 
 // START FASTIFY SERVER
 
-fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
+fastify.listen({ port: 5051, host: '0.0.0.0' }, async (err, address) => {
   if (err) throw err;
   console.log(`Server listening on ${address}`);
-  // await SERVERDB.connect();
+  await SERVERDB.connect();
   // await REALTIMEDB.connect();
 });

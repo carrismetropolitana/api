@@ -125,6 +125,14 @@ export default async () => {
 			variantForDisplay = sortedVariants[0][0];
 		}
 		// Select which trip to use for getting stops, getting a trip that includes the current stop
+
+		const patternForDisplay = timesByPeriodByDayTypeResult.rows.find(row => row.route_id == variantForDisplay).pattern_id;
+		console.log('patternForDisplay', patternForDisplay);
+		if (!patternForDisplay) {
+			console.log(`⤷ No patterns in ${LINE_ID} matching route_id ${variantForDisplay}.`);
+			continue;
+		}
+
 		const tripForStopsQuery = `
 		SELECT
 			trips.trip_id
@@ -237,7 +245,7 @@ export default async () => {
 			}),
 			exceptions: Array.from(mergedExceptions.values()),
 			// TODO HAS TO BE CORRECTED
-			patternForDisplay: variantForDisplay,
+			patternForDisplay: patternForDisplay,
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
 		console.timeEnd(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
@@ -246,7 +254,10 @@ export default async () => {
 	console.log(`Spent ${formatTime(cumulativeQueryTime)} on ${lineStops.length} queries`);
 	// and now for the rest of the time
 	console.log(`Spent ${formatTime(allLineTime - cumulativeQueryTime)} on other stuff`);
+	console.time('mset');
 	await client.mSet(bulkData);
+	console.timeEnd('mset');
+	await client.set('timetables:index', JSON.stringify(lineStopPairs));
 
 	// 9.
 	// Log elapsed time in the current operation
