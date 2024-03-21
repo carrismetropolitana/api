@@ -61,15 +61,32 @@ fastify.get('/vehicles.pb', require('./endpoints/network/vehicles.endpoint').pro
 /* DEPRECATED */ fastify.get('/facilities', require('./endpoints/datasets/facilities.endpoint').all); /* DEPRECATED */
 fastify.get('/datasets/facilities', require('./endpoints/datasets/facilities.endpoint').all);
 
-/* DEPRECATED */ fastify.get('/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all); /* DEPRECATED */
-/* DEPRECATED */ fastify.get('/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single); /* DEPRECATED */
+//
+// DATASETS > FACILITIES
+
 fastify.get('/datasets/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all);
 fastify.get('/datasets/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single);
 
-/* DEPRECATED */ fastify.get('/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all); /* DEPRECATED */
-/* DEPRECATED */ fastify.get('/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single); /* DEPRECATED */
 fastify.get('/datasets/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
 fastify.get('/datasets/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
+
+//
+// DATASETS > MODAL CONNECTIONS
+
+fastify.get('/datasets/connections/boat_stations', require('./endpoints/datasets/connections.boat_stations.endpoint').all);
+fastify.get('/datasets/connections/boat_stations/:id', require('./endpoints/datasets/connections.boat_stations.endpoint').single);
+
+fastify.get('/datasets/connections/light_rail_stations', require('./endpoints/datasets/connections.light_rail_stations.endpoint').all);
+fastify.get('/datasets/connections/light_rail_stations/:id', require('./endpoints/datasets/connections.light_rail_stations.endpoint').single);
+
+fastify.get('/datasets/connections/subway_stations', require('./endpoints/datasets/connections.subway_stations.endpoint').all);
+fastify.get('/datasets/connections/subway_stations/:id', require('./endpoints/datasets/connections.subway_stations.endpoint').single);
+
+fastify.get('/datasets/connections/train_stations', require('./endpoints/datasets/connections.train_stations.endpoint').all);
+fastify.get('/datasets/connections/train_stations/:id', require('./endpoints/datasets/connections.train_stations.endpoint').single);
+
+//
+// DATASESTS > DEMAND
 
 fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStop', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachStop);
 fastify.get('/datasets/demand/date-line-stop/viewByDateForEachLine', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachLine);

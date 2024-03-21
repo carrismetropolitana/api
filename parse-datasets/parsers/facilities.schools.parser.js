@@ -17,7 +17,7 @@ module.exports = async () => {
 
   // 2.
   // Open file from cloned repository
-  console.log(`⤷ Open data file...`);
+  console.log(`⤷ Opening data file...`);
   const allSchoolsRaw = fs.readFileSync(`${settings.BASE_DIR}/facilities/schools/schools.csv`, { encoding: 'utf-8' });
   const allSchoolsCsv = Papa.parse(allSchoolsRaw, { header: true });
 
