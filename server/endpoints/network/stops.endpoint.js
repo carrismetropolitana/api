@@ -70,6 +70,29 @@ module.exports.realtimeForPips = async (request, reply) => {
   // Validate each requested Stop ID
   for (const stopId of request.body.stops) {
     if (!regexPatternForStopId.test(stopId)) return reply.status(400).send([]);
+    if (stopId === '000000') {
+      return reply
+        .code(200)
+        .header('Content-Type', 'application/json; charset=utf-8')
+        .send([
+          {
+            lineId: '0000',
+            patternId: '0000_0_0',
+            stopHeadsign: 'teste',
+            journeyId: '0000_0_0|teste',
+            timetabledArrivalTime: '23:00:00',
+            timetabledDepartureTime: '23:00:00',
+            estimatedArrivalTime: '23:00:00',
+            estimatedDepartureTime: '23:00:00',
+            observedArrivalTime: null,
+            observedDepartureTime: null,
+            observedVehicleId: '0000',
+            stopId: '', // Deprecated
+            operatorId: '', // Deprecated
+            observedDriverId: '', // Deprecated
+          },
+        ]);
+    }
   }
   // Parse requested stop into a comma-separated list
   const stopIdsList = request.body.stops.join(',');
