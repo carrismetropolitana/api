@@ -70,6 +70,9 @@ fastify.get('/datasets/facilities/schools/:id', require('./endpoints/datasets/fa
 fastify.get('/datasets/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
 fastify.get('/datasets/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
 
+fastify.get('/datasets/facilities/pip', require('./endpoints/datasets/facilities.pip.endpoint').all);
+fastify.get('/datasets/facilities/pip/:id', require('./endpoints/datasets/facilities.pip.endpoint').single);
+
 //
 // DATASETS > MODAL CONNECTIONS
 

@@ -40,6 +40,10 @@ module.exports = async () => {
     console.log('STEP 1.2. Parse datasets/facilities/schools');
     await require('./parsers/facilities.schools.parser')();
 
+    console.log();
+    console.log('STEP 1.3. Parse datasets/facilities/pip');
+    await require('./parsers/facilities.pip.parser')();
+
     //
 
     console.log();
