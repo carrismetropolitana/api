@@ -1,13 +1,12 @@
 {
-    "name": "@carrismetropolitana/api-sync",
-    "version": "2023.2.1",
+    "name": "@carrismetropolitana/api-switch",
+    "version": "2023.1.1",
     "private": true,
     "main": "index.js",
     "scripts": {
         "start": "node index.js"
     },
     "dependencies": {
-        "dotenv": "16.4.5",
-        "redis": "4.6.13"
+        "fastify": "4.26.2"
     }
 }

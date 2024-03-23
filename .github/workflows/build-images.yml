@@ -131,3 +131,34 @@ jobs:
           context: ./sync
           file: ./sync/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-sync:${{ github.ref_name }}
+
+          # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  api-switch:
+    name: 'Docker Build - switch'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@master
+        with:
+          push: true
+          context: ./switch
+          file: ./switch/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-switch:${{ github.ref_name }}
