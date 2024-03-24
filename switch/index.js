@@ -4,7 +4,7 @@ const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
 
 /* * */
 
-fastify.get('/pips/:id', require('./handlers/pips.handler').handler);
+fastify.get('/pip/:id', require('./handlers/pip.handler').handler);
 
 /* * */
 
