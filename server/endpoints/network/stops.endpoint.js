@@ -129,6 +129,16 @@ module.exports.realtimeForPips = async (request, reply) => {
         observedDriverId: '', // Deprecated
       };
     });
+  console.log('**********************************');
+  console.log('**********************************');
+  console.log('**********************************');
+  console.log('**********************************');
+  console.log('result.length');
+  console.log(result.length);
+  console.log('**********************************');
+  console.log('**********************************');
+  console.log('**********************************');
+  console.log('**********************************');
   if (result.lenght > 0) {
     return reply
       .code(200)
