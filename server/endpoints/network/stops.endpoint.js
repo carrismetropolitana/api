@@ -129,22 +129,8 @@ module.exports.realtimeForPips = async (request, reply) => {
         observedDriverId: '', // Deprecated
       };
     });
-  console.log('**********************************');
-  console.log('**********************************');
-  console.log('**********************************');
-  console.log('**********************************');
-  console.log('result.length');
-  console.log(result.length);
-  console.log('**********************************');
-  console.log('**********************************');
-  console.log('**********************************');
-  console.log('**********************************');
-  if (result.lenght > 0) {
-    return reply
-      .code(200)
-      .header('Content-Type', 'application/json; charset=utf-8')
-      .send(result || []);
-  } else {
+
+  if (!result.length) {
     return reply
       .code(200)
       .header('Content-Type', 'application/json; charset=utf-8')
@@ -167,6 +153,9 @@ module.exports.realtimeForPips = async (request, reply) => {
         },
       ]);
   }
+
+  return reply.code(200).header('Content-Type', 'application/json; charset=utf-8').send(result);
+  //
 };
 
 /* * */
