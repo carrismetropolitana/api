@@ -93,6 +93,29 @@ module.exports.realtimeForPips = async (request, reply) => {
           },
         ]);
     }
+    if (stopId === '000001') {
+      return reply
+        .code(200)
+        .header('Content-Type', 'application/json; charset=utf-8')
+        .send([
+          {
+            lineId: 'INFO',
+            patternId: '0000_0_0',
+            stopHeadsign: 'Info teste :)',
+            journeyId: '0000_0_0|teste',
+            timetabledArrivalTime: '23:59:59',
+            timetabledDepartureTime: '23:59:59',
+            estimatedArrivalTime: '23:59:59',
+            estimatedDepartureTime: '23:59:59',
+            observedArrivalTime: null,
+            observedDepartureTime: null,
+            observedVehicleId: '0000',
+            stopId: '', // Deprecated
+            operatorId: '', // Deprecated
+            observedDriverId: '', // Deprecated
+          },
+        ]);
+    }
   }
   // Parse requested stop into a comma-separated list
   const stopIdsList = request.body.stops.join(',');
@@ -138,7 +161,7 @@ module.exports.realtimeForPips = async (request, reply) => {
         {
           lineId: '0000',
           patternId: '0000_0_0',
-          stopHeadsign: '-',
+          stopHeadsign: 'Consulte o site para mais informações.',
           journeyId: '0000_0_0|teste',
           timetabledArrivalTime: '23:59:59',
           timetabledDepartureTime: '23:59:59',
