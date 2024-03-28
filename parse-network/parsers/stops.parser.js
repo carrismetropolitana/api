@@ -91,9 +91,9 @@ module.exports = async () => {
       region_name: stop.region_name,
       wheelchair_boarding: stop.wheelchair_boarding,
       facilities: facilities,
-      lines: stop.line_ids,
-      routes: stop.route_ids,
-      patterns: stop.pattern_ids,
+      lines: stop.line_ids || [],
+      routes: stop.route_ids || [],
+      patterns: stop.pattern_ids || [],
     };
     // Update or create new document
     allStopsData.push(parsedStop);
