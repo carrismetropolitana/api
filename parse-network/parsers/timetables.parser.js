@@ -86,18 +86,18 @@ module.exports = async () => {
             if (periodDatesSet.has(tripDate)) {
               const dateInfo = allDatesMap.get(tripDate);
               switch (dateInfo.day_type) {
-                case 1:
+                case '1':
                   // Check if there is already an object with the same hours
                   const hoursIndex1 = periodResult.weekdays.find((item) => item.hour === scheduleHours);
                   if (hoursIndex1 > -1) periodResult.weekdays[hoursIndex1].minutes.push({ minute: scheduleMinutes, trip_id: patternTrip.trip_id });
                   else periodResult.weekdays.push({ hour: scheduleHours, minutes: [{ minute: scheduleMinutes, trip_id: patternTrip.trip_id }] });
                   break;
-                case 2:
+                case '2':
                   const hoursIndex2 = periodResult.saturdays.find((item) => item.hour === scheduleHours);
                   if (hoursIndex2 > -1) periodResult.saturdays[hoursIndex2].minutes.push({ minute: scheduleMinutes, trip_id: patternTrip.trip_id });
                   else periodResult.saturdays.push({ hour: scheduleHours, minutes: [{ minute: scheduleMinutes, trip_id: patternTrip.trip_id }] });
                   break;
-                case 3:
+                case '3':
                   const hoursIndex3 = periodResult.sundays_holidays.find((item) => item.hour === scheduleHours);
                   if (hoursIndex3 > -1) periodResult.sundays_holidays[hoursIndex3].minutes.push({ minute: scheduleMinutes, trip_id: patternTrip.trip_id });
                   else periodResult.sundays_holidays.push({ hour: scheduleHours, minutes: [{ minute: scheduleMinutes, trip_id: patternTrip.trip_id }] });
