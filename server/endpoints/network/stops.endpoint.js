@@ -86,6 +86,7 @@ module.exports.realtimeForPips = async (request, reply) => {
             estimatedDepartureTime: '23:59:59',
             observedArrivalTime: null,
             observedDepartureTime: null,
+            estimatedTimeString: '1 min',
             observedVehicleId: '0000',
             stopId: '', // Deprecated
             operatorId: '', // Deprecated
@@ -109,6 +110,7 @@ module.exports.realtimeForPips = async (request, reply) => {
             estimatedDepartureTime: '23:59:59',
             observedArrivalTime: null,
             observedDepartureTime: null,
+            estimatedTimeString: '1 min',
             observedVehicleId: '0000',
             stopId: '', // Deprecated
             operatorId: '', // Deprecated
@@ -138,6 +140,7 @@ module.exports.realtimeForPips = async (request, reply) => {
       // Check if the estimated time for this estimate is in the past
       const estimatedTimeInUnixSeconds = convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta);
       const estimatedTimeInSeconds = estimatedTimeInUnixSeconds - DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
+      const estimatedTimeInMinutes = Math.floor(estimatedTimeInSeconds / 60);
       //
       return {
         lineId: estimate.lineId,
@@ -151,7 +154,7 @@ module.exports.realtimeForPips = async (request, reply) => {
         estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
         observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
         observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
-        estimatedTimeString: `${estimatedTimeInSeconds} min`,
+        estimatedTimeString: `${estimatedTimeInMinutes} min`,
         observedVehicleId: estimate.observedVehicleId,
         stopId: '', // Deprecated
         operatorId: '', // Deprecated
@@ -175,6 +178,7 @@ module.exports.realtimeForPips = async (request, reply) => {
           estimatedDepartureTime: '23:59:59',
           observedArrivalTime: null,
           observedDepartureTime: null,
+          estimatedTimeString: '1 min',
           observedVehicleId: '0000',
           stopId: '', // Deprecated
           operatorId: '', // Deprecated
