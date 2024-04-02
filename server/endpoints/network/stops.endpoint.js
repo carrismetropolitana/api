@@ -135,17 +135,23 @@ module.exports.realtimeForPips = async (request, reply) => {
       return hasScheduledTime && hasEstimatedTime && !hasObservedTime && !isThisEstimateInThePast;
     })
     .map((estimate) => {
+      // Check if the estimated time for this estimate is in the past
+      const estimatedTimeInUnixSeconds = convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta);
+      const estimatedTimeInSeconds = estimatedTimeInUnixSeconds - DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
+      //
       return {
         lineId: estimate.lineId,
         patternId: estimate.patternId,
         stopHeadsign: estimate.tripHeadsign,
         journeyId: estimate.tripId,
         timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+        timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
         timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
         estimatedArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
         estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
         observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
         observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+        estimatedTimeString: `${estimatedTimeInSeconds} min`,
         observedVehicleId: estimate.observedVehicleId,
         stopId: '', // Deprecated
         operatorId: '', // Deprecated
