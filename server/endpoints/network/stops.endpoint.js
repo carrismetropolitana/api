@@ -155,12 +155,14 @@ module.exports.realtimeForPips = async (request, reply) => {
         observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
         observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
         estimatedTimeString: `${estimatedTimeInMinutes} min`,
+        estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
         observedVehicleId: estimate.observedVehicleId,
         stopId: '', // Deprecated
         operatorId: '', // Deprecated
         observedDriverId: '', // Deprecated
       };
-    });
+    })
+    .sort((a, b) => a.estimatedTimeUnixSeconds - b.estimatedTimeUnixSeconds);
 
   if (!result.length) {
     return reply
