@@ -1,6 +1,6 @@
 /* * */
 
-import { existsSync, mkdirSync, writeFileSync, createReadStream, readFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, createReadStream, readFileSync, appendFileSync } from 'fs';
 import { connection } from '../services/NETWORKDB';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
@@ -52,7 +52,7 @@ async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: stri
 	const startTime = process.hrtime();
 	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const headersString = FILE_OPTIONS.file_headers.join(',');
-	// writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
+	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
 	const fileLines = [headersString + '\n'];
 	console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const parserStream = createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
@@ -64,12 +64,12 @@ async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: stri
 			rowArray.push(colString);
 		}
 		const rowString = stringify([rowArray]);
-		// appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
-		fileLines.push(rowString);
+		appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
+		// fileLines.push(rowString);
 		rowCount++;
 	}
 	console.log(`⤷ Done transforming file in ${getElapsedTime(startTime)}`);
-	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, fileLines.join(''));
+	// writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, fileLines.join(''));
 	const elapsedTime = getElapsedTime(startTime);
 	console.log(`⤷ Prepared "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" (${rowCount} rows in ${elapsedTime})`);
 	//
