@@ -3,7 +3,6 @@
 const SERVERDB = require('./services/SERVERDB');
 const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
 const REALTIMEDB = require('./services/REALTIMEDB');
-const SERVERDB = require('./services/SERVERDB');
 
 /* * */
 
