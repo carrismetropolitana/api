@@ -103,7 +103,7 @@ fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', 
 
 // START FASTIFY SERVER
 
-fastify.listen({ port: 5051, host: '0.0.0.0' }, async (err, address) => {
+fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
   if (err) throw err;
   console.log(`Server listening on ${address}`);
   await SERVERDB.connect();
