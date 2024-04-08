@@ -1,5 +1,3 @@
-version: '3.9'
-
 volumes:
   certbotdata:
   serverdb:
@@ -175,3 +173,14 @@ services:
       - ./.env
     environment:
       - SERVERDB_HOST=serverdb
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  switch:
+    image: ghcr.io/carrismetropolitana/api-switch:beta
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
