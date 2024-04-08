@@ -2,9 +2,6 @@
 
 import files from './config/files';
 
-import { connect, disconnect } from './services/NETWORKDB';
-import { connect as _connect, disconnect as _disconnect } from './services/SERVERDB';
-
 import { getElapsedTime } from './modules/timeCalc';
 import setupBaseDirectory from './modules/setupBaseDirectory';
 import fetchAndExtractLatestGtfs from './modules/fetchAndExtractLatestGtfs';
@@ -37,11 +34,6 @@ export default async () => {
 		console.log('Starting...');
 
 		//
-
-		// console.log();
-		// console.log('STEP 0.0: Connect to databases');
-		// await connect();
-		// await _connect();
 
 		//
 

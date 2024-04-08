@@ -29,8 +29,8 @@
     "@types/papaparse": "5.3.14",
     "@types/pg": "8.11.4",
     "@types/pg-copy-streams": "1.2.5",
-    "@typescript-eslint/eslint-plugin": "7.0.1",
-    "eslint": "8.56.0",
+    "@typescript-eslint/eslint-plugin": "7.5.0",
+    "eslint": "8.57.0",
     "typescript": "5.4.4"
   }
 }

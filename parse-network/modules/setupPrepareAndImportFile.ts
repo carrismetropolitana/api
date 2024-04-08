@@ -1,6 +1,6 @@
 /* * */
 
-import { existsSync, mkdirSync, writeFileSync, createReadStream, appendFileSync, readFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, createReadStream, readFileSync } from 'fs';
 import { connection } from '../services/NETWORKDB';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
@@ -47,6 +47,7 @@ export default async FILE_OPTIONS => {
 };
 
 /* * */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function prepareFile1(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
 	const startTime = process.hrtime();
 	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
