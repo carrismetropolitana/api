@@ -1,7 +1,6 @@
 /* * */
 
-dotenv.config();
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import { RUN_INTERVAL } from './config/settings';
 import start from './start';
 import NETWORKDB from './services/NETWORKDB';

@@ -127,7 +127,6 @@ export default async () => {
 		// Select which trip to use for getting stops, getting a trip that includes the current stop
 
 		const patternForDisplay = timesByPeriodByDayTypeResult.rows.find(row => row.route_id == variantForDisplay).pattern_id;
-		console.log('patternForDisplay', patternForDisplay);
 		if (!patternForDisplay) {
 			console.log(`⤷ No patterns in ${LINE_ID} matching route_id ${variantForDisplay}.`);
 			continue;

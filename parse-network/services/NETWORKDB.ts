@@ -24,3 +24,9 @@ export async function disconnect() {
 }
 
 /* * */
+
+export default {
+	connect,
+	disconnect,
+	connection,
+};

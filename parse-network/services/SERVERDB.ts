@@ -24,3 +24,9 @@ export async function disconnect() {
 		console.log(`⤷ ERROR: Failed to disconnect from SERVERDB.`, err);
 	}
 }
+
+export default {
+	connect,
+	disconnect,
+	client,
+};
