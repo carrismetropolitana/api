@@ -48,7 +48,7 @@ export default async FILE_OPTIONS => {
 
 /* * */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function prepareFile1(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
+async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
 	const startTime = process.hrtime();
 	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const headersString = FILE_OPTIONS.file_headers.join(',');
@@ -76,7 +76,7 @@ async function prepareFile1(FILE_OPTIONS: { prepared_dir: string; file_name: str
 }
 
 // Parse the files first
-async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
+async function prepareFilePapaparseSync(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string; }) {
 	const startTime = process.hrtime();
 	const newFilePath = `${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`;
 	const oldFilePath = `${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`;
