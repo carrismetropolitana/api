@@ -22,6 +22,8 @@ services:
       - serverdb:/data
     environment:
       - REDIS_ARGS=--save 5 1
+    ports:
+      - "6379:6379"
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -36,12 +38,14 @@ services:
     environment:
       - POSTGRES_USER=networkdbuser
       - POSTGRES_PASSWORD=networkdbpassword
+    ports:
+      - "5432:5432"
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   parse-network:
-    image: ghcr.io/carrismetropolitana/api-parse-network:beta
+    build: ./parse-network
     restart: unless-stopped
     logging:
       options:

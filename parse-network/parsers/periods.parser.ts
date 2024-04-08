@@ -1,14 +1,14 @@
 /* * */
 
-const { DateTime } = require('luxon');
-const NETWORKDB = require('../services/NETWORKDB');
-const SERVERDB = require('../services/SERVERDB');
-const timeCalc = require('../modules/timeCalc');
-const collator = require('../modules/sortCollator');
+import { DateTime } from 'luxon';
+import { connection } from '../services/NETWORKDB';
+import { client } from '../services/SERVERDB';
+import { getElapsedTime } from '../modules/timeCalc';
+import collator from '../modules/sortCollator';
 
 /* * */
 
-module.exports = async () => {
+export default async () => {
   //
   // 1.
   // Record the start time to later calculate operation duration
@@ -17,8 +17,8 @@ module.exports = async () => {
   // 2.
   // Fetch all calendar dates from Postgres
   console.log(`⤷ Querying database...`);
-  const allPeriods = await NETWORKDB.connection.query('SELECT * FROM periods');
-  const allDates = await NETWORKDB.connection.query('SELECT * FROM dates');
+  const allPeriods = await connection.query<GTFSPeriod>('SELECT * FROM periods');
+  const allDates = await connection.query<GTFSDate>('SELECT * FROM dates');
 
   // 3.
   // Build periods hashmap
@@ -33,11 +33,17 @@ module.exports = async () => {
 
     // 3.2.
     // Initiate a variable to hold the active blocks for this period
-    const validFromUntil = [];
+    const validFromUntil: {
+      from: string;
+      until?: string;
+    }[] = [];
 
     // 3.3.
     // Start the block with the first date for this period
-    let currentBlock = {
+    let currentBlock: {
+      from: string;
+      until?: string;
+    } = {
       from: datesForThisPeriod[0],
     };
 
@@ -87,11 +93,11 @@ module.exports = async () => {
 
   // 6.
   // Save the array to the database
-  await SERVERDB.client.set('periods:all', JSON.stringify(allPeriodsParsed));
+  await client.set('periods:all', JSON.stringify(allPeriodsParsed));
 
   // 7.
   // Log elapsed time in the current operation
-  const elapsedTime = timeCalc.getElapsedTime(startTime);
+  const elapsedTime = getElapsedTime(startTime);
   console.log(`⤷ Done updating Periods (${elapsedTime}).`);
 
   //
