@@ -17,13 +17,18 @@ import SERVERDB from './services/SERVERDB';
 	// Define a function that is run on every interval
 	async function runOnInterval() {
 		// Force restart if an overlapping task is detected.
-		if (TASK_IS_RUNNING) throw new Error('Force restart: Overlapping tasks.');
+		if (TASK_IS_RUNNING) {
+			console.log('Tried to start a new task while another task is running.');
+			// throw new Error('Force restart: Overlapping tasks.');
+		} else {
 		// Set the flag to TRUE
-		TASK_IS_RUNNING = true;
-		// Run the program
-		await start();
-		// Set the flag to FALSE
-		TASK_IS_RUNNING = false;
+			TASK_IS_RUNNING = true;
+			// Run the program
+			await start();
+			// Set the flag to FALSE
+			TASK_IS_RUNNING = false;
+		}
+
 		//
 	}
 

@@ -243,7 +243,6 @@ export default async () => {
 				};
 			}),
 			exceptions: Array.from(mergedExceptions.values()),
-			// TODO HAS TO BE CORRECTED
 			patternForDisplay: patternForDisplay,
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
@@ -253,15 +252,15 @@ export default async () => {
 	console.log(`Spent ${formatTime(cumulativeQueryTime)} on ${lineStops.length} queries`);
 	// and now for the rest of the time
 	console.log(`Spent ${formatTime(allLineTime - cumulativeQueryTime)} on other stuff`);
-	console.time('mset');
+	console.time('⤷ Timetable mset');
 	await client.mSet(bulkData);
-	console.timeEnd('mset');
+	console.timeEnd('⤷ Timetable mset');
 	await client.set('timetables:index', JSON.stringify(lineStopPairs));
 
 	// 9.
 	// Log elapsed time in the current operation
 	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Municipalities (${elapsedTime}).`);
+	console.log(`⤷ Done updating Timetables (${elapsedTime}).`);
 
 	//
 };

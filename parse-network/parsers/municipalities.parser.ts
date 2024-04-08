@@ -58,7 +58,7 @@ export default async () => {
 
 	// 8.
 	// Delete all Municipalities not present in the current update
-	const allSavedMunicipalityKeys = [];
+	const allSavedMunicipalityKeys:string[] = [];
 	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
 		allSavedMunicipalityKeys.push(key);
 	}
