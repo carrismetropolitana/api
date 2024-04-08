@@ -1,25 +1,25 @@
 {
-    "name": "@carrismetropolitana/api-parse-datasets",
-    "version": "2023.2.1",
-    "private": true,
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "@turf/turf": "6.5.0",
-        "adm-zip": "0.5.10",
-        "csv-parse": "5.5.3",
-        "csv-stringify": "6.4.5",
-        "luxon": "3.4.4",
-        "papaparse": "^5.4.1",
-        "pg": "8.11.3",
-        "pg-copy-streams": "6.0.6",
-        "redis": "4.6.12",
-        "shelljs": "^0.8.5"
-    },
-    "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^7.0.1",
-        "eslint": "^8.56.0"
-    }
+  "name": "@carrismetropolitana/api-parse-datasets",
+  "version": "2023.2.1",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@turf/turf": "6.5.0",
+    "adm-zip": "0.5.12",
+    "csv-parse": "5.5.5",
+    "csv-stringify": "6.4.6",
+    "luxon": "3.4.4",
+    "papaparse": "5.4.1",
+    "pg": "8.11.5",
+    "pg-copy-streams": "6.0.6",
+    "redis": "4.6.13",
+    "shelljs": "0.8.5"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "7.0.1",
+    "eslint": "8.56.0"
+  }
 }

@@ -12,25 +12,25 @@
   },
   "dependencies": {
     "@turf/turf": "6.5.0",
-    "@types/node": "^20.11.17",
-    "adm-zip": "0.5.10",
-    "csv-parse": "5.5.3",
-    "csv-stringify": "6.4.5",
-    "dotenv": "^16.4.2",
+    "@types/node": "20.12.5",
+    "adm-zip": "0.5.12",
+    "csv-parse": "5.5.5",
+    "csv-stringify": "6.4.6",
+    "dotenv": "16.4.5",
     "luxon": "3.4.4",
-    "papaparse": "^5.4.1",
-    "pg": "8.11.3",
+    "papaparse": "5.4.1",
+    "pg": "8.11.5",
     "pg-copy-streams": "6.0.6",
-    "redis": "4.6.12"
+    "redis": "4.6.13"
   },
   "devDependencies": {
-    "@types/adm-zip": "^0.5.5",
-    "@types/luxon": "^3.4.2",
-    "@types/papaparse": "^5.3.14",
-    "@types/pg": "^8.11.0",
-    "@types/pg-copy-streams": "^1.2.5",
-    "@typescript-eslint/eslint-plugin": "^7.0.1",
-    "eslint": "^8.56.0",
-    "typescript": "^5.3.3"
+    "@types/adm-zip": "0.5.5",
+    "@types/luxon": "3.4.2",
+    "@types/papaparse": "5.3.14",
+    "@types/pg": "8.11.4",
+    "@types/pg-copy-streams": "1.2.5",
+    "@typescript-eslint/eslint-plugin": "7.0.1",
+    "eslint": "8.56.0",
+    "typescript": "5.4.4"
   }
 }
