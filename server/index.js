@@ -57,10 +57,6 @@ fastify.get('/vehicles.pb', require('./endpoints/network/vehicles.endpoint').pro
 
 /* * */
 
-fastify.post('/pips', require('./endpoints/network/pips.endpoint').tests);
-
-/* * */
-
 // DATASETS ENDPOINTS
 
 fastify.get('/datasets/facilities', require('./endpoints/datasets/facilities.endpoint').all);
