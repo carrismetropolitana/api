@@ -1,18 +1,18 @@
 {
-    "name": "@carrismetropolitana/api-server",
-    "version": "2023.1.1",
-    "private": true,
-    "main": "index.js",
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "dotenv": "16.4.5",
-        "fastify": "4.26.2",
-        "luxon": "3.4.4",
-        "mongodb": "6.5.0",
-        "protobufjs": "7.2.6",
-        "redis": "4.6.13",
-        "tunnel-ssh": "5.1.2"
-    }
+  "name": "@carrismetropolitana/api-server",
+  "version": "2024.04.14-2229",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "16.4.5",
+    "fastify": "4.26.2",
+    "luxon": "3.4.4",
+    "mongodb": "6.5.0",
+    "protobufjs": "7.2.6",
+    "redis": "4.6.13",
+    "tunnel-ssh": "5.1.2"
+  }
 }
