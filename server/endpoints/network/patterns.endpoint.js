@@ -28,10 +28,6 @@ module.exports.realtime = async (request, reply) => {
   console.log('******************')
   console.log('******************')
   console.log('******************')
-  console.log('HERE ENDPOINT')
-  console.log('******************')
-  console.log('******************')
-  console.log('******************')
   const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
   const stopIdsForThisPattern = singleItem?.path?.map(item => item.stop.id).join(',');
   console.log('******************')
