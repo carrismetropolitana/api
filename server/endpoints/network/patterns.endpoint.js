@@ -29,7 +29,8 @@ module.exports.realtime = async (request, reply) => {
   console.log('******************')
   console.log('******************')
   const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
-  const stopIdsForThisPattern = singleItem?.path?.map(item => item.stop.id).join(',');
+  const singleItemJson = await JSON.parse(singleItem);
+  const stopIdsForThisPattern = singleItemJson?.path?.map(item => item.stop.id).join(',');
   console.log('******************')
   console.log('******************')
   console.log('******************')
@@ -37,7 +38,7 @@ module.exports.realtime = async (request, reply) => {
   console.log('******************')
   console.log('******************')
   console.log('******************')
-  console.log('singleItem', singleItem)
+  // console.log('singleItemJson.path', singleItemJson.path)
   console.log('******************')
   console.log('******************')
   console.log('******************')
