@@ -192,6 +192,9 @@ export default async () => {
 				}
 			}
 		} = {};
+		for (const period_id of periods.keys()) {
+			timesByPeriodByDayType[period_id] = {};
+		}
 
 		timesByPeriodByDayTypeResult.rows.forEach(row => {
 			const { period_id, day_type, arrival_time, calendar_desc } = row;
@@ -223,7 +226,7 @@ export default async () => {
 		// console.log('mergedExceptions', mergedExceptions);
 
 		const timetable: Timetable = {
-			periods: Object.entries(timesByPeriodByDayType).map(([period, dayTypes]) => {
+			periods: Object.entries(timesByPeriodByDayType).map(([period_id, dayTypes]) => {
 				const getPeriod = (time: string, _exceptions: string[]) => ({
 					time,
 					// deduplicate exceptions
@@ -235,8 +238,8 @@ export default async () => {
 				});
 
 				return {
-					period_id: period,
-					period_name: periods.get(period),
+					period_id: period_id,
+					period_name: periods.get(period_id),
 					weekdays: dayTypes.weekdays ? Object.entries(dayTypes.weekdays).map(([time, exceptions]) => getPeriod(time, exceptions)) : [],
 					saturdays: dayTypes.saturdays ? Object.entries(dayTypes.saturdays).map(([time, exceptions]) => getPeriod(time, exceptions)) : [],
 					sundays_holidays: dayTypes.sundays_holidays ? Object.entries(dayTypes.sundays_holidays).map(([time, exceptions]) => getPeriod(time, exceptions)) : [],
@@ -247,6 +250,11 @@ export default async () => {
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
 		console.timeEnd(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
+		if (timetable.periods.length != 3) {
+			console.log(`⤷ Stop ${STOP_ID} has only ${timetable.periods.length} periods.`);
+			console.log(JSON.stringify(timetable, null, 2), JSON.stringify(timesByPeriodByDayType, null, 2));
+			return;
+		}
 	}
 	const allLineTime = process.hrtime.bigint() - allLineStartTime;
 	console.log(`Spent ${formatTime(cumulativeQueryTime)} on ${lineStops.length} queries`);
@@ -255,7 +263,11 @@ export default async () => {
 	console.time('⤷ Timetable mset');
 	await client.mSet(bulkData);
 	console.timeEnd('⤷ Timetable mset');
-	await client.set('timetables:index', JSON.stringify(lineStopPairs));
+	const index = {
+		updated_at: (new Date).toISOString(),
+		pairs: lineStopPairs,
+	};
+	await client.set('timetables:index', JSON.stringify(index));
 
 	// 9.
 	// Log elapsed time in the current operation
