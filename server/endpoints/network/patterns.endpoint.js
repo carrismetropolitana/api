@@ -27,6 +27,13 @@ module.exports.single = async (request, reply) => {
 module.exports.realtime = async (request, reply) => {
   const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
   const stopIdsForThisPattern = singleItem?.path?.map(item => item.stop.id).join(',');
+  console.log('******************')
+  console.log('******************')
+  console.log('******************')
+  console.log('stopIdsForThisPattern', stopIdsForThisPattern)
+  console.log('******************')
+  console.log('******************')
+  console.log('******************')
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
   const result = response.map((estimate) => {
     return {
