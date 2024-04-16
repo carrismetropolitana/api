@@ -30,7 +30,7 @@ module.exports.realtime = async (request, reply) => {
   const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
   const result = response
     .filter((item) => {
-      return item.pattern_id === request.params.id;
+      return item.patternId === request.params.id;
     })
     .map((item) => {
       return {
