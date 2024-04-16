@@ -173,7 +173,7 @@ module.exports.realtimeForPips = async (request, reply) => {
         {
           lineId: '0000',
           patternId: '0000_0_0',
-          stopHeadsign: 'Consulte o site para mais informações.',
+          stopHeadsign: 'Sem estimativas. Consulte site para +info.',
           journeyId: '0000_0_0|teste',
           timetabledArrivalTime: '23:59:59',
           timetabledDepartureTime: '23:59:59',
