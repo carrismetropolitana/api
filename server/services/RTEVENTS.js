@@ -25,6 +25,11 @@ class RTEVENTS {
     if (this.last_update > DateTime.now().minus({ seconds: 20 }).toUnixInteger()) return;
 
     // 2.
+    // Connect to the database
+
+    await REALTIMEDB.connect();
+
+    // 3.
     // Fetch latest events
 
     const allRtEvents = await REALTIMEDB.VehicleEvents.find({
@@ -33,23 +38,23 @@ class RTEVENTS {
       },
     }).toArray();
 
-    // 3.
+    // 4.
     // Set the current time to the last_update flag to avoid over fetching
 
     this.last_update = DateTime.now().toUnixInteger();
 
-    // 4.
+    // 5.
     // Reset the Map variable
 
     const updatedRtEvents = new Map();
 
-    // 5.
+    // 6.
     // Update vehicles with the latest events
 
     for (const rtEvent of allRtEvents) {
       //
 
-      // 5.1.
+      // 6.1.
       // Perform basic event validations
 
       // Does this event have a valid vehicle id
@@ -69,7 +74,7 @@ class RTEVENTS {
       // Is this event older than 90 seconds
       if (rtEvent?.content?.entity[0]?.vehicle?.timestamp < DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
-      // 5.2.
+      // 6.2.
       // Prepare the most used variables
 
       const vehicleId = `${rtEvent.content.entity[0].vehicle.agencyId}|${rtEvent.content.entity[0].vehicle.vehicle._id}`;
@@ -78,12 +83,12 @@ class RTEVENTS {
       const vehicleBearing = Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.bearing || 0);
       const vehicleSpeed = rtEvent?.content?.entity[0]?.vehicle?.position?.speed / 3.6 || 0; // in meters per second
 
-      // 5.3.
+      // 6.3.
       // Check if there is a vehicle already saved and that it has an older timestamp than the current event
 
       if (updatedRtEvents.get(vehicleId) && updatedRtEvents.get(vehicleId).timestamp >= vehicleTimestamp) continue;
 
-      // 5.4.
+      // 6.4.
       // Save the current event
 
       updatedRtEvents.set(vehicleId, {
@@ -119,7 +124,7 @@ class RTEVENTS {
       //
     }
 
-    // 6.
+    // 7.
     // Save the updated Map to memory
 
     this.rt_events = updatedRtEvents;
