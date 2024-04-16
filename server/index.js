@@ -42,6 +42,7 @@ fastify.get('/routes/:id', require('./endpoints/network/routes.endpoint').single
 
 fastify.get('/patterns', require('./endpoints/network/patterns.endpoint').all);
 fastify.get('/patterns/:id', require('./endpoints/network/patterns.endpoint').single);
+fastify.get('/patterns/:id/realtime', require('./endpoints/network/patterns.endpoint').realtime);
 
 fastify.get('/shapes', require('./endpoints/network/shapes.endpoint').all);
 fastify.get('/shapes/:id', require('./endpoints/network/shapes.endpoint').single);
