@@ -4,7 +4,8 @@ import files from './config/files';
 
 import { getElapsedTime } from './modules/timeCalc';
 import setupBaseDirectory from './modules/setupBaseDirectory';
-import fetchAndExtractLatestGtfs from './modules/fetchAndExtractLatestGtfs';
+import extractGtfs from './modules/extractGtfs';
+import fetchLatestGtfs from './modules/fetchLatestGtfs';
 import setupPrepareAndImportFile from './modules/setupPrepareAndImportFile';
 
 import municipalitiesParser from './parsers/municipalities.parser';
@@ -15,9 +16,12 @@ import stopsParser from './parsers/stops.parser';
 import shapesParser from './parsers/shapes.parser';
 import linesRoutesPatternsParser from './parsers/linesRoutesPatterns.parser';
 import timetablesParser from './parsers/timetables.parser';
+import getGtfsHash from './modules/getGtfsHash';
 
 /* * */
 const SKIP_INIT = false;
+
+let lastGtfsHash = null;
 
 export default async () => {
 	//
@@ -47,10 +51,22 @@ export default async () => {
 			await setupBaseDirectory();
 
 			//
+			console.log();
+			console.log('STEP 0.2: Fetch latest GTFS');
+			await fetchLatestGtfs();
 
 			console.log();
-			console.log('STEP 1.0: Fetch and Extract latest GTFS');
-			await fetchAndExtractLatestGtfs();
+			console.log('STEP 0.3: Compare with previous GTFS');
+			const currentGtfsHash = await getGtfsHash();
+			if (lastGtfsHash === currentGtfsHash) {
+				console.log('No changes in GTFS file, skipping this run.');
+				return;
+			}
+			lastGtfsHash = currentGtfsHash;
+
+			console.log();
+			console.log('STEP 1.0: Extract GTFS');
+			await extractGtfs();
 
 			console.log();
 			console.log('STEP 1.1: Import each GTFS file');
@@ -87,7 +103,7 @@ export default async () => {
 			await linesRoutesPatternsParser();
 		}
 		console.log();
-		console.log('STEP 1.3: Parse Timetables');
+		console.log('STEP 1.7: Parse Timetables');
 		await timetablesParser();
 
 		// console.log();

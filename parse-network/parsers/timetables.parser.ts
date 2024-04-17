@@ -1,10 +1,10 @@
 /* * */
 
-import sortCollator from '../modules/sortCollator';
+import limitConcurrency from '../modules/limitConcurrency';
 import { formatTime, getElapsedTime } from '../modules/timeCalc';
 import { connection } from '../services/NETWORKDB';
 import { client } from '../services/SERVERDB';
-import { Timetable, TimetableStop } from './timetableExample';
+import { Timetable } from './timetableExample';
 
 /* * */
 
@@ -51,9 +51,8 @@ export default async () => {
 
 	let cumulativeQueryTime = 0n;
 	const allLineStartTime = process.hrtime.bigint();
-	let i = 0;
-	for (const [LINE_ID, STOP_ID] of lineStopPairs) {
-		console.time(`${i}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
+	async function processLineStopPair(LINE_ID:string, STOP_ID:string, index: string|number) {
+		console.time(`${index}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
 
 		const timesByPeriodByDayTypeQuery = `
     SELECT
@@ -97,7 +96,7 @@ export default async () => {
 		}>(timesByPeriodByDayTypeQuery, [STOP_ID, LINE_ID]);
 		if (!timesByPeriodByDayTypeResult.rows.length) {
 			console.log(`⤷ Stop ${STOP_ID} has no times for line ${LINE_ID}.`);
-			continue;
+			return;
 		}
 		const queryDelta = process.hrtime.bigint() - queryStartTime;
 		cumulativeQueryTime += queryDelta;
@@ -129,7 +128,7 @@ export default async () => {
 		const patternForDisplay = timesByPeriodByDayTypeResult.rows.find(row => row.route_id == variantForDisplay).pattern_id;
 		if (!patternForDisplay) {
 			console.log(`⤷ No patterns in ${LINE_ID} matching route_id ${variantForDisplay}.`);
-			continue;
+			return;
 		}
 
 		const tripForStopsQuery = `
@@ -150,7 +149,7 @@ export default async () => {
 		// }
 		if (tripForStopsResult.rows.length <= 0) {
 			console.log(`⤷ Stop ${STOP_ID} has no trip for line ${variantForDisplay}.`);
-			continue;
+			return;
 		}
 
 		const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.rows.filter(row => row.calendar_desc != null).map(row => row.calendar_desc)).values());
@@ -249,13 +248,33 @@ export default async () => {
 			patternForDisplay: patternForDisplay,
 		};
 		bulkData.push([`timetables:${LINE_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
-		console.timeEnd(`${i++}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
+		console.timeEnd(`${index}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
 		if (timetable.periods.length != 3) {
 			console.log(`⤷ Stop ${STOP_ID} has only ${timetable.periods.length} periods.`);
 			console.log(JSON.stringify(timetable, null, 2), JSON.stringify(timesByPeriodByDayType, null, 2));
 			return;
 		}
 	}
+
+	/**
+	 *
+	 */
+	// const tasks = lineStopPairs.slice(0, 10000).map((pair, index) => {
+	// 	const [LINE_ID, STOP_ID] = pair;
+	// 	return () => processLineStopPair(LINE_ID, STOP_ID, index);
+	// });
+	// await limitConcurrency(tasks, 2);
+
+	/**
+	 *
+	 * 37s for 1000
+	 * 1m 39s for 10000
+	 *  */
+	for (const index in lineStopPairs) {
+		const [LINE_ID, STOP_ID] = lineStopPairs[index];
+		await processLineStopPair(LINE_ID, STOP_ID, index);
+	}
+
 	const allLineTime = process.hrtime.bigint() - allLineStartTime;
 	console.log(`Spent ${formatTime(cumulativeQueryTime)} on ${lineStops.length} queries`);
 	// and now for the rest of the time
