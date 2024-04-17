@@ -6,15 +6,21 @@ const { MongoClient } = require('mongodb');
 
 /* * */
 
+const MAX_CONNECTION_RETRIES = 3;
+
+/* * */
+
 class REALTIMEDB {
   //
 
   constructor() {
     //
     this.sshTunnelConnecting = false;
+    this.sshTunnelConnectionRetries = 0;
     this.sshTunnelConnectionInstance = null;
     //
     this.mongoClientConnecting = false;
+    this.mongoClientConnectionRetries = 0;
     this.mongoClientConnectionInstance = null;
     //
   }
@@ -55,6 +61,8 @@ class REALTIMEDB {
         maxPoolSize: 200,
         directConnection: true,
         readPreference: 'secondaryPreferred',
+        connectTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 5000,
       };
 
       //
@@ -65,9 +73,9 @@ class REALTIMEDB {
       //
       // Check if there is already an active MongoDB Client connection
 
-      if (this.mongoClientConnectionInstance) {
+      if (this.mongoClientConnectionInstance && this.mongoClientConnectionInstance.topology && this.mongoClientConnectionInstance.topology.isConnected()) {
         mongoClientInstance = this.mongoClientConnectionInstance;
-      } else if (global._mongoClientConnectionInstance) {
+      } else if (global._mongoClientConnectionInstance && global._mongoClientConnectionInstance.topology && global._mongoClientConnectionInstance.topology.isConnected()) {
         mongoClientInstance = global._mongoClientConnectionInstance;
       } else {
         mongoClientInstance = await MongoClient.connect(process.env.REALTIMEDB_MONGODB_URI, mongoClientOptions);
@@ -77,11 +85,13 @@ class REALTIMEDB {
       // Setup databases
 
       const coreManagementDatabase = mongoClientInstance.db('CoreManagement');
+      const salesManagementDatabase = mongoClientInstance.db('SalesManagement');
 
       //
       // Setup collections
 
       this.VehicleEvents = coreManagementDatabase.collection('VehicleEvents');
+      this.SalesEntity = salesManagementDatabase.collection('salesEntity');
 
       //
       // Save the instance in memory
@@ -90,14 +100,22 @@ class REALTIMEDB {
       else this.mongoClientConnectionInstance = mongoClientInstance;
 
       //
-      // Clear the flag
+      // Reset flags
 
       this.mongoClientConnecting = false;
+      this.mongoClientConnectionRetries = 0;
 
       //
     } catch (error) {
-      console.error('REALTIMEDB: Error creating MongoDB Client instance:', error);
-      this.mongoClientConnecting = false;
+      this.mongoClientConnectionRetries++;
+      if (this.mongoClientConnectionRetries < MAX_CONNECTION_RETRIES) {
+        console.error(`REALTIMEDB: Error creating MongoDB Client instance ["${error.message}"]. Retrying (${this.sshTunnelConnectionRetries}/${MAX_CONNECTION_RETRIES})...`);
+        await this.reset();
+        await this.connect();
+      } else {
+        console.error('REALTIMEDB: Error creating MongoDB Client instance:', error);
+        await this.reset();
+      }
     }
 
     //
@@ -123,10 +141,16 @@ class REALTIMEDB {
     //
     // Check if there is already an active SSH connection
 
-    if (this.sshTunnelConnectionInstance || global._sshTunnelConnectionInstance) {
+    if (this.sshTunnelConnectionInstance?.listening || global._sshTunnelConnectionInstance?.listening) {
       console.log('REALTIMEDB: SSH Tunnel already connected. Skipping...');
       return;
     }
+
+    //
+    // Try to close previously active connections
+
+    this.sshTunnelConnectionInstance?.close();
+    global._sshTunnelConnectionInstance?.close();
 
     //
     // Try to setup a new SSH Tunnel
@@ -175,16 +199,50 @@ class REALTIMEDB {
       if (process.env.NODE_ENV === 'development') global._sshTunnelConnectionInstance = server;
       else this.sshTunnelConnectionInstance = server;
 
+      //
+      // Reset flags
+
       this.sshTunnelConnecting = false;
+      this.sshTunnelConnectionRetries = 0;
 
       //
     } catch (error) {
-      console.error('REALTIMEDB: Error creating SSH Tunnel instance:', error);
-      this.sshTunnelConnecting = false;
-      reject(error);
+      this.sshTunnelConnectionRetries++;
+      if (this.sshTunnelConnectionRetries < MAX_CONNECTION_RETRIES) {
+        console.error(`REALTIMEDB: Error creating SSH Tunnel instance ["${error.message}"]. Retrying (${this.sshTunnelConnectionRetries}/${MAX_CONNECTION_RETRIES})...`);
+        await this.reset();
+        await this.connect();
+      } else {
+        console.error('REALTIMEDB: Error creating SSH Tunnel instance:', error);
+        await this.reset();
+      }
     }
 
     //
+  }
+
+  /* * *
+   * RESET CONNECTIONS
+   * Resets all connections and flags
+   */
+
+  async reset() {
+    // Close SSH Tunnel connection
+    await this.sshTunnelConnectionInstance?.close();
+    await global._sshTunnelConnectionInstance?.close();
+    // Clear SSH Tunnel flags
+    this.sshTunnelConnecting = false;
+    this.sshTunnelConnectionInstance = null;
+    global._sshTunnelConnectionInstance = null;
+    // Close MongoDB connections
+    // await this.mongoClientConnectionInstance?.close();
+    // await global._mongoClientConnectionInstance?.close();
+    // Clear MongoDB flags
+    this.mongoClientConnecting = false;
+    this.mongoClientConnectionInstance = null;
+    global._mongoClientConnectionInstance = null;
+    //
+    console.log('REALTIMEDB: Reset all connections.');
   }
 
   /* * *
@@ -219,4 +277,8 @@ class REALTIMEDB {
 
 /* * */
 
-module.exports = new REALTIMEDB();
+const realtimedb = new REALTIMEDB();
+
+/* * */
+
+export default realtimedb;
