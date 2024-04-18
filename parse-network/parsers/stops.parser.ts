@@ -22,6 +22,7 @@ export default async () => {
     stop_name: string;
     stop_short_name: string;
     tts_stop_name: string;
+    operational_status: string;
     stop_lat: string;
     stop_lon: string;
     locality: string;
@@ -116,6 +117,7 @@ export default async () => {
 			name: stop.stop_name,
 			short_name: stop.stop_short_name,
 			tts_name: stop.tts_stop_name,
+			operational_status: stop.operational_status,
 			lat: stop.stop_lat,
 			lon: stop.stop_lon,
 			locality: stop.locality,
