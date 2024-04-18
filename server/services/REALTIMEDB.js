@@ -277,8 +277,4 @@ class REALTIMEDB {
 
 /* * */
 
-const realtimedb = new REALTIMEDB();
-
-/* * */
-
-export default realtimedb;
+module.exports = new REALTIMEDB();
