@@ -3,7 +3,7 @@ volumes:
   serverdb:
 
 secrets:
-  realtimedbkey:
+  pcgidbkey:
     file: PCGIDB.key
 
 services:
@@ -110,7 +110,7 @@ services:
     environment:
       - SERVERDB_HOST=serverdb
     secrets:
-      - realtimedbkey
+      - pcgidbkey
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
