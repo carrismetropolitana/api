@@ -3,7 +3,7 @@ volumes:
 
 secrets:
   realtimedbkey:
-    file: REALTIMEDB.key
+    file: PCGIDB.key
 
 services:
   #

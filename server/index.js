@@ -2,7 +2,7 @@
 
 const SERVERDB = require('./services/SERVERDB');
 const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
-const REALTIMEDB = require('./services/REALTIMEDB');
+const PCGIDB = require('./services/PCGIDB');
 
 /* * */
 
@@ -101,8 +101,8 @@ fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', 
 // START FASTIFY SERVER
 
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
-  if (err) throw err;
-  console.log(`Server listening on ${address}`);
-  await SERVERDB.connect();
-  await REALTIMEDB.connect();
+	if (err) throw err;
+	console.log(`Server listening on ${address}`);
+	await SERVERDB.connect();
+	await PCGIDB.connect();
 });

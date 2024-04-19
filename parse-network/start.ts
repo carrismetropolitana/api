@@ -19,6 +19,7 @@ import timetablesParser from './parsers/timetables.parser';
 import getGtfsHash from './modules/getGtfsHash';
 
 /* * */
+
 const SKIP_INIT = false;
 
 let lastGtfsHash = null;
