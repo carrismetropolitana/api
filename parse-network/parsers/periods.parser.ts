@@ -1,10 +1,10 @@
 /* * */
 
 import { DateTime } from 'luxon';
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
-import { getElapsedTime } from '../modules/timeCalc';
-import collator from '../modules/sortCollator';
+import SERVERDB from '@/services/SERVERDB';
+import NETWORKDB from '@/services/NETWORKDB';
+import collator from '@/modules/sortCollator';
+import { getElapsedTime } from '@/modules/timeCalc';
 
 /* * */
 

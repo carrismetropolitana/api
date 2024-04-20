@@ -1,9 +1,9 @@
 /* * */
 
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
-import { getElapsedTime } from '../modules/timeCalc';
-import collator from '../modules/sortCollator';
+import NETWORKDB from '@/services/NETWORKDB';
+import SERVERDB from '@/services/SERVERDB';
+import collator from '@/modules/sortCollator';
+import { getElapsedTime } from '@/modules/timeCalc';
 
 /* * */
 

@@ -1,10 +1,10 @@
 /* * */
 
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
-import { getElapsedTime } from '../modules/timeCalc';
-import collator from '../modules/sortCollator';
-import { MonStop } from '../services/NETWORKDB.types';
+import NETWORKDB from '@/services/NETWORKDB';
+import SERVERDB from '@/services/SERVERDB';
+import { MonStop } from '@/services/NETWORKDB.types';
+import collator from '@/modules/sortCollator';
+import { getElapsedTime } from '@/modules/timeCalc';
 
 /* * */
 

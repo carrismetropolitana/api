@@ -7,7 +7,7 @@
     "sourceMap": true,
     "outDir": "build",
     "allowJs": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
       "@/config/*": ["config/*"],
       "@/modules/*": ["modules/*"],

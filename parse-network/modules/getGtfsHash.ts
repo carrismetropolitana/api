@@ -1,7 +1,7 @@
 /* * */
 
 import { createReadStream } from 'fs';
-import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings';
+import { BASE_DIR, GTFS_BASE_DIR } from '@/config/settings';
 import crypto from 'crypto';
 
 /* * */

@@ -1,9 +1,9 @@
 /* * */
 
-import limitConcurrency from '../modules/limitConcurrency';
-import { formatTime, getElapsedTime } from '../modules/timeCalc';
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
+import SERVERDB from '@/services/SERVERDB';
+import NETWORKDB from '@/services/NETWORKDB';
+import limitConcurrency from '@/modules/limitConcurrency';
+import { formatTime, getElapsedTime } from '@/modules/timeCalc';
 import { Timetable } from './timetableExample';
 
 /* * */

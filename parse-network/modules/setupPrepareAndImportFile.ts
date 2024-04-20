@@ -1,7 +1,7 @@
 /* * */
 
-import { existsSync, mkdirSync, writeFileSync, createReadStream, readFileSync, appendFileSync } from 'fs';
-import NETWORKDB from '../services/NETWORKDB';
+import fs from 'fs';
+import NETWORKDB from '@/services/NETWORKDB';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
 import { from as copyFrom } from 'pg-copy-streams';
@@ -30,9 +30,9 @@ export default async FILE_OPTIONS => {
 	}
 
 	// Create prepared directory if it does not already exist
-	if (!existsSync(FILE_OPTIONS.prepared_dir)) {
+	if (!fs.existsSync(FILE_OPTIONS.prepared_dir)) {
 		console.log(`⤷ Creating directory "${FILE_OPTIONS.prepared_dir}"...`);
-		mkdirSync(FILE_OPTIONS.prepared_dir);
+		fs.mkdirSync(FILE_OPTIONS.prepared_dir);
 	}
 
 	// Prepare file
@@ -52,10 +52,10 @@ async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: stri
 	const startTime = process.hrtime();
 	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const headersString = FILE_OPTIONS.file_headers.join(',');
-	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
+	fs.writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, headersString + '\n');
 	const fileLines = [headersString + '\n'];
 	console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
-	const parserStream = createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
+	const parserStream = fs.createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
 	let rowCount = 0;
 	for await (const rowObject of parserStream) {
 		const rowArray = [];
@@ -64,12 +64,12 @@ async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: stri
 			rowArray.push(colString);
 		}
 		const rowString = stringify([rowArray]);
-		appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
+		fs.appendFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, rowString);
 		// fileLines.push(rowString);
 		rowCount++;
 	}
 	console.log(`⤷ Done transforming file in ${getElapsedTime(startTime)}`);
-	// writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, fileLines.join(''));
+	// fs.writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, fileLines.join(''));
 	const elapsedTime = getElapsedTime(startTime);
 	console.log(`⤷ Prepared "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" (${rowCount} rows in ${elapsedTime})`);
 	//
@@ -83,7 +83,7 @@ async function prepareFilePapaparseSync(FILE_OPTIONS: { prepared_dir: string; fi
 	console.log(`⤷ Creating file "${newFilePath}"...`);
 	// console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	console.log(`⤷ Preparing "${oldFilePath}" to "${newFilePath}"...`);
-	const k = Papa.parse(readFileSync(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, 'utf8'), {
+	const k = Papa.parse(fs.readFileSync(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, 'utf8'), {
 		header: true,
 		skipEmptyLines: true,
 	});
@@ -106,7 +106,7 @@ async function prepareFilePapaparseSync(FILE_OPTIONS: { prepared_dir: string; fi
 	// const output = Papa.unparse(outputLines);
 	const output = outputLines.join('\n');
 
-	writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, output);
+	fs.writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, output);
 
 	const elapsedTime = getElapsedTime(startTime);
 	console.log(`⤷ Prepared "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" (${outputLines.length} rows in ${elapsedTime})`);
@@ -121,7 +121,7 @@ async function importFileToTable(FILE_OPTIONS: { prepared_dir: string; file_name
 	console.log(`⤷ Importing "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table...`);
 	// Setup the query and a filesystem NETWORKDB.client using 'pg-copy-streams' and 'fs'
 	const stream = NETWORKDB.client.query(copyFrom(`COPY ${FILE_OPTIONS.file_name} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
-	const fileStream = createReadStream(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`);
+	const fileStream = fs.createReadStream(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`);
 	// Pipe the contents of the file into the pg-copy-stream function
 	const { rowCount } = await new Promise<{ rowCount: number }>((resolve, reject) => {
 		fileStream

@@ -1,7 +1,7 @@
 /* * */
 
 import { rmSync, mkdirSync } from 'fs';
-import { BASE_DIR } from '../config/settings';
+import { BASE_DIR } from '@/config/settings';
 
 /* * */
 
