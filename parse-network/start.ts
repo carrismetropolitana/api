@@ -20,21 +20,23 @@ import shapesParser from './parsers/shapes.parser';
 import linesRoutesPatternsParser from './parsers/linesRoutesPatterns.parser';
 import timetablesParser from './parsers/timetables.parser';
 import getGtfsHash from './modules/getGtfsHash';
+import { ENABLED_MODULES } from './config/settings';
 
 /* * */
 
-const SKIP_INIT = false;
+let LAST_GTFS_HASH = null;
+let SHOULD_RUN_PARSERS = false;
 
-let lastGtfsHash = null;
+/* * */
 
 export default async () => {
 	//
 
 	try {
 		console.log();
-		console.log('-----------------------------------------');
+		console.log('------------------------');
 		console.log((new Date).toISOString());
-		console.log('-----------------------------------------');
+		console.log('------------------------');
 		console.log();
 
 		// Store start time for logging purposes
@@ -43,33 +45,21 @@ export default async () => {
 
 		//
 
-		await SERVERDB.connect();
-		await NETWORKDB.connect();
-
-		//
-
-		if (SKIP_INIT) {
+		if (ENABLED_MODULES.includes('gtfs_import')) {
 			console.log();
-			console.log('Skipping initial setup...');
-			console.log();
-		} else {
-			console.log();
-			console.log('STEP 0.1: Setup working directory');
+			console.log('STEP 0.1: Fetch latest GTFS');
 			await setupBaseDirectory();
-
-			//
-			console.log();
-			console.log('STEP 0.2: Fetch latest GTFS');
 			await fetchLatestGtfs();
 
 			console.log();
-			console.log('STEP 0.3: Compare with previous GTFS');
+			console.log('STEP 0.2: Compare with previous GTFS');
 			const currentGtfsHash = await getGtfsHash();
-			if (lastGtfsHash === currentGtfsHash) {
-				console.log('No changes in GTFS file, skipping this run.');
-				return;
+			if (LAST_GTFS_HASH === currentGtfsHash) {
+				console.log('⤷ No changes in GTFS file, skipping this run.');
+			} else {
+				LAST_GTFS_HASH = currentGtfsHash;
+				SHOULD_RUN_PARSERS = true;
 			}
-			lastGtfsHash = currentGtfsHash;
 
 			console.log();
 			console.log('STEP 1.0: Extract GTFS');
@@ -80,43 +70,69 @@ export default async () => {
 			for (const fileOptions of files) {
 				await setupPrepareAndImportFile(fileOptions);
 			}
-
-			console.log();
-			console.log('STEP 1.2: Parse Municipalities');
-			await municipalitiesParser();
-
-			console.log();
-			console.log('STEP 1.3: Parse Localities');
-			await localitiesParser();
-
-			console.log();
-			console.log('STEP 1.3: Parse Periods');
-			await periodsParser();
-
-			console.log();
-			console.log('STEP 1.3: Parse Dates');
-			await datesParser();
-
-			console.log();
-			console.log('STEP 1.4: Parse Stops');
-			// await stopsParser();
-
-			console.log();
-			console.log('STEP 1.5: Parse Shapes');
-			// await shapesParser();
-
-			console.log();
-			console.log('STEP 1.6: Parse Lines, Routes and Patterns');
-			// await linesRoutesPatternsParser();
 		}
-		console.log();
-		console.log('STEP 1.7: Parse Timetables');
-		// await timetablesParser();
 
-		console.log();
-		console.log('Disconnecting from databases...');
-		await SERVERDB.disconnect();
-		await NETWORKDB.disconnect();
+		if (SHOULD_RUN_PARSERS) {
+			//
+
+			await SERVERDB.connect();
+			await NETWORKDB.connect();
+
+			if (ENABLED_MODULES.includes('municipalities_parser')) {
+				console.log();
+				console.log('STEP 1.2: Parse Municipalities');
+				await municipalitiesParser();
+			}
+
+			if (ENABLED_MODULES.includes('localities_parser')) {
+				console.log();
+				console.log('STEP 1.3: Parse Localities');
+				await localitiesParser();
+			}
+
+			if (ENABLED_MODULES.includes('periods_parser')) {
+				console.log();
+				console.log('STEP 1.3: Parse Periods');
+				await periodsParser();
+			}
+
+			if (ENABLED_MODULES.includes('dates_parser')) {
+				console.log();
+				console.log('STEP 1.3: Parse Dates');
+				await datesParser();
+			}
+
+			if (ENABLED_MODULES.includes('stops_parser')) {
+				console.log();
+				console.log('STEP 1.4: Parse Stops');
+				await stopsParser();
+			}
+
+			if (ENABLED_MODULES.includes('shapes_parser')) {
+				console.log();
+				console.log('STEP 1.5: Parse Shapes');
+				await shapesParser();
+			}
+
+			if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
+				console.log();
+				console.log('STEP 1.6: Parse Lines, Routes and Patterns');
+				await linesRoutesPatternsParser();
+			}
+
+			if (ENABLED_MODULES.includes('timetables_parser')) {
+				console.log();
+				console.log('STEP 1.7: Parse Timetables');
+				await timetablesParser();
+			}
+
+			console.log();
+			console.log('Disconnecting from databases...');
+			await SERVERDB.disconnect();
+			await NETWORKDB.disconnect();
+
+			//
+		}
 
 		console.log();
 		console.log('- - - - - - - - - - - - - - - - - - - - -');

@@ -1,6 +1,23 @@
 /* * */
 
-export const RUN_INTERVAL = 60000; // 1 minute
+export const RUN_INTERVAL = 30000; // 1 minute
+
+/* * */
+
+export const ENABLED_MODULES = [
+	'gtfs_import',
+	'municipalities_parser',
+	'localities_parser',
+	'periods_parser',
+	'dates_parser',
+	// 'stops_parser',
+	// 'shapes_parser',
+	// 'lines_routes_patterns_parser',
+	// 'timetables_parser',
+];
+
+/* * */
+
 export const BASE_DIR = '/tmp/base';
 export const GTFS_BASE_DIR = 'gtfs';
 export const GTFS_RAW_DIR = 'raw';

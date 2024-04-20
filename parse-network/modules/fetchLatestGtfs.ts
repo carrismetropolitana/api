@@ -3,7 +3,7 @@
 import { existsSync, mkdirSync, createWriteStream } from 'fs';
 import { Readable } from 'stream';
 import { finished } from 'stream/promises';
-import { BASE_DIR, GTFS_BASE_DIR, GTFS_RAW_DIR } from '../config/settings';
+import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings';
 
 /* * */
 
