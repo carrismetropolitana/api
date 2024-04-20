@@ -50,35 +50,34 @@ export default async () => {
 
 		//
 
-		if (ENABLED_MODULES.includes('gtfs_import')) {
-			console.log();
-			console.log('STEP 0.1: Fetch latest GTFS');
-			await setupBaseDirectory();
-			await fetchLatestGtfs();
+		console.log();
+		console.log('STEP 0.1: Fetch latest GTFS');
+		await setupBaseDirectory();
+		await fetchLatestGtfs();
 
-			console.log();
-			console.log('STEP 0.2: Compare with previous GTFS');
-			const currentGtfsHash = await getGtfsHash();
-			if (LAST_GTFS_HASH === currentGtfsHash) {
-				console.log('⤷ No changes in GTFS file, skipping this run.');
-			} else {
-				LAST_GTFS_HASH = currentGtfsHash;
-				SHOULD_RUN_PARSERS = true;
-			}
+		console.log();
+		console.log('STEP 0.2: Compare with previous GTFS');
+		const currentGtfsHash = await getGtfsHash();
 
-			console.log();
-			console.log('STEP 1.0: Extract GTFS');
-			await extractGtfs();
-
-			console.log();
-			console.log('STEP 1.1: Import each GTFS file');
-			for (const fileOptions of files) {
-				await setupPrepareAndImportFile(fileOptions);
-			}
-		}
-
-		if (SHOULD_RUN_PARSERS) {
+		if (LAST_GTFS_HASH === currentGtfsHash) {
+			console.log('⤷ No changes in GTFS file, skipping this run.');
+		} else {
 			//
+
+			LAST_GTFS_HASH = currentGtfsHash;
+			SHOULD_RUN_PARSERS = true;
+			console.log('⤷ GTFS changed since previous run. Continuing...');
+
+			//
+
+			if (ENABLED_MODULES.includes('gtfs_import')) {
+				console.log();
+				console.log('STEP 1.0: Extract GTFS');
+				await extractGtfs();
+				for (const fileOptions of files) {
+					await setupPrepareAndImportFile(fileOptions);
+				}
+			}
 
 			if (ENABLED_MODULES.includes('municipalities_parser')) {
 				console.log();
