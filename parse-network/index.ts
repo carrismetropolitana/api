@@ -2,8 +2,6 @@
 
 import 'dotenv/config';
 import start from './start';
-import SERVERDB from './services/SERVERDB';
-import NETWORKDB from './services/NETWORKDB';
 import { RUN_INTERVAL } from './config/settings';
 
 /* * */
@@ -22,12 +20,6 @@ import { RUN_INTERVAL } from './config/settings';
 			TASK_IS_RUNNING = false;
 		}
 	};
-
-	console.log();
-	console.log('INIT: Connect to databases');
-
-	await SERVERDB.connect();
-	await NETWORKDB.connect();
 
 	runOnInterval();
 

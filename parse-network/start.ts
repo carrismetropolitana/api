@@ -2,6 +2,9 @@
 
 import files from './config/files';
 
+import SERVERDB from './services/SERVERDB';
+import NETWORKDB from './services/NETWORKDB';
+
 import { getElapsedTime } from './modules/timeCalc';
 import setupBaseDirectory from './modules/setupBaseDirectory';
 import extractGtfs from './modules/extractGtfs';
@@ -39,6 +42,9 @@ export default async () => {
 		console.log('Starting...');
 
 		//
+
+		await SERVERDB.connect();
+		await NETWORKDB.connect();
 
 		//
 
@@ -107,10 +113,10 @@ export default async () => {
 		console.log('STEP 1.7: Parse Timetables');
 		await timetablesParser();
 
-		// console.log();
-		// console.log('Disconnecting from databases...');
-		// await disconnect();
-		// await _disconnect();
+		console.log();
+		console.log('Disconnecting from databases...');
+		await SERVERDB.disconnect();
+		await NETWORKDB.disconnect();
 
 		console.log();
 		console.log('- - - - - - - - - - - - - - - - - - - - -');

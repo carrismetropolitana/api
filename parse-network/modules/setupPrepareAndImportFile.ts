@@ -1,7 +1,7 @@
 /* * */
 
 import { existsSync, mkdirSync, writeFileSync, createReadStream, readFileSync, appendFileSync } from 'fs';
-import { connection } from '../services/NETWORKDB';
+import NETWORKDB from '../services/NETWORKDB';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
 import { from as copyFrom } from 'pg-copy-streams';
@@ -16,16 +16,16 @@ export default async FILE_OPTIONS => {
 	console.log(`⤷ Importing "${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 
 	// Drop existing table
-	await connection.query(`DROP TABLE IF EXISTS ${FILE_OPTIONS.file_name};`);
+	await NETWORKDB.connection.query(`DROP TABLE IF EXISTS ${FILE_OPTIONS.file_name};`);
 	console.log(`⤷ Dropped existing SQL table "${FILE_OPTIONS.file_name}".`);
 
 	// Create table
-	await connection.query(FILE_OPTIONS.table_query);
+	await NETWORKDB.connection.query(FILE_OPTIONS.table_query);
 	console.log(`⤷ Created SQL table "${FILE_OPTIONS.file_name}".`);
 
 	// Create indexes
 	for (const indexQuery of FILE_OPTIONS.index_queries) {
-		await connection.query(indexQuery);
+		await NETWORKDB.connection.query(indexQuery);
 		console.log(`⤷ Created index on SQL table "${FILE_OPTIONS.file_name}".`);
 	}
 
@@ -119,8 +119,8 @@ async function prepareFilePapaparseSync(FILE_OPTIONS: { prepared_dir: string; fi
 async function importFileToTable(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; }) {
 	const startTime = process.hrtime();
 	console.log(`⤷ Importing "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table...`);
-	// Setup the query and a filesystem connection using 'pg-copy-streams' and 'fs'
-	const stream = connection.query(copyFrom(`COPY ${FILE_OPTIONS.file_name} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
+	// Setup the query and a filesystem NETWORKDB.connection using 'pg-copy-streams' and 'fs'
+	const stream = NETWORKDB.connection.query(copyFrom(`COPY ${FILE_OPTIONS.file_name} FROM STDIN CSV HEADER DELIMITER ',' QUOTE '"'`));
 	const fileStream = createReadStream(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`);
 	// Pipe the contents of the file into the pg-copy-stream function
 	const { rowCount } = await new Promise<{ rowCount: number }>((resolve, reject) => {
