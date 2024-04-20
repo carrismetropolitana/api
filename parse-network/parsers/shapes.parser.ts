@@ -17,7 +17,7 @@ export default async () => {
 	// 2.
 	// Query Postgres for all unique shapes by shape_id
 	console.log(`⤷ Querying database...`);
-	const allShapes = await NETWORKDB.connection.query<{
+	const allShapes = await NETWORKDB.client.query<{
     shape_id: string,
     points: {
       shape_pt_lat: string,

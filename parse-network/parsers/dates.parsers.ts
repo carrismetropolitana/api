@@ -16,7 +16,7 @@ export default async () => {
 	// 2.
 	// Fetch all Dates from Postgres
 	console.log(`⤷ Querying database...`);
-	const allDates = await NETWORKDB.connection.query('SELECT * FROM dates');
+	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
 
 	// 3.
 	// Initate a temporary variable to hold updated Dates

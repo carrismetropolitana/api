@@ -17,7 +17,7 @@ export default async () => {
 	// 2.
 	// Query Postgres for all unique localities, municipalities
 	console.log(`⤷ Querying database...`);
-	const allLocalities = await NETWORKDB.connection.query(`
+	const allLocalities = await NETWORKDB.client.query(`
     SELECT DISTINCT ON (locality, municipality_id, municipality_name)
         locality,
         municipality_id,

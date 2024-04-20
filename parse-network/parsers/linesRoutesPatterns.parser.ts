@@ -79,7 +79,7 @@ export default async () => {
 
 	// 4.
 	// Query Postgres for all calendar dates and build a hashmap for quick retrieval
-	const allDatesRaw = await NETWORKDB.connection.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
+	const allDatesRaw = await NETWORKDB.client.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
 	const allDatesHashmap = new Map;
 	const allCalendarDatesHashmap = new Map;
 	for (const row of allDatesRaw.rows) {
@@ -93,7 +93,7 @@ export default async () => {
 	// 5,
 	// Query Postgres for all unique routes
 	console.log(`⤷ Querying database...`);
-	const allRoutesRaw = await NETWORKDB.connection.query<GTFSRoute>('SELECT * FROM routes');
+	const allRoutesRaw = await NETWORKDB.client.query<GTFSRoute>('SELECT * FROM routes');
 
 	// 6.
 	// Group all routes into lines by route_short_name
@@ -208,7 +208,7 @@ export default async () => {
 
 			// 9.4.3.
 			// Get all trips associated with this route
-			const allTripsRaw = await NETWORKDB.connection.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
+			const allTripsRaw = await NETWORKDB.client.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
 
 			// 9.4.4.
 			// Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -222,7 +222,7 @@ export default async () => {
 
 				// 9.4.4.2.
 				// Get the current trip stop_times
-				const allStopTimesRaw = await NETWORKDB.connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRaw.trip_id]);
+				const allStopTimesRaw = await NETWORKDB.client.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRaw.trip_id]);
 
 				// 9.4.4.3.
 				// Initiate temporary holding variables

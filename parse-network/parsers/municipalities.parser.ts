@@ -16,7 +16,7 @@ export default async () => {
 	// 2.
 	// Fetch all Municipalities from Postgres
 	console.log(`⤷ Querying database...`);
-	const allMunicipalities = await NETWORKDB.connection.query('SELECT * FROM municipalities');
+	const allMunicipalities = await NETWORKDB.client.query('SELECT * FROM municipalities');
 
 	// 3.
 	// Initate a temporary variable to hold updated Municipalities

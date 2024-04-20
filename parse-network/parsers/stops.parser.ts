@@ -17,7 +17,7 @@ export default async () => {
 	// 2.
 	// Query Postgres for all unique stops by stop_id
 	console.log(`⤷ Querying database...`);
-	const allStops = await NETWORKDB.connection.query<{
+	const allStops = await NETWORKDB.client.query<{
     stop_id: string;
     stop_name: string;
     stop_short_name: string;

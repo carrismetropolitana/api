@@ -15,7 +15,7 @@ export default async () => {
 
 	const bulkData = [];
 	console.time('Make new table');
-	await NETWORKDB.connection.query(`
+	await NETWORKDB.client.query(`
     DROP TABLE IF EXISTS stop_times_without_last_stop;
     CREATE TABLE stop_times_without_last_stop AS
       SELECT *
@@ -36,7 +36,7 @@ export default async () => {
 	console.timeEnd('Make new table');
 	// 2.
 	// Fetch all Periods from Redis
-	const lineStops = (await NETWORKDB.connection.query<{stop_id:string, line_id:string}>(`
+	const lineStops = (await NETWORKDB.client.query<{stop_id:string, line_id:string}>(`
 	SELECT DISTINCT stops.stop_id, routes.line_id
 	FROM stops
 	JOIN stop_times_without_last_STOP AS stop_times ON stops.stop_id = stop_times.stop_id
@@ -46,7 +46,7 @@ export default async () => {
 	// console.log('lineStops', lineStops.rows);
 	const lineStopPairs = lineStops.map(row => [row.line_id, row.stop_id]);
 	const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays']]);
-	const periods = new Map((await NETWORKDB.connection.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
+	const periods = new Map((await NETWORKDB.client.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
 		.map(period => [period.period_id, period.period_name]));
 
 	let cumulativeQueryTime = 0n;
@@ -84,7 +84,7 @@ export default async () => {
 
 		const queryStartTime = process.hrtime.bigint();
 		// console.time('timesByPeriodByDayType query');
-		const timesByPeriodByDayTypeResult = await NETWORKDB.connection.query<{
+		const timesByPeriodByDayTypeResult = await NETWORKDB.client.query<{
 			period_id: string,
 			day_type: string,
 			arrival_time: string,
@@ -142,7 +142,7 @@ export default async () => {
 			AND stop_times.stop_id = $2
 		LIMIT 1`;
 
-		const tripForStopsResult = await NETWORKDB.connection.query<{ trip_id: string }>(tripForStopsQuery, [variantForDisplay, STOP_ID]);
+		const tripForStopsResult = await NETWORKDB.client.query<{ trip_id: string }>(tripForStopsQuery, [variantForDisplay, STOP_ID]);
 		// if (tripForStopsResult.rows[0].trip_id != tripForStops) {
 		// 	console.log(`${tripForStopsResult.rows[0].trip_id} != ${tripForStops}`);
 		// 	continue;

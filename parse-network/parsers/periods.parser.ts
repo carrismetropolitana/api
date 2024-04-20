@@ -17,8 +17,8 @@ export default async () => {
 	// 2.
 	// Fetch all calendar dates from Postgres
 	console.log(`⤷ Querying database...`);
-	const allPeriods = await NETWORKDB.connection.query<GTFSPeriod>('SELECT * FROM periods');
-	const allDates = await NETWORKDB.connection.query<GTFSDate>('SELECT * FROM dates');
+	const allPeriods = await NETWORKDB.client.query<GTFSPeriod>('SELECT * FROM periods');
+	const allDates = await NETWORKDB.client.query<GTFSDate>('SELECT * FROM dates');
 
 	// 3.
 	// Build periods hashmap

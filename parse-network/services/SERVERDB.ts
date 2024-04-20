@@ -1,32 +1,34 @@
 /* * */
 
-import { createClient } from 'redis';
+import { RedisClientType, createClient } from '@redis/client';
 const { SERVERDB_HOST } = process.env;
 
 /* * */
 
-export const client = createClient({ socket: { host: SERVERDB_HOST } });
+class SERVERDB {
+	//
 
-export async function connect() {
-	try {
-		await client.connect();
+	client: RedisClientType;
+
+	async connect() {
+		this.client = createClient({ socket: { host: SERVERDB_HOST } });
+		await this.client.connect();
 		console.log(`⤷ Connected to SERVERDB.`);
-	} catch (err) {
-		console.log(`⤷ ERROR: Failed to connect to SERVERDB.`, err);
 	}
-}
 
-export async function disconnect() {
-	try {
-		await client.disconnect();
+	async disconnect() {
+		await this.client.disconnect();
+		this.client = null;
 		console.log(`⤷ Disconnected from SERVERDB.`);
-	} catch (err) {
-		console.log(`⤷ ERROR: Failed to disconnect from SERVERDB.`, err);
 	}
+
+	//
 }
 
-export default {
-	connect,
-	disconnect,
-	client,
-};
+/* * */
+
+const serverdb = new SERVERDB;
+
+/* * */
+
+export default serverdb;

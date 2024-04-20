@@ -8,23 +8,23 @@ const { NETWORKDB_HOST, NETWORKDB_USER, NETWORKDB_PASSWORD } = process.env;
 class NETWORKDB {
 	//
 
-	connection: Client;
+	client: Client;
 
 	async connect() {
-		this.connection = new Client({
+		this.client = new Client({
 			host: NETWORKDB_HOST,
 			user: NETWORKDB_USER,
 			database: NETWORKDB_USER,
 			password: NETWORKDB_PASSWORD,
 			connectionTimeoutMillis: 10000,
 		});
-		await this.connection.connect();
+		await this.client.connect();
 		console.log(`⤷ Connected to NETWORKDB.`);
 	}
 
 	async disconnect() {
-		await this.connection.end();
-		this.connection = null;
+		await this.client.end();
+		this.client = null;
 		console.log(`⤷ Disconnected from NETWORKDB.`);
 	}
 
