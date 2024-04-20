@@ -5,16 +5,17 @@ const { NETWORKDB_HOST, NETWORKDB_USER, NETWORKDB_PASSWORD } = process.env;
 
 /* * */
 
-export const connection = new Client({
-	host: NETWORKDB_HOST,
-	user: NETWORKDB_USER,
-	database: NETWORKDB_USER,
-	password: NETWORKDB_PASSWORD,
-	connectionTimeoutMillis: 10000,
-});
+export let connection: Client;
 
 export async function connect() {
-	connection.connect();
+	connection = new Client({
+		host: NETWORKDB_HOST,
+		user: NETWORKDB_USER,
+		database: NETWORKDB_USER,
+		password: NETWORKDB_PASSWORD,
+		connectionTimeoutMillis: 10000,
+	});
+	await connection.connect();
 	console.log(`⤷ Connected to NETWORKDB.`);
 }
 

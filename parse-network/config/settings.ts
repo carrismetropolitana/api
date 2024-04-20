@@ -1,6 +1,6 @@
 /* * */
 
-export const RUN_INTERVAL = 300000; // 5 minutes
+export const RUN_INTERVAL = 60000; // 1 minute
 export const BASE_DIR = '/tmp/base';
 export const GTFS_BASE_DIR = 'gtfs';
 export const GTFS_RAW_DIR = 'raw';
