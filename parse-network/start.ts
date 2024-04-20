@@ -1,26 +1,26 @@
 /* * */
 
-import files from './config/files';
+import files from '@/config/files';
+import { ENABLED_MODULES } from '@/config/settings';
 
-import SERVERDB from './services/SERVERDB';
-import NETWORKDB from './services/NETWORKDB';
+import SERVERDB from '@/services/SERVERDB';
+import NETWORKDB from '@/services/NETWORKDB';
 
-import { getElapsedTime } from './modules/timeCalc';
-import setupBaseDirectory from './modules/setupBaseDirectory';
-import extractGtfs from './modules/extractGtfs';
-import fetchLatestGtfs from './modules/fetchLatestGtfs';
-import setupPrepareAndImportFile from './modules/setupPrepareAndImportFile';
+import { getElapsedTime } from '@/modules/timeCalc';
+import setupBaseDirectory from '@/modules/setupBaseDirectory';
+import extractGtfs from '@/modules/extractGtfs';
+import fetchLatestGtfs from '@/modules/fetchLatestGtfs';
+import setupPrepareAndImportFile from '@/modules/setupPrepareAndImportFile';
+import getGtfsHash from '@/modules/getGtfsHash';
 
-import municipalitiesParser from './parsers/municipalities.parser';
-import localitiesParser from './parsers/localities.parser';
-import periodsParser from './parsers/periods.parser';
-import datesParser from './parsers/dates.parsers';
-import stopsParser from './parsers/stops.parser';
-import shapesParser from './parsers/shapes.parser';
-import linesRoutesPatternsParser from './parsers/linesRoutesPatterns.parser';
-import timetablesParser from './parsers/timetables.parser';
-import getGtfsHash from './modules/getGtfsHash';
-import { ENABLED_MODULES } from './config/settings';
+import municipalitiesParser from '@/parsers/municipalities.parser';
+import localitiesParser from '@/parsers/localities.parser';
+import periodsParser from '@/parsers/periods.parser';
+import datesParser from '@/parsers/dates.parsers';
+import stopsParser from '@/parsers/stops.parser';
+import shapesParser from '@/parsers/shapes.parser';
+import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
+import timetablesParser from '@/parsers/timetables.parser';
 
 /* * */
 
@@ -42,6 +42,11 @@ export default async () => {
 		// Store start time for logging purposes
 		const startTime = process.hrtime();
 		console.log('Starting...');
+
+		//
+
+		await SERVERDB.connect();
+		await NETWORKDB.connect();
 
 		//
 
@@ -74,9 +79,6 @@ export default async () => {
 
 		if (SHOULD_RUN_PARSERS) {
 			//
-
-			await SERVERDB.connect();
-			await NETWORKDB.connect();
 
 			if (ENABLED_MODULES.includes('municipalities_parser')) {
 				console.log();
@@ -126,13 +128,11 @@ export default async () => {
 				await timetablesParser();
 			}
 
-			console.log();
-			console.log('Disconnecting from databases...');
-			await SERVERDB.disconnect();
-			await NETWORKDB.disconnect();
-
 			//
 		}
+
+		await SERVERDB.disconnect();
+		await NETWORKDB.disconnect();
 
 		console.log();
 		console.log('- - - - - - - - - - - - - - - - - - - - -');

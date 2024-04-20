@@ -6,7 +6,14 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "build",
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/config/*": ["config/*"],
+      "@/modules/*": ["modules/*"],
+      "@/services/*": ["services/*"],
+      "@/parsers/*": ["parsers/*"],
+    }
   },
   "lib": ["es2020"],
   "exclude": ["**/node_modules", "**/.*/", "**/build/"]
