@@ -7,12 +7,12 @@
     "sourceMap": true,
     "outDir": "build",
     "allowJs": true,
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@/config/*": ["config/*"],
       "@/modules/*": ["modules/*"],
       "@/services/*": ["services/*"],
-      "@/parsers/*": ["parsers/*"],
+      "@/parsers/*": ["parsers/*"]
     }
   },
   "lib": ["es2020"],
