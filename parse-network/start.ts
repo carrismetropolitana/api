@@ -99,19 +99,19 @@ export default async () => {
 
 			console.log();
 			console.log('STEP 1.4: Parse Stops');
-			await stopsParser();
+			// await stopsParser();
 
 			console.log();
 			console.log('STEP 1.5: Parse Shapes');
-			await shapesParser();
+			// await shapesParser();
 
 			console.log();
 			console.log('STEP 1.6: Parse Lines, Routes and Patterns');
-			await linesRoutesPatternsParser();
+			// await linesRoutesPatternsParser();
 		}
 		console.log();
 		console.log('STEP 1.7: Parse Timetables');
-		await timetablesParser();
+		// await timetablesParser();
 
 		console.log();
 		console.log('Disconnecting from databases...');
