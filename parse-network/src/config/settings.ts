@@ -1,6 +1,6 @@
 /* * */
 
-export const RUN_INTERVAL = 30000; // 1 minute
+export const RUN_INTERVAL = 300000; // 5 minutes
 
 /* * */
 
@@ -10,10 +10,10 @@ export const ENABLED_MODULES = [
 	'localities_parser',
 	'periods_parser',
 	'dates_parser',
-	// 'stops_parser',
-	// 'shapes_parser',
-	// 'lines_routes_patterns_parser',
-	// 'timetables_parser',
+	'stops_parser',
+	'shapes_parser',
+	'lines_routes_patterns_parser',
+	'timetables_parser',
 ];
 
 /* * */

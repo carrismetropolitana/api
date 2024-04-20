@@ -25,7 +25,6 @@ import timetablesParser from '@/parsers/timetables.parser';
 /* * */
 
 let LAST_GTFS_HASH = null;
-let SHOULD_RUN_PARSERS = false;
 
 /* * */
 
@@ -39,7 +38,8 @@ export default async () => {
 		console.log('------------------------');
 		console.log();
 
-		// Store start time for logging purposes
+		//
+
 		const startTime = process.hrtime();
 		console.log('Starting...');
 
@@ -65,7 +65,6 @@ export default async () => {
 			//
 
 			LAST_GTFS_HASH = currentGtfsHash;
-			SHOULD_RUN_PARSERS = true;
 			console.log('⤷ GTFS changed since previous run. Continuing...');
 
 			//
@@ -81,13 +80,13 @@ export default async () => {
 
 			if (ENABLED_MODULES.includes('municipalities_parser')) {
 				console.log();
-				console.log('STEP 1.2: Parse Municipalities');
+				console.log('STEP 1.1: Parse Municipalities');
 				await municipalitiesParser();
 			}
 
 			if (ENABLED_MODULES.includes('localities_parser')) {
 				console.log();
-				console.log('STEP 1.3: Parse Localities');
+				console.log('STEP 1.2: Parse Localities');
 				await localitiesParser();
 			}
 
@@ -99,31 +98,31 @@ export default async () => {
 
 			if (ENABLED_MODULES.includes('dates_parser')) {
 				console.log();
-				console.log('STEP 1.3: Parse Dates');
+				console.log('STEP 1.4: Parse Dates');
 				await datesParser();
 			}
 
 			if (ENABLED_MODULES.includes('stops_parser')) {
 				console.log();
-				console.log('STEP 1.4: Parse Stops');
+				console.log('STEP 1.5: Parse Stops');
 				await stopsParser();
 			}
 
 			if (ENABLED_MODULES.includes('shapes_parser')) {
 				console.log();
-				console.log('STEP 1.5: Parse Shapes');
+				console.log('STEP 1.6: Parse Shapes');
 				await shapesParser();
 			}
 
 			if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
 				console.log();
-				console.log('STEP 1.6: Parse Lines, Routes and Patterns');
+				console.log('STEP 1.7: Parse Lines, Routes and Patterns');
 				await linesRoutesPatternsParser();
 			}
 
 			if (ENABLED_MODULES.includes('timetables_parser')) {
 				console.log();
-				console.log('STEP 1.7: Parse Timetables');
+				console.log('STEP 1.8: Parse Timetables');
 				await timetablesParser();
 			}
 
@@ -134,9 +133,9 @@ export default async () => {
 		await NETWORKDB.disconnect();
 
 		console.log();
-		console.log('- - - - - - - - - - - - - - - - - - - - -');
+		console.log('------------------------');
 		console.log(`Run took ${getElapsedTime(startTime)}.`);
-		console.log('- - - - - - - - - - - - - - - - - - - - -');
+		console.log('------------------------');
 		console.log();
 
 		//
