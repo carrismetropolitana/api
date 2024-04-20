@@ -1,7 +1,7 @@
 /* * */
 
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 import { MonStop } from '../services/NETWORKDB.types';
@@ -17,7 +17,7 @@ export default async () => {
 	// 2.
 	// Query Postgres for all unique stops by stop_id
 	console.log(`⤷ Querying database...`);
-	const allStops = await connection.query<{
+	const allStops = await NETWORKDB.connection.query<{
     stop_id: string;
     stop_name: string;
     stop_short_name: string;
@@ -137,7 +137,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allStopsData.push(parsedStop);
-		await client.set(`stops:${parsedStop.id}`, JSON.stringify(parsedStop));
+		await SERVERDB.client.set(`stops:${parsedStop.id}`, JSON.stringify(parsedStop));
 		updatedStopKeys.add(`stops:${parsedStop.id}`);
 		//
 	}
@@ -149,17 +149,17 @@ export default async () => {
 	// 7.
 	// Add the 'all' option
 	allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-	await client.set('stops:all', JSON.stringify(allStopsData));
+	await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
 	updatedStopKeys.add('stops:all');
 
 	// 8.
 	// Delete all Stops not present in the current update
 	const allSavedStopKeys = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
 		allSavedStopKeys.push(key);
 	}
 	const staleStopKeys = allSavedStopKeys.filter(id => !updatedStopKeys.has(id));
-	if (staleStopKeys.length) await client.del(staleStopKeys);
+	if (staleStopKeys.length) await SERVERDB.client.del(staleStopKeys);
 	console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
 
 	// 9.

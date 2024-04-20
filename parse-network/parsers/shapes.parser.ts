@@ -1,8 +1,8 @@
 /* * */
 
 import { lineString, length } from '@turf/turf';
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 
@@ -17,7 +17,7 @@ export default async () => {
 	// 2.
 	// Query Postgres for all unique shapes by shape_id
 	console.log(`⤷ Querying database...`);
-	const allShapes = await connection.query<{
+	const allShapes = await NETWORKDB.connection.query<{
     shape_id: string,
     points: {
       shape_pt_lat: string,
@@ -73,7 +73,7 @@ export default async () => {
 			const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
 			parsedShape.extension = Math.floor(shapeExtensionMeters);
 			// Update or create new document
-			await client.set(`shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
+			await SERVERDB.client.set(`shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
 			updatedShapeKeys.add(`shapes:${parsedShape.id}`);
 			//
 		} catch (error) {
@@ -84,11 +84,11 @@ export default async () => {
 	// 6.
 	// Delete all Shapes not present in the current update
 	const allSavedShapeKeys = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
 		allSavedShapeKeys.push(key);
 	}
 	const staleShapeKeys = allSavedShapeKeys.filter(id => !updatedShapeKeys.has(id));
-	if (staleShapeKeys.length) await client.del(staleShapeKeys);
+	if (staleShapeKeys.length) await SERVERDB.client.del(staleShapeKeys);
 	console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
 	// 7.

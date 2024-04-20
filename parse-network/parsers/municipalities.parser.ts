@@ -1,7 +1,7 @@
 /* * */
 
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 
@@ -16,7 +16,7 @@ export default async () => {
 	// 2.
 	// Fetch all Municipalities from Postgres
 	console.log(`⤷ Querying database...`);
-	const allMunicipalities = await connection.query('SELECT * FROM municipalities');
+	const allMunicipalities = await NETWORKDB.connection.query('SELECT * FROM municipalities');
 
 	// 3.
 	// Initate a temporary variable to hold updated Municipalities
@@ -42,7 +42,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allMunicipalitiesData.push(parsedMunicipality);
-		await client.set(`municipalities:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
+		await SERVERDB.client.set(`municipalities:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
 		updatedMunicipalityKeys.add(`municipalities:${parsedMunicipality.id}`);
 	}
 
@@ -53,17 +53,17 @@ export default async () => {
 	// 7.
 	// Add the 'all' option
 	allMunicipalitiesData.sort((a, b) => collator.compare(a.id, b.id));
-	await client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
+	await SERVERDB.client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
 	updatedMunicipalityKeys.add('municipalities:all');
 
 	// 8.
 	// Delete all Municipalities not present in the current update
 	const allSavedMunicipalityKeys:string[] = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
 		allSavedMunicipalityKeys.push(key);
 	}
 	const staleMunicipalityKeys = allSavedMunicipalityKeys.filter(id => !updatedMunicipalityKeys.has(id));
-	if (staleMunicipalityKeys.length) await client.del(staleMunicipalityKeys);
+	if (staleMunicipalityKeys.length) await SERVERDB.client.del(staleMunicipalityKeys);
 	console.log(`⤷ Deleted ${staleMunicipalityKeys.length} stale Municipalities.`);
 
 	// 9.

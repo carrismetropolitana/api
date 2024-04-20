@@ -1,7 +1,7 @@
 /* * */
 
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 import { MonStop } from '../services/NETWORKDB.types';
@@ -73,13 +73,13 @@ export default async () => {
 
 	// 3.
 	// Get all stops and build a hashmap for quick retrieval
-	const allStopsTxt = await client.get('stops:all');
+	const allStopsTxt = await SERVERDB.client.get('stops:all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
 	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
 
 	// 4.
 	// Query Postgres for all calendar dates and build a hashmap for quick retrieval
-	const allDatesRaw = await connection.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
+	const allDatesRaw = await NETWORKDB.connection.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
 	const allDatesHashmap = new Map;
 	const allCalendarDatesHashmap = new Map;
 	for (const row of allDatesRaw.rows) {
@@ -93,7 +93,7 @@ export default async () => {
 	// 5,
 	// Query Postgres for all unique routes
 	console.log(`⤷ Querying database...`);
-	const allRoutesRaw = await connection.query<GTFSRoute>('SELECT * FROM routes');
+	const allRoutesRaw = await NETWORKDB.connection.query<GTFSRoute>('SELECT * FROM routes');
 
 	// 6.
 	// Group all routes into lines by route_short_name
@@ -208,7 +208,7 @@ export default async () => {
 
 			// 9.4.3.
 			// Get all trips associated with this route
-			const allTripsRaw = await connection.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
+			const allTripsRaw = await NETWORKDB.connection.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
 
 			// 9.4.4.
 			// Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -222,7 +222,7 @@ export default async () => {
 
 				// 9.4.4.2.
 				// Get the current trip stop_times
-				const allStopTimesRaw = await connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRaw.trip_id]);
+				const allStopTimesRaw = await NETWORKDB.connection.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRaw.trip_id]);
 
 				// 9.4.4.3.
 				// Initiate temporary holding variables
@@ -362,7 +362,7 @@ export default async () => {
 			// 9.4.6.
 			// Save all created patterns to the database and update parent route and line
 			for (const patternParsed of parsedPatternsForThisRoute) {
-				await client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
+				await SERVERDB.client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
 				updatedPatternKeys.add(`patterns:${patternParsed.id}`);
 				routeParsed.patterns.push(patternParsed.id);
 				lineParsed.patterns.push(patternParsed.id);
@@ -384,7 +384,7 @@ export default async () => {
 
 			// 9.4.10.
 			// Save the current route to the database
-			await client.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
+			await SERVERDB.client.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
 			updatedRouteKeys.add(`routes:${routeParsed.id}`);
 
 			//
@@ -402,7 +402,7 @@ export default async () => {
 
 		// 9.7.
 		// Save the current line to the database
-		await client.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
+		await SERVERDB.client.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
 		updatedLineKeys.add(`lines:${lineParsed.id}`);
 
 		// 9.8.
@@ -416,43 +416,43 @@ export default async () => {
 	// 10.
 	// Save all routes to the routes:all REDIS key
 	allRoutesFinal.sort((a, b) => collator.compare(a.id, b.id));
-	await client.set('routes:all', JSON.stringify(allRoutesFinal));
+	await SERVERDB.client.set('routes:all', JSON.stringify(allRoutesFinal));
 	updatedRouteKeys.add('routes:all');
 
 	// 11.
 	// Save all lines to the lines:all REDIS key
 	allLinesFinal.sort((a, b) => collator.compare(a.id, b.id));
-	await client.set('lines:all', JSON.stringify(allLinesFinal));
+	await SERVERDB.client.set('lines:all', JSON.stringify(allLinesFinal));
 	updatedLineKeys.add('lines:all');
 
 	// 12.
 	// Delete stale patterns not present in the current update
 	const allPatternKeysInTheDatabase = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 	const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));
-	if (stalePatternKeys.length) await client.del(stalePatternKeys);
+	if (stalePatternKeys.length) await SERVERDB.client.del(stalePatternKeys);
 	console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
 	// 13.
 	// Delete stale routes not present in the current update
 	const allRouteKeysInTheDatabase = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
 	const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
-	if (staleRouteKeys.length) await client.del(staleRouteKeys);
+	if (staleRouteKeys.length) await SERVERDB.client.del(staleRouteKeys);
 	console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
 
 	// 14.
 	// Delete stale lines not present in the current update
 	const allLineKeysInTheDatabase = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
 		allLineKeysInTheDatabase.push(key);
 	}
 	const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
-	if (staleLineKeys.length) await client.del(staleLineKeys);
+	if (staleLineKeys.length) await SERVERDB.client.del(staleLineKeys);
 	console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 
 	// 15.

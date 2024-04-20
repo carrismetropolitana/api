@@ -1,8 +1,8 @@
 /* * */
 
 import { createHash } from 'crypto';
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 
@@ -17,7 +17,7 @@ export default async () => {
 	// 2.
 	// Query Postgres for all unique localities, municipalities
 	console.log(`⤷ Querying database...`);
-	const allLocalities = await connection.query(`
+	const allLocalities = await NETWORKDB.connection.query(`
     SELECT DISTINCT ON (locality, municipality_id, municipality_name)
         locality,
         municipality_id,
@@ -55,7 +55,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allLocalitiesData.push(parsedLocality);
-		await client.set(`localities:${parsedLocality.id}`, JSON.stringify(parsedLocality));
+		await SERVERDB.client.set(`localities:${parsedLocality.id}`, JSON.stringify(parsedLocality));
 		updatedLocalityKeys.add(`localities:${parsedLocality.id}`);
 		//
 	}
@@ -67,17 +67,17 @@ export default async () => {
 	// 7.
 	// Add the 'all' option
 	allLocalitiesData.sort((a, b) => collator.compare(a.id, b.id));
-	await client.set('localities:all', JSON.stringify(allLocalitiesData));
+	await SERVERDB.client.set('localities:all', JSON.stringify(allLocalitiesData));
 	updatedLocalityKeys.add('localities:all');
 
 	// 8.
 	// Delete all Localities not present in the current update
 	const allSavedStopKeys = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'localities:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'localities:*' })) {
 		allSavedStopKeys.push(key);
 	}
 	const staleLocalityKeys = allSavedStopKeys.filter(id => !updatedLocalityKeys.has(id));
-	if (staleLocalityKeys.length) await client.del(staleLocalityKeys);
+	if (staleLocalityKeys.length) await SERVERDB.client.del(staleLocalityKeys);
 	console.log(`⤷ Deleted ${staleLocalityKeys.length} stale Localities.`);
 
 	// 9.

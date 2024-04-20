@@ -1,8 +1,8 @@
 /* * */
 
 import { DateTime } from 'luxon';
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 
@@ -17,8 +17,8 @@ export default async () => {
 	// 2.
 	// Fetch all calendar dates from Postgres
 	console.log(`⤷ Querying database...`);
-	const allPeriods = await connection.query<GTFSPeriod>('SELECT * FROM periods');
-	const allDates = await connection.query<GTFSDate>('SELECT * FROM dates');
+	const allPeriods = await NETWORKDB.connection.query<GTFSPeriod>('SELECT * FROM periods');
+	const allDates = await NETWORKDB.connection.query<GTFSDate>('SELECT * FROM dates');
 
 	// 3.
 	// Build periods hashmap
@@ -93,7 +93,7 @@ export default async () => {
 
 	// 6.
 	// Save the array to the database
-	await client.set('periods:all', JSON.stringify(allPeriodsParsed));
+	await SERVERDB.client.set('periods:all', JSON.stringify(allPeriodsParsed));
 
 	// 7.
 	// Log elapsed time in the current operation

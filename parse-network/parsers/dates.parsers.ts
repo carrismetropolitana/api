@@ -1,7 +1,7 @@
 /* * */
 
-import { connection } from '../services/NETWORKDB';
-import { client } from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
 import { getElapsedTime } from '../modules/timeCalc';
 import collator from '../modules/sortCollator';
 
@@ -16,7 +16,7 @@ export default async () => {
 	// 2.
 	// Fetch all Dates from Postgres
 	console.log(`⤷ Querying database...`);
-	const allDates = await connection.query('SELECT * FROM dates');
+	const allDates = await NETWORKDB.connection.query('SELECT * FROM dates');
 
 	// 3.
 	// Initate a temporary variable to hold updated Dates
@@ -40,7 +40,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allDatesData.push(parsedDate);
-		await client.set(`dates:${parsedDate.date}`, JSON.stringify(parsedDate));
+		await SERVERDB.client.set(`dates:${parsedDate.date}`, JSON.stringify(parsedDate));
 		updatedDateKeys.add(`dates:${parsedDate.date}`);
 	}
 
@@ -51,17 +51,17 @@ export default async () => {
 	// 7.
 	// Add the 'all' option
 	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
-	await client.set('dates:all', JSON.stringify(allDatesData));
+	await SERVERDB.client.set('dates:all', JSON.stringify(allDatesData));
 	updatedDateKeys.add('dates:all');
 
 	// 8.
 	// Delete all Dates not present in the current update
 	const allSavedDateKeys = [];
-	for await (const key of client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) {
 		allSavedDateKeys.push(key);
 	}
 	const staleDateKeys = allSavedDateKeys.filter(date => !updatedDateKeys.has(date));
-	if (staleDateKeys.length) await client.del(staleDateKeys);
+	if (staleDateKeys.length) await SERVERDB.client.del(staleDateKeys);
 	console.log(`⤷ Deleted ${staleDateKeys.length} stale Dates.`);
 
 	// 9.
