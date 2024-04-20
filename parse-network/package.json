@@ -7,7 +7,7 @@
 	"scripts": {
 		"start": "tsc && node build/index.js",
 		"lint": "eslint . --ext .ts",
-		"build": "tsc && tspath -f",
+		"build": "tsc && resolve-tspaths",
 		"watch": "tsc -w"
 	},
 	"dependencies": {
@@ -31,7 +31,7 @@
 		"@types/pg-copy-streams": "1.2.5",
 		"@typescript-eslint/eslint-plugin": "7.5.0",
 		"eslint": "8.57.0",
-		"typescript": "5.4.4",
-		"tspath": "2.6.8"
+		"resolve-tspaths": "0.8.18",
+		"typescript": "^5.4.4"
 	}
 }
