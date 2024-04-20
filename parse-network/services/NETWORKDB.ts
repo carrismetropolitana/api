@@ -5,29 +5,36 @@ const { NETWORKDB_HOST, NETWORKDB_USER, NETWORKDB_PASSWORD } = process.env;
 
 /* * */
 
-export let connection: Client;
+class NETWORKDB {
+	//
 
-export async function connect() {
-	connection = new Client({
-		host: NETWORKDB_HOST,
-		user: NETWORKDB_USER,
-		database: NETWORKDB_USER,
-		password: NETWORKDB_PASSWORD,
-		connectionTimeoutMillis: 10000,
-	});
-	await connection.connect();
-	console.log(`⤷ Connected to NETWORKDB.`);
-}
+	connection: Client;
 
-export async function disconnect() {
-	await connection.end();
-	console.log(`⤷ Disconnected from NETWORKDB.`);
+	async connect() {
+		this.connection = new Client({
+			host: NETWORKDB_HOST,
+			user: NETWORKDB_USER,
+			database: NETWORKDB_USER,
+			password: NETWORKDB_PASSWORD,
+			connectionTimeoutMillis: 10000,
+		});
+		await this.connection.connect();
+		console.log(`⤷ Connected to NETWORKDB.`);
+	}
+
+	async disconnect() {
+		await this.connection.end();
+		this.connection = null;
+		console.log(`⤷ Disconnected from NETWORKDB.`);
+	}
+
+	//
 }
 
 /* * */
 
-export default {
-	connect,
-	disconnect,
-	connection,
-};
+const networkdb = new NETWORKDB;
+
+/* * */
+
+export default networkdb;
