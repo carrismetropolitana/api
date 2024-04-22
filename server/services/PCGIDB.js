@@ -85,13 +85,11 @@ class PCGIDB {
 			// Setup databases
 
 			const coreManagementDatabase = mongoClientInstance.db('CoreManagement');
-			const salesManagementDatabase = mongoClientInstance.db('SalesManagement');
 
 			//
 			// Setup collections
 
 			this.VehicleEvents = coreManagementDatabase.collection('VehicleEvents');
-			this.SalesEntity = salesManagementDatabase.collection('salesEntity');
 
 			//
 			// Save the instance in memory
