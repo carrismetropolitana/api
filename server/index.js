@@ -32,7 +32,7 @@ fastify.get('/periods', require('./endpoints/network/periods.endpoint').all);
 fastify.get('/dates', require('./endpoints/network/dates.endpoint').all);
 fastify.get('/dates/:date', require('./endpoints/network/dates.endpoint').single);
 fastify.get('/timetables', require('./endpoints/network/timetables.endpoint').index);
-fastify.get('/timetables/:line_id/:stop_id', require('./endpoints/network/timetables.endpoint').single);
+fastify.get('/timetables/:line_id/:direction_id/:stop_id', require('./endpoints/network/timetables.endpoint').single);
 
 fastify.get('/lines', require('./endpoints/network/lines.endpoint').all);
 fastify.get('/lines/:id', require('./endpoints/network/lines.endpoint').single);
@@ -101,8 +101,8 @@ fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', 
 // START FASTIFY SERVER
 
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
-	if (err) throw err;
-	console.log(`Server listening on ${address}`);
-	await SERVERDB.connect();
-	await PCGIDB.connect();
+  if (err) throw err;
+  console.log(`Server listening on ${address}`);
+  await SERVERDB.connect();
+  // await REALTIMEDB.connect();
 });

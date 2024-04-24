@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"type": "commonjs",
 	"scripts": {
-		"start": "tsc && node build/index.js",
+		"start": "tsc && resolve-tspaths && node build/index.js",
 		"lint": "eslint . --ext .ts",
 		"build": "tsc && resolve-tspaths",
 		"watch": "tsc -w"
