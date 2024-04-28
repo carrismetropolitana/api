@@ -218,7 +218,14 @@ export default async () => {
 
 				// 9.4.4.1.
 				// Find the pattern that matches the unique combination for this trip
-				const patternParsed = parsedPatternsForThisRoute.find(pattern => pattern.id === tripRaw.pattern_id);
+				const patternParsed = parsedPatternsForThisRoute.find(pattern => {
+					const isSameDirection = pattern.direction_id === tripRaw.direction_id;
+					const isSameHeadsign = pattern.headsign === tripRaw.trip_headsign;
+					const isSameRoute = pattern.route_id === tripRaw.route_id;
+					return isSameDirection && isSameHeadsign && isSameRoute;
+					// const isSameShape = pattern.shape_id === tripRaw.shape_id;
+					// return pattern.id === tripRaw.pattern_id;
+				});
 
 				// 9.4.4.2.
 				// Get the current trip stop_times
