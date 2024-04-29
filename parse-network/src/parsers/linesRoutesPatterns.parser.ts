@@ -41,6 +41,52 @@ function calculateTimeDifference(time1: string, time2: string): string {
 //
 //
 
+function createPatternGroups(allTrips) {
+	//
+
+	const dateMap = {};
+	allTrips.forEach(trip => {
+		trip.dates.forEach(date => {
+			if (!dateMap[date]) {
+				dateMap[date] = [];
+			}
+			dateMap[date].push(trip.id);
+		});
+	});
+
+	const reversedMap = {};
+
+	for (const key in dateMap) {
+		if (Object.prototype.hasOwnProperty.call(dateMap, key)) {
+			const values = dateMap[key];
+			const newKey = values.sort().join(',');
+
+			if (!reversedMap[newKey]) {
+				reversedMap[newKey] = [];
+			}
+
+			reversedMap[newKey].push(key);
+		}
+	}
+
+	const finalGroups = [];
+
+	for (const key in reversedMap) {
+		finalGroups.push({
+			dates: reversedMap[key],
+			ids: dateMap[reversedMap[key][0]],
+		});
+	}
+
+	return finalGroups;
+
+	//
+}
+
+//
+//
+//
+
 function formatArrivalTime(arrival_time: string) {
 	const arrival_time_array = arrival_time.split(':');
 	let arrival_time_hours = arrival_time_array[0].padStart(2, '0');
@@ -369,6 +415,11 @@ export default async () => {
 			// 9.4.6.
 			// Save all created patterns to the database and update parent route and line
 			for (const patternParsed of parsedPatternsForThisRoute) {
+				//
+				const preParsedData = patternParsed.trips.map(trip => ({ id: trip.id, dates: trip.dates }));
+				const patternGroups = createPatternGroups(preParsedData);
+				await SERVERDB.client.set(`patterns_groups:${patternParsed.id}`, JSON.stringify(patternGroups));
+
 				await SERVERDB.client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
 				updatedPatternKeys.add(`patterns:${patternParsed.id}`);
 				routeParsed.patterns.push(patternParsed.id);

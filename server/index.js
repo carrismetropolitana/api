@@ -2,7 +2,6 @@
 
 const SERVERDB = require('./services/SERVERDB');
 const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
-const PCGIDB = require('./services/PCGIDB');
 
 /* * */
 
@@ -43,6 +42,7 @@ fastify.get('/routes/:id', require('./endpoints/network/routes.endpoint').single
 fastify.get('/patterns', require('./endpoints/network/patterns.endpoint').all);
 fastify.get('/patterns/:id', require('./endpoints/network/patterns.endpoint').single);
 fastify.get('/patterns/:id/realtime', require('./endpoints/network/patterns.endpoint').realtime);
+fastify.get('/patterns_groups/:id', require('./endpoints/network/patterns.endpoint').groups);
 
 fastify.get('/shapes', require('./endpoints/network/shapes.endpoint').all);
 fastify.get('/shapes/:id', require('./endpoints/network/shapes.endpoint').single);
@@ -101,8 +101,7 @@ fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', 
 // START FASTIFY SERVER
 
 fastify.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
-  if (err) throw err;
-  console.log(`Server listening on ${address}`);
-  await SERVERDB.connect();
-  // await REALTIMEDB.connect();
+	if (err) throw err;
+	console.log(`Server listening on ${address}`);
+	await SERVERDB.connect();
 });

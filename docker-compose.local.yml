@@ -6,7 +6,7 @@ volumes:
   serverdb:
 
 secrets:
-  realtimedbkey:
+  pcgidbkey:
     file: PCGIDB.key
 
 services:
@@ -26,8 +26,6 @@ services:
       - serverdb:/data
     environment:
       - REDIS_ARGS=--save 5 1
-    ports:
-      - "6379:6379"
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -42,8 +40,25 @@ services:
     environment:
       - POSTGRES_USER=networkdbuser
       - POSTGRES_PASSWORD=networkdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  server:
+    build: ./server
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env.local
+    environment:
+      - SERVERDB_HOST=serverdb
+    secrets:
+      - pcgidbkey
     ports:
-      - "5432:5432"
+      - "5050:5050"
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -56,7 +71,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./.env.local
     environment:
       - SERVERDB_HOST=serverdb
       - NETWORKDB_HOST=networkdb
