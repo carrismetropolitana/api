@@ -21,7 +21,7 @@ import stopsParser from '@/parsers/stops.parser';
 import shapesParser from '@/parsers/shapes.parser';
 import plansParser from '@/parsers/plans.parser';
 import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
-import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser';
+// import newLinesRoutesPatternsParser from 's@/parsers/newLinesRoutesPatterns.parser';
 import timetablesParser from '@/parsers/timetables.parser';
 
 /* * */
