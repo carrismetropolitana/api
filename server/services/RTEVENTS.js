@@ -247,9 +247,6 @@ class RTEVENTS {
 			//
 			bearing: savedEvent.bearing,
 			speed: savedEvent.speed,
-			////
-			status: 'REPLACED BY current_status', // deprecated
-			heading: 0, // deprecated
 			//
 		}));
 
