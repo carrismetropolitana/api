@@ -46,7 +46,7 @@ export default async () => {
 
 	// 6.
 	// Log count of updated Plans
-	console.log(`⤷ Uppland ${updatedPlanKeys.size} Plans.`);
+	console.log(`⤷ Updated ${updatedPlanKeys.size} Plans.`);
 
 	// 7.
 	// Add the 'all' option
@@ -60,7 +60,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'plans:*' })) {
 		allSavedPlanKeys.push(key);
 	}
-	const stalePlanKeys = allSavedPlanKeys.filter(plan => !updatedPlanKeys.has(plan));
+	const stalePlanKeys = allSavedPlanKeys.filter((plan) => !updatedPlanKeys.has(plan));
 	if (stalePlanKeys.length) await SERVERDB.client.del(stalePlanKeys);
 	console.log(`⤷ Deleted ${stalePlanKeys.length} stale Plans.`);
 
