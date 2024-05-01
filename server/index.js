@@ -30,6 +30,10 @@ fastify.get('/periods', require('./endpoints/network/periods.endpoint').all);
 
 fastify.get('/dates', require('./endpoints/network/dates.endpoint').all);
 fastify.get('/dates/:date', require('./endpoints/network/dates.endpoint').single);
+
+fastify.get('/plans', require('./endpoints/network/plans.endpoint').all);
+fastify.get('/plans/:id', require('./endpoints/network/plans.endpoint').single);
+
 fastify.get('/timetables', require('./endpoints/network/timetables.endpoint').index);
 fastify.get('/timetables/:line_id/:direction_id/:stop_id', require('./endpoints/network/timetables.endpoint').single);
 

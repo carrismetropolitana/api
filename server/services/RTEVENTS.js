@@ -2,6 +2,7 @@
 
 const { DateTime } = require('luxon');
 const PCGIDB = require('./PCGIDB');
+const SERVERDB = require('./SERVERDB');
 
 /* * */
 
@@ -89,19 +90,38 @@ class RTEVENTS {
 			if (updatedRtEvents.get(vehicleId) && updatedRtEvents.get(vehicleId).timestamp >= vehicleTimestamp) continue;
 
 			// 6.4.
+			// Prepare the IDs suffix based on the current active plan
+
+			const allPlansTxt = await SERVERDB.client.get('plans:all');
+			const allPlansData = JSON.parse(allPlansTxt);
+
+
+			// Create a map of plans and their ids based on the operator_id field
+			const currentPlanIds = {};
+			for (const planData of allPlansData) {
+				// Check if plan is active
+				const planStartDate = DateTime.fromFormat(planData.start_date, 'yyyyMMdd');
+				const planEndDate = DateTime.fromFormat(planData.end_date, 'yyyyMMdd');
+				if (planStartDate > DateTime.now() || planEndDate < DateTime.now()) continue;
+				else currentPlanIds[planData.operator_id] = planData.id;
+			}
+
+			const operatorId = rtEvent.content?.entity[0]?.vehicle?.agencyId;
+
+			// 6.4.
 			// Save the current event
 
 			updatedRtEvents.set(vehicleId, {
 				// The vehicle ID is composed of the agency_id and the vehicle_id
 				vehicle_id: vehicleId,
 				// Event ID should be kept stable for the duration of a single trip
-				event_id: `${vehicleId}-${vehicleTripId}`,
+				event_id: `${currentPlanIds[operatorId]}-${vehicleId}-${vehicleTripId}`,
 				// Timestamp is in UTC
 				timestamp: vehicleTimestamp,
 				// Schedule relationship can be SCHEDULED for planned trips or ADDED for new trips created by the driver
 				schedule_relationship: rtEvent.content.entity[0].vehicle.trip.scheduleRelationship === 'SCHEDULED' ? 'SCHEDULED' : 'DUPLICATED',
 				// Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
-				trip_id: vehicleTripId,
+				trip_id: `${vehicleTripId}_${currentPlanIds[operatorId]}`,
 				pattern_id: rtEvent.content.entity[0].vehicle.trip.patternId,
 				route_id: rtEvent.content.entity[0].vehicle.trip.routeId,
 				line_id: rtEvent.content.entity[0].vehicle.trip.lineId,
