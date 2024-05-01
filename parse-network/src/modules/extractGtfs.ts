@@ -12,9 +12,9 @@ export default async () => {
 	const extractedPath = `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}/`;
 
 	// Extract archive to directory
-	const zip = new AdmZip(filePath);
-	zip.extractAllTo(extractedPath, true, false);
-	console.log(`⤷ Extracted file to "${extractedPath}" successfully.`);
+	const zipArchive = new AdmZip(filePath);
+	zipArchive.extractAllTo(extractedPath, true, false);
+	console.log(`⤷ Extracted archive to "${extractedPath}" successfully.`);
 
 	//
 };
