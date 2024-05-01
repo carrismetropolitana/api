@@ -44,39 +44,33 @@ class RTEVENTS {
 
 		this.last_update = DateTime.now().toUnixInteger();
 
-		// 6.4.
-		// Prepare the IDs suffix based on the current active plan
+		// 5.
+		// Get all plans from SERVERDB to find out what is the active plan_id for each operator
+
+		const currentPlanIds = {};
 
 		const allPlansTxt = await SERVERDB.client.get('plans:all');
 		const allPlansData = JSON.parse(allPlansTxt);
 
-
-		// Create a map of plans and their ids based on the operator_id field
-		const currentPlanIds = {};
 		for (const planData of allPlansData) {
-
-			console.log('-----------');
-			console.log(planData);
-			console.log('-----------');
-			// Check if plan is active
 			const planStartDate = DateTime.fromFormat(planData.start_date, 'yyyyMMdd');
 			const planEndDate = DateTime.fromFormat(planData.end_date, 'yyyyMMdd');
 			if (planStartDate > DateTime.now() || planEndDate < DateTime.now()) continue;
 			else currentPlanIds[planData.operator_id] = planData.id;
 		}
 
-		// 5.
+		// 6.
 		// Reset the Map variable
 
 		const updatedRtEvents = new Map();
 
-		// 6.
+		// 7.
 		// Update vehicles with the latest events
 
 		for (const rtEvent of allRtEvents) {
 			//
 
-			// 6.1.
+			// 7.1.
 			// Perform basic event validations
 
 			// Does this event have a valid vehicle id
@@ -96,7 +90,7 @@ class RTEVENTS {
 			// Is this event older than 90 seconds
 			if (rtEvent?.content?.entity[0]?.vehicle?.timestamp < DateTime.now().minus({ seconds: 90 }).toUnixInteger()) continue;
 
-			// 6.2.
+			// 7.2.
 			// Prepare the most used variables
 
 			const vehicleId = `${rtEvent.content.entity[0].vehicle.agencyId}|${rtEvent.content.entity[0].vehicle.vehicle._id}`;
@@ -105,14 +99,14 @@ class RTEVENTS {
 			const vehicleBearing = Math.floor(rtEvent?.content?.entity[0]?.vehicle?.position?.bearing || 0);
 			const vehicleSpeed = rtEvent?.content?.entity[0]?.vehicle?.position?.speed / 3.6 || 0; // in meters per second
 
-			// 6.3.
+			// 7.3.
 			// Check if there is a vehicle already saved and that it has an older timestamp than the current event
 
 			if (updatedRtEvents.get(vehicleId) && updatedRtEvents.get(vehicleId).timestamp >= vehicleTimestamp) continue;
 
 			const operatorId = rtEvent.content?.entity[0]?.vehicle?.agencyId;
 
-			// 6.4.
+			// 7.4.
 			// Save the current event
 
 			updatedRtEvents.set(vehicleId, {
