@@ -38,7 +38,7 @@ export default async () => {
 			end_date: plan.end_date,
 
 		};
-		// Upplan or create new document
+		// Update or create new document
 		allPlansData.push(parsedPlan);
 		await SERVERDB.client.set(`plans:${parsedPlan.id}`, JSON.stringify(parsedPlan));
 		updatedPlanKeys.add(`plans:${parsedPlan.id}`);

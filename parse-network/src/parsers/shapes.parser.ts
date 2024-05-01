@@ -67,7 +67,7 @@ export default async () => {
 			// Sort points to match sequence
 			parsedShape.points = shape.points.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
 			// Create geojson feature using turf
-			parsedShape.geojson = lineString(parsedShape.points.map(point => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
+			parsedShape.geojson = lineString(parsedShape.points.map((point) => [parseFloat(point.shape_pt_lon), parseFloat(point.shape_pt_lat)]));
 			// Calculate shape extension
 			const shapeExtensionKm = length(parsedShape.geojson, { units: 'kilometers' });
 			const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
@@ -87,7 +87,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) {
 		allSavedShapeKeys.push(key);
 	}
-	const staleShapeKeys = allSavedShapeKeys.filter(id => !updatedShapeKeys.has(id));
+	const staleShapeKeys = allSavedShapeKeys.filter((id) => !updatedShapeKeys.has(id));
 	if (staleShapeKeys.length) await SERVERDB.client.del(staleShapeKeys);
 	console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
