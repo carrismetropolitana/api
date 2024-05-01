@@ -44,6 +44,23 @@ class RTEVENTS {
 
 		this.last_update = DateTime.now().toUnixInteger();
 
+		// 6.4.
+		// Prepare the IDs suffix based on the current active plan
+
+		const allPlansTxt = await SERVERDB.client.get('plans:all');
+		const allPlansData = JSON.parse(allPlansTxt);
+
+
+		// Create a map of plans and their ids based on the operator_id field
+		const currentPlanIds = {};
+		for (const planData of allPlansData) {
+			// Check if plan is active
+			const planStartDate = DateTime.fromFormat(planData.start_date, 'yyyyMMdd');
+			const planEndDate = DateTime.fromFormat(planData.end_date, 'yyyyMMdd');
+			if (planStartDate > DateTime.now() || planEndDate < DateTime.now()) continue;
+			else currentPlanIds[planData.operator_id] = planData.id;
+		}
+
 		// 5.
 		// Reset the Map variable
 
@@ -88,23 +105,6 @@ class RTEVENTS {
 			// Check if there is a vehicle already saved and that it has an older timestamp than the current event
 
 			if (updatedRtEvents.get(vehicleId) && updatedRtEvents.get(vehicleId).timestamp >= vehicleTimestamp) continue;
-
-			// 6.4.
-			// Prepare the IDs suffix based on the current active plan
-
-			const allPlansTxt = await SERVERDB.client.get('plans:all');
-			const allPlansData = JSON.parse(allPlansTxt);
-
-
-			// Create a map of plans and their ids based on the operator_id field
-			const currentPlanIds = {};
-			for (const planData of allPlansData) {
-				// Check if plan is active
-				const planStartDate = DateTime.fromFormat(planData.start_date, 'yyyyMMdd');
-				const planEndDate = DateTime.fromFormat(planData.end_date, 'yyyyMMdd');
-				if (planStartDate > DateTime.now() || planEndDate < DateTime.now()) continue;
-				else currentPlanIds[planData.operator_id] = planData.id;
-			}
 
 			const operatorId = rtEvent.content?.entity[0]?.vehicle?.agencyId;
 
