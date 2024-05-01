@@ -54,6 +54,10 @@ class RTEVENTS {
 		// Create a map of plans and their ids based on the operator_id field
 		const currentPlanIds = {};
 		for (const planData of allPlansData) {
+
+			console.log('-----------');
+			console.log(planData);
+			console.log('-----------');
 			// Check if plan is active
 			const planStartDate = DateTime.fromFormat(planData.start_date, 'yyyyMMdd');
 			const planEndDate = DateTime.fromFormat(planData.end_date, 'yyyyMMdd');

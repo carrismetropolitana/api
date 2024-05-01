@@ -75,12 +75,12 @@ const files: File[] = [
 	{
 		file_name: 'plans',
 		file_extension: 'txt',
-		file_headers: ['plan_id', 'operator_id', 'start_date', 'end_date'],
+		file_headers: ['plan_id', 'operator_id', 'plan_start_date', 'plan_end_date'],
 		table_query: `CREATE TABLE plans (
         plan_id VARCHAR(10),
         operator_id VARCHAR(2),
-        start_date VARCHAR(8),
-        end_date VARCHAR(8)
+        plan_start_date VARCHAR(8),
+        plan_end_date VARCHAR(8)
     );`,
 		index_queries: ['CREATE INDEX plans_plan_id_idx ON plans ("plan_id");'],
 		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,

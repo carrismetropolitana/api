@@ -34,8 +34,8 @@ export default async () => {
 		const parsedPlan = {
 			id: plan.plan_id,
 			operator_id: plan.operator_id,
-			start_date: plan.start_date,
-			end_date: plan.end_date,
+			start_date: plan.plan_start_date,
+			end_date: plan.plan_end_date,
 
 		};
 		// Update or create new document
