@@ -74,7 +74,8 @@ services:
     volumes:
       - ./data-temp/production/:/data-temp
     environment:
-      - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
+      - GTFS_URL=https://storage.carrismetropolitana.pt/static/gtfs/live/CarrisMetropolitana.zip
+      # - GTFS_URL=https://github.com/carrismetropolitana/gtfs/raw/live/CarrisMetropolitana.zip
       - GTFSAPIDB_HOST=gtfsapidb-production
       - GTFSAPIDB_USER=gtfsapidbuser
       - GTFSAPIDB_PASSWORD=gtfsapidbpassword
