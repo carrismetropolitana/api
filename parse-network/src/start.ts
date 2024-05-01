@@ -19,7 +19,9 @@ import periodsParser from '@/parsers/periods.parser';
 import datesParser from '@/parsers/dates.parsers';
 import stopsParser from '@/parsers/stops.parser';
 import shapesParser from '@/parsers/shapes.parser';
+import plansParser from '@/parsers/plans.parser';
 import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
+import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser';
 import timetablesParser from '@/parsers/timetables.parser';
 
 /* * */
@@ -102,6 +104,12 @@ export default async () => {
 				await datesParser();
 			}
 
+			if (ENABLED_MODULES.includes('plans_parser')) {
+				console.log();
+				console.log('STEP 1.4: Parse Plans');
+				await plansParser();
+			}
+
 			if (ENABLED_MODULES.includes('stops_parser')) {
 				console.log();
 				console.log('STEP 1.5: Parse Stops');
@@ -119,6 +127,12 @@ export default async () => {
 				console.log('STEP 1.7: Parse Lines, Routes and Patterns');
 				await linesRoutesPatternsParser();
 			}
+
+			// if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
+			// 	console.log();
+			// 	console.log('STEP 1.7: Parse Lines, Routes and Patterns');
+			// 	await newLinesRoutesPatternsParser();
+			// }
 
 			if (ENABLED_MODULES.includes('timetables_parser')) {
 				console.log();
