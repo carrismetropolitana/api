@@ -45,8 +45,8 @@ function createPatternGroups(allTrips) {
 	//
 
 	const dateMap = {};
-	allTrips.forEach(trip => {
-		trip.dates.forEach(date => {
+	allTrips.forEach((trip) => {
+		trip.dates.forEach((date) => {
 			if (!dateMap[date]) {
 				dateMap[date] = [];
 			}
@@ -121,7 +121,7 @@ export default async () => {
 	// Get all stops and build a hashmap for quick retrieval
 	const allStopsTxt = await SERVERDB.client.get('stops:all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
-	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
+	const allStopsHashmap = new Map(allStopsJson.map((obj) => [obj.id, obj]));
 
 	// 4.
 	// Query Postgres for all calendar dates and build a hashmap for quick retrieval
@@ -147,7 +147,7 @@ export default async () => {
 		//
 		// 7.1.
 		// Check if the route_short_name already exists as a line
-		const existingLine = result.find(line => line.short_name === route.route_short_name);
+		const existingLine = result.find((line) => line.short_name === route.route_short_name);
 
 		// 7.2.
 		// Add the route to the existing line or create a new line with the route
@@ -264,7 +264,7 @@ export default async () => {
 
 				// 9.4.4.1.
 				// Find the pattern that matches the unique combination for this trip
-				const patternParsed = parsedPatternsForThisRoute.find(pattern => {
+				const patternParsed = parsedPatternsForThisRoute.find((pattern) => {
 					return pattern.id === tripRaw.pattern_id;
 					// const isSameDirection = pattern.direction === tripRaw.direction_id;
 					// const isSameHeadsign = pattern.headsign === tripRaw.trip_headsign;
@@ -416,7 +416,7 @@ export default async () => {
 			// Save all created patterns to the database and update parent route and line
 			for (const patternParsed of parsedPatternsForThisRoute) {
 				//
-				const preParsedData = patternParsed.trips.map(trip => ({ id: trip.id, dates: trip.dates }));
+				const preParsedData = patternParsed.trips.map((trip) => ({ id: trip.id, dates: trip.dates }));
 				const patternGroups = createPatternGroups(preParsedData);
 				await SERVERDB.client.set(`patterns_groups:${patternParsed.id}`, JSON.stringify(patternGroups));
 
@@ -489,7 +489,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
-	const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));
+	const stalePatternKeys = allPatternKeysInTheDatabase.filter((key) => !updatedPatternKeys.has(key));
 	if (stalePatternKeys.length) await SERVERDB.client.del(stalePatternKeys);
 	console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
@@ -499,7 +499,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
-	const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
+	const staleRouteKeys = allRouteKeysInTheDatabase.filter((key) => !updatedRouteKeys.has(key));
 	if (staleRouteKeys.length) await SERVERDB.client.del(staleRouteKeys);
 	console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
 
@@ -509,7 +509,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) {
 		allLineKeysInTheDatabase.push(key);
 	}
-	const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
+	const staleLineKeys = allLineKeysInTheDatabase.filter((key) => !updatedLineKeys.has(key));
 	if (staleLineKeys.length) await SERVERDB.client.del(staleLineKeys);
 	console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 

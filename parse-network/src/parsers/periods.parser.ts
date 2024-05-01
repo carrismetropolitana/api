@@ -22,13 +22,13 @@ export default async () => {
 
 	// 3.
 	// Build periods hashmap
-	const allPeriodsParsed = allPeriods.rows.map(period => {
+	const allPeriodsParsed = allPeriods.rows.map((period) => {
 		//
 		// 3.1.
 		// Parse the dates associated with this period
 		const datesForThisPeriod = allDates.rows
-			.filter(date => date.period === period.period_id)
-			.map(date => date.date)
+			.filter((date) => date.period === period.period_id)
+			.map((date) => date.date)
 			.sort((a, b) => collator.compare(a, b));
 
 		// 3.2.

@@ -10,6 +10,7 @@ export const ENABLED_MODULES = [
 	'localities_parser',
 	'periods_parser',
 	'dates_parser',
+	'plans_parser',
 	'stops_parser',
 	'shapes_parser',
 	'lines_routes_patterns_parser',

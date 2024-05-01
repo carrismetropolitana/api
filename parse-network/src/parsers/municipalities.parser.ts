@@ -62,7 +62,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'municipalities:*' })) {
 		allSavedMunicipalityKeys.push(key);
 	}
-	const staleMunicipalityKeys = allSavedMunicipalityKeys.filter(id => !updatedMunicipalityKeys.has(id));
+	const staleMunicipalityKeys = allSavedMunicipalityKeys.filter((id) => !updatedMunicipalityKeys.has(id));
 	if (staleMunicipalityKeys.length) await SERVERDB.client.del(staleMunicipalityKeys);
 	console.log(`⤷ Deleted ${staleMunicipalityKeys.length} stale Municipalities.`);
 
