@@ -10,7 +10,13 @@ import { RUN_INTERVAL, SINGLE_RUN } from '@/config/settings';
 	//
 
 	const runOnInterval = async () => {
-		await start();
+		const success = await start();
+		if (!success) {
+			setTimeout(() => {
+				console.log('Retrying in 10 seconds...');
+				process.exit(0); // End process
+			}, 10000); // after 10 seconds
+		}
 		setTimeout(runOnInterval, RUN_INTERVAL);
 	};
 
@@ -18,8 +24,8 @@ import { RUN_INTERVAL, SINGLE_RUN } from '@/config/settings';
 		let success = false;
 		while (!success) {
 			try {
-				await start();
-				success = true;
+				success = await start();
+				await new Promise((resolve) => setTimeout(resolve, 1000)); // after 1 second
 			} catch (error) {
 				console.error(error);
 			}

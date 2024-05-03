@@ -30,7 +30,7 @@ let LAST_GTFS_HASH = null;
 
 /* * */
 
-export default async () => {
+export default async ():Promise<boolean> => {
 	//
 
 	try {
@@ -151,14 +151,12 @@ export default async () => {
 		console.log(`Run took ${getElapsedTime(startTime)}.`);
 		console.log('------------------------');
 		console.log();
+		return true;
 
 		//
 	} catch (err) {
 		console.log('An error occurred. Halting execution.', err);
-		console.log('Retrying in 10 seconds...');
-		setTimeout(() => {
-			process.exit(0); // End process
-		}, 10000); // after 10 seconds
+		return false;
 	}
 
 	//
