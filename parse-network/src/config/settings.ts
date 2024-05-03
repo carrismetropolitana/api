@@ -2,6 +2,8 @@
 
 export const RUN_INTERVAL = 300000; // 5 minutes
 
+export const SINGLE_RUN = false || process.env.SINGLE_RUN === 'true';
+
 /* * */
 
 export const ENABLED_MODULES = [

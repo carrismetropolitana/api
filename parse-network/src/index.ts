@@ -2,7 +2,7 @@
 
 import 'dotenv/config';
 import start from './start';
-import { RUN_INTERVAL } from '@/config/settings';
+import { RUN_INTERVAL, SINGLE_RUN } from '@/config/settings';
 
 /* * */
 
@@ -14,7 +14,11 @@ import { RUN_INTERVAL } from '@/config/settings';
 		setTimeout(runOnInterval, RUN_INTERVAL);
 	};
 
-	runOnInterval();
+	if (SINGLE_RUN) {
+		await start();
+	} else {
+		runOnInterval();
+	}
 
 	//
 })();
