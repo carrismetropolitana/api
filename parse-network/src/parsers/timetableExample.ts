@@ -51,6 +51,7 @@ export type Timetable = {
     text: string;
   }[];
 	patternForDisplay: string;
+	secondaryPatterns: string[];
 };
 
 // Example of a timetable
@@ -155,4 +156,5 @@ const timetable: Timetable = {
 		{ id: 'b', label: 'b)', text: 'Apenas no segundo domingo do mês.' },
 	],
 	patternForDisplay: '1000_1',
+	secondaryPatterns: ['1000_2'],
 };

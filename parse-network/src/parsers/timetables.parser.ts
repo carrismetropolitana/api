@@ -2,7 +2,6 @@
 
 import SERVERDB from '@/services/SERVERDB';
 import NETWORKDB from '@/services/NETWORKDB';
-import limitConcurrency from '@/modules/limitConcurrency';
 import { formatTime, getElapsedTime } from '@/modules/timeCalc';
 import { Timetable } from './timetableExample';
 
@@ -44,10 +43,10 @@ export default async () => {
 	JOIN routes ON trips.route_id = routes.route_id
 	`)).rows;
 	// console.log('lineStops', lineStops.rows);
-	const lineStopPairs = lineStops.map(row => [row.line_id, row.stop_id]);
+	const lineStopPairs = lineStops.map((row) => [row.line_id, row.stop_id]);
 	const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays']]);
 	const periods = new Map((await NETWORKDB.client.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
-		.map(period => [period.period_id, period.period_name]));
+		.map((period) => [period.period_id, period.period_name]));
 
 	let cumulativeQueryTime = 0n;
 	// lineStopPairs = lineStopPairs.filter(([LINE_ID, STOP_ID]) => STOP_ID == '100250' || STOP_ID === '190008');
@@ -103,7 +102,7 @@ export default async () => {
 			return;
 		}
 		// console.log('timesByPeriodByDayTypeResult[0]', timesByPeriodByDayTypeResult.rows[0]);
-		const directions = new Set<number>(timesByPeriodByDayTypeResult1.rows.map(row => row.direction_id));
+		const directions = new Set<number>(timesByPeriodByDayTypeResult1.rows.map((row) => row.direction_id));
 		if (directions.size > 1) {
 			console.log(`⤷ Stop ${STOP_ID}/${LINE_ID} has more than one direction.`, Array.from(directions));
 		}
@@ -115,7 +114,7 @@ export default async () => {
 		for (const [DIRECTION_ID, timesByPeriodByDayTypeResult] of Object.entries(timesByPeriodByDayTypeResults)) {
 			const queryDelta = process.hrtime.bigint() - queryStartTime;
 			cumulativeQueryTime += queryDelta;
-			const variants = new Map<string, string>(timesByPeriodByDayTypeResult.map(row => [row.route_id, row.route_long_name]));
+			const variants = new Map<string, string>(timesByPeriodByDayTypeResult.map((row) => [row.route_id, row.route_long_name]));
 			let variantForDisplay = '';
 			if (variants.size == 1) {
 				variantForDisplay = variants.keys().next().value;
@@ -140,11 +139,13 @@ export default async () => {
 			}
 			// Select which trip to use for getting stops, getting a trip that includes the current stop
 
-			const patternForDisplay = timesByPeriodByDayTypeResult.find(row => row.route_id == variantForDisplay).pattern_id;
+			const patternForDisplay = timesByPeriodByDayTypeResult.find((row) => row.route_id == variantForDisplay).pattern_id;
 			if (!patternForDisplay) {
 				console.log(`⤷ No patterns in ${LINE_ID} matching route_id ${variantForDisplay}.`);
 				return;
 			}
+
+			const secondaryPatterns = Array.from(new Set(timesByPeriodByDayTypeResult.filter((row) => row.pattern_id != patternForDisplay).map((row) => row.pattern_id))).sort();
 
 			const tripForStopsQuery = `
 		SELECT
@@ -167,7 +168,7 @@ export default async () => {
 				return;
 			}
 
-			const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.filter(row => row.calendar_desc != null).map(row => row.calendar_desc)).values());
+			const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.filter((row) => row.calendar_desc != null).map((row) => row.calendar_desc)).values());
 			const exceptions = new Map(uniqueExceptionsArray.map((calendar_desc, index) => {
 				return [calendar_desc, {
 					id: String.fromCharCode(97 + index),
@@ -210,7 +211,7 @@ export default async () => {
 				timesByPeriodByDayType[period_id] = {};
 			}
 
-			timesByPeriodByDayTypeResult.forEach(row => {
+			timesByPeriodByDayTypeResult.forEach((row) => {
 				const { period_id, day_type, arrival_time, calendar_desc } = row;
 				const dt = dayTypes.get(day_type);
 				const variantException = variantExceptions.get(row.route_id);
@@ -245,7 +246,7 @@ export default async () => {
 						time,
 						// deduplicate exceptions
 						exceptions: _exceptions.reduce((acc, ex) => acc.includes(ex) ? acc : acc.concat(ex), [] as string[])
-							.map(ex => {
+							.map((ex) => {
 								const exp = mergedExceptions.get(ex);
 								return { id: exp.id };
 							}),
@@ -261,6 +262,7 @@ export default async () => {
 				}),
 				exceptions: Array.from(mergedExceptions.values()),
 				patternForDisplay: patternForDisplay,
+				secondaryPatterns: secondaryPatterns,
 			};
 			// console.log(`wrote timetable:${LINE_ID}/${DIRECTION_ID}/${STOP_ID}`);
 			bulkData.push([`${LINE_ID}/${DIRECTION_ID}/${STOP_ID}`, JSON.stringify(timetable)]);

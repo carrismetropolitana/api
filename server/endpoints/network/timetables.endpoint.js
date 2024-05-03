@@ -14,7 +14,7 @@ module.exports.index = async (request, reply) => {
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')
-    .send(index || {});
+    .send(index || null);
 };
 
 module.exports.single = async (request, reply) => {
@@ -23,5 +23,5 @@ module.exports.single = async (request, reply) => {
   return reply
     .code(200)
     .header('Content-Type', 'application/json; charset=utf-8')
-    .send(singleItem || {});
+    .send(singleItem || null);
 };
