@@ -5,13 +5,13 @@ import { BASE_DIR, GTFS_BASE_DIR, GTFS_RAW_DIR, GTFS_PREPARED_DIR } from './sett
 /* * */
 
 type File = {
-  file_name: string;
-  file_extension: string;
-  file_headers: string[];
-  table_query: string;
-  index_queries: string[];
-  raw_dir: string;
-  prepared_dir: string;
+	file_name: string;
+	file_extension: string;
+	file_headers: string[];
+	table_query: string;
+	index_queries: string[];
+	raw_dir: string;
+	prepared_dir: string;
 };
 
 const files: File[] = [

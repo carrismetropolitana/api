@@ -158,7 +158,7 @@ export default async () => {
 	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) {
 		allSavedStopKeys.push(key);
 	}
-	const staleStopKeys = allSavedStopKeys.filter(id => !updatedStopKeys.has(id));
+	const staleStopKeys = allSavedStopKeys.filter((id) => !updatedStopKeys.has(id));
 	if (staleStopKeys.length) await SERVERDB.client.del(staleStopKeys);
 	console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
 

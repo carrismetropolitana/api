@@ -4,7 +4,7 @@ export default function limitConcurrency(tasks:(()=>Promise<unknown>)[], limit: 
 	const results = new Array(tasks.length);
 	const executing = [];
 
-	return new Promise(resolve => {
+	return new Promise((resolve) => {
 		const enqueue = () => {
 			if (index === tasks.length) {
 				if (active === 0) resolve(results);
@@ -15,11 +15,11 @@ export default function limitConcurrency(tasks:(()=>Promise<unknown>)[], limit: 
 				const currentIndex = index++;
 				const task = tasks[currentIndex];
 				active++;
-				task().then(result => {
+				task().then((result) => {
 					results[currentIndex] = result;
 					active--;
 					enqueue();
-				}).catch(error => {
+				}).catch((error) => {
 					results[currentIndex] = error; // Handle errors if necessary
 					active--;
 					enqueue();
