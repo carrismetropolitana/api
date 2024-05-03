@@ -15,7 +15,15 @@ import { RUN_INTERVAL, SINGLE_RUN } from '@/config/settings';
 	};
 
 	if (SINGLE_RUN) {
-		await start();
+		let success = false;
+		while (!success) {
+			try {
+				await start();
+				success = true;
+			} catch (error) {
+				console.error(error);
+			}
+		}
 	} else {
 		runOnInterval();
 	}
