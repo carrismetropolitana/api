@@ -13,8 +13,8 @@ module.exports.all = async (request, reply) => {
 
 /* * */
 
-module.exports.groups = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`patterns_groups:${request.params.id}`);
+module.exports.new = async (request, reply) => {
+const singleItem = await SERVERDB.client.get(`network/v2/patterns:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
