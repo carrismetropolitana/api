@@ -1,6 +1,6 @@
 # # #
 
-name: api
+name: api-local
 
 volumes:
   serverdb:
