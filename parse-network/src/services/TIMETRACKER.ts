@@ -3,37 +3,37 @@
 export default class TIMETRACKER {
   //
 
-  INSTANCE_NAME: string
+  INSTANCE_NAME: string;
 
-  START_TIME: number
+  START_TIME: number;
 
   constructor(instanceName = '') {
-    this.INSTANCE_NAME = instanceName
-    this.START_TIME = Date.now()
+    this.INSTANCE_NAME = instanceName;
+    this.START_TIME = Date.now();
   }
 
   get() {
     //
 
-    const elapsedTime = Date.now() - this.START_TIME
+    const elapsedTime = Date.now() - this.START_TIME;
 
-    const milliseconds = elapsedTime % 1000
-    const seconds = Math.floor(elapsedTime / 1000) % 60
-    const minutes = Math.floor(elapsedTime / (1000 * 60)) % 60
-    const hours = Math.floor(elapsedTime / (1000 * 60 * 60))
+    const milliseconds = elapsedTime % 1000;
+    const seconds = Math.floor(elapsedTime / 1000) % 60;
+    const minutes = Math.floor(elapsedTime / (1000 * 60)) % 60;
+    const hours = Math.floor(elapsedTime / (1000 * 60 * 60));
 
-    let string = ''
+    let string = '';
 
     if (hours > 0)
-      string += `${hours}h `
+      string += `${hours}h `;
     if (minutes > 0)
-      string += `${minutes}m `
+      string += `${minutes}m `;
     if (seconds > 0)
-      string += `${seconds}s `
+      string += `${seconds}s `;
     if (milliseconds > 0)
-      string += `${milliseconds}ms`
+      string += `${milliseconds}ms`;
 
-    return string
+    return string;
 
     //
   }

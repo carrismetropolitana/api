@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "esModuleInterop": true,
     "target": "ES2020",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "build",
-    "allowJs": true,
     "baseUrl": "./src",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "paths": {
       "@/config/*": ["config/*"],
       "@/modules/*": ["modules/*"],
       "@/services/*": ["services/*"],
       "@/parsers/*": ["parsers/*"]
-    }
+    },
+    "allowJs": true,
+    "outDir": "build",
+    "sourceMap": true,
+    "esModuleInterop": true
   },
   "lib": ["es2020"],
   "exclude": ["**/node_modules", "**/.*/", "**/build/"]
