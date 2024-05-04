@@ -62,11 +62,11 @@ export default async () => {
       calendar_dates.day_type,
       stop_times.arrival_time,
       trips.calendar_desc,
-			trips.route_id,
-			trips.trip_id,
-			trips.direction_id,
-			routes.route_long_name,
-			trips.pattern_id
+      trips.route_id,
+      trips.trip_id,
+      trips.direction_id,
+      routes.route_long_name,
+      trips.pattern_id
     FROM
       stop_times_without_last_stop AS stop_times
       JOIN trips ON stop_times.trip_id = trips.trip_id
@@ -104,8 +104,7 @@ export default async () => {
     }
     // console.log('timesByPeriodByDayTypeResult[0]', timesByPeriodByDayTypeResult.rows[0]);
     const directions = new Set<number>(timesByPeriodByDayTypeResult1.rows.map(row => row.direction_id));
-    if (directions.size > 1)
-      console.log(`⤷ Stop ${STOP_ID}/${LINE_ID} has more than one direction.`, Array.from(directions));
+    if (directions.size > 1) { console.log(`⤷ Stop ${STOP_ID}/${LINE_ID} has more than one direction.`, Array.from(directions)); }
 
     const timesByPeriodByDayTypeResults = timesByPeriodByDayTypeResult1.rows.reduce((acc, row) => {
       acc[row.direction_id] = acc[row.direction_id] || [];
@@ -150,15 +149,16 @@ export default async () => {
       const secondaryPatterns = Array.from(new Set(timesByPeriodByDayTypeResult.filter(row => row.pattern_id !== patternForDisplay).map(row => row.pattern_id))).sort();
 
       const tripForStopsQuery = `
-		SELECT
-			trips.trip_id
-		FROM
-			trips
-			JOIN stop_times ON trips.trip_id = stop_times.trip_id
-		WHERE
-			trips.route_id = $1
-			AND stop_times.stop_id = $2
-		LIMIT 1`;
+        SELECT
+          trips.trip_id
+        FROM
+          trips
+        JOIN stop_times ON trips.trip_id = stop_times.trip_id
+        WHERE
+          trips.route_id = $1
+        AND
+          stop_times.stop_id = $2
+        LIMIT 1`;
 
       const tripForStopsResult = await NETWORKDB.client.query<{ trip_id: string }>(tripForStopsQuery, [variantForDisplay, STOP_ID]);
       // if (tripForStopsResult.rows[0].trip_id != tripForStops) {
@@ -186,8 +186,7 @@ export default async () => {
       if (variants.size > 1) {
         // console.log(`⤷ Stop ${STOP_ID} has more than one variant.`, Array.from(variants));
         for (const variant of variants) {
-          if (variant[0].endsWith('0'))
-            continue;
+          if (variant[0].endsWith('0')) { continue; }
           variantExceptions.set(variant[0], {
             id: String.fromCharCode(97 + variantExceptionId),
             label: `${String.fromCharCode(97 + variantExceptionId)})`,
@@ -210,8 +209,7 @@ export default async () => {
           };
         };
       } = {};
-      for (const period_id of periods.keys())
-        timesByPeriodByDayType[period_id] = {};
+      for (const period_id of periods.keys()) { timesByPeriodByDayType[period_id] = {}; }
 
       timesByPeriodByDayTypeResult.forEach((row) => {
         const { period_id, day_type, arrival_time, calendar_desc } = row;
@@ -219,20 +217,15 @@ export default async () => {
         const variantException = variantExceptions.get(row.route_id);
         const calendar_descId = calendar_desc ? exceptions.get(calendar_desc)?.id : null;
 
-        if (!timesByPeriodByDayType[period_id])
-          timesByPeriodByDayType[period_id] = {};
+        if (!timesByPeriodByDayType[period_id]) { timesByPeriodByDayType[period_id] = {}; }
 
-        if (!timesByPeriodByDayType[period_id][dt])
-          timesByPeriodByDayType[period_id][dt] = {};
+        if (!timesByPeriodByDayType[period_id][dt]) { timesByPeriodByDayType[period_id][dt] = {}; }
 
-        if (!timesByPeriodByDayType[period_id][dt][arrival_time])
-          timesByPeriodByDayType[period_id][dt][arrival_time] = [];
+        if (!timesByPeriodByDayType[period_id][dt][arrival_time]) { timesByPeriodByDayType[period_id][dt][arrival_time] = []; }
 
-        if (calendar_descId)
-          timesByPeriodByDayType[period_id][dt][arrival_time].push(calendar_descId);
+        if (calendar_descId) { timesByPeriodByDayType[period_id][dt][arrival_time].push(calendar_descId); }
 
-        if (variantException)
-          timesByPeriodByDayType[period_id][dt][arrival_time].push(variantException.id);
+        if (variantException) { timesByPeriodByDayType[period_id][dt][arrival_time].push(variantException.id); }
       });
       // console.log('timesByPeriodByDayType', JSON.stringify(timesByPeriodByDayType, null, 2));
 

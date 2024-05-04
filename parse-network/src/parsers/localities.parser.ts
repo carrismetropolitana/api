@@ -38,10 +38,8 @@ export default async () => {
   // For each locality, update its entry in the database
   for (const localityData of allLocalities.rows) {
     // Skip if the locality is the same as the municipality
-    if (!localityData.locality)
-      continue;
-    else if (localityData.locality === localityData.municipality_name)
-      continue;
+    if (!localityData.locality) { continue; }
+    else if (localityData.locality === localityData.municipality_name) { continue; }
     // Setup the display string for this locality
     const displayString = `${localityData.locality}, ${localityData.municipality_name}`;
     // Setup a unique ID for this locality
@@ -75,12 +73,10 @@ export default async () => {
   // 8.
   // Delete all Localities not present in the current update
   const allSavedStopKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'localities:*' }))
-    allSavedStopKeys.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'localities:*' })) { allSavedStopKeys.push(key); }
 
   const staleLocalityKeys = allSavedStopKeys.filter(id => !updatedLocalityKeys.has(id));
-  if (staleLocalityKeys.length)
-    await SERVERDB.client.del(staleLocalityKeys);
+  if (staleLocalityKeys.length) { await SERVERDB.client.del(staleLocalityKeys); }
   console.log(`⤷ Deleted ${staleLocalityKeys.length} stale Localities.`);
 
   // 9.

@@ -24,14 +24,10 @@ export default class TIMETRACKER {
 
     let string = '';
 
-    if (hours > 0)
-      string += `${hours}h `;
-    if (minutes > 0)
-      string += `${minutes}m `;
-    if (seconds > 0)
-      string += `${seconds}s `;
-    if (milliseconds > 0)
-      string += `${milliseconds}ms`;
+    if (hours > 0) { string += `${hours}h `; }
+    if (minutes > 0) { string += `${minutes}m `; }
+    if (seconds > 0) { string += `${seconds}s `; }
+    if (milliseconds > 0) { string += `${milliseconds}ms`; }
 
     return string;
 

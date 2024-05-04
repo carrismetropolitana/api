@@ -7,8 +7,9 @@ export default function limitConcurrency(tasks: (() => Promise<unknown>)[], limi
   return new Promise((resolve) => {
     const enqueue = () => {
       if (index === tasks.length) {
-        if (active === 0)
+        if (active === 0) {
           resolve(results);
+        }
         return;
       }
 

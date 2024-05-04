@@ -55,7 +55,7 @@ export interface Timetable {
 }
 
 // Example of a timetable
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 const timetable: Timetable = {
   periods: [
     {

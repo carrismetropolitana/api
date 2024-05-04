@@ -57,12 +57,10 @@ export default async () => {
   // 8.
   // Delete all Plans not present in the current update
   const allSavedPlanKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'plans:*' }))
-    allSavedPlanKeys.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'plans:*' })) { allSavedPlanKeys.push(key); }
 
   const stalePlanKeys = allSavedPlanKeys.filter(plan => !updatedPlanKeys.has(plan));
-  if (stalePlanKeys.length)
-    await SERVERDB.client.del(stalePlanKeys);
+  if (stalePlanKeys.length) { await SERVERDB.client.del(stalePlanKeys); }
   console.log(`⤷ Deleted ${stalePlanKeys.length} stale Plans.`);
 
   // 9.

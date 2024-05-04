@@ -10,8 +10,7 @@ import { getElapsedTime } from '@/modules/timeCalc';
 
 function calculateTimeDifference(time1: string, time2: string): string {
   // Handle the case where time1 is zero
-  if (time1 === '00:00:00')
-    return '00:00:00';
+  if (time1 === '00:00:00') { return '00:00:00'; }
   // Convert time strings to seconds
   const [h1, m1, s1] = time1.split(':').map(Number);
   const [h2, m2, s2] = time2.split(':').map(Number);
@@ -26,8 +25,7 @@ function calculateTimeDifference(time1: string, time2: string): string {
   let timeDifference = totalSeconds2 - totalSeconds1;
 
   // Handle negative time difference
-  if (timeDifference < 0)
-    timeDifference += 86400;
+  if (timeDifference < 0) { timeDifference += 86400; }
 
   // Convert time difference back to "HH:MM:SS" format
   const hours = Math.floor(timeDifference / 3600);
@@ -47,8 +45,7 @@ function createPatternGroups(allTrips) {
   const dateMap = {};
   allTrips.forEach((trip) => {
     trip.dates.forEach((date) => {
-      if (!dateMap[date])
-        dateMap[date] = [];
+      if (!dateMap[date]) { dateMap[date] = []; }
 
       dateMap[date].push(trip.id);
     });
@@ -61,8 +58,7 @@ function createPatternGroups(allTrips) {
       const values = dateMap[key];
       const newKey = values.sort().join(',');
 
-      if (!reversedMap[newKey])
-        reversedMap[newKey] = [];
+      if (!reversedMap[newKey]) { reversedMap[newKey] = []; }
 
       reversedMap[newKey].push(key);
     }
@@ -129,12 +125,10 @@ export default async () => {
   const allCalendarDatesHashmap = new Map();
   for (const row of allDatesRaw.rows) {
     // Build a hashmap for dates, periods and day_types
-    if (!allDatesHashmap.has(row.date))
-      allDatesHashmap.set(row.date, { period: row.period, day_type: row.day_type });
+    if (!allDatesHashmap.has(row.date)) { allDatesHashmap.set(row.date, { period: row.period, day_type: row.day_type }); }
     // Build a hashmap for calendar dates
-    if (allCalendarDatesHashmap.has(row.service_id))
-      allCalendarDatesHashmap.get(row.service_id).push(row.date);
-    else allCalendarDatesHashmap.set(row.service_id, [row.date]);
+    if (allCalendarDatesHashmap.has(row.service_id)) { allCalendarDatesHashmap.get(row.service_id).push(row.date); }
+    else { allCalendarDatesHashmap.set(row.service_id, [row.date]); }
   }
 
   // 5,
@@ -488,34 +482,30 @@ export default async () => {
   // 12.
   // Delete stale patterns not present in the current update
   const allPatternKeysInTheDatabase = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' }))
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
     allPatternKeysInTheDatabase.push(key);
+  }
 
   const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));
-  if (stalePatternKeys.length)
-    await SERVERDB.client.del(stalePatternKeys);
+  if (stalePatternKeys.length) { await SERVERDB.client.del(stalePatternKeys); }
   console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
   // 13.
   // Delete stale routes not present in the current update
   const allRouteKeysInTheDatabase = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' }))
-    allRouteKeysInTheDatabase.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) { allRouteKeysInTheDatabase.push(key); }
 
   const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
-  if (staleRouteKeys.length)
-    await SERVERDB.client.del(staleRouteKeys);
+  if (staleRouteKeys.length) { await SERVERDB.client.del(staleRouteKeys); }
   console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
 
   // 14.
   // Delete stale lines not present in the current update
   const allLineKeysInTheDatabase = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' }))
-    allLineKeysInTheDatabase.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) { allLineKeysInTheDatabase.push(key); }
 
   const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
-  if (staleLineKeys.length)
-    await SERVERDB.client.del(staleLineKeys);
+  if (staleLineKeys.length) { await SERVERDB.client.del(staleLineKeys); }
   console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 
   // 15.

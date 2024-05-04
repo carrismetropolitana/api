@@ -60,10 +60,8 @@ export default async () => {
         points?: any[];
         geojson?: any;
         extension?: number;
-      }
-				= {
-				  id: shape.shape_id,
-				};
+      } = { id: shape.shape_id,
+      };
       // Sort points to match sequence
       parsedShape.points = shape.points.sort((a, b) => collator.compare(a.shape_pt_sequence, b.shape_pt_sequence));
       // Create geojson feature using turf
@@ -85,12 +83,10 @@ export default async () => {
   // 6.
   // Delete all Shapes not present in the current update
   const allSavedShapeKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' }))
-    allSavedShapeKeys.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'shapes:*' })) { allSavedShapeKeys.push(key); }
 
   const staleShapeKeys = allSavedShapeKeys.filter(id => !updatedShapeKeys.has(id));
-  if (staleShapeKeys.length)
-    await SERVERDB.client.del(staleShapeKeys);
+  if (staleShapeKeys.length) { await SERVERDB.client.del(staleShapeKeys); }
   console.log(`⤷ Deleted ${staleShapeKeys.length} stale Shapes.`);
 
   // 7.

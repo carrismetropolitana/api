@@ -76,8 +76,9 @@ export default async (): Promise<boolean> => {
         console.log();
         console.log('STEP 1.0: Extract GTFS');
         await extractGtfs();
-        for (const fileOptions of files)
+        for (const fileOptions of files) {
           await setupPrepareAndImportFile(fileOptions);
+        }
       }
 
       if (ENABLED_MODULES.includes('municipalities_parser')) {

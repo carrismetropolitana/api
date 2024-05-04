@@ -119,7 +119,7 @@ const files: File[] = [
         route_type VARCHAR(255),
         route_color VARCHAR(6),
         route_text_color VARCHAR(6),
-				line_id VARCHAR(10)
+        line_id VARCHAR(10)
     );`,
     index_queries: ['CREATE INDEX routes_route_id_idx ON routes ("route_id");'],
     raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,

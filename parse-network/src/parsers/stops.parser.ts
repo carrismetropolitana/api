@@ -94,40 +94,23 @@ export default async () => {
   for (const stop of allStops.rows) {
     // Discover which facilities this stop is near to
     const facilities = [];
-    if (stop.near_health_clinic)
-      facilities.push('health_clinic');
-    if (stop.near_hospital)
-      facilities.push('hospital');
-    if (stop.near_university)
-      facilities.push('university');
-    if (stop.near_school)
-      facilities.push('school');
-    if (stop.near_police_station)
-      facilities.push('police_station');
-    if (stop.near_fire_station)
-      facilities.push('fire_station');
-    if (stop.near_shopping)
-      facilities.push('shopping');
-    if (stop.near_historic_building)
-      facilities.push('historic_building');
-    if (stop.near_transit_office)
-      facilities.push('transit_office');
-    if (stop.subway)
-      facilities.push('subway');
-    if (stop.light_rail)
-      facilities.push('light_rail');
-    if (stop.train)
-      facilities.push('train');
-    if (stop.boat)
-      facilities.push('boat');
-    if (stop.airport)
-      facilities.push('airport');
-    if (stop.bike_sharing)
-      facilities.push('bike_sharing');
-    if (stop.bike_parking)
-      facilities.push('bike_parking');
-    if (stop.car_parking)
-      facilities.push('car_parking');
+    if (stop.near_health_clinic) { facilities.push('health_clinic'); }
+    if (stop.near_hospital) { facilities.push('hospital'); }
+    if (stop.near_university) { facilities.push('university'); }
+    if (stop.near_school) { facilities.push('school'); }
+    if (stop.near_police_station) { facilities.push('police_station'); }
+    if (stop.near_fire_station) { facilities.push('fire_station'); }
+    if (stop.near_shopping) { facilities.push('shopping'); }
+    if (stop.near_historic_building) { facilities.push('historic_building'); }
+    if (stop.near_transit_office) { facilities.push('transit_office'); }
+    if (stop.subway) { facilities.push('subway'); }
+    if (stop.light_rail) { facilities.push('light_rail'); }
+    if (stop.train) { facilities.push('train'); }
+    if (stop.boat) { facilities.push('boat'); }
+    if (stop.airport) { facilities.push('airport'); }
+    if (stop.bike_sharing) { facilities.push('bike_sharing'); }
+    if (stop.bike_parking) { facilities.push('bike_parking'); }
+    if (stop.car_parking) { facilities.push('car_parking'); }
     // Initiate a variable to hold the parsed stop
     const parsedStop = {
       id: stop.stop_id,
@@ -172,12 +155,10 @@ export default async () => {
   // 8.
   // Delete all Stops not present in the current update
   const allSavedStopKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' }))
-    allSavedStopKeys.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) { allSavedStopKeys.push(key); }
 
   const staleStopKeys = allSavedStopKeys.filter(id => !updatedStopKeys.has(id));
-  if (staleStopKeys.length)
-    await SERVERDB.client.del(staleStopKeys);
+  if (staleStopKeys.length) { await SERVERDB.client.del(staleStopKeys); }
   console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
 
   // 9.

@@ -57,12 +57,10 @@ export default async () => {
   // 8.
   // Delete all Dates not present in the current update
   const allSavedDateKeys = [];
-  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' }))
-    allSavedDateKeys.push(key);
+  for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) { allSavedDateKeys.push(key); }
 
   const staleDateKeys = allSavedDateKeys.filter(date => !updatedDateKeys.has(date));
-  if (staleDateKeys.length)
-    await SERVERDB.client.del(staleDateKeys);
+  if (staleDateKeys.length) { await SERVERDB.client.del(staleDateKeys); }
   console.log(`⤷ Deleted ${staleDateKeys.length} stale Dates.`);
 
   // 9.

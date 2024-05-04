@@ -4,15 +4,28 @@ import type { MonStop } from './NETWORKDB.types';
 
 /* * */
 
+export interface Line {
+  line_id: string;
+  short_name: string;
+  long_name: string;
+  color: string;
+  text_color: string;
+  route_ids: string[];
+  pattern_ids: string[];
+  facilities: string[];
+  localities: string[];
+  municipality_ids: string[];
+}
+
+/* * */
+
 export interface Route {
   line_id: string;
   route_id: string;
   short_name: string;
   long_name: string;
   color: string;
-
   text_color: string;
-
   pattern_ids: string[];
   facilities: string[];
   localities: string[];
