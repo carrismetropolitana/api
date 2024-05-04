@@ -2,7 +2,7 @@
 
 import 'dotenv/config';
 import start from './start';
-import { RUN_INTERVAL, SINGLE_RUN } from '@/config/settings';
+import { RUN_INTERVAL, SINGLE_RUN } from './config/settings';
 
 /* * */
 

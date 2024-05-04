@@ -1,10 +1,10 @@
 /* * */
 
 import type { Timetable } from './timetableExample';
-import SERVERDB from '@/services/SERVERDB';
-import NETWORKDB from '@/services/NETWORKDB';
-import { formatTime, getElapsedTime } from '@/modules/timeCalc';
-import type { GTFSPeriod } from '@/services/NETWORKDB.types';
+import SERVERDB from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import { formatTime, getElapsedTime } from '../modules/timeCalc';
+import type { GTFSPeriod } from '../services/NETWORKDB.types';
 
 /* * */
 

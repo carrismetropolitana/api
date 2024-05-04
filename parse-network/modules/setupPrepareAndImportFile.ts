@@ -5,7 +5,7 @@ import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
 import { from as copyFrom } from 'pg-copy-streams';
 import { getElapsedTime } from './timeCalc';
-import NETWORKDB from '@/services/NETWORKDB';
+import NETWORKDB from '../services/NETWORKDB';
 
 /* * */
 

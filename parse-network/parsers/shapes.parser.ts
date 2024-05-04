@@ -1,10 +1,10 @@
 /* * */
 
 import { length, lineString } from '@turf/turf';
-import SERVERDB from '@/services/SERVERDB';
-import NETWORKDB from '@/services/NETWORKDB';
-import collator from '@/modules/sortCollator';
-import { getElapsedTime } from '@/modules/timeCalc';
+import SERVERDB from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import collator from '../modules/sortCollator';
+import { getElapsedTime } from '../modules/timeCalc';
 
 /* * */
 

@@ -5,7 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "tsc && resolve-tspaths && node build/index.js",
+    "start": "tsc && resolve-tspaths && node build/src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc && resolve-tspaths",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@turf/turf": "6.5.0",
-    "@types/node": "20.12.8",
     "adm-zip": "0.5.12",
     "csv-parse": "5.5.5",
     "csv-stringify": "6.4.6",
@@ -28,6 +27,7 @@
     "@antfu/eslint-config": "2.16.1",
     "@types/adm-zip": "0.5.5",
     "@types/luxon": "3.4.2",
+    "@types/node": "20.12.8",
     "@types/papaparse": "5.3.14",
     "@types/pg": "8.11.5",
     "@types/pg-copy-streams": "1.2.5",

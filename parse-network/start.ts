@@ -1,28 +1,28 @@
 /* * */
 
-import files from '@/config/files';
-import { ENABLED_MODULES } from '@/config/settings';
+import files from './config/files';
+import { ENABLED_MODULES } from './config/settings';
 
-import SERVERDB from '@/services/SERVERDB';
-import NETWORKDB from '@/services/NETWORKDB';
+import SERVERDB from './services/SERVERDB';
+import NETWORKDB from './services/NETWORKDB';
 
-import { getElapsedTime } from '@/modules/timeCalc';
-import setupBaseDirectory from '@/modules/setupBaseDirectory';
-import extractGtfs from '@/modules/extractGtfs';
-import fetchLatestGtfs from '@/modules/fetchLatestGtfs';
-import setupPrepareAndImportFile from '@/modules/setupPrepareAndImportFile';
-import getGtfsHash from '@/modules/getGtfsHash';
+import { getElapsedTime } from './modules/timeCalc';
+import setupBaseDirectory from './modules/setupBaseDirectory';
+import extractGtfs from './modules/extractGtfs';
+import fetchLatestGtfs from './modules/fetchLatestGtfs';
+import setupPrepareAndImportFile from './modules/setupPrepareAndImportFile';
+import getGtfsHash from './modules/getGtfsHash';
 
-import municipalitiesParser from '@/parsers/municipalities.parser';
-import localitiesParser from '@/parsers/localities.parser';
-import periodsParser from '@/parsers/periods.parser';
-import datesParser from '@/parsers/dates.parsers';
-import stopsParser from '@/parsers/stops.parser';
-import shapesParser from '@/parsers/shapes.parser';
-import plansParser from '@/parsers/plans.parser';
+import municipalitiesParser from './parsers/municipalities.parser';
+import localitiesParser from './parsers/localities.parser';
+import periodsParser from './parsers/periods.parser';
+import datesParser from './parsers/dates.parsers';
+import stopsParser from './parsers/stops.parser';
+import shapesParser from './parsers/shapes.parser';
+import plansParser from './parsers/plans.parser';
 // import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
-import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser';
-import timetablesParser from '@/parsers/timetables.parser';
+import newLinesRoutesPatternsParser from './parsers/newLinesRoutesPatterns.parser';
+import timetablesParser from './parsers/timetables.parser';
 
 /* * */
 

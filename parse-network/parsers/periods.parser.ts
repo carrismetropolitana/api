@@ -1,11 +1,11 @@
 /* * */
 
 import { DateTime } from 'luxon';
-import SERVERDB from '@/services/SERVERDB';
-import NETWORKDB from '@/services/NETWORKDB';
-import collator from '@/modules/sortCollator';
-import { getElapsedTime } from '@/modules/timeCalc';
-import type { GTFSDate, GTFSPeriod } from '@/services/NETWORKDB.types';
+import SERVERDB from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import collator from '../modules/sortCollator';
+import { getElapsedTime } from '../modules/timeCalc';
+import type { GTFSDate, GTFSPeriod } from '../services/NETWORKDB.types';
 
 /* * */
 

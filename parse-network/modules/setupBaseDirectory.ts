@@ -1,7 +1,7 @@
 /* * */
 
 import { mkdirSync, rmSync } from 'node:fs';
-import { BASE_DIR } from '@/config/settings';
+import { BASE_DIR } from '../config/settings';
 
 /* * */
 

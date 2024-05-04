@@ -1,10 +1,10 @@
 /* * */
 
-import NETWORKDB from '@/services/NETWORKDB';
-import SERVERDB from '@/services/SERVERDB';
-import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@/services/NETWORKDB.types';
-import collator from '@/modules/sortCollator';
-import { getElapsedTime } from '@/modules/timeCalc';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
+import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '../services/NETWORKDB.types';
+import collator from '../modules/sortCollator';
+import { getElapsedTime } from '../modules/timeCalc';
 
 /* * */
 

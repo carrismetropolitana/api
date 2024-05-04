@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "baseUrl": "./src",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "@/config/*": ["config/*"],
       "@/modules/*": ["modules/*"],
