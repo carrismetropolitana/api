@@ -117,11 +117,11 @@ export default async () => {
       cumulativeQueryTime += queryDelta;
       const variants = new Map<string, string>(timesByPeriodByDayTypeResult.map(row => [row.route_id, row.route_long_name]));
       let variantForDisplay = '';
-      if (variants.size == 1) {
+      if (variants.size === 1) {
         variantForDisplay = variants.keys().next().value;
       }
       else {
-        for (const [variant, route] of variants) {
+        for (const [variant, _] of variants) {
           if (variant.endsWith('0')) {
             variantForDisplay = variant;
             break;
@@ -141,13 +141,13 @@ export default async () => {
       }
       // Select which trip to use for getting stops, getting a trip that includes the current stop
 
-      const patternForDisplay = timesByPeriodByDayTypeResult.find(row => row.route_id == variantForDisplay).pattern_id;
+      const patternForDisplay = timesByPeriodByDayTypeResult.find(row => row.route_id === variantForDisplay).pattern_id;
       if (!patternForDisplay) {
         console.log(`⤷ No patterns in ${LINE_ID} matching route_id ${variantForDisplay}.`);
         return;
       }
 
-      const secondaryPatterns = Array.from(new Set(timesByPeriodByDayTypeResult.filter(row => row.pattern_id != patternForDisplay).map(row => row.pattern_id))).sort();
+      const secondaryPatterns = Array.from(new Set(timesByPeriodByDayTypeResult.filter(row => row.pattern_id !== patternForDisplay).map(row => row.pattern_id))).sort();
 
       const tripForStopsQuery = `
 		SELECT
@@ -267,7 +267,7 @@ export default async () => {
       };
       // console.log(`wrote timetable:${LINE_ID}/${DIRECTION_ID}/${STOP_ID}`);
       bulkData.push([`${LINE_ID}/${DIRECTION_ID}/${STOP_ID}`, JSON.stringify(timetable)]);
-      if (timetable.periods.length != 3) {
+      if (timetable.periods.length !== 3) {
         console.log(`⤷ Stop ${STOP_ID} has only ${timetable.periods.length} periods.`);
         console.log(JSON.stringify(timetable, null, 2), JSON.stringify(timesByPeriodByDayType, null, 2));
         return;
