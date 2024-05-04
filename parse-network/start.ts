@@ -20,7 +20,7 @@ import datesParser from './parsers/dates.parsers';
 import stopsParser from './parsers/stops.parser';
 import shapesParser from './parsers/shapes.parser';
 import plansParser from './parsers/plans.parser';
-// import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
+import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
 import newLinesRoutesPatternsParser from './parsers/newLinesRoutesPatterns.parser';
 import timetablesParser from './parsers/timetables.parser';
 
@@ -126,7 +126,12 @@ export default async (): Promise<boolean> => {
       if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
         console.log();
         console.log('STEP 1.7: Parse Lines, Routes and Patterns');
-        // await linesRoutesPatternsParser();
+        await linesRoutesPatternsParser();
+      }
+
+      if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
+        console.log();
+        console.log('STEP 1.7.1: NEW Parse Lines, Routes and Patterns');
         await newLinesRoutesPatternsParser();
       }
 
