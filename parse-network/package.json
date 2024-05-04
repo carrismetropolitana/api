@@ -1,37 +1,38 @@
 {
-	"name": "@carrismetropolitana/api-parse-network",
-	"version": "2024.04.18-0052",
-	"private": true,
-	"main": "index.js",
-	"type": "commonjs",
-	"scripts": {
-		"start": "tsc && resolve-tspaths && node build/index.js",
-		"lint": "eslint . --ext .ts",
-		"build": "tsc && resolve-tspaths",
-		"watch": "tsc -w"
-	},
-	"dependencies": {
-		"@turf/turf": "6.5.0",
-		"@types/node": "20.12.5",
-		"adm-zip": "0.5.12",
-		"csv-parse": "5.5.5",
-		"csv-stringify": "6.4.6",
-		"dotenv": "16.4.5",
-		"luxon": "3.4.4",
-		"papaparse": "5.4.1",
-		"pg": "8.11.5",
-		"pg-copy-streams": "6.0.6",
-		"redis": "4.6.13"
-	},
-	"devDependencies": {
-		"@types/adm-zip": "0.5.5",
-		"@types/luxon": "3.4.2",
-		"@types/papaparse": "5.3.14",
-		"@types/pg": "8.11.4",
-		"@types/pg-copy-streams": "1.2.5",
-		"@typescript-eslint/eslint-plugin": "7.5.0",
-		"eslint": "8.57.0",
-		"resolve-tspaths": "0.8.18",
-		"typescript": "^5.4.4"
-	}
+  "name": "@carrismetropolitana/api-parse-network",
+  "type": "commonjs",
+  "version": "2024.04.18-0052",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && resolve-tspaths && node build/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc && resolve-tspaths",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@turf/turf": "6.5.0",
+    "@types/node": "20.12.8",
+    "adm-zip": "0.5.12",
+    "csv-parse": "5.5.5",
+    "csv-stringify": "6.4.6",
+    "dotenv": "16.4.5",
+    "luxon": "3.4.4",
+    "papaparse": "5.4.1",
+    "pg": "8.11.5",
+    "pg-copy-streams": "6.0.6",
+    "redis": "4.6.13"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "2.16.1",
+    "@types/adm-zip": "0.5.5",
+    "@types/luxon": "3.4.2",
+    "@types/papaparse": "5.3.14",
+    "@types/pg": "8.11.5",
+    "@types/pg-copy-streams": "1.2.5",
+    "eslint": "8.57.0",
+    "resolve-tspaths": "0.8.18",
+    "typescript": "5.4.5"
+  }
 }
