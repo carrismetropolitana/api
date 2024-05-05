@@ -5,7 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "tsc && resolve-tspaths && node build/src/index.js",
+    "start": "tsc && resolve-tspaths && node build/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc && resolve-tspaths",
@@ -24,14 +24,13 @@
     "redis": "4.6.13"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "2.16.1",
+    "@carrismetropolitana/eslint": "2024.5.51855",
     "@types/adm-zip": "0.5.5",
     "@types/luxon": "3.4.2",
     "@types/node": "20.12.8",
     "@types/papaparse": "5.3.14",
-    "@types/pg": "8.11.5",
+    "@types/pg": "8.11.6",
     "@types/pg-copy-streams": "1.2.5",
-    "eslint": "8.57.0",
     "resolve-tspaths": "0.8.18",
     "typescript": "5.4.5"
   }
