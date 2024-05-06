@@ -24,7 +24,7 @@
     "redis": "4.6.13"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "2024.5.61134",
+    "@carrismetropolitana/eslint": "2024.5.61434",
     "@types/adm-zip": "0.5.5",
     "@types/luxon": "3.4.2",
     "@types/node": "20.12.8",
