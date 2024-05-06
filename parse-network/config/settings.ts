@@ -2,21 +2,21 @@
 
 export const RUN_INTERVAL = 300000; // 5 minutes
 
-export const SINGLE_RUN = false || process.env.SINGLE_RUN === 'true';
+export const SINGLE_RUN = process.env.SINGLE_RUN === 'true' || false;
 
 /* * */
 
 export const ENABLED_MODULES = [
-  'gtfs_import',
-  'municipalities_parser',
-  'localities_parser',
-  'periods_parser',
-  'dates_parser',
-  'plans_parser',
-  'stops_parser',
-  'shapes_parser',
-  'lines_routes_patterns_parser',
-  'timetables_parser',
+	'gtfs_import',
+	'municipalities_parser',
+	'localities_parser',
+	'periods_parser',
+	'dates_parser',
+	'plans_parser',
+	'stops_parser',
+	'shapes_parser',
+	'lines_routes_patterns_parser',
+	'timetables_parser',
 ];
 
 /* * */

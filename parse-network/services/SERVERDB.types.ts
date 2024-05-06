@@ -165,20 +165,20 @@ interface Path {
 interface Stop {
   id: string;
   name: string;
-  short_name: any;
+  short_name: string|null;
   tts_name: string;
   lat: string;
   lon: string;
   locality: string;
-  parish_id: any;
-  parish_name: any;
+  parish_id: string|null;
+  parish_name: string|null;
   municipality_id: string;
   municipality_name: string;
   district_id: string;
   district_name: string;
   region_id: string;
   region_name: string;
-  wheelchair_boarding: any;
+  wheelchair_boarding: string|null;
   facilities: string[];
   lines: string[];
   routes: string[];

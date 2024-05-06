@@ -101,18 +101,18 @@ export default async () => {
 		const queryStartTime = process.hrtime.bigint();
 		// console.time('timesByPeriodByDayType query');
 		const timesByPeriodByDayTypeResult1 = await NETWORKDB.client.query<{
-      period_id: string;
-      day_type: string;
-      arrival_time: string;
-      calendar_desc: null | string;
-      route_id: string;
-      trip_id: string;
-      direction_id: number;
-      route_long_name: string;
-      pattern_id: string;
-    }>(timesByPeriodByDayTypeQuery, [
-    	STOP_ID, LINE_ID,
-    ]);
+			period_id: string;
+			day_type: string;
+			arrival_time: string;
+			calendar_desc: null | string;
+			route_id: string;
+			trip_id: string;
+			direction_id: number;
+			route_long_name: string;
+			pattern_id: string;
+		}>(timesByPeriodByDayTypeQuery, [
+			STOP_ID, LINE_ID,
+		]);
 		if (!timesByPeriodByDayTypeResult1.rows.length) {
 			console.log(`⤷ Stop ${STOP_ID} has no times for line ${LINE_ID}.`);
 			return;
