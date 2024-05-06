@@ -30,6 +30,8 @@ import { RUN_INTERVAL, SINGLE_RUN } from './config/settings';
 				console.error(error);
 			}
 		}
+		console.log('Exiting...');
+		process.exit(0); // End process
 	} else {
 		runOnInterval();
 	}
