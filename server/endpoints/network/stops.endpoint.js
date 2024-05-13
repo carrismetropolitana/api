@@ -184,9 +184,9 @@ module.exports.realtimeForPips = async (request, reply) => {
 			.header('Content-Type', 'application/json; charset=utf-8')
 			.send([
 				{
-					lineId: '0000',
+					lineId: 'INFO',
 					patternId: '0000_0_0',
-					stopHeadsign: 'Sem estimativas. Consulte site para +info.',
+					stopHeadsign: 'Sem estimativas em tempo real.',
 					journeyId: '0000_0_0|teste',
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
@@ -196,6 +196,23 @@ module.exports.realtimeForPips = async (request, reply) => {
 					observedDepartureTime: null,
 					estimatedTimeString: '1 min',
 					observedVehicleId: '0000',
+					stopId: '', // Deprecated
+					operatorId: '', // Deprecated
+					observedDriverId: '', // Deprecated
+				},
+				{
+					lineId: 'INFO',
+					patternId: '0000_0_1',
+					stopHeadsign: 'Consulte o site para +info.',
+					journeyId: '0000_0_1|teste',
+					timetabledArrivalTime: '23:59:59',
+					timetabledDepartureTime: '23:59:59',
+					estimatedArrivalTime: '23:59:59',
+					estimatedDepartureTime: '23:59:59',
+					observedArrivalTime: null,
+					observedDepartureTime: null,
+					estimatedTimeString: '1 min',
+					observedVehicleId: '0001',
 					stopId: '', // Deprecated
 					operatorId: '', // Deprecated
 					observedDriverId: '', // Deprecated
