@@ -190,7 +190,7 @@ export default async () => {
 			const variantExceptions = new Map<string, { label: string; text: string; id: string }>;
 			let variantExceptionId = exceptions.size;
 			for (const variant of variants) {
-				if (variant[0].endsWith('0')) { continue; }
+				if (variant[0] === variantForDisplay) { continue; }
 				variantExceptions.set(variant[0], {
 					id: String.fromCharCode(97 + variantExceptionId),
 					label: `${String.fromCharCode(97 + variantExceptionId)})`,
