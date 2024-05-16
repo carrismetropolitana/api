@@ -85,19 +85,19 @@ const files: File[] = [
 	//
 	// PLANS
 	{
-		file_name: 'plans',
+		file_name: 'archives',
 		file_extension: 'txt',
 		file_headers: [
-			'plan_id', 'operator_id', 'plan_start_date', 'plan_end_date',
+			'archive_id', 'operator_id', 'archive_start_date', 'archive_end_date',
 		],
-		table_query: `CREATE TABLE plans (
-        plan_id VARCHAR(10),
+		table_query: `CREATE TABLE archives (
+        archive_id VARCHAR(10),
         operator_id VARCHAR(2),
-        plan_start_date VARCHAR(8),
-        plan_end_date VARCHAR(8)
+        archive_start_date VARCHAR(8),
+        archive_end_date VARCHAR(8)
     );`,
 		index_queries: [
-			'CREATE INDEX plans_plan_id_idx ON plans ("plan_id");',
+			'CREATE INDEX archives_archive_id_idx ON archives ("archive_id");',
 		],
 		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,

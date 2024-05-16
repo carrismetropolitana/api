@@ -5,7 +5,7 @@ const SERVERDB = require('../../services/SERVERDB');
 /* * */
 
 module.exports.all = async (request, reply) => {
-	const allItems = await SERVERDB.client.get('plans:all');
+	const allItems = await SERVERDB.client.get('archives:all');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -13,7 +13,7 @@ module.exports.all = async (request, reply) => {
 };
 
 module.exports.single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`plans:${request.params.id}`);
+	const singleItem = await SERVERDB.client.get(`archives:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

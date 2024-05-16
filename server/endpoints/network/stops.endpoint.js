@@ -39,16 +39,16 @@ module.exports.singleWithRealtime = async (request, reply) => {
 	//   return reply.code(503).send([]);
 	//
 
-	const currentPlanIds = {};
+	const currentArchiveIds = {};
 
-	const allPlansTxt = await SERVERDB.client.get('plans:all');
-	const allPlansData = JSON.parse(allPlansTxt);
+	const allArchivesTxt = await SERVERDB.client.get('archives:all');
+	const allArchivesData = JSON.parse(allArchivesTxt);
 
-	for (const planData of allPlansData) {
-		const planStartDate = DateTime.fromFormat(planData.start_date, 'yyyyMMdd');
-		const planEndDate = DateTime.fromFormat(planData.end_date, 'yyyyMMdd');
-		if (planStartDate > DateTime.now() || planEndDate < DateTime.now()) continue;
-		else currentPlanIds[planData.operator_id] = planData.id;
+	for (const archiveData of allArchivesData) {
+		const archiveStartDate = DateTime.fromFormat(archiveData.start_date, 'yyyyMMdd');
+		const archiveEndDate = DateTime.fromFormat(archiveData.end_date, 'yyyyMMdd');
+		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) continue;
+		else currentArchiveIds[archiveData.operator_id] = archiveData.id;
 	}
 
 	if (!regexPatternForStopId.test(request.params.id)) return reply.status(400).send([]);
@@ -58,7 +58,7 @@ module.exports.singleWithRealtime = async (request, reply) => {
 			line_id: estimate.lineId,
 			pattern_id: estimate.patternId,
 			route_id: estimate.routeId,
-			trip_id: `${estimate.tripId}_${currentPlanIds[estimate.agencyId]}`,
+			trip_id: `${estimate.tripId}_${currentArchiveIds[estimate.agencyId]}`,
 			headsign: estimate.tripHeadsign,
 			stop_sequence: estimate.stopSequence,
 			scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
