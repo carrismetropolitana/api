@@ -30,6 +30,18 @@ class PCGIAPI {
 	async request(service: string, options: PCGIAPIRequestOptions) {
 		//
 
+		console.log('************************************');
+		console.log('************************************');
+		console.log('************************************');
+		console.log('************************************');
+		console.log('************************************');
+		console.log('this.access_token', this.access_token);
+		console.log('************************************');
+		console.log('************************************');
+		console.log('************************************');
+		console.log('************************************');
+		console.log('************************************');
+
 		//
 		// Check if the token is still valid
 
