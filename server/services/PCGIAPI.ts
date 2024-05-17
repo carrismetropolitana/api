@@ -30,18 +30,6 @@ class PCGIAPI {
 	async request(service: string, options: PCGIAPIRequestOptions) {
 		//
 
-		console.log('************************************');
-		console.log('************************************');
-		console.log('************************************');
-		console.log('************************************');
-		console.log('************************************');
-		console.log('this.access_token', this.access_token);
-		console.log('************************************');
-		console.log('************************************');
-		console.log('************************************');
-		console.log('************************************');
-		console.log('************************************');
-
 		//
 		// Check if the token is still valid
 
@@ -81,9 +69,6 @@ class PCGIAPI {
 
 	async authenticate() {
 		//
-
-		console.log('* * * * * * * * * * * * * * * * * *');
-		console.log('HERERERERERER');
 
 		//
 		// If another authentication request is already in progress, wait for it to complete
