@@ -1,20 +1,20 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB';
-import PCGIAPI from '@/services/PCGIAPI';
-import DATES from '@/services/DATES';
+const SERVERDB = require('../../services/SERVERDB');
+const PCGIAPI = require('../../services/PCGIAPI');
+const DATES = require('../../services/DATES');
 
 /* * */
 
-const all = async (_, reply) => {
+module.exports.all = async (request, reply) => {
 	// Disabled endpoint
 	return reply.code(200).header('Content-Type', 'application/json; charset=utf-8').send([]);
 };
 
 /* * */
 
-const v2 = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`network/v2/patterns:${request.params.id}`);
+module.exports.new = async (request, reply) => {
+const singleItem = await SERVERDB.client.get(`network/v2/patterns:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -23,7 +23,7 @@ const v2 = async (request, reply) => {
 
 /* * */
 
-const single = async (request, reply) => {
+module.exports.single = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
 	return reply
 		.code(200)
@@ -33,7 +33,7 @@ const single = async (request, reply) => {
 
 /* * */
 
-const realtime = async (request, reply) => {
+module.exports.realtime = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
 	const singleItemJson = await JSON.parse(singleItem);
 	const stopIdsForThisPattern = singleItemJson?.path?.map((item) => item.stop.id).join(',');
@@ -64,13 +64,4 @@ const realtime = async (request, reply) => {
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
 		.send(result || []);
-};
-
-/* * */
-
-export default {
-	all,
-	v2,
-	single,
-	realtime,
 };

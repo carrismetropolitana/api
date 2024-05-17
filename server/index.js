@@ -1,140 +1,104 @@
 /* * */
 
-import 'dotenv/config';
-import SERVERDB from './services/SERVERDB';
-import fastify from 'fastify';
-
-/* * */
-
-import timeEndpoint from '@/endpoints/debug/time.endpoint';
-
-import networkFeedEndpoint from '@/endpoints/network/feed.endpoint';
-import networkAlertsEndpoint from '@/endpoints/network/alerts.endpoint';
-import networkMunicipalitiesEndpoint from '@/endpoints/network/municipalities.endpoint';
-import networkLocalitiesEndpoint from '@/endpoints/network/localities.endpoint';
-import networkPeriodsEndpoint from '@/endpoints/network/periods.endpoint';
-import networkDatesEndpoint from '@/endpoints/network/dates.endpoint';
-import networkArchivesEndpoint from '@/endpoints/network/archives.endpoint';
-import networkTimetablesEndpoint from '@/endpoints/network/timetables.endpoint';
-import networkLinesEndpoint from '@/endpoints/network/lines.endpoint';
-import networkRoutesEndpoint from '@/endpoints/network/routes.endpoint';
-import networkPatternsEndpoint from '@/endpoints/network/patterns.endpoint';
-import networkShapesEndpoint from '@/endpoints/network/shapes.endpoint';
-import networkStopsEndpoint from '@/endpoints/network/stops.endpoint';
-import networkVehiclesEndpoint from '@/endpoints/network/vehicles.endpoint';
-
-import datasetsFacilitiesEndpoint from '@/endpoints/datasets/facilities.endpoint';
-import datasetsFacilitiesSchoolsEndpoint from '@/endpoints/datasets/facilities.schools.endpoint';
-import datasetsFacilitiesEncmEndpoint from '@/endpoints/datasets/facilities.encm.endpoint';
-import datasetsFacilitiesPipEndpoint from '@/endpoints/datasets/facilities.pip.endpoint';
-
-import datasetsConnectionsBoatStationsEndpoint from '@/endpoints/datasets/connections.boat_stations.endpoint';
-import datasetsConnectionsLightRailStationsEndpoint from '@/endpoints/datasets/connections.light_rail_stations.endpoint';
-import datasetsConnectionsSubwayStationsEndpoint from '@/endpoints/datasets/connections.subway_stations.endpoint';
-import datasetsConnectionsTrainStationsEndpoint from '@/endpoints/datasets/connections.train_stations.endpoint';
-
-import datasetsDemandDateLineStopEndpoint from '@/endpoints/datasets/demand.date-line-stop.endpoint';
-
-/* * */
-
-fastify({ logger: true, requestTimeout: 10000 });
+const SERVERDB = require('./services/SERVERDB');
+const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
 
 /* * */
 
 // DEBUG ENDPOINTS
 
-fastify.get('/time', timeEndpoint.time);
+fastify.get('/time', require('./endpoints/debug/time.endpoint').time);
 
 /* * */
 
 // NETWORK ENDPOINTS
 
-fastify.get('/gtfs', networkFeedEndpoint.gtfs);
-// fastify.get('/netex', networkFeedEndpoint.netex);
+fastify.get('/gtfs', require('./endpoints/network/feed.endpoint').gtfs);
+// fastify.get('/netex', require('./endpoints/network/feed.endpoint').netex);
 
-fastify.get('/alerts', networkAlertsEndpoint.json);
-fastify.get('/alerts.pb', networkAlertsEndpoint.protobuf);
-// fastify.get('/alerts.rss', networkAlertsEndpoint.rss);
+fastify.get('/alerts', require('./endpoints/network/alerts.endpoint').json);
+fastify.get('/alerts.pb', require('./endpoints/network/alerts.endpoint').protobuf);
+// fastify.get('/alerts.rss', require('./endpoints/network/alerts.endpoint').rss);
 
-fastify.get('/municipalities', networkMunicipalitiesEndpoint.all);
-fastify.get('/municipalities/:id', networkMunicipalitiesEndpoint.single);
+fastify.get('/municipalities', require('./endpoints/network/municipalities.endpoint').all);
+fastify.get('/municipalities/:id', require('./endpoints/network/municipalities.endpoint').single);
 
-fastify.get('/localities', networkLocalitiesEndpoint.all);
-fastify.get('/localities/:id', networkLocalitiesEndpoint.single);
+fastify.get('/localities', require('./endpoints/network/localities.endpoint').all);
+fastify.get('/localities/:id', require('./endpoints/network/localities.endpoint').single);
 
-fastify.get('/periods', networkPeriodsEndpoint.all);
+fastify.get('/periods', require('./endpoints/network/periods.endpoint').all);
 
-fastify.get('/dates', networkDatesEndpoint.all);
-fastify.get('/dates/:date', networkDatesEndpoint.single);
+fastify.get('/dates', require('./endpoints/network/dates.endpoint').all);
+fastify.get('/dates/:date', require('./endpoints/network/dates.endpoint').single);
 
-fastify.get('/archives', networkArchivesEndpoint.all);
-fastify.get('/archives/:id', networkArchivesEndpoint.single);
+fastify.get('/archives', require('./endpoints/network/archives.endpoint').all);
+fastify.get('/archives/:id', require('./endpoints/network/archives.endpoint').single);
 
-fastify.get('/timetables', networkTimetablesEndpoint.index);
-fastify.get('/timetables/:line_id/:direction_id/:stop_id', networkTimetablesEndpoint.single);
+fastify.get('/timetables', require('./endpoints/network/timetables.endpoint').index);
+fastify.get('/timetables/:line_id/:direction_id/:stop_id', require('./endpoints/network/timetables.endpoint').single);
 
-fastify.get('/lines', networkLinesEndpoint.all);
-fastify.get('/lines/:id', networkLinesEndpoint.single);
+fastify.get('/lines', require('./endpoints/network/lines.endpoint').all);
+fastify.get('/lines/:id', require('./endpoints/network/lines.endpoint').single);
 
-fastify.get('/routes', networkRoutesEndpoint.all);
-fastify.get('/routes/:id', networkRoutesEndpoint.single);
+fastify.get('/routes', require('./endpoints/network/routes.endpoint').all);
+fastify.get('/routes/:id', require('./endpoints/network/routes.endpoint').single);
 
-fastify.get('/patterns', networkPatternsEndpoint.all);
-fastify.get('/patterns/:id', networkPatternsEndpoint.single);
-fastify.get('/patterns/:id/realtime', networkPatternsEndpoint.realtime);
-fastify.get('/network/v2/patterns/:id', networkPatternsEndpoint.v2);
+fastify.get('/patterns', require('./endpoints/network/patterns.endpoint').all);
+fastify.get('/patterns/:id', require('./endpoints/network/patterns.endpoint').single);
+fastify.get('/patterns/:id/realtime', require('./endpoints/network/patterns.endpoint').realtime);
+fastify.get('/network/v2/patterns/:id', require('./endpoints/network/patterns.endpoint').new);
 
-fastify.get('/shapes', networkShapesEndpoint.all);
-fastify.get('/shapes/:id', networkShapesEndpoint.single);
+fastify.get('/shapes', require('./endpoints/network/shapes.endpoint').all);
+fastify.get('/shapes/:id', require('./endpoints/network/shapes.endpoint').single);
 
-fastify.get('/stops', networkStopsEndpoint.all);
-// fastify.get('/stops.pb', networkStopsEndpoint.protobuf);
-fastify.get('/stops/:id', networkStopsEndpoint.single);
-fastify.get('/stops/:id/realtime', networkStopsEndpoint.singleWithRealtime);
-fastify.post('/stops/pip', networkStopsEndpoint.realtimeForPips);
+fastify.get('/stops', require('./endpoints/network/stops.endpoint').all);
+// fastify.get('/stops.pb', require('./endpoints/network/stops.endpoint').protobuf);
+fastify.get('/stops/:id', require('./endpoints/network/stops.endpoint').single);
+fastify.get('/stops/:id/realtime', require('./endpoints/network/stops.endpoint').singleWithRealtime);
+fastify.post('/stops/pip', require('./endpoints/network/stops.endpoint').realtimeForPips);
 
-fastify.get('/vehicles', networkVehiclesEndpoint.json);
-fastify.get('/vehicles.pb', networkVehiclesEndpoint.protobuf);
+fastify.get('/vehicles', require('./endpoints/network/vehicles.endpoint').json);
+fastify.get('/vehicles.pb', require('./endpoints/network/vehicles.endpoint').protobuf);
 
 /* * */
 
 // DATASETS ENDPOINTS
 
-fastify.get('/datasets/facilities', datasetsFacilitiesEndpoint.all);
+fastify.get('/datasets/facilities', require('./endpoints/datasets/facilities.endpoint').all);
 
 //
 // DATASETS > FACILITIES
 
-fastify.get('/datasets/facilities/schools', datasetsFacilitiesSchoolsEndpoint.all);
-fastify.get('/datasets/facilities/schools/:id', datasetsFacilitiesSchoolsEndpoint.single);
+fastify.get('/datasets/facilities/schools', require('./endpoints/datasets/facilities.schools.endpoint').all);
+fastify.get('/datasets/facilities/schools/:id', require('./endpoints/datasets/facilities.schools.endpoint').single);
 
-fastify.get('/datasets/facilities/encm', datasetsFacilitiesEncmEndpoint.all);
-fastify.get('/datasets/facilities/encm/:id', datasetsFacilitiesEncmEndpoint.single);
+fastify.get('/datasets/facilities/encm', require('./endpoints/datasets/facilities.encm.endpoint').all);
+fastify.get('/datasets/facilities/encm/:id', require('./endpoints/datasets/facilities.encm.endpoint').single);
 
-fastify.get('/datasets/facilities/pip', datasetsFacilitiesPipEndpoint.all);
-fastify.get('/datasets/facilities/pip/:id', datasetsFacilitiesPipEndpoint.single);
+fastify.get('/datasets/facilities/pip', require('./endpoints/datasets/facilities.pip.endpoint').all);
+fastify.get('/datasets/facilities/pip/:id', require('./endpoints/datasets/facilities.pip.endpoint').single);
 
 //
 // DATASETS > MODAL CONNECTIONS
 
-fastify.get('/datasets/connections/boat_stations', datasetsConnectionsBoatStationsEndpoint.all);
-fastify.get('/datasets/connections/boat_stations/:id', datasetsConnectionsBoatStationsEndpoint.single);
+fastify.get('/datasets/connections/boat_stations', require('./endpoints/datasets/connections.boat_stations.endpoint').all);
+fastify.get('/datasets/connections/boat_stations/:id', require('./endpoints/datasets/connections.boat_stations.endpoint').single);
 
-fastify.get('/datasets/connections/light_rail_stations', datasetsConnectionsLightRailStationsEndpoint.all);
-fastify.get('/datasets/connections/light_rail_stations/:id', datasetsConnectionsLightRailStationsEndpoint.single);
+fastify.get('/datasets/connections/light_rail_stations', require('./endpoints/datasets/connections.light_rail_stations.endpoint').all);
+fastify.get('/datasets/connections/light_rail_stations/:id', require('./endpoints/datasets/connections.light_rail_stations.endpoint').single);
 
-fastify.get('/datasets/connections/subway_stations', datasetsConnectionsSubwayStationsEndpoint.all);
-fastify.get('/datasets/connections/subway_stations/:id', datasetsConnectionsSubwayStationsEndpoint.single);
+fastify.get('/datasets/connections/subway_stations', require('./endpoints/datasets/connections.subway_stations.endpoint').all);
+fastify.get('/datasets/connections/subway_stations/:id', require('./endpoints/datasets/connections.subway_stations.endpoint').single);
 
-fastify.get('/datasets/connections/train_stations', datasetsConnectionsTrainStationsEndpoint.all);
-fastify.get('/datasets/connections/train_stations/:id', datasetsConnectionsTrainStationsEndpoint.single);
+fastify.get('/datasets/connections/train_stations', require('./endpoints/datasets/connections.train_stations.endpoint').all);
+fastify.get('/datasets/connections/train_stations/:id', require('./endpoints/datasets/connections.train_stations.endpoint').single);
 
 //
 // DATASESTS > DEMAND
 
-fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStop', datasetsDemandDateLineStopEndpoint.viewByDateForEachStop);
-fastify.get('/datasets/demand/date-line-stop/viewByDateForEachLine', datasetsDemandDateLineStopEndpoint.viewByDateForEachLine);
-fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', datasetsDemandDateLineStopEndpoint.viewByDateForEachStopForEachLine);
+fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStop', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachStop);
+fastify.get('/datasets/demand/date-line-stop/viewByDateForEachLine', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachLine);
+fastify.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', require('./endpoints/datasets/demand.date-line-stop.endpoint').viewByDateForEachStopForEachLine);
 
 /* * */
 

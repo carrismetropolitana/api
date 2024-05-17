@@ -1,10 +1,10 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB';
+const SERVERDB = require('../../services/SERVERDB');
 
 /* * */
 
-const all = async (_, reply) => {
+module.exports.all = async (request, reply) => {
 	const allItems = await SERVERDB.client.get('archives:all');
 	return reply
 		.code(200)
@@ -12,17 +12,10 @@ const all = async (_, reply) => {
 		.send(allItems || []);
 };
 
-const single = async (request, reply) => {
+module.exports.single = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`archives:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
 		.send(singleItem || {});
-};
-
-/* * */
-
-export default {
-	all,
-	single,
 };
