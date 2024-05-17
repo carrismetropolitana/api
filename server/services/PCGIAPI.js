@@ -34,6 +34,14 @@ class PCGIAPI {
       await this.authenticate();
     }
 
+    console.log("******************************");
+    console.log("******************************");
+    console.log("******************************");
+    console.log('this.access_token', this.access_token);
+    console.log("******************************");
+    console.log("******************************");
+    console.log("******************************");
+
     //
     // Perform the request to PCGI API
 
