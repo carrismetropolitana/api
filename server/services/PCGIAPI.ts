@@ -50,7 +50,7 @@ class PCGIAPI {
 		//
 		// Request a new authentication token if is is expired
 
-		if (isTokenExpired) {
+		if (isTokenExpired || !this.access_token) {
 			await this.authenticate();
 		}
 
