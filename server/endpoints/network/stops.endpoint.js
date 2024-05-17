@@ -1,9 +1,9 @@
 /* * */
 
-const SERVERDB = require('../../services/SERVERDB');
-const PCGIAPI = require('../../services/PCGIAPI');
-const DATES = require('../../services/DATES');
-const { DateTime } = require('luxon');
+import SERVERDB from '@/services/SERVERDB';
+import PCGIAPI from '@/services/PCGIAPI';
+import DATES from '@/services/DATES';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -11,7 +11,7 @@ const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 /* * */
 
-module.exports.all = async (request, reply) => {
+const all = async (_, reply) => {
 	const allItems = await SERVERDB.client.get('stops:all');
 	reply.header('Content-Type', 'application/json');
 	return reply
@@ -22,7 +22,7 @@ module.exports.all = async (request, reply) => {
 
 /* * */
 
-module.exports.single = async (request, reply) => {
+const single = async (request, reply) => {
 	if (!regexPatternForStopId.test(request.params.id)) return reply.status(400).send([]);
 	const singleItem = await SERVERDB.client.get(`stops:${request.params.id}`);
 	reply.header('Content-Type', 'application/json');
@@ -34,7 +34,7 @@ module.exports.single = async (request, reply) => {
 
 /* * */
 
-module.exports.singleWithRealtime = async (request, reply) => {
+const singleWithRealtime = async (request, reply) => {
 	//
 	//   return reply.code(503).send([]);
 	//
@@ -78,7 +78,7 @@ module.exports.singleWithRealtime = async (request, reply) => {
 
 /* * */
 
-module.exports.realtimeForPips = async (request, reply) => {
+const realtimeForPips = async (request, reply) => {
 	// Validate request body
 	if (!request.body?.stops || request.body.stops.length === 0) return reply.code(400).send([]);
 	// Validate each requested Stop ID
@@ -162,7 +162,6 @@ module.exports.realtimeForPips = async (request, reply) => {
 				stopHeadsign: estimate.tripHeadsign,
 				journeyId: estimate.tripId,
 				timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
-				timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				estimatedArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
@@ -222,4 +221,13 @@ module.exports.realtimeForPips = async (request, reply) => {
 
 	return reply.code(200).header('Content-Type', 'application/json; charset=utf-8').send(result);
 	//
+};
+
+/* * */
+
+export default {
+	all,
+	single,
+	singleWithRealtime,
+	realtimeForPips,
 };

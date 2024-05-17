@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "paths": {
+      "@/services/*": ["services/*"],
+      "@/endpoints/*": ["endpoints/*"],
+    },
+    "allowJs": true,
+    "outDir": "build",
+    "sourceMap": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["**/node_modules", "**/.*/", "**/build/"]
+}
