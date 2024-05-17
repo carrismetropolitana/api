@@ -70,6 +70,9 @@ class PCGIAPI {
 	async authenticate() {
 		//
 
+		console.log('* * * * * * * * * * * * * * * * * *');
+		console.log('HERERERERERER');
+
 		//
 		// If another authentication request is already in progress, wait for it to complete
 
