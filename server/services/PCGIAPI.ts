@@ -16,11 +16,11 @@ interface PCGIAPIRequestOptions {
 class PCGIAPI {
 	//
 
+	authenticating: boolean;
+
 	access_token: string;
 
 	expires_at: number;
-
-	authenticating: boolean;
 
 	/* * *
    * REQUEST
@@ -36,7 +36,7 @@ class PCGIAPI {
 		const isTokenExpired = this.expires_at < (Date.now() / 1000);
 
 		//
-		// Request a new authentication token if is is expired
+		// Request a new authentication token if it is expired or non-existent
 
 		if (isTokenExpired || !this.access_token) {
 			await this.authenticate();
@@ -57,7 +57,14 @@ class PCGIAPI {
 		//
 		// Return the response to the caller
 
-		return await response.json();
+		try {
+			return await response.json();
+		} catch (error) {
+			console.log('ERROR: Failed to parse PCGIAPI Response:', error);
+			console.log('Retrying authentication...');
+			this.reset();
+			throw new Error('PCGIAPI temporarily unavailable. Please try your query again.');
+		}
 
 		//
 	}
@@ -147,6 +154,17 @@ class PCGIAPI {
 				}
 			}, 100);
 		});
+	}
+
+	/* * *
+   * RESET AUTHENTICATION
+   * Clears all tokens to force a new authentication
+   */
+
+	async reset() {
+		this.authenticating = false;
+		this.access_token = '';
+		this.expires_at = 0;
 	}
 
 	//
