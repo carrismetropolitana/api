@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 /* * */
 
-import 'dotenv/config';
 const SERVERDB = require('./services/SERVERDB');
 const fastify = require('fastify')({ logger: true, requestTimeout: 10000 });
 
