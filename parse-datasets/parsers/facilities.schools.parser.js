@@ -35,17 +35,10 @@ module.exports = async () => {
   for (const schoolData of allSchoolsCsv.data) {
     // Discover which cicles this school has
     const cicles = [];
-    console.log(schoolData);
-    if (schoolData.pre_school === '1') cicles.push('pre_school');
-    if (schoolData.basic_1 === '1') cicles.push('basic_1');
-    if (schoolData.basic_2 === '1') cicles.push('basic_2');
-    if (schoolData.basic_3 === '1') cicles.push('basic_3');
-    if (schoolData.high_school === '1') cicles.push('high_school');
-    if (schoolData.professional === '1') cicles.push('professional');
-    if (schoolData.special === '1') cicles.push('special');
-    if (schoolData.artistic === '1') cicles.push('artistic');
-    if (schoolData.university === '1') cicles.push('university');
-    if (schoolData.other === '1') cicles.push('other');
+    const possibleCicles = ['pre_school', 'basic_1', 'basic_2', 'basic_3', 'high_school', 'professional', 'special', 'artistic', 'university', 'other'];
+    for (const cicle of possibleCicles) {
+      if (schoolData[cicle] === '1') cicles.push(cicle);
+    }
     // Split stops into discrete IDs
     let parsedSchoolStops = [];
     if (schoolData.stops?.length) parsedSchoolStops = schoolData.stops.split('|');
