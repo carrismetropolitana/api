@@ -1,6 +1,7 @@
 /* * */
 
 import { createWriteStream, existsSync, mkdirSync } from 'node:fs';
+import fs from 'node:fs';
 import { Readable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings';
@@ -19,11 +20,19 @@ export default async () => {
 	}
 
 	// Download GTFS file to given destination
-	const stream = createWriteStream(filePath);
-	const resp: Response = await fetch(process.env.GTFS_URL);
-	const body: ReadableStream<Uint8Array> = resp.body;
-	// @ts-expect-error Readable.fromWeb actually accepts a ReadableStream<Uint8Array>, even though we are mixing nodejs and web ReadableStreams
-	await finished(Readable.fromWeb(body).pipe(stream));
+	const url = process.env.GTFS_URL;
+	if (url.startsWith('file://')) {
+		console.log(`⤷ Copying file from "${url}" to "${filePath}"...`);
+		const path = url.replace('file://', '');
+		fs.copyFileSync(path, filePath);
+	} else {
+		const stream = createWriteStream(filePath);
+		const resp: Response = await fetch(process.env.GTFS_URL);
+		const body: ReadableStream<Uint8Array> = resp.body;
+		// @ts-expect-error Readable.fromWeb actually accepts a ReadableStream<Uint8Array>, even though we are mixing nodejs and web ReadableStreams
+		await finished(Readable.fromWeb(body).pipe(stream));
+	}
+
 	console.log(`⤷ Downloaded file from "${process.env.GTFS_URL}" to "${filePath}" successfully.`);
 
 	//
