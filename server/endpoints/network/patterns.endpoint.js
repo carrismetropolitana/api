@@ -3,6 +3,7 @@
 import SERVERDB from '@/services/SERVERDB';
 import PCGIAPI from '@/services/PCGIAPI';
 import DATES from '@/services/DATES';
+const { DateTime } = require('luxon');
 
 /* * */
 
@@ -34,6 +35,18 @@ const single = async (request, reply) => {
 /* * */
 
 const realtime = async (request, reply) => {
+	const currentArchiveIds = {};
+
+	const allArchivesTxt = await SERVERDB.client.get('archives:all');
+	const allArchivesData = JSON.parse(allArchivesTxt);
+
+	for (const archiveData of allArchivesData) {
+		const archiveStartDate = DateTime.fromFormat(archiveData.start_date, 'yyyyMMdd');
+		const archiveEndDate = DateTime.fromFormat(archiveData.end_date, 'yyyyMMdd');
+		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) continue;
+		else currentArchiveIds[archiveData.operator_id] = archiveData.id;
+	}
+
 	const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
 	const singleItemJson = await JSON.parse(singleItem);
 	const stopIdsForThisPattern = singleItemJson?.path?.map((item) => item.stop.id).join(',');
@@ -48,7 +61,7 @@ const realtime = async (request, reply) => {
 				line_id: item.lineId,
 				pattern_id: item.patternId,
 				route_id: item.routeId,
-				trip_id: item.tripId,
+				trip_id: `${item.tripId}_${currentArchiveIds[item.agencyId]}`,
 				headsign: item.tripHeadsign,
 				stop_sequence: item.stopSequence,
 				scheduled_arrival: item.stopScheduledArrivalTime || item.stopScheduledDepartureTime,
