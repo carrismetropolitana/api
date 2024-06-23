@@ -1,13 +1,13 @@
 {
 
-  "editor.tabSize": 2,
+  "editor.tabSize": 4,
 
   "files.eol": "\n",
 
-  "eslint.workingDirectories": ["./parse-network", "./parse-datasets", "./server"],
+  "eslint.workingDirectories": ["./parse-datasets", "./parse-network", "./server", "./switch", "./sync"],
 
   // Enable the ESlint flat config support
-  "eslint.experimental.useFlatConfig": true,
+  "eslint.useFlatConfig": true,
 
   // Disable the default formatter, use eslint instead
   "prettier.enable": false,
