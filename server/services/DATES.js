@@ -1,6 +1,6 @@
 /* * */
 
-const { DateTime } = require('luxon');
+import { DateTime } from 'luxon';
 
 /* * */
 

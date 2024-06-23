@@ -5,10 +5,10 @@ import { jwtDecode } from 'jwt-decode';
 /* * */
 
 interface PCGIAPIRequestOptions {
-  method: string;
-  contentType: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  body: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	body: any
+	contentType: string
+	method: string
 }
 
 /* * */
@@ -16,62 +16,15 @@ interface PCGIAPIRequestOptions {
 class PCGIAPI {
 	//
 
-	authenticating: boolean;
-
 	access_token: string;
+
+	authenticating: boolean;
 
 	expires_at: number;
 
 	/* * *
    * REQUEST
    * This function makes GET requests to PCGI API and agregates all the steps required for authentication.
-   */
-
-	async request(service: string, options: PCGIAPIRequestOptions) {
-		//
-
-		//
-		// Check if the token is still valid
-
-		const isTokenExpired = this.expires_at < (Date.now() / 1000);
-
-		//
-		// Request a new authentication token if it is expired or non-existent
-
-		if (isTokenExpired || !this.access_token) {
-			await this.authenticate();
-		}
-
-		//
-		// Perform the request to PCGI API
-
-		const response = await fetch(`${process.env.PCGI_BASE_URL}/${service}`, {
-			method: options?.method || 'GET',
-			headers: {
-				'Content-Type': options?.contentType || 'application/json',
-				Authorization: `Bearer ${this.access_token}`,
-			},
-			body: options?.body || undefined,
-		});
-
-		//
-		// Return the response to the caller
-
-		try {
-			return await response.json();
-		} catch (error) {
-			console.log('ERROR: Failed to parse PCGIAPI Response:', error);
-			console.log('Retrying authentication...');
-			this.reset();
-			throw new Error('PCGIAPI temporarily unavailable. Please try your query again.');
-		}
-
-		//
-	}
-
-	/* * *
-   * AUTHENTICATE
-   * This function requests new authentication tokens to IDP.
    */
 
 	async authenticate() {
@@ -99,13 +52,13 @@ class PCGIAPI {
 			// Initiate a new request to the token endpoint
 
 			const response = await fetch(process.env.PCGI_AUTH_URL, {
-				method: 'POST',
-				headers: { 'content-type': 'application/x-www-form-urlencoded' },
 				body: new URLSearchParams({
 					client_id: process.env.PCGI_CLIENT_ID,
 					client_secret: process.env.PCGI_CLIENT_SECRET,
 					grant_type: 'client_credentials',
 				}),
+				headers: { 'content-type': 'application/x-www-form-urlencoded' },
+				method: 'POST',
 			});
 
 			//
@@ -130,10 +83,60 @@ class PCGIAPI {
 			console.log('PCGIAPI Authentication successful');
 
 			//
-		} catch (err) {
+		}
+		catch (err) {
 			console.log('! PCGIAPI Authentication failed', err);
-		} finally {
+		}
+		finally {
 			this.authenticating = false;
+		}
+
+		//
+	}
+
+	/* * *
+   * AUTHENTICATE
+   * This function requests new authentication tokens to IDP.
+   */
+
+	async request(service: string, options: PCGIAPIRequestOptions) {
+		//
+
+		//
+		// Check if the token is still valid
+
+		const isTokenExpired = this.expires_at < (Date.now() / 1000);
+
+		//
+		// Request a new authentication token if it is expired or non-existent
+
+		if (isTokenExpired || !this.access_token) {
+			await this.authenticate();
+		}
+
+		//
+		// Perform the request to PCGI API
+
+		const response = await fetch(`${process.env.PCGI_BASE_URL}/${service}`, {
+			body: options?.body || undefined,
+			headers: {
+				'Authorization': `Bearer ${this.access_token}`,
+				'Content-Type': options?.contentType || 'application/json',
+			},
+			method: options?.method || 'GET',
+		});
+
+		//
+		// Return the response to the caller
+
+		try {
+			return await response.json();
+		}
+		catch (error) {
+			console.log('ERROR: Failed to parse PCGIAPI Response:', error);
+			console.log('Retrying authentication...');
+			this.reset();
+			throw new Error('PCGIAPI temporarily unavailable. Please try your query again.');
 		}
 
 		//
@@ -142,6 +145,17 @@ class PCGIAPI {
 	/* * *
    * WAIT FOR AUTHENTICATION
    * Implements a mechanism that waits until authentication is complete
+   */
+
+	async reset() {
+		this.authenticating = false;
+		this.access_token = '';
+		this.expires_at = 0;
+	}
+
+	/* * *
+   * RESET AUTHENTICATION
+   * Clears all tokens to force a new authentication
    */
 
 	async waitForAuthentication() {
@@ -156,20 +170,9 @@ class PCGIAPI {
 		});
 	}
 
-	/* * *
-   * RESET AUTHENTICATION
-   * Clears all tokens to force a new authentication
-   */
-
-	async reset() {
-		this.authenticating = false;
-		this.access_token = '';
-		this.expires_at = 0;
-	}
-
 	//
 }
 
 /* * */
 
-export default new PCGIAPI;
+export default new PCGIAPI();
