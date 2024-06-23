@@ -1,12 +1,23 @@
 {
   "name": "@carrismetropolitana/api-switch",
-  "version": "2024.04.18-0052",
+  "type": "module",
+  "version": "1.0.0",
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "tsc && resolve-tspaths && node build/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc && resolve-tspaths",
+    "watch": "tsc -w"
   },
   "dependencies": {
-    "fastify": "4.26.2"
+    "fastify": "4.28.0"
+  },
+  "devDependencies": {
+    "@carrismetropolitana/eslint": "20240622.50.2",
+    "@types/node": "20.14.8",
+    "resolve-tspaths": "0.8.19",
+    "typescript": "5.5.2"
   }
 }

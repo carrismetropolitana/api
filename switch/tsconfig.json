@@ -7,7 +7,7 @@
 		"moduleResolution": "NodeNext",
 		"paths": {
 			"@/services/*": ["services/*"],
-			"@/tasks/*": ["tasks/*"],
+			"@/handlers/*": ["handlers/*"],
 		},
 		"allowJs": true,
 		"outDir": "build",
