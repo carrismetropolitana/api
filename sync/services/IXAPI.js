@@ -1,19 +1,18 @@
-// auth.js
+/* * */
+
+import 'dotenv/config';
 
 /* * */
-/* IMPORTS */
-require('dotenv').config();
-const { IX_AUTH_URL, IX_SERVER_KEY, IX_USERNAME, IX_PASSWORD, IX_CLIENT_ID, IX_CLIENT_SECRET, IX_GRANT_TYPE, IX_BASE_URL } = process.env;
 
 class IXAPI {
-  //
+	//
 
-  constructor() {
-    this.access_token = '';
-    this.expires_at = new Date();
-  }
+	constructor() {
+		this.access_token = '';
+		this.expires_at = new Date();
+	}
 
-  /* * *
+	/* * *
    * REQUEST
    * This function makes GET requests to Carris API and agregates all the steps required for authentication.
    * The process starts by defining flags that serve as logical gates in the authentication flow.
@@ -29,73 +28,78 @@ class IXAPI {
    * If all is well, then return the raw data response to the parent caller.
    */
 
-  async request(options = {}) {
-    //
+	async authenticate() {
+		try {
+			//
 
-    // Renew token if no longer valid
-    const isTokenExpired = this.expires_at < new Date();
-    if (isTokenExpired) await this.authenticate();
+			console.log('→ Starting IXAPI authentication...');
 
-    const response = await fetch(`${IX_BASE_URL}/statistics`, {
-      method: options.method || 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.access_token}`,
-        StatisticsFilter: JSON.stringify({
-          header: { method: 'statisticsGetReport' },
-          content: { apiVersion: '1.0', rowsPerPage: 2000, ...options },
-        }),
-      },
-      body: options.body ? JSON.stringify(options.body) : undefined,
-    });
+			// Initiate a new request to the token endpoint
+			const response = await fetch(process.env.IX_AUTH_URL, {
+				body: new URLSearchParams({
+					client_id: process.env.IX_CLIENT_ID,
+					client_secret: process.env.IX_CLIENT_SECRET,
+					grant_type: process.env.IX_GRANT_TYPE,
+					password: process.env.IX_PASSWORD,
+					server: process.env.IX_SERVER_KEY,
+					username: process.env.IX_USERNAME,
+				}),
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				method: 'POST',
+			});
 
-    return await response.json();
+			// Parse response
+			const responseData = await response.json();
 
-    //
-  }
+			// Save authorization values
+			this.access_token = responseData.access_token;
 
-  /* MARK: - SECTION 8: FETCH AUTH TOKEN FROM CARRIS API */
-  /* This is the function where a valid ‹authToken› is requested to Carris Authentication endpoint. */
-  /* Depending on the method of authentication ['apikey', 'refresh'], just perform the request and */
-  /* save the result to the respective variables. */
+			// Save expire times
+			const now = new Date();
+			this.expires_at = new Date(now.getTime() + responseData.expires_in * 1000);
 
-  async authenticate() {
-    try {
-      //
-      console.log('→ Starting IXAPI authentication...');
+			console.log('→ IXAPI Authentication successful');
 
-      // Initiate a new request to the token endpoint
-      const response = await fetch(IX_AUTH_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          server: IX_SERVER_KEY,
-          username: IX_USERNAME,
-          password: IX_PASSWORD,
-          grant_type: IX_GRANT_TYPE,
-          client_id: IX_CLIENT_ID,
-          client_secret: IX_CLIENT_SECRET,
-        }),
-      });
+			//
+		}
+		catch (err) {
+			console.log('→ IXAPI Authentication failed', err);
+		}
+	}
 
-      // Parse response
-      const responseData = await response.json();
+	/* MARK: - SECTION 8: FETCH AUTH TOKEN FROM CARRIS API */
+	/* This is the function where a valid ‹authToken› is requested to Carris Authentication endpoint. */
+	/* Depending on the method of authentication ['apikey', 'refresh'], just perform the request and */
+	/* save the result to the respective variables. */
 
-      // Save authorization values
-      this.access_token = responseData.access_token;
+	async request(options = {}) {
+		//
 
-      // Save expire times
-      const now = new Date();
-      this.expires_at = new Date(now.getTime() + responseData.expires_in * 1000);
+		// Renew token if no longer valid
+		const isTokenExpired = this.expires_at < new Date();
+		if (isTokenExpired) await this.authenticate();
 
-      console.log('→ IXAPI Authentication successful');
-      //
-    } catch (err) {
-      console.log('→ IXAPI Authentication failed', err);
-    }
-  }
+		const response = await fetch(`${process.env.IX_BASE_URL}/statistics`, {
+			body: options.body ? JSON.stringify(options.body) : undefined,
+			headers: {
+				'Authorization': `Bearer ${this.access_token}`,
+				'Content-Type': 'application/json',
+				'StatisticsFilter': JSON.stringify({
+					content: { apiVersion: '1.0', rowsPerPage: 2000, ...options },
+					header: { method: 'statisticsGetReport' },
+				}),
+			},
+			method: options.method || 'GET',
+		});
 
-  //
+		return await response.json();
+
+		//
+	}
+
+	//
 }
 
-module.exports = new IXAPI();
+/* * */
+
+export default new IXAPI();
