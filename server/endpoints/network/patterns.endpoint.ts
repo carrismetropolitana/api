@@ -3,6 +3,7 @@
 import DATES from '@/services/DATES.js';
 import PCGIAPI from '@/services/PCGIAPI.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -34,6 +35,20 @@ const single = async (request, reply) => {
 /* * */
 
 const realtime = async (request, reply) => {
+	//
+
+	const currentArchiveIds = {};
+
+	const allArchivesTxt = await SERVERDB.client.get('archives:all');
+	const allArchivesData = JSON.parse(allArchivesTxt);
+
+	for (const archiveData of allArchivesData) {
+		const archiveStartDate = DateTime.fromFormat(archiveData.start_date, 'yyyyMMdd');
+		const archiveEndDate = DateTime.fromFormat(archiveData.end_date, 'yyyyMMdd');
+		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) continue;
+		else currentArchiveIds[archiveData.operator_id] = archiveData.id;
+	}
+
 	const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
 	const singleItemJson = await JSON.parse(singleItem);
 	const stopIdsForThisPattern = singleItemJson?.path?.map(item => item.stop.id).join(',');
@@ -56,7 +71,7 @@ const realtime = async (request, reply) => {
 				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
 				stop_id: item.stopId,
 				stop_sequence: item.stopSequence,
-				trip_id: item.tripId,
+				trip_id: `${item.tripId}_${currentArchiveIds[item.agencyId]}`,
 				vehicle_id: item.observedVehicleId,
 			};
 		});
