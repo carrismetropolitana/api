@@ -1,11 +1,11 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('dates:all');
+	const allItems = await SERVERDB.client.get('lines:all');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -13,7 +13,7 @@ const all = async (_, reply) => {
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`dates:${request.params.date}`);
+	const singleItem = await SERVERDB.client.get(`lines:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

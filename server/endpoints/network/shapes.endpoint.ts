@@ -1,6 +1,6 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 

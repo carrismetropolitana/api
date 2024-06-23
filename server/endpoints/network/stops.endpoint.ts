@@ -1,8 +1,8 @@
 /* * */
 
-import DATES from '@/services/DATES';
-import PCGIAPI from '@/services/PCGIAPI';
-import SERVERDB from '@/services/SERVERDB';
+import DATES from '@/services/DATES.js';
+import PCGIAPI from '@/services/PCGIAPI.js';
+import SERVERDB from '@/services/SERVERDB.js';
 import { DateTime } from 'luxon';
 
 /* * */

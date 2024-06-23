@@ -3,7 +3,7 @@
 import files from '@/config/files';
 import { ENABLED_MODULES } from '@/config/settings';
 
-import SERVERDB from '@/services/SERVERDB';
+import SERVERDB from '@/services/SERVERDB.js';
 import NETWORKDB from '@/services/NETWORKDB';
 
 import { getElapsedTime } from '@/modules/timeCalc';
