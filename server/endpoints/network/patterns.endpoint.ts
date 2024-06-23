@@ -1,8 +1,8 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB';
-import PCGIAPI from '@/services/PCGIAPI';
-import DATES from '@/services/DATES';
+import DATES from '@/services/DATES.js';
+import PCGIAPI from '@/services/PCGIAPI.js';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 
@@ -36,7 +36,7 @@ const single = async (request, reply) => {
 const realtime = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`patterns:${request.params.id}`);
 	const singleItemJson = await JSON.parse(singleItem);
-	const stopIdsForThisPattern = singleItemJson?.path?.map((item) => item.stop.id).join(',');
+	const stopIdsForThisPattern = singleItemJson?.path?.map(item => item.stop.id).join(',');
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
 	const result = response
 		.filter((item) => {
@@ -44,19 +44,19 @@ const realtime = async (request, reply) => {
 		})
 		.map((item) => {
 			return {
-				stop_id: item.stopId,
-				line_id: item.lineId,
-				pattern_id: item.patternId,
-				route_id: item.routeId,
-				trip_id: item.tripId,
-				headsign: item.tripHeadsign,
-				stop_sequence: item.stopSequence,
-				scheduled_arrival: item.stopScheduledArrivalTime || item.stopScheduledDepartureTime,
-				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
 				estimated_arrival: item.stopArrivalEta || item.stopDepartureEta,
 				estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopDepartureEta),
+				headsign: item.tripHeadsign,
+				line_id: item.lineId,
 				observed_arrival: item.stopObservedArrivalTime || item.stopObservedDepartureTime,
 				observed_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopObservedArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopObservedDepartureTime),
+				pattern_id: item.patternId,
+				route_id: item.routeId,
+				scheduled_arrival: item.stopScheduledArrivalTime || item.stopScheduledDepartureTime,
+				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
+				stop_id: item.stopId,
+				stop_sequence: item.stopSequence,
+				trip_id: item.tripId,
 				vehicle_id: item.observedVehicleId,
 			};
 		});
@@ -70,7 +70,7 @@ const realtime = async (request, reply) => {
 
 export default {
 	all,
-	v2,
-	single,
 	realtime,
+	single,
+	v2,
 };

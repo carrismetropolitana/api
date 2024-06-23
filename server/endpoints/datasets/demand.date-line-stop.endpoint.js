@@ -31,7 +31,7 @@ const viewByDateForEachStopForEachLine = async (_, reply) => {
 /* * */
 
 export default {
-	viewByDateForEachStop,
 	viewByDateForEachLine,
+	viewByDateForEachStop,
 	viewByDateForEachStopForEachLine,
 };

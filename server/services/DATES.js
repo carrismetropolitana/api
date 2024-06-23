@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-module.exports = {
+export default {
 	//
 
 	convert24HourPlusOperationTimeStringToUnixTimestamp: (operationTimeString) => {

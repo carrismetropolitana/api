@@ -99,7 +99,7 @@ class PCGIAPI {
    * This function requests new authentication tokens to IDP.
    */
 
-	async request(service: string, options: PCGIAPIRequestOptions) {
+	async request(service: string, options?: PCGIAPIRequestOptions) {
 		//
 
 		//

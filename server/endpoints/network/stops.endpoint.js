@@ -1,8 +1,8 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB';
-import PCGIAPI from '@/services/PCGIAPI';
 import DATES from '@/services/DATES';
+import PCGIAPI from '@/services/PCGIAPI';
+import SERVERDB from '@/services/SERVERDB';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -55,18 +55,18 @@ const singleWithRealtime = async (request, reply) => {
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
 	const result = response.map((estimate) => {
 		return {
-			line_id: estimate.lineId,
-			pattern_id: estimate.patternId,
-			route_id: estimate.routeId,
-			trip_id: `${estimate.tripId}_${currentArchiveIds[estimate.agencyId]}`,
-			headsign: estimate.tripHeadsign,
-			stop_sequence: estimate.stopSequence,
-			scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
-			scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
 			estimated_arrival: estimate.stopArrivalEta || estimate.stopDepartureEta,
 			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta),
+			headsign: estimate.tripHeadsign,
+			line_id: estimate.lineId,
 			observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
 			observed_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedDepartureTime),
+			pattern_id: estimate.patternId,
+			route_id: estimate.routeId,
+			scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
+			scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
+			stop_sequence: estimate.stopSequence,
+			trip_id: `${estimate.tripId}_${currentArchiveIds[estimate.agencyId]}`,
 			vehicle_id: estimate.observedVehicleId,
 		};
 	});
@@ -90,21 +90,21 @@ const realtimeForPips = async (request, reply) => {
 				.header('Content-Type', 'application/json; charset=utf-8')
 				.send([
 					{
-						lineId: '0000',
-						patternId: '0000_0_0',
-						stopHeadsign: 'Olá :)',
-						journeyId: '0000_0_0|teste',
-						timetabledArrivalTime: '23:59:59',
-						timetabledDepartureTime: '23:59:59',
 						estimatedArrivalTime: '23:59:59',
 						estimatedDepartureTime: '23:59:59',
+						estimatedTimeString: '1 min',
+						journeyId: '0000_0_0|teste',
+						lineId: '0000',
 						observedArrivalTime: null,
 						observedDepartureTime: null,
-						estimatedTimeString: '1 min',
-						observedVehicleId: '0000',
-						stopId: '', // Deprecated
-						operatorId: '', // Deprecated
 						observedDriverId: '', // Deprecated
+						observedVehicleId: '0000',
+						operatorId: '', // Deprecated
+						patternId: '0000_0_0',
+						stopHeadsign: 'Olá :)',
+						stopId: '', // Deprecated
+						timetabledArrivalTime: '23:59:59',
+						timetabledDepartureTime: '23:59:59',
 					},
 				]);
 		}
@@ -114,21 +114,21 @@ const realtimeForPips = async (request, reply) => {
 				.header('Content-Type', 'application/json; charset=utf-8')
 				.send([
 					{
-						lineId: 'INFO',
-						patternId: '0000_0_0',
-						stopHeadsign: 'Sem estimativas. Consulte site para +info.',
-						journeyId: '0000_0_0|teste',
-						timetabledArrivalTime: '23:59:59',
-						timetabledDepartureTime: '23:59:59',
 						estimatedArrivalTime: '23:59:59',
 						estimatedDepartureTime: '23:59:59',
+						estimatedTimeString: '1 min',
+						journeyId: '0000_0_0|teste',
+						lineId: 'INFO',
 						observedArrivalTime: null,
 						observedDepartureTime: null,
-						estimatedTimeString: '1 min',
-						observedVehicleId: '0000',
-						stopId: '', // Deprecated
-						operatorId: '', // Deprecated
 						observedDriverId: '', // Deprecated
+						observedVehicleId: '0000',
+						operatorId: '', // Deprecated
+						patternId: '0000_0_0',
+						stopHeadsign: 'Sem estimativas. Consulte site para +info.',
+						stopId: '', // Deprecated
+						timetabledArrivalTime: '23:59:59',
+						timetabledDepartureTime: '23:59:59',
 					},
 				]);
 		}
@@ -157,22 +157,22 @@ const realtimeForPips = async (request, reply) => {
 			const estimatedTimeInMinutes = Math.floor(estimatedTimeInSeconds / 60);
 			//
 			return {
-				lineId: estimate.lineId,
-				patternId: estimate.patternId,
-				stopHeadsign: estimate.tripHeadsign,
-				journeyId: estimate.tripId,
-				timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
-				timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				estimatedArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
-				observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
-				observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
 				estimatedTimeString: `${estimatedTimeInMinutes} min`,
 				estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
-				observedVehicleId: estimate.observedVehicleId,
-				stopId: '', // Deprecated
-				operatorId: '', // Deprecated
+				journeyId: estimate.tripId,
+				lineId: estimate.lineId,
+				observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+				observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
 				observedDriverId: '', // Deprecated
+				observedVehicleId: estimate.observedVehicleId,
+				operatorId: '', // Deprecated
+				patternId: estimate.patternId,
+				stopHeadsign: estimate.tripHeadsign,
+				stopId: '', // Deprecated
+				timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+				timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 			};
 		})
 		.sort((a, b) => a.estimatedTimeUnixSeconds - b.estimatedTimeUnixSeconds);
@@ -183,38 +183,38 @@ const realtimeForPips = async (request, reply) => {
 			.header('Content-Type', 'application/json; charset=utf-8')
 			.send([
 				{
+					estimatedArrivalTime: '23:59:59',
+					estimatedDepartureTime: '23:59:59',
+					estimatedTimeString: '1 min',
+					journeyId: '0000_0_0|teste',
 					lineId: 'INFO',
+					observedArrivalTime: null,
+					observedDepartureTime: null,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: '0000',
+					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
 					stopHeadsign: 'Sem estimativas em tempo real.',
-					journeyId: '0000_0_0|teste',
+					stopId: '', // Deprecated
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
-					estimatedArrivalTime: '23:59:59',
-					estimatedDepartureTime: '23:59:59',
-					observedArrivalTime: null,
-					observedDepartureTime: null,
-					estimatedTimeString: '1 min',
-					observedVehicleId: '0000',
-					stopId: '', // Deprecated
-					operatorId: '', // Deprecated
-					observedDriverId: '', // Deprecated
 				},
 				{
-					lineId: 'INFO',
-					patternId: '0000_0_1',
-					stopHeadsign: 'Consulte o site para +info.',
-					journeyId: '0000_0_1|teste',
-					timetabledArrivalTime: '23:59:59',
-					timetabledDepartureTime: '23:59:59',
 					estimatedArrivalTime: '23:59:59',
 					estimatedDepartureTime: '23:59:59',
+					estimatedTimeString: '1 min',
+					journeyId: '0000_0_1|teste',
+					lineId: 'INFO',
 					observedArrivalTime: null,
 					observedDepartureTime: null,
-					estimatedTimeString: '1 min',
-					observedVehicleId: '0001',
-					stopId: '', // Deprecated
-					operatorId: '', // Deprecated
 					observedDriverId: '', // Deprecated
+					observedVehicleId: '0001',
+					operatorId: '', // Deprecated
+					patternId: '0000_0_1',
+					stopHeadsign: 'Consulte o site para +info.',
+					stopId: '', // Deprecated
+					timetabledArrivalTime: '23:59:59',
+					timetabledDepartureTime: '23:59:59',
 				},
 			]);
 	}
@@ -227,7 +227,7 @@ const realtimeForPips = async (request, reply) => {
 
 export default {
 	all,
+	realtimeForPips,
 	single,
 	singleWithRealtime,
-	realtimeForPips,
 };

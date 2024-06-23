@@ -1,7 +1,7 @@
 /* * */
 
-import protobufjs from 'protobufjs';
 import RTEVENTS from '@/services/RTEVENTS';
+import protobufjs from 'protobufjs';
 
 /* * */
 
