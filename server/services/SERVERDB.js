@@ -9,14 +9,15 @@ class SERVERDB {
 
 	constructor() {
 		this.client = redis.createClient({ socket: { host: process.env.SERVERDB_HOST } });
-		this.client.on('error', (err) => console.log('Redis Client Error', err));
+		this.client.on('error', err => console.log('Redis Client Error', err));
 	}
 
 	async connect() {
 		try {
 			await this.client.connect();
 			console.log(`⤷ Connected to SERVERDB.`);
-		} catch (err) {
+		}
+		catch (err) {
 			console.log(`⤷ ERROR: Failed to connect to SERVERDB.`, err);
 		}
 	}
@@ -25,7 +26,8 @@ class SERVERDB {
 		try {
 			await this.client.disconnect();
 			console.log(`⤷ Disconnected from SERVERDB.`);
-		} catch (err) {
+		}
+		catch (err) {
 			console.log(`⤷ ERROR: Failed to disconnect from SERVERDB.`, err);
 		}
 	}
@@ -33,4 +35,4 @@ class SERVERDB {
 	//
 }
 
-export default new SERVERDB;
+export default new SERVERDB();
