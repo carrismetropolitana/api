@@ -6,7 +6,7 @@ const shell = require('shelljs');
 
 /* * */
 
-module.exports = async () => {
+export default async () => {
   //
 
   // Delete directory if it exists

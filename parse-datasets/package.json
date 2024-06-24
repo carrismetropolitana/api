@@ -1,25 +1,27 @@
 {
   "name": "@carrismetropolitana/api-parse-datasets",
-  "version": "2024.04.18-0052",
+  "type": "module",
+  "version": "1.0.0",
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "tsc && resolve-tspaths && node build/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc && resolve-tspaths",
+    "watch": "tsc -w"
   },
   "dependencies": {
-    "@turf/turf": "6.5.0",
-    "adm-zip": "0.5.12",
-    "csv-parse": "5.5.5",
-    "csv-stringify": "6.4.6",
+	"@helperkits/timer": "20240623.52.16",
     "luxon": "3.4.4",
     "papaparse": "5.4.1",
-    "pg": "8.11.5",
-    "pg-copy-streams": "6.0.6",
-    "redis": "4.6.13",
+    "redis": "4.6.14",
     "shelljs": "0.8.5"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "7.0.1",
-    "eslint": "8.56.0"
+    "@carrismetropolitana/eslint": "20240622.50.2",
+    "@types/node": "20.14.8",
+    "resolve-tspaths": "0.8.19",
+    "typescript": "5.5.2"
   }
 }
