@@ -1,8 +1,10 @@
 /* * */
 
-import settings from '@/config/settings.js';
-
 import start from './start.js';
+
+/* * */
+
+const RUN_INTERVAL = 1200000; // 20 minutes
 
 /* * */
 
@@ -29,7 +31,7 @@ import start from './start.js';
 	runOnInterval();
 
 	// Set the interval
-	setInterval(runOnInterval, settings.RUN_INTERVAL);
+	setInterval(runOnInterval, RUN_INTERVAL);
 
 	//
 })();

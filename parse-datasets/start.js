@@ -1,8 +1,7 @@
 /* * */
 
-import cloneGitRepository from '@/modules/cloneGitRepository';
-import timeCalc from '@/modules/timeCalc';
 import SERVERDB from '@/services/SERVERDB';
+import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
@@ -19,10 +18,6 @@ import connectionsTrainStationsParser from '@/parsers/connections.train_stations
 
 /* * */
 
-import demandDateLineStopParser from '@/parsers/demand.date-line-stop.parser.js';
-
-/* * */
-
 export default async () => {
 	//
 
@@ -34,7 +29,7 @@ export default async () => {
 		console.log();
 
 		// Store start time for logging purposes
-		const startTime = process.hrtime();
+		const globalTimer = new TIMETRACKER();
 		console.log('Starting...');
 
 		//
@@ -42,10 +37,6 @@ export default async () => {
 		console.log();
 		console.log('STEP 0.1: Connect to databases');
 		await SERVERDB.connect();
-
-		console.log();
-		console.log('STEP 0.2: Clone Git repository');
-		await cloneGitRepository();
 
 		//
 
@@ -82,18 +73,12 @@ export default async () => {
 		//
 
 		console.log();
-		console.log('STEP 3.1: Parse datasets/demand/date-line-stop');
-		await demandDateLineStopParser();
-
-		//
-
-		console.log();
 		console.log('Disconnecting from databases...');
 		await SERVERDB.disconnect();
 
 		console.log();
 		console.log('- - - - - - - - - - - - - - - - - - - - -');
-		console.log(`Run took ${timeCalc.getElapsedTime(startTime)}.`);
+		console.log(`Run took ${globalTimer.get()}.`);
 		console.log('- - - - - - - - - - - - - - - - - - - - -');
 		console.log();
 

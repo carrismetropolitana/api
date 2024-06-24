@@ -15,8 +15,7 @@
 	"@helperkits/timer": "20240623.52.16",
     "luxon": "3.4.4",
     "papaparse": "5.4.1",
-    "redis": "4.6.14",
-    "shelljs": "0.8.5"
+    "redis": "4.6.14"
   },
   "devDependencies": {
     "@carrismetropolitana/eslint": "20240622.50.2",

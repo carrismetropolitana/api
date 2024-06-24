@@ -1,37 +1,40 @@
 /* * */
 
-import settings from '@/config/settings.js';
-import collator from '@/modules/sortCollator.js';
-import timeCalc from '@/modules/timeCalc.js';
 import SERVERDB from '@/services/SERVERDB.js';
-import fs from 'fs';
+import collator from '@/services/sortCollator.js';
+import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
+
+/* * */
+
+const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/connections/train_stations/train_stations.csv';
 
 /* * */
 
 export default async () => {
 	//
+
 	// 1.
 	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
+
+	const globalTimer = new TIMETRACKER();
 
 	// 2.
 	// Open file from cloned repository
-	console.log(`⤷ Opening data file...`);
-	const allItemsRaw = fs.readFileSync(`${settings.BASE_DIR}/connections/train_stations/train_stations.csv`, { encoding: 'utf-8' });
-	const allItemsCsv = Papa.parse(allItemsRaw, { header: true });
+
+	console.log(`⤷ Downloading data file...`);
+	const downloadedCsvFile = await fetch(DATASET_FILE_URL);
+	const downloadedCsvText = await downloadedCsvFile.text();
+	const allItemsCsv = Papa.parse(downloadedCsvText, { header: true });
 
 	// 3.
-	// Initate a temporary variable to hold updated items
+	// For each item, update its entry in the database
+
+	console.log(`⤷ Updating items...`);
+
 	const allItemsData = [];
 	const updatedItemKeys = new Set();
 
-	// 4.
-	// Log progress
-	console.log(`⤷ Updating items...`);
-
-	// 5.
-	// For each facility, update its entry in the database
 	for (const itemCsv of allItemsCsv.data) {
 		// Parse item
 		const parsedItemData = {
@@ -57,30 +60,35 @@ export default async () => {
 		//
 	}
 
-	// 6.
+	// 4.
 	// Log count of updated items
+
 	console.log(`⤷ Updated ${updatedItemKeys.size} items.`);
 
-	// 7.
+	// 5.
 	// Add the 'all' option
+
 	allItemsData.sort((a, b) => collator.compare(a.id, b.id));
 	await SERVERDB.client.set('datasets/connections/train_stations/all', JSON.stringify(allItemsData));
 	updatedItemKeys.add('datasets/connections/train_stations/all');
 
-	// 8.
+	// 6.
 	// Delete all items not present in the current update
+
 	const allSavedItemKeys = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'datasets/connections/train_stations/*', TYPE: 'string' })) {
 		allSavedItemKeys.push(key);
 	}
 	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));
-	if (staleItemKeys.length) await SERVERDB.client.del(staleItemKeys);
+	if (staleItemKeys.length) {
+		await SERVERDB.client.del(staleItemKeys);
+	}
 	console.log(`⤷ Deleted ${staleItemKeys.length} stale items.`);
 
-	// 9.
+	// 7.
 	// Log elapsed time in the current operation
-	const elapsedTime = timeCalc.getElapsedTime(startTime);
-	console.log(`⤷ Done updating items (${elapsedTime}).`);
+
+	console.log(`⤷ Done updating items (${globalTimer.get()}).`);
 
 	//
 };
