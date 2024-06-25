@@ -1,9 +1,9 @@
 /* * */
 
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
-import collator from '../modules/sortCollator';
-import { getElapsedTime } from '../modules/timeCalc';
+import collator from '@/modules/sortCollator.js';
+import { getElapsedTime } from '@/modules/timeCalc.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 
@@ -20,9 +20,8 @@ export default async () => {
 
 	// 3.
 	// Initate a temporary variable to hold updated Dates
-	const allDatesData = [
-	];
-	const updatedDateKeys = new Set;
+	const allDatesData = [];
+	const updatedDateKeys = new Set();
 
 	// 4.
 	// Log progress
@@ -34,10 +33,10 @@ export default async () => {
 		// Parse date
 		const parsedDate = {
 			date: date.date,
-			period: date.period,
 			day_type: date.day_type,
-			holiday: date.holiday,
 			description: date.description,
+			holiday: date.holiday,
+			period: date.period,
 		};
 		// Update or create new document
 		allDatesData.push(parsedDate);
@@ -57,12 +56,15 @@ export default async () => {
 
 	// 8.
 	// Delete all Dates not present in the current update
-	const allSavedDateKeys = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) { allSavedDateKeys.push(key); }
+	const allSavedDateKeys = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'dates:*', TYPE: 'string' })) {
+		allSavedDateKeys.push(key);
+	}
 
-	const staleDateKeys = allSavedDateKeys.filter((date) => !updatedDateKeys.has(date));
-	if (staleDateKeys.length) { await SERVERDB.client.del(staleDateKeys); }
+	const staleDateKeys = allSavedDateKeys.filter(date => !updatedDateKeys.has(date));
+	if (staleDateKeys.length) {
+		await SERVERDB.client.del(staleDateKeys);
+	}
 	console.log(`⤷ Deleted ${staleDateKeys.length} stale Dates.`);
 
 	// 9.

@@ -1,12 +1,13 @@
 /* * */
 
+import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@/services/NETWORKDB.types.js';
+import type { Line, PatternGroup, Route } from '@/services/SERVERDB.types.js';
+
+import sortCollator from '@/modules/sortCollator.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
+import TIMETRACKER from '@/services/TIMETRACKER.js';
 import crypto from 'node:crypto';
-import NETWORKDB from '../services/NETWORKDB';
-import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '../services/NETWORKDB.types';
-import SERVERDB from '../services/SERVERDB';
-import TIMETRACKER from '../services/TIMETRACKER';
-import type { Line, PatternGroup, Route } from '../services/SERVERDB.types';
-import sortCollator from '../modules/sortCollator';
 
 /* * */
 
@@ -56,24 +57,25 @@ export default async () => {
 	// For Stops
 	const allStopsParsedTxt = await SERVERDB.client.get('stops:all');
 	const allStopsParsedJson: MonStop[] = JSON.parse(allStopsParsedTxt);
-	const allStopsParsedMap = new Map(allStopsParsedJson.map((item) => [
+	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [
 		item.id, item,
 	]));
 
 	// For Routes
 	const allRoutesRaw = await NETWORKDB.client.query<GTFSRoute>('SELECT * FROM routes');
-	const allRoutesRawMap = new Map(allRoutesRaw.rows.map((item) => [
+	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [
 		item.route_id, item,
 	]));
 
 	// For Calendar Dates
 	const allCalendarDatesRaw = await NETWORKDB.client.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
-	const allCalendarDatesRawMap = new Map;
+	const allCalendarDatesRawMap = new Map();
 	allCalendarDatesRaw.rows.forEach((item) => {
-		if (allCalendarDatesRawMap.has(item.service_id)) { allCalendarDatesRawMap.get(item.service_id).push(item.date); } else {
-			allCalendarDatesRawMap.set(item.service_id, [
-				item.date,
-			]);
+		if (allCalendarDatesRawMap.has(item.service_id)) {
+			allCalendarDatesRawMap.get(item.service_id).push(item.date);
+		}
+		else {
+			allCalendarDatesRawMap.set(item.service_id, [item.date]);
 		}
 	});
 
@@ -83,15 +85,15 @@ export default async () => {
 	const allLinesParsed = {};
 	const allRoutesParsed = {};
 
-	const updatedLineKeys = new Set;
-	const updatedRouteKeys = new Set;
-	const updatedPatternKeys = new Set;
+	const updatedLineKeys = new Set();
+	const updatedRouteKeys = new Set();
+	const updatedPatternKeys = new Set();
 
 	// 4.
 	// Get all distinct Pattern IDs from trips table
 
 	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<{ pattern_id: string }>(`SELECT DISTINCT pattern_id FROM trips`);
-	const allDistinctPatternIdsData = allDistinctPatternIdsRaw.rows.map((item) => item.pattern_id);
+	const allDistinctPatternIdsData = allDistinctPatternIdsRaw.rows.map(item => item.pattern_id);
 
 	// 5.
 	// For each distinct pattern_id, parse trips into patterns and schedules.
@@ -154,10 +156,10 @@ export default async () => {
 			const stopTimesAsCompleteSchedule = [
 			];
 
-			const facilitiesList = new Set;
+			const facilitiesList = new Set();
 
-			const localitiesList = new Set;
-			const municipalityIdsList = new Set;
+			const localitiesList = new Set();
+			const municipalityIdsList = new Set();
 
 			for (const stopTimeRawData of stopTimesRaw.rows) {
 				//
@@ -181,11 +183,11 @@ export default async () => {
 				// This will be the path that is stored alongside this pattern group.
 
 				stopTimesAsCompletePath.push({
+					allow_drop_off: stopTimeRawData.drop_off_type !== '1',
+					allow_pickup: stopTimeRawData.pickup_type !== '1',
+					distance_delta: 0,
 					stop: stopParsedData,
 					stop_sequence: stopTimeRawData.stop_sequence,
-					allow_pickup: stopTimeRawData.pickup_type !== '1',
-					allow_drop_off: stopTimeRawData.drop_off_type !== '1',
-					distance_delta: 0,
 				});
 
 				// 5.3.2.4.
@@ -193,9 +195,9 @@ export default async () => {
 				// This will be used to merge trips that are equal but happen on differnt dates.
 
 				stopTimesAsSimplifiedSchedule.push({
+					arrival_time: stopTimeRawData.arrival_time,
 					stop_id: stopTimeRawData.stop_id,
 					stop_sequence: stopTimeRawData.stop_sequence,
-					arrival_time: stopTimeRawData.arrival_time,
 				});
 
 				// 5.3.2.5.
@@ -203,16 +205,16 @@ export default async () => {
 				// This will be the schedule that is stored alongside this trip group.
 
 				stopTimesAsCompleteSchedule.push({
-					stop_id: stopTimeRawData.stop_id,
-					stop_sequence: stopTimeRawData.stop_sequence,
 					arrival_time: stopTimeRawData.arrival_time,
 					arrival_time_24h: transformOperationTimeStringIntoDisplayTimeString(stopTimeRawData.arrival_time),
+					stop_id: stopTimeRawData.stop_id,
+					stop_sequence: stopTimeRawData.stop_sequence,
 				});
 
 				// 5.3.2.6.
 				// Add the facilities served by the current stop to the list
 
-				stopParsedData.facilities.forEach((item) => facilitiesList.add(item));
+				stopParsedData.facilities.forEach(item => facilitiesList.add(item));
 
 				// 5.3.2.7.
 				// Add the current stop locality and municipality to the list
@@ -236,16 +238,16 @@ export default async () => {
 			// and a different set of dates will be associated with it.
 
 			const currentPatternGroup = {
-				line_id: routeRawData.line_id,
-				route_id: routeRawData.route_id,
-				pattern_id: tripRawData.pattern_id,
-				short_name: routeRawData.route_short_name,
 				color: routeRawData.route_color,
-				text_color: routeRawData.route_text_color,
 				direction: tripRawData.direction_id,
 				headsign: tripRawData.trip_headsign,
+				line_id: routeRawData.line_id,
+				pattern_id: tripRawData.pattern_id,
+				route_id: routeRawData.route_id,
 				shape_id: tripRawData.shape_id,
+				short_name: routeRawData.route_short_name,
 				simplified_path: stopTimesAsSimplifiedPath,
+				text_color: routeRawData.route_text_color,
 			};
 
 			// 5.3.5.
@@ -259,25 +261,25 @@ export default async () => {
 
 			if (!parsedPatternGroups[currentPatternGroupHash]) {
 				parsedPatternGroups[currentPatternGroupHash] = {
-					line_id: routeRawData.line_id,
-					route_id: routeRawData.route_id,
-					pattern_id: tripRawData.pattern_id,
-					pattern_group_id: currentPatternGroupHash,
-					short_name: routeRawData.route_short_name,
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
-					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
 					direction: tripRawData.direction_id,
-					headsign: tripRawData.trip_headsign,
-					shape_id: tripRawData.shape_id,
-					path: stopTimesAsCompletePath,
-					trip_groups: {}, // A map, not an array
-					valid_on: [
-					],
 					facilities: [
 					],
+					headsign: tripRawData.trip_headsign,
+					line_id: routeRawData.line_id,
 					localities: [
 					],
 					municipality_ids: [
+					],
+					path: stopTimesAsCompletePath,
+					pattern_group_id: currentPatternGroupHash,
+					pattern_id: tripRawData.pattern_id,
+					route_id: routeRawData.route_id,
+					shape_id: tripRawData.shape_id,
+					short_name: routeRawData.route_short_name,
+					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
+					trip_groups: {}, // A map, not an array
+					valid_on: [
 					],
 				};
 			}
@@ -306,10 +308,10 @@ export default async () => {
 			// on the pattern group it belongs to.
 
 			const currentTripGroup = {
-				route_id: tripRawData.route_id,
-				pattern_id: tripRawData.pattern_id,
 				direction_id: tripRawData.direction_id,
 				pattern_group_hash: currentPatternGroupHash,
+				pattern_id: tripRawData.pattern_id,
+				route_id: tripRawData.route_id,
 				simplified_schedule: stopTimesAsSimplifiedSchedule,
 			};
 
@@ -324,9 +326,9 @@ export default async () => {
 
 			if (!parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash]) {
 				parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash] = {
-					schedule: stopTimesAsCompleteSchedule,
 					dates: [
 					],
+					schedule: stopTimesAsCompleteSchedule,
 					trip_ids: [
 					],
 				};
@@ -348,20 +350,20 @@ export default async () => {
 
 			if (!allRoutesParsed[tripRawData.route_id]) {
 				allRoutesParsed[tripRawData.route_id] = {
-					line_id: routeRawData.line_id,
-					route_id: routeRawData.route_id,
-					short_name: routeRawData.route_short_name,
-					long_name: routeRawData.route_long_name,
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
-					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
-					pattern_ids: [
-					],
 					facilities: [
 					],
+					line_id: routeRawData.line_id,
 					localities: [
 					],
+					long_name: routeRawData.route_long_name,
 					municipality_ids: [
 					],
+					pattern_ids: [
+					],
+					route_id: routeRawData.route_id,
+					short_name: routeRawData.route_short_name,
+					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
 				};
 			}
 
@@ -387,21 +389,21 @@ export default async () => {
 
 			if (!allLinesParsed[routeRawData.line_id]) {
 				allLinesParsed[routeRawData.line_id] = {
-					line_id: routeRawData.line_id,
-					short_name: routeRawData.line_short_name,
-					long_name: routeRawData.line_long_name,
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
-					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
-					route_ids: [
+					facilities: [
+					],
+					line_id: routeRawData.line_id,
+					localities: [
+					],
+					long_name: routeRawData.line_long_name,
+					municipality_ids: [
 					],
 					pattern_ids: [
 					],
-					facilities: [
+					route_ids: [
 					],
-					localities: [
-					],
-					municipality_ids: [
-					],
+					short_name: routeRawData.line_short_name,
+					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
 				};
 			}
 
@@ -474,13 +476,12 @@ export default async () => {
 	// 7.
 	// Delete stale patterns
 
-	const allPatternKeysInTheDatabase = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'network/v2/patterns:*' })) {
+	const allPatternKeysInTheDatabase = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'network/v2/patterns:*', TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 
-	const stalePatternKeys = allPatternKeysInTheDatabase.filter((key) => !updatedPatternKeys.has(key));
+	const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));
 	if (stalePatternKeys.length) {
 		await SERVERDB.client.del(stalePatternKeys);
 	}
@@ -489,13 +490,12 @@ export default async () => {
 	// 7.
 	// Delete stale routes
 
-	const allRouteKeysInTheDatabase = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'network/v2/routes:*' })) {
+	const allRouteKeysInTheDatabase = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'network/v2/routes:*', TYPE: 'string' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
 
-	const staleRouteKeys = allRouteKeysInTheDatabase.filter((key) => !updatedRouteKeys.has(key));
+	const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
 	if (staleRouteKeys.length) {
 		await SERVERDB.client.del(staleRouteKeys);
 	}
@@ -504,13 +504,12 @@ export default async () => {
 	// 7.
 	// Delete stale routes
 
-	const allLineKeysInTheDatabase = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'network/v2/lines:*' })) {
+	const allLineKeysInTheDatabase = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'network/v2/lines:*', TYPE: 'string' })) {
 		allLineKeysInTheDatabase.push(key);
 	}
 
-	const staleLineKeys = allLineKeysInTheDatabase.filter((key) => !updatedLineKeys.has(key));
+	const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
 	if (staleLineKeys.length) {
 		await SERVERDB.client.del(staleLineKeys);
 	}

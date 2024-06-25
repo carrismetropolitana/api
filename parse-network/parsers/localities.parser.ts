@@ -1,10 +1,10 @@
 /* * */
 
+import collator from '@/modules/sortCollator.js';
+import { getElapsedTime } from '@/modules/timeCalc.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
 import { createHash } from 'node:crypto';
-import SERVERDB from '../services/SERVERDB';
-import NETWORKDB from '../services/NETWORKDB';
-import collator from '../modules/sortCollator';
-import { getElapsedTime } from '../modules/timeCalc';
 
 /* * */
 
@@ -31,15 +31,15 @@ export default async () => {
 
 	// 4.
 	// Initate a temporary variable to hold updated Localities
-	const allLocalitiesData = [
-	];
-	const updatedLocalityKeys = new Set;
+	const allLocalitiesData = [];
+	const updatedLocalityKeys = new Set();
 
 	// 5.
 	// For each locality, update its entry in the database
 	for (const localityData of allLocalities.rows) {
 		// Skip if the locality is the same as the municipality
-		if (!localityData.locality) { continue; } else if (localityData.locality === localityData.municipality_name) { continue; }
+		if (!localityData.locality) continue;
+		else if (localityData.locality === localityData.municipality_name) continue;
 		// Setup the display string for this locality
 		const displayString = `${localityData.locality}, ${localityData.municipality_name}`;
 		// Setup a unique ID for this locality
@@ -47,8 +47,8 @@ export default async () => {
 		hash.update(displayString);
 		// Initiate a variable to hold the parsed locality
 		const parsedLocality = {
-			id: hash.digest('hex'),
 			display: displayString,
+			id: hash.digest('hex'),
 			locality: localityData.locality,
 			municipality_id: localityData.municipality_id,
 			municipality_name: localityData.municipality_name,
@@ -72,12 +72,15 @@ export default async () => {
 
 	// 8.
 	// Delete all Localities not present in the current update
-	const allSavedStopKeys = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'localities:*' })) { allSavedStopKeys.push(key); }
+	const allSavedStopKeys = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'localities:*', TYPE: 'string' })) {
+		allSavedStopKeys.push(key);
+	}
 
-	const staleLocalityKeys = allSavedStopKeys.filter((id) => !updatedLocalityKeys.has(id));
-	if (staleLocalityKeys.length) { await SERVERDB.client.del(staleLocalityKeys); }
+	const staleLocalityKeys = allSavedStopKeys.filter(id => !updatedLocalityKeys.has(id));
+	if (staleLocalityKeys.length) {
+		await SERVERDB.client.del(staleLocalityKeys);
+	}
 	console.log(`⤷ Deleted ${staleLocalityKeys.length} stale Localities.`);
 
 	// 9.

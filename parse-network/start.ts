@@ -1,28 +1,34 @@
 /* * */
 
-import files from '@/config/files';
-import { ENABLED_MODULES } from '@/config/settings';
+import files from '@/config/files.js';
+import { ENABLED_MODULES } from '@/config/settings.js';
 
+/* * */
+
+import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
-import NETWORKDB from '@/services/NETWORKDB';
+import TIMETRACKER from '@helperkits/timer';
 
-import { getElapsedTime } from '@/modules/timeCalc';
-import setupBaseDirectory from '@/modules/setupBaseDirectory';
-import extractGtfs from '@/modules/extractGtfs';
-import fetchLatestGtfs from '@/modules/fetchLatestGtfs';
-import setupPrepareAndImportFile from '@/modules/setupPrepareAndImportFile';
-import getGtfsHash from '@/modules/getGtfsHash';
+/* * */
 
-import municipalitiesParser from '@/parsers/municipalities.parser';
-import localitiesParser from '@/parsers/localities.parser';
-import periodsParser from '@/parsers/periods.parser';
-import datesParser from '@/parsers/dates.parsers';
-import stopsParser from '@/parsers/stops.parser';
-import shapesParser from '@/parsers/shapes.parser';
-import archivesParser from '@/parsers/archives.parser';
-import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
-import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser';
-import timetablesParser from '@/parsers/timetables.parser';
+import extractGtfs from '@/modules/extractGtfs.js';
+import fetchLatestGtfs from '@/modules/fetchLatestGtfs.js';
+import getGtfsHash from '@/modules/getGtfsHash.js';
+import setupBaseDirectory from '@/modules/setupBaseDirectory.js';
+import setupPrepareAndImportFile from '@/modules/setupPrepareAndImportFile.js';
+
+/* * */
+
+import archivesParser from '@/parsers/archives.parser.js';
+import datesParser from '@/parsers/dates.parser.js';
+import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser.js';
+import localitiesParser from '@/parsers/localities.parser.js';
+import municipalitiesParser from '@/parsers/municipalities.parser.js';
+import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser.js';
+import periodsParser from '@/parsers/periods.parser.js';
+import shapesParser from '@/parsers/shapes.parser.js';
+import stopsParser from '@/parsers/stops.parser.js';
+import timetablesParser from '@/parsers/timetables.parser.js';
 
 /* * */
 
@@ -30,20 +36,20 @@ let LAST_GTFS_HASH = null;
 
 /* * */
 
-export default async (): Promise<boolean> => {
-	//
-
+export default async () => {
 	try {
+		//
+
 		console.log();
 		console.log('------------------------');
-		console.log((new Date).toISOString());
+		console.log((new Date()).toISOString());
 		console.log('------------------------');
 		console.log();
 
 		//
 
-		const startTime = process.hrtime();
 		console.log('Starting...');
+		const globalTimer = new TIMETRACKER();
 
 		//
 
@@ -54,16 +60,21 @@ export default async (): Promise<boolean> => {
 
 		console.log();
 		console.log('STEP 0.1: Fetch latest GTFS');
+
 		await setupBaseDirectory();
 		await fetchLatestGtfs();
 
+		//
+
 		console.log();
 		console.log('STEP 0.2: Compare with previous GTFS');
+
 		const currentGtfsHash = await getGtfsHash();
 
 		if (LAST_GTFS_HASH === currentGtfsHash) {
-			console.log('⤷ No changes in GTFS file, skipping this run.');
-		} else {
+			console.log('⤷ No changes found in GTFS file, skipping this run.');
+		}
+		else {
 			//
 
 			LAST_GTFS_HASH = currentGtfsHash;
@@ -148,16 +159,15 @@ export default async (): Promise<boolean> => {
 
 		console.log();
 		console.log('------------------------');
-		console.log(`Run took ${getElapsedTime(startTime)}.`);
+		console.log(`Run took ${globalTimer.get()}.`);
 		console.log('------------------------');
 		console.log();
 		return true;
 
 		//
-	} catch (err) {
+	}
+	catch (err) {
 		console.log('An error occurred. Halting execution.', err);
 		return false;
 	}
-
-	//
 };

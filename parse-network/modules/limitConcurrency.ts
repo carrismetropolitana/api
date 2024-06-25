@@ -2,8 +2,7 @@ export default function limitConcurrency(tasks: (() => Promise<unknown>)[], limi
 	let active = 0;
 	let index = 0;
 	const results = Array.from({ length: tasks.length });
-	const executing = [
-	];
+	const executing = [];
 
 	return new Promise((resolve) => {
 		const enqueue = () => {

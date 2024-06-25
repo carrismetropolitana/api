@@ -1,20 +1,20 @@
 {
-  "compilerOptions": {
-    "target": "ES6",
-    "baseUrl": ".",
-    "rootDir": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "paths": {
-      "@/config/*": ["config/*"],
-      "@/modules/*": ["modules/*"],
-      "@/services/*": ["services/*"],
-      "@/parsers/*": ["parsers/*"]
-    },
-    "allowJs": true,
-    "outDir": "build",
-    "sourceMap": true,
-    "esModuleInterop": true
-  },
-  "exclude": ["**/node_modules", "**/.*/", "**/build/"]
+	"compilerOptions": {
+		"target": "ESNext",
+		"baseUrl": "./",
+		"rootDir": "./",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"paths": {
+			"@/config/*": ["config/*"],
+			"@/modules/*": ["modules/*"],
+			"@/services/*": ["services/*"],
+			"@/parsers/*": ["parsers/*"]
+		},
+		"allowJs": true,
+		"outDir": "build",
+		"sourceMap": true,
+		"esModuleInterop": true
+	},
+	"exclude": ["**/node_modules", "**/.*/", "**/build/"]
 }
