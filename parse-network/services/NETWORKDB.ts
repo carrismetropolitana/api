@@ -1,7 +1,6 @@
 /* * */
 
-import pg from 'pg';
-const { Client } = pg;
+import { Client } from 'pg';
 
 const { NETWORKDB_HOST, NETWORKDB_PASSWORD, NETWORKDB_USER } = process.env;
 
@@ -10,7 +9,7 @@ const { NETWORKDB_HOST, NETWORKDB_PASSWORD, NETWORKDB_USER } = process.env;
 class NETWORKDB {
 	//
 
-	client = null;
+	client: Client;
 
 	async connect() {
 		this.client = new Client({

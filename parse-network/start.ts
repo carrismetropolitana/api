@@ -2,27 +2,24 @@
 
 import files from '@/config/files';
 import { ENABLED_MODULES } from '@/config/settings';
-
-import SERVERDB from '@/services/SERVERDB.js';
-import NETWORKDB from '@/services/NETWORKDB';
-
-import { getElapsedTime } from '@/modules/timeCalc';
-import setupBaseDirectory from '@/modules/setupBaseDirectory';
 import extractGtfs from '@/modules/extractGtfs';
 import fetchLatestGtfs from '@/modules/fetchLatestGtfs';
-import setupPrepareAndImportFile from '@/modules/setupPrepareAndImportFile';
 import getGtfsHash from '@/modules/getGtfsHash';
-
-import municipalitiesParser from '@/parsers/municipalities.parser';
-import localitiesParser from '@/parsers/localities.parser';
-import periodsParser from '@/parsers/periods.parser';
-import datesParser from '@/parsers/dates.parsers';
-import stopsParser from '@/parsers/stops.parser';
-import shapesParser from '@/parsers/shapes.parser';
+import setupBaseDirectory from '@/modules/setupBaseDirectory';
+import setupPrepareAndImportFile from '@/modules/setupPrepareAndImportFile';
+import { getElapsedTime } from '@/modules/timeCalc';
 import archivesParser from '@/parsers/archives.parser';
+import datesParser from '@/parsers/dates.parsers';
 import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser';
+import localitiesParser from '@/parsers/localities.parser';
+import municipalitiesParser from '@/parsers/municipalities.parser';
 import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser';
-import timetablesParser from '@/parsers/timetables.parser';
+import periodsParser from '@/parsers/periods.parser';
+import shapesParser from '@/parsers/shapes.parser';
+import stopsParser from '@/parsers/stops.parser';
+import NETWORKDB from '@/services/NETWORKDB';
+import SERVERDB from '@/services/SERVERDB.js';
+// import timetablesParser from '@/parsers/timetables.parser';
 
 /* * */
 
@@ -36,7 +33,7 @@ export default async (): Promise<boolean> => {
 	try {
 		console.log();
 		console.log('------------------------');
-		console.log((new Date).toISOString());
+		console.log((new Date()).toISOString());
 		console.log('------------------------');
 		console.log();
 
@@ -63,7 +60,8 @@ export default async (): Promise<boolean> => {
 
 		if (LAST_GTFS_HASH === currentGtfsHash) {
 			console.log('⤷ No changes in GTFS file, skipping this run.');
-		} else {
+		}
+		else {
 			//
 
 			LAST_GTFS_HASH = currentGtfsHash;
@@ -134,11 +132,11 @@ export default async (): Promise<boolean> => {
 				await newLinesRoutesPatternsParser();
 			}
 
-			if (ENABLED_MODULES.includes('timetables_parser')) {
-				console.log();
-				console.log('STEP 1.8: Parse Timetables');
-				await timetablesParser();
-			}
+			// if (ENABLED_MODULES.includes('timetables_parser')) {
+			// 	console.log();
+			// 	console.log('STEP 1.8: Parse Timetables');
+			// 	await timetablesParser();
+			// }
 
 			//
 		}
@@ -154,7 +152,8 @@ export default async (): Promise<boolean> => {
 		return true;
 
 		//
-	} catch (err) {
+	}
+	catch (err) {
 		console.log('An error occurred. Halting execution.', err);
 		return false;
 	}
