@@ -1,22 +1,22 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB.js';
+import start from './start.js';
 
 /* * */
 
-import syncEncmStatus from '@/tasks/syncEncmStatus.js';
+const RUN_INTERVAL = 1200000; // 20 minutes
 
 /* * */
 
 (async function init() {
 	//
 
-	await SERVERDB.connect();
+	const runOnInterval = async () => {
+		await start();
+		setTimeout(runOnInterval, RUN_INTERVAL);
+	};
 
-	//
-	// Setup tasks
-
-	await syncEncmStatus();
+	runOnInterval();
 
 	//
 })();
