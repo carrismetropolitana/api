@@ -166,8 +166,19 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync:
-    image: ghcr.io/carrismetropolitana/api-sync:beta
+  switch:
+    image: ghcr.io/carrismetropolitana/api-switch:beta
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-encm:
+    image: ghcr.io/carrismetropolitana/api-sync-encm:beta
     restart: unless-stopped
     logging:
       options:
@@ -177,14 +188,3 @@ services:
       - ./.env
     environment:
       - SERVERDB_HOST=serverdb
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  switch:
-    image: ghcr.io/carrismetropolitana/api-switch:beta
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
