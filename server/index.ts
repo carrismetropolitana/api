@@ -1,39 +1,38 @@
 /* * */
 
 import 'dotenv/config';
+
+/* * */
+
 import SERVERDB from '@/services/SERVERDB.js';
 import fastify from 'fastify';
 
 /* * */
 
-import timeEndpoint from '@/endpoints/debug/time.endpoint.js';
-
-import networkFeedEndpoint from '@/endpoints/network/feed.endpoint.js';
-import networkAlertsEndpoint from '@/endpoints/network/alerts.endpoint.js';
-import networkMunicipalitiesEndpoint from '@/endpoints/network/municipalities.endpoint.js';
-import networkLocalitiesEndpoint from '@/endpoints/network/localities.endpoint.js';
-import networkPeriodsEndpoint from '@/endpoints/network/periods.endpoint.js';
-import networkDatesEndpoint from '@/endpoints/network/dates.endpoint.js';
-import networkArchivesEndpoint from '@/endpoints/network/archives.endpoint.js';
-import networkTimetablesEndpoint from '@/endpoints/network/timetables.endpoint.js';
-import networkLinesEndpoint from '@/endpoints/network/lines.endpoint.js';
-import networkRoutesEndpoint from '@/endpoints/network/routes.endpoint.js';
-import networkPatternsEndpoint from '@/endpoints/network/patterns.endpoint.js';
-import networkShapesEndpoint from '@/endpoints/network/shapes.endpoint.js';
-import networkStopsEndpoint from '@/endpoints/network/stops.endpoint.js';
-import networkVehiclesEndpoint from '@/endpoints/network/vehicles.endpoint.js';
-
-import datasetsFacilitiesEndpoint from '@/endpoints/datasets/facilities.endpoint.js';
-import datasetsFacilitiesSchoolsEndpoint from '@/endpoints/datasets/facilities.schools.endpoint.js';
-import datasetsFacilitiesEncmEndpoint from '@/endpoints/datasets/facilities.encm.endpoint.js';
-import datasetsFacilitiesPipEndpoint from '@/endpoints/datasets/facilities.pip.endpoint.js';
-
 import datasetsConnectionsBoatStationsEndpoint from '@/endpoints/datasets/connections.boat_stations.endpoint.js';
 import datasetsConnectionsLightRailStationsEndpoint from '@/endpoints/datasets/connections.light_rail_stations.endpoint.js';
 import datasetsConnectionsSubwayStationsEndpoint from '@/endpoints/datasets/connections.subway_stations.endpoint.js';
 import datasetsConnectionsTrainStationsEndpoint from '@/endpoints/datasets/connections.train_stations.endpoint.js';
-
 import datasetsDemandDateLineStopEndpoint from '@/endpoints/datasets/demand.date-line-stop.endpoint.js';
+import datasetsFacilitiesEncmEndpoint from '@/endpoints/datasets/facilities.encm.endpoint.js';
+import datasetsFacilitiesEndpoint from '@/endpoints/datasets/facilities.endpoint.js';
+import datasetsFacilitiesPipEndpoint from '@/endpoints/datasets/facilities.pip.endpoint.js';
+import datasetsFacilitiesSchoolsEndpoint from '@/endpoints/datasets/facilities.schools.endpoint.js';
+import timeEndpoint from '@/endpoints/debug/time.endpoint.js';
+import networkAlertsEndpoint from '@/endpoints/network/alerts.endpoint.js';
+import networkArchivesEndpoint from '@/endpoints/network/archives.endpoint.js';
+import networkDatesEndpoint from '@/endpoints/network/dates.endpoint.js';
+import networkFeedEndpoint from '@/endpoints/network/feed.endpoint.js';
+import networkLinesEndpoint from '@/endpoints/network/lines.endpoint.js';
+import networkLocalitiesEndpoint from '@/endpoints/network/localities.endpoint.js';
+import networkMunicipalitiesEndpoint from '@/endpoints/network/municipalities.endpoint.js';
+import networkPatternsEndpoint from '@/endpoints/network/patterns.endpoint.js';
+import networkPeriodsEndpoint from '@/endpoints/network/periods.endpoint.js';
+import networkRoutesEndpoint from '@/endpoints/network/routes.endpoint.js';
+import networkShapesEndpoint from '@/endpoints/network/shapes.endpoint.js';
+import networkStopsEndpoint from '@/endpoints/network/stops.endpoint.js';
+import networkTimetablesEndpoint from '@/endpoints/network/timetables.endpoint.js';
+import networkVehiclesEndpoint from '@/endpoints/network/vehicles.endpoint.js';
 
 /* * */
 
@@ -140,7 +139,7 @@ server.get('/datasets/demand/date-line-stop/viewByDateForEachStopForEachLine', d
 
 // START FASTIFY SERVER
 
-server.listen({ port: 5050, host: '0.0.0.0' }, async (err, address) => {
+server.listen({ host: '0.0.0.0', port: 5050 }, async (err, address) => {
 	if (err) throw err;
 	console.log(`Server listening on ${address}`);
 	await SERVERDB.connect();

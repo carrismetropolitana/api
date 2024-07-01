@@ -111,8 +111,6 @@ services:
         max-file: '1'
     env_file:
       - ./.env
-    environment:
-      - SERVERDB_HOST=serverdb
     secrets:
       - pcgidbkey
 
@@ -128,8 +126,6 @@ services:
         max-file: '1'
     env_file:
       - ./.env
-    environment:
-      - SERVERDB_HOST=serverdb
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -158,7 +154,6 @@ services:
     env_file:
       - ./.env
     environment:
-      - SERVERDB_HOST=serverdb
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
       - NETWORKDB_PASSWORD=networkdbpassword
@@ -186,5 +181,3 @@ services:
         max-file: '1'
     env_file:
       - ./.env
-    environment:
-      - SERVERDB_HOST=serverdb

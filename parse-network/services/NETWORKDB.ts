@@ -1,23 +1,24 @@
 /* * */
 
-import { Client } from 'pg';
+import pg from 'pg';
+const { Client } = pg;
 
-const { NETWORKDB_HOST, NETWORKDB_USER, NETWORKDB_PASSWORD } = process.env;
+const { NETWORKDB_HOST, NETWORKDB_PASSWORD, NETWORKDB_USER } = process.env;
 
 /* * */
 
 class NETWORKDB {
 	//
 
-	client: Client;
+	client = null;
 
 	async connect() {
 		this.client = new Client({
-			host: NETWORKDB_HOST,
-			user: NETWORKDB_USER,
-			database: NETWORKDB_USER,
-			password: NETWORKDB_PASSWORD,
 			connectionTimeoutMillis: 10000,
+			database: NETWORKDB_USER,
+			host: NETWORKDB_HOST,
+			password: NETWORKDB_PASSWORD,
+			user: NETWORKDB_USER,
 		});
 		await this.client.connect();
 		console.log(`⤷ Connected to NETWORKDB.`);
@@ -34,7 +35,7 @@ class NETWORKDB {
 
 /* * */
 
-const networkdb = new NETWORKDB;
+const networkdb = new NETWORKDB();
 
 /* * */
 
