@@ -1,11 +1,10 @@
 /* * */
 
-import type { Timetable } from '@/parsers/timetableExample.js';
-import type { GTFSPeriod } from '@/services/NETWORKDB.types.js';
-
-import { formatTime, getElapsedTime } from '@/modules/timeCalc.js';
-import NETWORKDB from '@/services/NETWORKDB.js';
-import SERVERDB from '@/services/SERVERDB.js';
+import type { Timetable } from './timetableExample';
+import SERVERDB from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import { formatTime, getElapsedTime } from '../modules/timeCalc';
+import type { GTFSPeriod } from '../services/NETWORKDB.types';
 
 /* * */
 
@@ -42,28 +41,28 @@ export default async () => {
 
 	// 3.
 	// Get all pairs of line_id and stop_id that exist in trips
-	const lineStops = (await NETWORKDB.client.query<{ line_id: string, stop_id: string }>(`
+	const lineStops = (await NETWORKDB.client.query<{ stop_id: string; line_id: string }>(`
 	SELECT DISTINCT stops.stop_id, routes.line_id
 	FROM stops
 	JOIN stop_times_without_last_STOP AS stop_times ON stops.stop_id = stop_times.stop_id
 	JOIN trips ON stop_times.trip_id = trips.trip_id
 	JOIN routes ON trips.route_id = routes.route_id
 	`)).rows;
-	const lineStopPairs = lineStops.map(row => [row.line_id, row.stop_id]);
+	const lineStopPairs = lineStops.map((row) => [row.line_id, row.stop_id]);
 
 	// 4. Setup day types and period ids and names
-	const dayTypes = new Map<string, 'saturdays' | 'sundays_holidays' | 'weekdays'>([
+	const dayTypes = new Map<string, 'weekdays' | 'saturdays' | 'sundays_holidays'>([
 		['1', 'weekdays'], ['2', 'saturdays'], ['3', 'sundays_holidays'],
 	]);
 	const periods = new Map((await NETWORKDB.client.query<GTFSPeriod>(`SELECT * FROM periods`)).rows
-		.map(period => [
+		.map((period) => [
 			period.period_id, period.period_name,
 		]));
 
 	/**
 	 * Add all timetables from this line stop pair to bulkData
 	 */
-	async function processLineStopPair(LINE_ID: string, STOP_ID: string, index: number | string) {
+	async function processLineStopPair(LINE_ID: string, STOP_ID: string, index: string | number) {
 		console.time(`${index}/${lineStopPairs.length} -> Line ${LINE_ID} stop ${STOP_ID}`);
 
 		// 1. Get all trips on this line that pass through this stop
@@ -97,15 +96,15 @@ export default async () => {
 		`;
 		const queryStartTime = process.hrtime.bigint();
 		const timesByPeriodByDayTypeResult1 = await NETWORKDB.client.query<{
-			arrival_time: string
-			calendar_desc: null | string
-			day_type: string
-			direction_id: number
-			pattern_id: string
-			period_id: string
-			route_id: string
-			route_long_name: string
-			trip_id: string
+			period_id: string;
+			day_type: string;
+			arrival_time: string;
+			calendar_desc: null | string;
+			route_id: string;
+			trip_id: string;
+			direction_id: number;
+			route_long_name: string;
+			pattern_id: string;
 		}>(timesByPeriodByDayTypeQuery, [STOP_ID, LINE_ID]);
 		if (!timesByPeriodByDayTypeResult1.rows.length) {
 			console.log(`⤷ Stop ${STOP_ID} has no times for line ${LINE_ID}.`);
@@ -116,7 +115,7 @@ export default async () => {
 
 		// 2. Split the results by direction
 		// 2.1 Print if there is more than 1 direction
-		const directions = new Set<number>(timesByPeriodByDayTypeResult1.rows.map(row => row.direction_id));
+		const directions = new Set<number>(timesByPeriodByDayTypeResult1.rows.map((row) => row.direction_id));
 		if (directions.size > 1) {
 			console.log(`⤷ Stop ${STOP_ID}/${LINE_ID} has more than one direction.`, Array.from(directions));
 		}
@@ -134,14 +133,13 @@ export default async () => {
 			// - Base variant, aka ends in 0
 			// - Variant with the most trips
 			// - Variant with the first route_id, alphabetically
-			const variants = new Map<string, string>(timesByPeriodByDayTypeResult.map(row => [
+			const variants = new Map<string, string>(timesByPeriodByDayTypeResult.map((row) => [
 				row.route_id, row.route_long_name,
 			]));
 			let variantForDisplay = '';
 			if (variants.size === 1) {
 				variantForDisplay = variants.keys().next().value;
-			}
-			else {
+			} else {
 				for (const [variant, _] of variants) {
 					if (variant.endsWith('0')) {
 						variantForDisplay = variant;
@@ -151,7 +149,7 @@ export default async () => {
 			}
 			if (variantForDisplay === '') {
 				// count how many times each variant appears
-				const variantCounts = new Map<string, number>();
+				const variantCounts = new Map<string, number>;
 				for (const row of timesByPeriodByDayTypeResult) {
 					const count = variantCounts.get(row.route_id) || 0;
 					variantCounts.set(row.route_id, count + 1);
@@ -162,8 +160,8 @@ export default async () => {
 			}
 			// Select which trip to use for getting stops, getting a trip that includes the current stop
 
-			// 3.1 Get the pattern_id for the variant we will display
-			const patternForDisplay = timesByPeriodByDayTypeResult.find(row => row.route_id === variantForDisplay).pattern_id;
+			//3.1 Get the pattern_id for the variant we will display
+			const patternForDisplay = timesByPeriodByDayTypeResult.find((row) => row.route_id === variantForDisplay).pattern_id;
 			// Schizo sanity check
 			if (!patternForDisplay) {
 				console.log(`⤷ No patterns in ${LINE_ID} matching route_id ${variantForDisplay}.`);
@@ -171,11 +169,11 @@ export default async () => {
 			}
 
 			// Get other patterns for this stop line direction
-			const secondaryPatterns = Array.from(new Set(timesByPeriodByDayTypeResult.filter(row => row.pattern_id !== patternForDisplay).map(row => row.pattern_id))).sort();
+			const secondaryPatterns = Array.from(new Set(timesByPeriodByDayTypeResult.filter((row) => row.pattern_id !== patternForDisplay).map((row) => row.pattern_id))).sort();
 
 			// 4. Format exceptions nicely for the timetable
 			// 4.1 Get all deduplicated exceptions from GTFS
-			const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.filter(row => row.calendar_desc != null).map(row => row.calendar_desc)).values());
+			const uniqueExceptionsArray = Array.from(new Set(timesByPeriodByDayTypeResult.filter((row) => row.calendar_desc != null).map((row) => row.calendar_desc)).values());
 
 			// 4.2 Place them in a map
 			const exceptions = new Map(uniqueExceptionsArray.map((calendar_desc, index) => {
@@ -189,10 +187,10 @@ export default async () => {
 			}));
 
 			// 4.3 Create exceptions for variants
-			const variantExceptions = new Map<string, { id: string, label: string, text: string }>();
+			const variantExceptions = new Map<string, { label: string; text: string; id: string }>;
 			let variantExceptionId = exceptions.size;
 			for (const variant of variants) {
-				if (variant[0] === variantForDisplay) continue;
+				if (variant[0] === variantForDisplay) { continue; }
 				variantExceptions.set(variant[0], {
 					id: String.fromCharCode(97 + variantExceptionId),
 					label: `${String.fromCharCode(97 + variantExceptionId)})`,
@@ -216,42 +214,36 @@ export default async () => {
 			}
 			 */
 			const timesByPeriodByDayType: Record<string, {
-				saturdays: Record<string, string[]>
-				sundays_holidays: Record<string, string[]>
-				weekdays: Record<string, string[]>
-			}> = {};
+          weekdays: Record<string, string[]>;
+          saturdays: Record<string, string[]>;
+          sundays_holidays: Record<string, string[]>;
+        }> = {};
 
 			// Init map with all periods
 			for (const period_id of periods.keys()) {
 				timesByPeriodByDayType[period_id] = {
+					weekdays: {},
 					saturdays: {},
 					sundays_holidays: {},
-					weekdays: {},
 				};
 			}
 
 			timesByPeriodByDayTypeResult.forEach((row) => {
-				const { arrival_time, calendar_desc, day_type, period_id } = row;
+				const { period_id, day_type, arrival_time, calendar_desc } = row;
 				const dt = dayTypes.get(day_type);
 				const variantException = variantExceptions.get(row.route_id);
 				const calendar_descId = calendar_desc ? exceptions.get(calendar_desc)?.id : null;
 
-				if (!timesByPeriodByDayType[period_id][dt]) {
-					timesByPeriodByDayType[period_id][dt] = {};
-				}
+				if (!timesByPeriodByDayType[period_id][dt]) { timesByPeriodByDayType[period_id][dt] = {}; }
 
 				if (!timesByPeriodByDayType[period_id][dt][arrival_time]) {
 					timesByPeriodByDayType[period_id][dt][arrival_time] = [
 					];
 				}
 
-				if (calendar_descId) {
-					timesByPeriodByDayType[period_id][dt][arrival_time].push(calendar_descId);
-				}
+				if (calendar_descId) { timesByPeriodByDayType[period_id][dt][arrival_time].push(calendar_descId); }
 
-				if (variantException) {
-					timesByPeriodByDayType[period_id][dt][arrival_time].push(variantException.id);
-				}
+				if (variantException) { timesByPeriodByDayType[period_id][dt][arrival_time].push(variantException.id); }
 			});
 
 			// 6. Merge exceptions and variant exceptions
@@ -263,19 +255,17 @@ export default async () => {
 				_, exception,
 			]) => [exception.id, exception]));
 
-			const mergedExceptions = new Map<string, { id: string, label: string, text: string }>([
+			const mergedExceptions = new Map<string, { id: string; label: string; text: string }>([
 				...mappedExceptions, ...mappedVariantExceptions,
 			]);
 			// console.log('mergedExceptions', mergedExceptions);
 
 			// 7. Build the timetable object
 			const timetable: Timetable = {
-				exceptions: Array.from(mergedExceptions.values()),
-				// Set patterns for both Spine and header with other patterns
-				patternForDisplay,
 				// For each period, build the timetable
 				periods: Object.entries(timesByPeriodByDayType).map(([period_id, dayTypes]) => {
 					const getPeriod = (time: string, _exceptions: string[]) => ({
+						time,
 						// deduplicate exceptions
 						exceptions: _exceptions.reduce((acc, ex) => acc.includes(ex) ? acc : acc.concat(ex), [
 						] as string[])
@@ -283,23 +273,25 @@ export default async () => {
 								const exp = mergedExceptions.get(ex);
 								return { id: exp.id };
 							}),
-						time,
 					});
 
 					return {
 						period_id,
 						period_name: periods.get(period_id),
 
+						weekdays: Object.entries(dayTypes.weekdays)
+							.map(([time, exceptions]) => getPeriod(time, exceptions)),
+
 						saturdays: Object.entries(dayTypes.saturdays)
 							.map(([time, exceptions]) => getPeriod(time, exceptions)),
 
 						sundays_holidays: Object.entries(dayTypes.sundays_holidays)
 							.map(([time, exceptions]) => getPeriod(time, exceptions)),
-
-						weekdays: Object.entries(dayTypes.weekdays)
-							.map(([time, exceptions]) => getPeriod(time, exceptions)),
 					};
 				}),
+				exceptions: Array.from(mergedExceptions.values()),
+				// Set patterns for both Spine and header with other patterns
+				patternForDisplay,
 				secondaryPatterns,
 			};
 			// Add this to bulkData
@@ -350,8 +342,8 @@ export default async () => {
 
 	// Update index
 	const index = {
+		updated_at: (new Date).toISOString(),
 		pairs: bulkData.map(([key, _]) => key),
-		updated_at: (new Date()).toISOString(),
 	};
 	await SERVERDB.client.set('timetables:index', JSON.stringify(index));
 

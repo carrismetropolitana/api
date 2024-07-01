@@ -1,7 +1,7 @@
 {
   "name": "@carrismetropolitana/api-parse-network",
-  "type": "module",
-  "version": "1.0.0",
+  "type": "commonjs",
+  "version": "2024.04.18-0052",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -12,27 +12,26 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-	"@helperkits/timer": "20240623.52.16",
-    "@turf/turf": "7.0.0",
-    "adm-zip": "0.5.14",
-    "csv-parse": "5.5.6",
-    "csv-stringify": "6.5.0",
+    "@turf/turf": "6.5.0",
+    "adm-zip": "0.5.12",
+    "csv-parse": "5.5.5",
+    "csv-stringify": "6.4.6",
     "dotenv": "16.4.5",
     "luxon": "3.4.4",
     "papaparse": "5.4.1",
-    "pg": "8.12.0",
+    "pg": "8.11.5",
     "pg-copy-streams": "6.0.6",
-    "redis": "4.6.14"
+    "redis": "4.6.13"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "20240622.50.2",
+    "@carrismetropolitana/eslint": "2024.5.61434",
     "@types/adm-zip": "0.5.5",
     "@types/luxon": "3.4.2",
-    "@types/node": "20.14.8",
+    "@types/node": "20.12.8",
     "@types/papaparse": "5.3.14",
     "@types/pg": "8.11.6",
     "@types/pg-copy-streams": "1.2.5",
-    "resolve-tspaths": "0.8.19",
-    "typescript": "5.5.2"
+    "resolve-tspaths": "0.8.18",
+    "typescript": "5.4.5"
   }
 }

@@ -1,9 +1,9 @@
 /* * */
 
-import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
-import NETWORKDB from '@/services/NETWORKDB.js';
-import SERVERDB from '@/services/SERVERDB.js';
+import NETWORKDB from '../services/NETWORKDB';
+import SERVERDB from '../services/SERVERDB';
+import collator from '../modules/sortCollator';
+import { getElapsedTime } from '../modules/timeCalc';
 
 /* * */
 
@@ -20,8 +20,9 @@ export default async () => {
 
 	// 3.
 	// Initate a temporary variable to hold updated Archives
-	const allArchivesData = [];
-	const updatedArchiveKeys = new Set();
+	const allArchivesData = [
+	];
+	const updatedArchiveKeys = new Set;
 
 	// 4.
 	// Log progress
@@ -32,10 +33,10 @@ export default async () => {
 	for (const archive of allArchives.rows) {
 		// Parse archive
 		const parsedArchive = {
-			end_date: archive.archive_end_date,
 			id: archive.archive_id,
 			operator_id: archive.operator_id,
 			start_date: archive.archive_start_date,
+			end_date: archive.archive_end_date,
 
 		};
 		// Update or create new document
@@ -56,15 +57,12 @@ export default async () => {
 
 	// 8.
 	// Delete all Archives not present in the current update
-	const allSavedArchiveKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'archives:*', TYPE: 'string' })) {
-		allSavedArchiveKeys.push(key);
-	}
+	const allSavedArchiveKeys = [
+	];
+	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'archives:*' })) { allSavedArchiveKeys.push(key); }
 
-	const staleArchiveKeys = allSavedArchiveKeys.filter(item => !updatedArchiveKeys.has(item));
-	if (staleArchiveKeys.length) {
-		await SERVERDB.client.del(staleArchiveKeys);
-	}
+	const staleArchiveKeys = allSavedArchiveKeys.filter((item) => !updatedArchiveKeys.has(item));
+	if (staleArchiveKeys.length) { await SERVERDB.client.del(staleArchiveKeys); }
 	console.log(`⤷ Deleted ${staleArchiveKeys.length} stale Archives.`);
 
 	// 9.

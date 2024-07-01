@@ -5,9 +5,9 @@ export function getElapsedTime(startTime: [number, number]) {
 
 	const elapsedMiliseconds = Math.floor(
 		// seconds -> milliseconds +
-		interval[0] * 1000
-		// + nanoseconds -> milliseconds
-		+ interval[1] / 1000000,
+		interval[0] * 1000 +
+    // + nanoseconds -> milliseconds
+    interval[1] / 1000000,
 	);
 
 	//
@@ -20,18 +20,10 @@ export function getElapsedTime(startTime: [number, number]) {
 
 	let string = '';
 
-	if (hours > 0) {
-		string += `${hours}h `;
-	}
-	if (minutes > 0) {
-		string += `${minutes}m `;
-	}
-	if (seconds > 0) {
-		string += `${seconds}s `;
-	}
-	if (milliseconds > 0) {
-		string += `${milliseconds}ms`;
-	}
+	if (hours > 0) { string += `${hours}h `; }
+	if (minutes > 0) { string += `${minutes}m `; }
+	if (seconds > 0) { string += `${seconds}s `; }
+	if (milliseconds > 0) { string += `${milliseconds}ms`; }
 
 	return string;
 	//
@@ -49,18 +41,10 @@ export function formatTime(time: bigint) {
 
 	let string = '';
 
-	if (hours > 0) {
-		string += `${hours}h `;
-	}
-	if (minutes > 0) {
-		string += `${minutes}m `;
-	}
-	if (seconds > 0) {
-		string += `${seconds}s `;
-	}
-	if (milliseconds > 0) {
-		string += `${milliseconds}ms`;
-	}
+	if (hours > 0) { string += `${hours}h `; }
+	if (minutes > 0) { string += `${minutes}m `; }
+	if (seconds > 0) { string += `${seconds}s `; }
+	if (milliseconds > 0) { string += `${milliseconds}ms`; }
 
 	return string;
 //

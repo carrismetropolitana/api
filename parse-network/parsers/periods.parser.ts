@@ -1,12 +1,11 @@
 /* * */
 
-import type { GTFSDate, GTFSPeriod } from '@/services/NETWORKDB.types.js';
-
-import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
-import NETWORKDB from '@/services/NETWORKDB.js';
-import SERVERDB from '@/services/SERVERDB.js';
 import { DateTime } from 'luxon';
+import SERVERDB from '../services/SERVERDB';
+import NETWORKDB from '../services/NETWORKDB';
+import collator from '../modules/sortCollator';
+import { getElapsedTime } from '../modules/timeCalc';
+import type { GTFSDate, GTFSPeriod } from '../services/NETWORKDB.types';
 
 /* * */
 
@@ -29,23 +28,23 @@ export default async () => {
 		// 3.1.
 		// Parse the dates associated with this period
 		const datesForThisPeriod = allDates.rows
-			.filter(date => date.period === period.period_id)
-			.map(date => date.date)
+			.filter((date) => date.period === period.period_id)
+			.map((date) => date.date)
 			.sort((a, b) => collator.compare(a, b));
 
 		// 3.2.
 		// Initiate a variable to hold the active blocks for this period
 		const validFromUntil: {
-			from: string
-			until?: string
-		}[] = [
-		];
+      from: string;
+      until?: string;
+    }[] = [
+    ];
 
 		// 3.3.
 		// Start the block with the first date for this period
 		let currentBlock: {
-			from: string
-			until?: string
+			from: string;
+			until?: string;
 		} = { from: datesForThisPeriod[0] };
 
 		// 3.4.
@@ -75,9 +74,9 @@ export default async () => {
 		// 3.6.
 		// Return the parsed period
 		return {
-			dates: datesForThisPeriod,
 			id: period.period_id,
 			name: period.period_name,
+			dates: datesForThisPeriod,
 			valid: validFromUntil,
 		};
 

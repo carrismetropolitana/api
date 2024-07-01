@@ -1,9 +1,8 @@
 /* * */
 
 import 'dotenv/config';
-
-import { RUN_INTERVAL, SINGLE_RUN } from './config/settings.js';
-import start from './start.js';
+import start from './start';
+import { RUN_INTERVAL, SINGLE_RUN } from './config/settings';
 
 /* * */
 
@@ -26,16 +25,14 @@ import start from './start.js';
 		while (!success) {
 			try {
 				success = await start();
-				await new Promise(resolve => setTimeout(resolve, 1000)); // after 1 second
-			}
-			catch (error) {
+				await new Promise((resolve) => setTimeout(resolve, 1000)); // after 1 second
+			} catch (error) {
 				console.error(error);
 			}
 		}
 		console.log('Exiting...');
 		process.exit(0); // End process
-	}
-	else {
+	} else {
 		runOnInterval();
 	}
 
