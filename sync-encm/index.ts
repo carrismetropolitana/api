@@ -1,15 +1,19 @@
 /* * */
 
+import SERVERDB from '@/services/SERVERDB.js';
+
 import start from './start.js';
 
 /* * */
 
-const RUN_INTERVAL = 1200000; // 20 minutes
+const RUN_INTERVAL = 10000; // 10 seconds
 
 /* * */
 
 (async function init() {
 	//
+
+	await SERVERDB.connect();
 
 	const runOnInterval = async () => {
 		await start();

@@ -3,6 +3,7 @@ import IXAPI from '@/services/IXAPI.js';
 import SERVERDB from '@/services/SERVERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -21,16 +22,9 @@ export default async () => {
 
 	LOGGER.init();
 
-	LOGGER.divider('UPDATE ENCM STATUS');
-
 	const globalTimer = new TIMETRACKER();
 
 	// 1.
-	// Connect to the database
-
-	await SERVERDB.connect();
-
-	// 2.
 	// Retrieve existing ENCM documents from database
 
 	const allEncmDocumentsTxt = await SERVERDB.client.get('datasets/facilities/encm/all');
@@ -38,6 +32,14 @@ export default async () => {
 
 	// 2.
 	// Query IXAPI for all waiting tickets and open counters
+
+	// Build a date string for the current time in the format ${year}-${month}-${day} ${hours}:${minutes}:${seconds}
+
+	const currentDateString = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
+	const twoHoursAgoDateString = DateTime.now().minus({ hour: 2 }).toFormat('yyyy-MM-dd HH:mm:ss');
+
+	console.log('currentDateString', currentDateString);
+	console.log('twoHoursAgoDateString', twoHoursAgoDateString);
 
 	const allEncmTicketsWaiting = await IXAPI.request({ finalDate: getIxDateString(), initialDate: getIxDateString(-7200), reportType: 'ticket', status: 'W' });
 	const allEncmCounters = await IXAPI.request({ finalDate: getIxDateString(), initialDate: getIxDateString(-7200), reportType: 'siteReportByCounter' });
@@ -110,6 +112,7 @@ export default async () => {
 	await SERVERDB.client.set('datasets/facilities/encm/all', JSON.stringify(allEncmData));
 
 	LOGGER.terminate(`Task completed: Updated ENCM status (${allEncmDocumentsData.length} documents in ${globalTimer.get()}).`);
+
 	LOGGER.divider();
 
 	//
