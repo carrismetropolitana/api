@@ -12,7 +12,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@helperkits/logger": "20240627.34.42",
+    "@helperkits/logger": "20240702.29.13",
     "@helperkits/timer": "20240627.34.23",
     "dotenv": "16.4.5",
     "luxon": "3.4.4",
