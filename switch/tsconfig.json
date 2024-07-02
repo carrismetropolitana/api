@@ -10,9 +10,9 @@
 			"@/handlers/*": ["handlers/*"],
 		},
 		"allowJs": true,
-		"outDir": "build",
+		"outDir": "dist",
 		"sourceMap": true,
 		"esModuleInterop": true
 	},
-	"exclude": ["**/node_modules", "**/.*/", "**/build/"]
+	"exclude": ["**/node_modules", "**/.*/", "**/dist/"]
 }
