@@ -33,16 +33,11 @@ export default async () => {
 	// 2.
 	// Query IXAPI for all waiting tickets and open counters
 
-	// Build a date string for the current time in the format ${year}-${month}-${day} ${hours}:${minutes}:${seconds}
+	const currentDateString = DateTime.now().setZone('UTC').toFormat('yyyy-MM-dd HH:mm:ss');
+	const twoHoursAgoDateString = DateTime.now().setZone('UTC').minus({ hour: 2 }).toFormat('yyyy-MM-dd HH:mm:ss');
 
-	const currentDateString = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
-	const twoHoursAgoDateString = DateTime.now().minus({ hour: 2 }).toFormat('yyyy-MM-dd HH:mm:ss');
-
-	console.log('currentDateString', currentDateString);
-	console.log('twoHoursAgoDateString', twoHoursAgoDateString);
-
-	const allEncmTicketsWaiting = await IXAPI.request({ finalDate: getIxDateString(), initialDate: getIxDateString(-7200), reportType: 'ticket', status: 'W' });
-	const allEncmCounters = await IXAPI.request({ finalDate: getIxDateString(), initialDate: getIxDateString(-7200), reportType: 'siteReportByCounter' });
+	const allEncmTicketsWaiting = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'ticket', status: 'W' });
+	const allEncmCounters = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'siteReportByCounter' });
 
 	// 3.
 	// Add realtime status to each ENCM
@@ -117,24 +112,3 @@ export default async () => {
 
 	//
 };
-
-/* * */
-
-function getIxDateString(adjustmentSeconds = 0) {
-	// Create a new date object
-	const dateObj = new Date();
-	// Apply the adjustment to the current date
-	dateObj.setSeconds(dateObj.getSeconds() + adjustmentSeconds);
-	// Get the components of the date
-	const year = dateObj.getFullYear().toString().padStart(4, '0');
-	const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
-	const day = dateObj.getDate().toString().padStart(2, '0');
-	const hours = dateObj.getHours().toString().padStart(2, '0');
-	const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-	const seconds = dateObj.getSeconds().toString().padStart(2, '0');
-	// Format the date string
-	const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-	// Return result
-	return formattedDate;
-	//
-}

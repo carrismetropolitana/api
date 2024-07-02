@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@carrismetropolitana/eslint": "20240622.50.2",
+    "@types/luxon": "3.4.2",
     "@types/node": "20.14.9",
     "resolve-tspaths": "0.8.19",
     "typescript": "5.5.3"
