@@ -106,7 +106,7 @@ export default async () => {
 	allEncmData.sort((a, b) => collator.compare(a.id, b.id));
 	await SERVERDB.client.set('datasets/facilities/encm/all', JSON.stringify(allEncmData));
 
-	LOGGER.terminate(`Task completed: Updated ENCM status (${allEncmDocumentsData.length} documents in ${globalTimer.get()}).`);
+	LOGGER.terminate(`Updated ${allEncmDocumentsData.length} ENCM locations (${globalTimer.get()})`);
 
 	LOGGER.divider();
 
