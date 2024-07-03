@@ -19,7 +19,7 @@ import shapesParser from '@/parsers/shapes.parser';
 import stopsParser from '@/parsers/stops.parser';
 import NETWORKDB from '@/services/NETWORKDB';
 import SERVERDB from '@/services/SERVERDB.js';
-// import timetablesParser from '@/parsers/timetables.parser';
+import timetablesParser from '@/parsers/timetables.parser';
 
 /* * */
 
@@ -33,7 +33,7 @@ export default async (): Promise<boolean> => {
 	try {
 		console.log();
 		console.log('------------------------');
-		console.log((new Date()).toISOString());
+		console.log((new Date).toISOString());
 		console.log('------------------------');
 		console.log();
 
@@ -60,8 +60,7 @@ export default async (): Promise<boolean> => {
 
 		if (LAST_GTFS_HASH === currentGtfsHash) {
 			console.log('⤷ No changes in GTFS file, skipping this run.');
-		}
-		else {
+		} else {
 			//
 
 			LAST_GTFS_HASH = currentGtfsHash;
@@ -132,11 +131,11 @@ export default async (): Promise<boolean> => {
 				await newLinesRoutesPatternsParser();
 			}
 
-			// if (ENABLED_MODULES.includes('timetables_parser')) {
-			// 	console.log();
-			// 	console.log('STEP 1.8: Parse Timetables');
-			// 	await timetablesParser();
-			// }
+			if (ENABLED_MODULES.includes('timetables_parser')) {
+				console.log();
+				console.log('STEP 1.8: Parse Timetables');
+				await timetablesParser();
+			}
 
 			//
 		}
@@ -152,8 +151,7 @@ export default async (): Promise<boolean> => {
 		return true;
 
 		//
-	}
-	catch (err) {
+	} catch (err) {
 		console.log('An error occurred. Halting execution.', err);
 		return false;
 	}
