@@ -16,10 +16,8 @@
     "fastify": "4.28.1",
     "jwt-decode": "4.0.0",
     "luxon": "3.4.4",
-    "mongodb": "6.8.0",
     "protobufjs": "7.3.2",
-    "redis": "4.6.15",
-    "tunnel-ssh": "5.1.2"
+    "redis": "4.6.15"
   },
   "devDependencies": {
     "@carrismetropolitana/eslint": "20240622.50.2",

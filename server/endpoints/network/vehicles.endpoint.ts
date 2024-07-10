@@ -1,6 +1,5 @@
 /* * */
 
-import RTEVENTS from '@/services/RTEVENTS.js';
 import SERVERDB from '@/services/SERVERDB.js';
 import protobufjs from 'protobufjs';
 
@@ -11,26 +10,22 @@ const gtfsRealtime = protobufjs.loadSync(`${process.env.PWD}/services/gtfs-realt
 /* * */
 
 const json = async (_, reply) => {
-	// Get the saved events from RTEVENTS
-	// const rtFeed = await RTEVENTS.json();
-	const rtFeed = await SERVERDB.client.get('rtevents:json');
-	// Return response
+	const allRtEvents = await SERVERDB.client.get('rtevents:json');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(rtFeed || []);
+		.send(allRtEvents || []);
 };
 
 /* * */
 
 const protobuf = async (_, reply) => {
 	// Get the saved events from RTEVENTS
-	// const rtFeed = await RTEVENTS.protobuf();
-	const rtFeedTxt = await SERVERDB.client.get('rtevents:protobuf');
-	const rtFeedJson = await JSON.parse(rtFeedTxt);
-	// Do the conversion to PB
+	const allRtEventsTxt = await SERVERDB.client.get('rtevents:protobuf');
+	const allRtEvents = await JSON.parse(allRtEventsTxt);
+	// Do the conversion to Protobuf
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
-	const message = FeedMessage.fromObject(rtFeedJson);
+	const message = FeedMessage.fromObject(allRtEvents);
 	const buffer = FeedMessage.encode(message).finish();
 	return reply.send(buffer);
 };
