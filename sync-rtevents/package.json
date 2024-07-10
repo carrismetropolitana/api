@@ -15,6 +15,8 @@
     "@helperkits/logger": "20240703.1726.24",
     "@helperkits/timer": "20240627.34.23",
     "dotenv": "16.4.5",
+	"mongodb": "6.8.0",
+	"tunnel-ssh": "5.1.2",
     "luxon": "3.4.4",
     "redis": "4.6.15"
   },
