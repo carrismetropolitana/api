@@ -117,20 +117,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Calculate current hash for sync-rtevents
+        id: calculate-hash
+        run: |
+          find sync-rtevents -type f -exec sha256sum {} + | sort | sha256sum > sync-rtevents.hash
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@master
+      - name: Cache previous hash
+        id: cache-previous-hash
+        uses: actions/cache@v3
         with:
-          push: true
-          context: ./sync-rtevents
-          file: ./sync-rtevents/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-sync-rtevents:${{ github.ref_name }}
+          path: sync-rtevents.hash.old
+          key: sync-rtevents-hash-${{ github.sha }}
+          restore-keys: sync-rtevents-hash-
+
+      - name: Compare hashes
+        id: compare-hash
+        run: |
+          if cmp -s sync-rtevents.hash sync-rtevents.hash.old; then
+            echo "sync-rtevents unchanged"
+            echo "sync_rtevents_changed=false" >> $GITHUB_ENV
+          else
+            echo "sync-rtevents changed"
+            echo "sync_rtevents_chang
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
