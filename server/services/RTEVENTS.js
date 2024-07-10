@@ -29,30 +29,22 @@ class RTEVENTS {
 		// Return the formatted result
 
 		return Array.from(this.rt_events.values()).map(savedEvent => ({
-			//
 			bearing: savedEvent.bearing,
-			//
 			block_id: savedEvent.block_id,
 			current_status: savedEvent.current_status,
-			//
+			direction_id: savedEvent.direction_id,
 			id: savedEvent.vehicle_id,
-			//
 			lat: savedEvent.latitude,
 			line_id: savedEvent.line_id,
 			lon: savedEvent.longitude,
 			pattern_id: savedEvent.pattern_id,
 			route_id: savedEvent.route_id,
-			//
 			schedule_relationship: savedEvent.schedule_relationship,
 			shift_id: savedEvent.shift_id,
 			speed: savedEvent.speed,
-			//
 			stop_id: savedEvent.stop_id,
-			//
 			timestamp: savedEvent.timestamp,
-			//
 			trip_id: savedEvent.trip_id,
-			//
 		}));
 
 		//
@@ -98,6 +90,7 @@ class RTEVENTS {
 				stopId: savedEvent.stop_id,
 				timestamp: savedEvent.timestamp,
 				trip: {
+					directionId: savedEvent.direction_id,
 					routeId: savedEvent.route_id,
 					scheduleRelationship: savedEvent.schedule_relationship,
 					tripId: savedEvent.trip_id,
@@ -209,43 +202,39 @@ class RTEVENTS {
 
 			const operatorId = rtEvent.content?.entity[0]?.vehicle?.agencyId;
 
+			// 7.5.
+			// Fetch pattern information from SERVERDB
+
+			const patternDataTxt = await SERVERDB.client.get(`patterns:${rtEvent.content.entity[0].vehicle.trip.patternId}`);
+			const patternDataJson = await JSON.parse(patternDataTxt);
+
 			// 7.4.
 			// Save the current event
 
 			updatedRtEvents.set(vehicleId, {
-				//
 				bearing: vehicleBearing,
-				//
 				block_id: rtEvent.content.entity[0].vehicle.vehicle.blockId,
-				// Current status can be 'IN_TRANSIT_TO', 'INCOMMING_AT' or 'STOPPED_AT' at the current stop_id
-				current_status: rtEvent.content.entity[0].vehicle.currentStatus,
-				// Event ID should be kept stable for the duration of a single trip
-				event_id: `${currentArchiveIds[operatorId]}-${vehicleId}-${vehicleTripId}`,
-				//
+				current_status: rtEvent.content.entity[0].vehicle.currentStatus, // Current status can be 'IN_TRANSIT_TO', 'INCOMMING_AT' or 'STOPPED_AT' at the current stop_id
+				direction_id: patternDataJson.direction_id,
+				event_id: `${currentArchiveIds[operatorId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
 				latitude: rtEvent.content.entity[0].vehicle.position.latitude,
 				line_id: rtEvent.content.entity[0].vehicle.trip.lineId,
 				longitude: rtEvent.content.entity[0].vehicle.position.longitude,
 				pattern_id: rtEvent.content.entity[0].vehicle.trip.patternId,
 				route_id: rtEvent.content.entity[0].vehicle.trip.routeId,
-				// Schedule relationship can be SCHEDULED for archivened trips or ADDED for new trips created by the driver
-				schedule_relationship: rtEvent.content.entity[0].vehicle.trip.scheduleRelationship === 'SCHEDULED' ? 'SCHEDULED' : 'DUPLICATED',
+				schedule_relationship: rtEvent.content.entity[0].vehicle.trip.scheduleRelationship === 'SCHEDULED' ? 'SCHEDULED' : 'DUPLICATED', // Schedule relationship can be SCHEDULED for archivened trips or ADDED for new trips created by the driver
 				shift_id: rtEvent.content.entity[0].vehicle.vehicle.shiftId,
 				speed: vehicleSpeed,
-				// The stop the vehicle is serving at the moment
-				stop_id: rtEvent.content.entity[0].vehicle.stopId,
-				// Timestamp is in UTC
-				timestamp: vehicleTimestamp,
-				// Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
-				trip_id: `${vehicleTripId}_${currentArchiveIds[operatorId]}`,
-				// The vehicle ID is composed of the agency_id and the vehicle_id
-				vehicle_id: vehicleId,
-				//
+				stop_id: rtEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
+				timestamp: vehicleTimestamp, // Timestamp is in UTC
+				trip_id: `${vehicleTripId}_${currentArchiveIds[operatorId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
+				vehicle_id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
 			});
 
 			//
 		}
 
-		// 7.
+		// 8.
 		// Save the updated Map to memory
 
 		this.rt_events = updatedRtEvents;
