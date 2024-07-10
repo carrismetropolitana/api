@@ -1,0 +1,28 @@
+{
+  "name": "@carrismetropolitana/api-sync-rtevents",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && resolve-tspaths && node dist/index.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "build": "tsc && resolve-tspaths",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@helperkits/logger": "20240703.1726.24",
+    "@helperkits/timer": "20240627.34.23",
+    "dotenv": "16.4.5",
+    "luxon": "3.4.4",
+    "redis": "4.6.15"
+  },
+  "devDependencies": {
+    "@carrismetropolitana/eslint": "20240622.50.2",
+    "@types/luxon": "3.4.2",
+    "@types/node": "20.14.10",
+    "resolve-tspaths": "0.8.19",
+    "typescript": "5.5.3"
+  }
+}
