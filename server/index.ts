@@ -9,16 +9,10 @@ import fastify from 'fastify';
 
 /* * */
 
-import datasetsConnectionsBoatStationsEndpoint from '@/endpoints/datasets/connections.boat_stations.endpoint.js';
-import datasetsConnectionsLightRailStationsEndpoint from '@/endpoints/datasets/connections.light_rail_stations.endpoint.js';
-import datasetsConnectionsSubwayStationsEndpoint from '@/endpoints/datasets/connections.subway_stations.endpoint.js';
-import datasetsConnectionsTrainStationsEndpoint from '@/endpoints/datasets/connections.train_stations.endpoint.js';
-import datasetsDemandDateLineStopEndpoint from '@/endpoints/datasets/demand.date-line-stop.endpoint.js';
-import datasetsFacilitiesEncmEndpoint from '@/endpoints/datasets/facilities.encm.endpoint.js';
-import datasetsFacilitiesEndpoint from '@/endpoints/datasets/facilities.endpoint.js';
-import datasetsFacilitiesPipEndpoint from '@/endpoints/datasets/facilities.pip.endpoint.js';
-import datasetsFacilitiesSchoolsEndpoint from '@/endpoints/datasets/facilities.schools.endpoint.js';
-import timeEndpoint from '@/endpoints/debug/time.endpoint.js';
+import debugTimeEndpoint from '@/endpoints/debug/time.endpoint.js';
+
+/* * */
+
 import networkAlertsEndpoint from '@/endpoints/network/alerts.endpoint.js';
 import networkArchivesEndpoint from '@/endpoints/network/archives.endpoint.js';
 import networkDatesEndpoint from '@/endpoints/network/dates.endpoint.js';
@@ -36,13 +30,31 @@ import networkVehiclesEndpoint from '@/endpoints/network/vehicles.endpoint.js';
 
 /* * */
 
+import pipEstimatesEndpoint from '@/endpoints/pip/estimates.endpoint.js';
+import pipMessageEndpoint from '@/endpoints/pip/message.endpoint.js';
+import pipStopsDeprecatedEndpoint from '@/endpoints/pip/stops_deprecated.endpoint.js';
+
+/* * */
+
+import datasetsConnectionsBoatStationsEndpoint from '@/endpoints/datasets/connections.boat_stations.endpoint.js';
+import datasetsConnectionsLightRailStationsEndpoint from '@/endpoints/datasets/connections.light_rail_stations.endpoint.js';
+import datasetsConnectionsSubwayStationsEndpoint from '@/endpoints/datasets/connections.subway_stations.endpoint.js';
+import datasetsConnectionsTrainStationsEndpoint from '@/endpoints/datasets/connections.train_stations.endpoint.js';
+import datasetsDemandDateLineStopEndpoint from '@/endpoints/datasets/demand.date-line-stop.endpoint.js';
+import datasetsFacilitiesEncmEndpoint from '@/endpoints/datasets/facilities.encm.endpoint.js';
+import datasetsFacilitiesEndpoint from '@/endpoints/datasets/facilities.endpoint.js';
+import datasetsFacilitiesPipEndpoint from '@/endpoints/datasets/facilities.pip.endpoint.js';
+import datasetsFacilitiesSchoolsEndpoint from '@/endpoints/datasets/facilities.schools.endpoint.js';
+
+/* * */
+
 const server = fastify({ logger: true, requestTimeout: 10000 });
 
 /* * */
 
 // DEBUG ENDPOINTS
 
-server.get('/time', timeEndpoint.time);
+server.get('/time', debugTimeEndpoint.time);
 
 /* * */
 
@@ -90,10 +102,17 @@ server.get('/stops', networkStopsEndpoint.all);
 // server.get('/stops.pb', networkStopsEndpoint.protobuf);
 server.get('/stops/:id', networkStopsEndpoint.single);
 server.get('/stops/:id/realtime', networkStopsEndpoint.singleWithRealtime);
-server.post('/stops/pip', networkStopsEndpoint.realtimeForPips);
 
 server.get('/vehicles', networkVehiclesEndpoint.json);
 server.get('/vehicles.pb', networkVehiclesEndpoint.protobuf);
+
+/* * */
+
+// PIP ENDPOINTS
+
+server.post('/pip/:pip_id/estimates', pipEstimatesEndpoint.main);
+server.post('/pip/:pip_id/message', pipMessageEndpoint.main);
+/* DEPRECATED */ server.post('/stops/pip', pipStopsDeprecatedEndpoint.realtimeForPips);
 
 /* * */
 
