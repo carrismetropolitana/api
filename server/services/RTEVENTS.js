@@ -208,6 +208,14 @@ class RTEVENTS {
 			const patternDataTxt = await SERVERDB.client.get(`patterns:${rtEvent.content.entity[0].vehicle.trip.patternId}`);
 			const patternDataJson = await JSON.parse(patternDataTxt);
 
+			console.log('***************************************');
+			console.log('***************************************');
+			console.log('***************************************');
+			console.log('patternDataJson.direction_id', patternDataJson.direction_id);
+			console.log('***************************************');
+			console.log('***************************************');
+			console.log('***************************************');
+
 			// 7.4.
 			// Save the current event
 
