@@ -157,9 +157,6 @@ export default async () => {
 		const patternDataTxt = await SERVERDB.client.get(`patterns:${pcgiVehicleEvent.content.entity[0].vehicle.trip.patternId}`);
 		const patternDataJson = await JSON.parse(patternDataTxt);
 
-		console.log('patternDataJson.direction_id', patternDataJson);
-		continue;
-
 		// 3.5.
 		// Save the current event to the map variable
 
@@ -167,7 +164,7 @@ export default async () => {
 			bearing: vehicleBearing,
 			block_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.blockId,
 			current_status: pcgiVehicleEvent.content.entity[0].vehicle.currentStatus, // Current status can be 'IN_TRANSIT_TO', 'INCOMMING_AT' or 'STOPPED_AT' at the current stop_id
-			direction_id: patternDataJson.direction_id,
+			direction_id: patternDataJson.direction,
 			event_id: `${currentArchiveIds[operatorId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
 			latitude: pcgiVehicleEvent.content.entity[0].vehicle.position.latitude,
 			line_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.lineId,
