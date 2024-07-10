@@ -172,6 +172,19 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
+  sync-rtevents:
+    image: ghcr.io/carrismetropolitana/api-sync-rtevents:beta
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   sync-encm:
     image: ghcr.io/carrismetropolitana/api-sync-encm:beta
     restart: unless-stopped
