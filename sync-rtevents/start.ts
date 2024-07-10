@@ -157,13 +157,8 @@ export default async () => {
 		const patternDataTxt = await SERVERDB.client.get(`patterns:${pcgiVehicleEvent.content.entity[0].vehicle.trip.patternId}`);
 		const patternDataJson = await JSON.parse(patternDataTxt);
 
-		console.log('***************************************');
-		console.log('***************************************');
-		console.log('***************************************');
-		console.log('patternDataJson.direction_id', patternDataJson.direction_id);
-		console.log('***************************************');
-		console.log('***************************************');
-		console.log('***************************************');
+		console.log('patternDataJson.direction_id', patternDataJson);
+		continue;
 
 		// 3.5.
 		// Save the current event to the map variable

@@ -181,6 +181,8 @@ services:
         max-file: '1'
     env_file:
       - ./.env
+    secrets:
+      - pcgidbkey
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
