@@ -56,12 +56,15 @@ export default async () => {
 
 	// 8.
 	// Delete all Archives not present in the current update
-	const allSavedArchiveKeys = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'archives:*', TYPE: 'string' })) { allSavedArchiveKeys.push(key); }
+	const allSavedArchiveKeys = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'archives:*', TYPE: 'string' })) {
+		allSavedArchiveKeys.push(key);
+	}
 
 	const staleArchiveKeys = allSavedArchiveKeys.filter(item => !updatedArchiveKeys.has(item));
-	if (staleArchiveKeys.length) { await SERVERDB.client.del(staleArchiveKeys); }
+	if (staleArchiveKeys.length) {
+		await SERVERDB.client.del(staleArchiveKeys);
+	}
 	console.log(`⤷ Deleted ${staleArchiveKeys.length} stale Archives.`);
 
 	// 9.
