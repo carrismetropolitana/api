@@ -127,18 +127,40 @@ jobs:
         uses: actions/cache@v3
         with:
           path: sync-rtevents.hash.old
-          key: sync-rtevents-hash-${{ github.sha }}
+          key: sync-rtevents-hash-${{ github.ref_name }}
           restore-keys: sync-rtevents-hash-
 
       - name: Compare hashes
         id: compare-hash
         run: |
-          if cmp -s sync-rtevents.hash sync-rtevents.hash.old; then
+          if [ -f sync-rtevents.hash.old ] && cmp -s sync-rtevents.hash sync-rtevents.hash.old; then
             echo "sync-rtevents unchanged"
             echo "sync_rtevents_changed=false" >> $GITHUB_ENV
           else
             echo "sync-rtevents changed"
-            echo "sync_rtevents_chang
+            echo "sync_rtevents_changed=true" >> $GITHUB_ENV
+          fi
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        if: env.sync_rtevents_changed == 'true'
+        uses: docker/build-push-action@master
+        with:
+          push: true
+          context: ./sync-rtevents
+          file: ./sync-rtevents/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-rtevents:${{ github.ref_name }}
+
+      - name: Store current hash for future comparisons
+        if: env.sync_rtevents_changed == 'true'
+        run: |
+          cp sync-rtevents.hash sync-rtevents.hash.old
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
