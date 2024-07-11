@@ -123,11 +123,12 @@ jobs:
           export CACHE_NAME=$(find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           echo "sync-rtevents hash: $CACHE_NAME"
           echo "cache-name=$CACHE_NAME" >> $GITHUB_OUTPUT
+          echo $CACHE_NAME > /cache/sync-rtevents.hash
 
       - uses: actions/cache@v4
         id: cache
         with:
-          path: sync-rtevents.hash
+          path: /cache/sync-rtevents.hash
           key: sync-rtevents-${{ steps.calculate-hash.outputs.cache-name }}
 
       # - name: Restore cached SHA256 hash
