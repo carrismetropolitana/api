@@ -117,21 +117,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Generate hash for module
+      - name: Calculate current hash for sync-rtevents
+        id: calculate-hash
         run: |
           find sync-rtevents -type f -exec sha256sum {} + | sort | sha256sum > sync-rtevents.hash
 
-      - name: Get previous hash
-        uses: actions/cache@main
+      - name: Cache previous hash
+        id: cache-previous-hash
+        uses: actions/cache@v3
         with:
-          path: sync-rtevents.hash.prev
+          path: sync-rtevents.hash.old
           key: sync-rtevents-hash-${{ github.ref_name }}
           restore-keys: sync-rtevents-hash-
 
       - name: Compare hashes
+        id: compare-hash
         run: |
-          if cmp -s sync-rtevents.hash sync-rtevents.hash.prev; then
+          if [ -f sync-rtevents.hash.old ] && cmp -s sync-rtevents.hash sync-rtevents.hash.old; then
             echo "sync-rtevents unchanged"
+            echo "sync_rtevents_changed=false" >> $GITHUB_ENV
             exit 1  # This will fail the step and job
           else
             echo "sync-rtevents changed"
@@ -157,7 +161,7 @@ jobs:
       - name: Store current hash for future comparisons
         if: env.sync_rtevents_changed == 'true'
         run: |
-          cp sync-rtevents.hash sync-rtevents.hash.prev
+          cp sync-rtevents.hash sync-rtevents.hash.old
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
