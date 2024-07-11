@@ -38,7 +38,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -87,7 +87,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -136,7 +136,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -185,7 +185,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -234,7 +234,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -283,7 +283,7 @@ jobs:
         id: cache
         with:
           path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
