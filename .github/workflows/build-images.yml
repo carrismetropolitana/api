@@ -11,95 +11,95 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-server:
-    name: 'Docker Build - server'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    permissions:
-      contents: read
-      packages: write
+  # api-server:
+  #   name: 'Docker Build - server'
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@main
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@master
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./server
-          file: ./server/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-server:${{ github.ref_name }}
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  api-parse-datasets:
-    name: 'Docker Build - parse-datasets'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./parse-datasets
-          file: ./parse-datasets/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-parse-datasets:${{ github.ref_name }}
+  #     - name: Build Docker Image
+  #       uses: docker/build-push-action@master
+  #       with:
+  #         push: true
+  #         context: ./server
+  #         file: ./server/Dockerfile
+  #         tags: ghcr.io/carrismetropolitana/api-server:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-parse-network:
-    name: 'Docker Build - parse-network'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    permissions:
-      contents: read
-      packages: write
+  # api-parse-datasets:
+  #   name: 'Docker Build - parse-datasets'
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@main
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@master
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./parse-network
-          file: ./parse-network/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-parse-network:${{ github.ref_name }}
+  #     - name: Build Docker Image
+  #       uses: docker/build-push-action@master
+  #       with:
+  #         push: true
+  #         context: ./parse-datasets
+  #         file: ./parse-datasets/Dockerfile
+  #         tags: ghcr.io/carrismetropolitana/api-parse-datasets:${{ github.ref_name }}
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  # api-parse-network:
+  #   name: 'Docker Build - parse-network'
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #   permissions:
+  #     contents: read
+  #     packages: write
+
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@main
+
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@master
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Build Docker Image
+  #       uses: docker/build-push-action@master
+  #       with:
+  #         push: true
+  #         context: ./parse-network
+  #         file: ./parse-network/Dockerfile
+  #         tags: ghcr.io/carrismetropolitana/api-parse-network:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -172,61 +172,61 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-encm:
-    name: 'Docker Build - sync-encm'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    permissions:
-      contents: read
-      packages: write
+  # api-sync-encm:
+  #   name: 'Docker Build - sync-encm'
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@main
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@master
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./sync-encm
-          file: ./sync-encm/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-sync-encm:${{ github.ref_name }}
+  #     - name: Build Docker Image
+  #       uses: docker/build-push-action@master
+  #       with:
+  #         push: true
+  #         context: ./sync-encm
+  #         file: ./sync-encm/Dockerfile
+  #         tags: ghcr.io/carrismetropolitana/api-sync-encm:${{ github.ref_name }}
 
-          # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-switch:
-    name: 'Docker Build - switch'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    permissions:
-      contents: read
-      packages: write
+  # api-switch:
+  #   name: 'Docker Build - switch'
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #   permissions:
+  #     contents: read
+  #     packages: write
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@main
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@master
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./switch
-          file: ./switch/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-switch:${{ github.ref_name }}
+  #     - name: Build Docker Image
+  #       uses: docker/build-push-action@master
+  #       with:
+  #         push: true
+  #         context: ./switch
+  #         file: ./switch/Dockerfile
+  #         tags: ghcr.io/carrismetropolitana/api-switch:${{ github.ref_name }}
