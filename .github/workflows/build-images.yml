@@ -120,7 +120,7 @@ jobs:
       - name: Calculate current hash for sync-rtevents
         id: calculate-hash
         run: |
-          find sync-rtevents -type f -exec sha256sum {} + | sort | sha256sum > sync-rtevents.hash
+          find ./sync-rtevents -type f -exec sha256sum {} + | sort | sha256sum > sync-rtevents.hash
 
       - name: Cache previous hash
         id: cache-previous-hash
@@ -136,7 +136,7 @@ jobs:
           if [ -f sync-rtevents.hash.old ] && cmp -s sync-rtevents.hash sync-rtevents.hash.old; then
             echo "sync-rtevents unchanged"
             echo "sync_rtevents_changed=false" >> $GITHUB_ENV
-            exit 1  # This will fail the step and job
+            exit 0
           else
             echo "sync-rtevents changed"
             echo "sync_rtevents_changed=true" >> $GITHUB_ENV
