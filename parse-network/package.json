@@ -12,6 +12,8 @@
     "watch": "tsc -w"
   },
   "dependencies": {
+    "@helperkits/logger": "20240703.1726.24",
+    "@helperkits/timer": "20240627.34.23",
     "@helperkits/writer": "20240711.1547.52",
     "@turf/turf": "7.0.0",
     "adm-zip": "0.5.14",
