@@ -122,7 +122,7 @@ jobs:
         run: |
           export CACHE_NAME=$(find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           echo "sync-rtevents hash: $CACHE_NAME"
-          echo "::set-output name=cache-name::$CACHE_NAME"  # Set the output variable
+          echo "{cache-name}={$CACHE_NAME}" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v4
         id: cache
