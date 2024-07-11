@@ -33,7 +33,7 @@ jobs:
           find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
-      - name: Fetch hashed cache key
+      - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
@@ -82,7 +82,7 @@ jobs:
           find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
-      - name: Fetch hashed cache key
+      - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
@@ -131,7 +131,7 @@ jobs:
           find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
-      - name: Fetch hashed cache key
+      - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
@@ -180,7 +180,7 @@ jobs:
           find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
-      - name: Fetch hashed cache key
+      - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
@@ -229,7 +229,7 @@ jobs:
           find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
-      - name: Fetch hashed cache key
+      - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
@@ -278,7 +278,7 @@ jobs:
           find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
-      - name: Fetch hashed cache key
+      - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
