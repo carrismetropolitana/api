@@ -130,11 +130,12 @@ jobs:
 
       - name: Compare hashes
         run: |
-          if [ -f sync-rtevents.hash.prev ] && cmp -s sync-rtevents.hash sync-rtevents.hash.prev; then
+          if cmp -s sync-rtevents.hash sync-rtevents.hash.prev; then
             echo "sync-rtevents unchanged"
             exit 1  # This will fail the step and job
           else
             echo "sync-rtevents changed"
+            echo "sync_rtevents_changed=true" >> $GITHUB_ENV
           fi
 
       - name: Login to GitHub Container Registry
