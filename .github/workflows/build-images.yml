@@ -120,63 +120,30 @@ jobs:
       - name: Calculate SHA256 hash
         id: calculate-hash
         run: |
-          export CACHE_NAME=$(find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
-          echo "sync-rtevents hash: $CACHE_NAME"
-          echo "cache-name=$CACHE_NAME" >> $GITHUB_OUTPUT
-          echo $CACHE_NAME > sync-rtevents.hash
+          find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > sync-rtevents.hash
 
       - uses: actions/cache@v4
         id: cache
         with:
           path: sync-rtevents.hash
-          key: sync-rtevents-${{ steps.calculate-hash.outputs.cache-name }}
+          key: sync-rtevents-${{ cat sync-rtevents.hash }}
 
-      # - name: Restore cached SHA256 hash
-      #   id: cache-hash-restore
-      #   uses: actions/cache/restore@v4
-      #   with:
-      #     path: sync-rtevents.hash.prev
-      #     key: sync-rtevents.hash-${{ github.ref_name }}
-
-      - name: Compare SHA256 hashes
+      - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
-        id: compare-hashes
-        run: |
-          hash_prev=$(<sync-rtevents.hash.prev 2>/dev/null || echo "fallback_value")
-          hash_current=$(<sync-rtevents.hash 2>/dev/null || echo "fallback_value")
-          if [[ "$hash_prev" == "$hash_current" ]]; then
-            echo "The hashes are identical."
-          else
-            echo "The hashes are different."
-          fi
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Save Primes
-      #   id: cache-hash-save
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: sync-rtevents.hash
-      #     key: ${{ steps.cache-hash-restore.outputs.cache-primary-key }}
-
-      # - name: Login to GitHub Container Registry
-      #   uses: docker/login-action@master
-      #   with:
-      #     registry: ghcr.io
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-
-      # - name: Build and Push Docker Image
-      #   if: env.sync_rtevents_changed == 'true'
-      #   uses: docker/build-push-action@master
-      #   with:
-      #     push: true
-      #     context: ./sync-rtevents
-      #     file: ./sync-rtevents/Dockerfile
-      #     tags: ghcr.io/carrismetropolitana/api-sync-rtevents:${{ github.ref_name }}
-
-      # - name: Store current hash for future comparisons
-      #   if: env.sync_rtevents_changed == 'true'
-      #   run: |
-      #     cp sync-rtevents.hash sync-rtevents.hash.old
+      - name: Build and Push Docker Image
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: docker/build-push-action@master
+        with:
+          push: true
+          context: ./sync-rtevents
+          file: ./sync-rtevents/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-rtevents:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
