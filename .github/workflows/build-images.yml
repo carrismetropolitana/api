@@ -117,20 +117,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate SHA256 hash
-        id: calculate-hash
-        run: |
-          find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum > sync-rtevents.hash
-          echo "sync-rtevents hash: $(cat sync-rtevents.hash)"
+      # - name: Calculate SHA256 hash
+      #   id: calculate-hash
+      #   run: |
+      #     find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum > sync-rtevents.hash
+      #     echo "sync-rtevents hash: $(cat sync-rtevents.hash)"
 
-      - name: Restore cached SHA256 hash
-        id: cache-hash-restore
-        uses: actions/cache/restore@v4
+      - uses: actions/cache@v4
+        id: cache
         with:
-          path: sync-rtevents.hash.prev
-          key: sync-rtevents.hash-${{ github.ref_name }}
+          key: sync-rtevents-hash-${{ find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum }}
+
+      # - name: Restore cached SHA256 hash
+      #   id: cache-hash-restore
+      #   uses: actions/cache/restore@v4
+      #   with:
+      #     path: sync-rtevents.hash.prev
+      #     key: sync-rtevents.hash-${{ github.ref_name }}
 
       - name: Compare SHA256 hashes
+        if: steps.cache.outputs.cache-hit != 'true'
         id: compare-hashes
         run: |
           hash_prev=$(<sync-rtevents.hash.prev 2>/dev/null || echo "fallback_value")
