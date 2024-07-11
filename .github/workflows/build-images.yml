@@ -133,9 +133,9 @@ jobs:
       - name: Compare SHA256 hashes
         id: compare-hashes
         run: |
-          hash.prev=$(<hash.prev.txt 2>/dev/null || echo "fallback_value")
-          hash.current=$(<hash.current.txt 2>/dev/null || echo "fallback_value")
-          if [[ "$hash.prev" == "$hash.current" ]]; then
+          hash_prev=$(<sync-rtevents.hash.prev 2>/dev/null || echo "fallback_value")
+          hash_current=$(<sync-rtevents.hash 2>/dev/null || echo "fallback_value")
+          if [[ "$hash_prev" == "$hash_current" ]]; then
             echo "The hashes are identical."
           else
             echo "The hashes are different."
