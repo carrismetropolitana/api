@@ -117,16 +117,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      # - name: Calculate SHA256 hash
-      #   id: calculate-hash
-      #   run: |
-      #     find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum > sync-rtevents.hash
-      #     echo "sync-rtevents hash: $(cat sync-rtevents.hash)"
+      - name: Calculate SHA256 hash
+        id: calculate-hash
+        run: |
+          cache_key=cache_key=$(find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          echo "sync-rtevents hash: $cache_key"
 
       - uses: actions/cache@v4
         id: cache
         with:
-          key: sync-rtevents-hash-${{ find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum }}
+          key: sync-rtevents-hash-$(cache_key)
 
       # - name: Restore cached SHA256 hash
       #   id: cache-hash-restore
