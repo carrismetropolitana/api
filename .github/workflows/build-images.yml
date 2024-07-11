@@ -120,9 +120,17 @@ jobs:
       - name: Calculate current hash for sync-rtevents
         id: calculate-hash
         run: |
-          # find ./sync-rtevents -type f -exec sha256sum {} + | sort | sha256sum > sync-rtevents.hash
           find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum > sync-rtevents.hash
           echo "sync-rtevents hash: $(cat sync-rtevents.hash)"
+
+      - name: Restore cached Primes
+        id: cache-primes-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            path/to/dependencies
+            some/other/dependencies
+          key: ${{ runner.os }}-primes
 
       - name: Cache previous hash
         id: cache-previous-hash
