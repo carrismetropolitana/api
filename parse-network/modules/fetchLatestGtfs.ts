@@ -4,6 +4,7 @@ import { createWriteStream, existsSync, mkdirSync } from 'node:fs';
 import fs from 'node:fs';
 import { Readable } from 'node:stream';
 import { finished } from 'node:stream/promises';
+
 import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings';
 
 /* * */
@@ -25,7 +26,8 @@ export default async () => {
 		console.log(`⤷ Copying file from "${url}" to "${filePath}"...`);
 		const path = url.replace('file://', '');
 		fs.copyFileSync(path, filePath);
-	} else {
+	}
+	else {
 		const stream = createWriteStream(filePath);
 		const resp: Response = await fetch(process.env.GTFS_URL);
 		const body: ReadableStream<Uint8Array> = resp.body;
