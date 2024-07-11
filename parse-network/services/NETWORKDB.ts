@@ -7,34 +7,31 @@ const { NETWORKDB_HOST, NETWORKDB_PASSWORD, NETWORKDB_USER } = process.env;
 
 /* * */
 
-class NETWORKDB {
-	//
+const client = new Client({
+	connectionTimeoutMillis: 10000,
+	database: NETWORKDB_USER,
+	host: NETWORKDB_HOST,
+	password: NETWORKDB_PASSWORD,
+	user: NETWORKDB_USER,
+});
 
-	client = new Client({
-		connectionTimeoutMillis: 10000,
-		database: NETWORKDB_USER,
-		host: NETWORKDB_HOST,
-		password: NETWORKDB_PASSWORD,
-		user: NETWORKDB_USER,
-	});
+async function connect() {
+	await client.connect();
+	console.log(`⤷ Connected to NETWORKDB.`);
+}
 
-	async connect() {
-		await this.client.connect();
-		console.log(`⤷ Connected to NETWORKDB.`);
-	}
-
-	async disconnect() {
-		await this.client.end();
-		this.client = null;
-		console.log(`⤷ Disconnected from NETWORKDB.`);
-	}
-
-	//
+async function disconnect() {
+	await client.end();
+	console.log(`⤷ Disconnected from NETWORKDB.`);
 }
 
 /* * */
 
-const networkdb = new NETWORKDB();
+const networkdb = {
+	client,
+	connect,
+	disconnect,
+};
 
 /* * */
 
