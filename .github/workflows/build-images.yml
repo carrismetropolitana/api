@@ -120,14 +120,14 @@ jobs:
       - name: Calculate SHA256 hash
         id: calculate-hash
         run: |
-          cache_key=cache_key=$(find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
-          echo "sync-rtevents hash: $cache_key"
+          CACHE_NAME=$(find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          echo "sync-rtevents hash: $CACHE_NAME"
 
       - uses: actions/cache@v4
         id: cache
         with:
           path: sync-rtevents.hash
-          key: sync-rtevents-hash-$(cache_key)
+          key: sync-rtevents-hash-${{ env.CACHE_NAME }}
 
       # - name: Restore cached SHA256 hash
       #   id: cache-hash-restore
@@ -148,33 +148,33 @@ jobs:
             echo "The hashes are different."
           fi
 
-      - name: Save Primes
-        id: cache-hash-save
-        uses: actions/cache/save@v4
-        with:
-          path: sync-rtevents.hash
-          key: ${{ steps.cache-hash-restore.outputs.cache-primary-key }}
+      # - name: Save Primes
+      #   id: cache-hash-save
+      #   uses: actions/cache/save@v4
+      #   with:
+      #     path: sync-rtevents.hash
+      #     key: ${{ steps.cache-hash-restore.outputs.cache-primary-key }}
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@master
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
-        if: env.sync_rtevents_changed == 'true'
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./sync-rtevents
-          file: ./sync-rtevents/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-sync-rtevents:${{ github.ref_name }}
+      # - name: Build and Push Docker Image
+      #   if: env.sync_rtevents_changed == 'true'
+      #   uses: docker/build-push-action@master
+      #   with:
+      #     push: true
+      #     context: ./sync-rtevents
+      #     file: ./sync-rtevents/Dockerfile
+      #     tags: ghcr.io/carrismetropolitana/api-sync-rtevents:${{ github.ref_name }}
 
-      - name: Store current hash for future comparisons
-        if: env.sync_rtevents_changed == 'true'
-        run: |
-          cp sync-rtevents.hash sync-rtevents.hash.old
+      # - name: Store current hash for future comparisons
+      #   if: env.sync_rtevents_changed == 'true'
+      #   run: |
+      #     cp sync-rtevents.hash sync-rtevents.hash.old
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
