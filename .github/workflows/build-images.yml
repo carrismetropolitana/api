@@ -117,40 +117,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate current hash for sync-rtevents
+      - name: Calculate SHA256 hash
         id: calculate-hash
         run: |
           find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum > sync-rtevents.hash
           echo "sync-rtevents hash: $(cat sync-rtevents.hash)"
 
-      - name: Restore cached Primes
-        id: cache-primes-restore
+      - name: Restore cached SHA256 hash
+        id: cache-hash-restore
         uses: actions/cache/restore@v4
         with:
-          path: |
-            path/to/dependencies
-            some/other/dependencies
-          key: ${{ runner.os }}-primes
+          path: sync-rtevents.hash.prev
+          key: sync-rtevents.hash-${{ github.ref_name }}
 
-      - name: Cache previous hash
-        id: cache-previous-hash
-        uses: actions/cache@v3
-        with:
-          path: sync-rtevents.hash.old
-          key: sync-rtevents-hash-${{ github.ref_name }}
-          restore-keys: sync-rtevents-hash-
-
-      - name: Compare hashes
-        id: compare-hash
+      - name: Compare SHA256 hashes
+        id: compare-hashes
         run: |
-          if [ -f sync-rtevents.hash.old ] && cmp -s sync-rtevents.hash sync-rtevents.hash.old; then
-            echo "sync-rtevents unchanged"
-            echo "sync_rtevents_changed=false" >> $GITHUB_ENV
-            exit 0
+          hash.prev=$(<sync-rtevents.hash.prev)
+          hash.current=$(<sync-rtevents.hash)
+          if [[ "$hash1" == "$hash2" ]]; then
+            echo "The hashes are identical."
           else
-            echo "sync-rtevents changed"
-            echo "sync_rtevents_changed=true" >> $GITHUB_ENV
+            echo "The hashes are different."
           fi
+
+      - name: Save Primes
+        id: cache-hash-save
+        uses: actions/cache/save@v4
+        with:
+          path: sync-rtevents.hash
+          key: ${{ steps.cache-hash-restore.outputs.cache-primary-key }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@master
