@@ -5,9 +5,9 @@ export function getElapsedTime(startTime: [number, number]) {
 
 	const elapsedMiliseconds = Math.floor(
 		// seconds -> milliseconds +
-		interval[0] * 1000 +
-    // + nanoseconds -> milliseconds
-    interval[1] / 1000000,
+		interval[0] * 1000
+		// + nanoseconds -> milliseconds
+		+ interval[1] / 1000000,
 	);
 
 	//

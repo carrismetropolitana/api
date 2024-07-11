@@ -1,11 +1,12 @@
 /* * */
 
-import fs from 'node:fs';
+import NETWORKDB from '@/services/NETWORKDB.js';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify/sync';
+import fs from 'node:fs';
 import { from as copyFrom } from 'pg-copy-streams';
-import { getElapsedTime } from './timeCalc';
-import NETWORKDB from '../services/NETWORKDB';
+
+import { getElapsedTime } from './timeCalc.js';
 
 /* * */
 
@@ -46,14 +47,14 @@ export default async function (FILE_OPTIONS) {
 }
 
 /* * */
-async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string; file_headers: string[]; raw_dir: string }) {
+async function prepareFile(FILE_OPTIONS: { file_extension: string, file_headers: string[], file_name: string, prepared_dir: string, raw_dir: string }) {
 	const startTime = process.hrtime();
 	console.log(`⤷ Creating file "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
 	const headersString = FILE_OPTIONS.file_headers.join(',');
 	fs.writeFileSync(`${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`, `${headersString}\n`);
 
 	console.log(`⤷ Preparing "${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}"...`);
-	const parserStream = fs.createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ columns: true, trim: true, skip_empty_lines: true, ignore_last_delimiters: true, bom: true }));
+	const parserStream = fs.createReadStream(`${FILE_OPTIONS.raw_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}`).pipe(parse({ bom: true, columns: true, ignore_last_delimiters: true, skip_empty_lines: true, trim: true }));
 	let rowCount = 0;
 	for await (const rowObject of parserStream) {
 		const rowArray = [
@@ -79,7 +80,7 @@ async function prepareFile(FILE_OPTIONS: { prepared_dir: string; file_name: stri
 /* * */
 
 // LOAD files into the database
-async function importFileToTable(FILE_OPTIONS: { prepared_dir: string; file_name: string; file_extension: string }) {
+async function importFileToTable(FILE_OPTIONS: { file_extension: string, file_name: string, prepared_dir: string }) {
 	const startTime = process.hrtime();
 	console.log(`⤷ Importing "${FILE_OPTIONS.prepared_dir}/${FILE_OPTIONS.file_name}.${FILE_OPTIONS.file_extension}" to "${FILE_OPTIONS.file_name}" table...`);
 	// Setup the query and a filesystem NETWORKDB.client using 'pg-copy-streams' and 'fs'

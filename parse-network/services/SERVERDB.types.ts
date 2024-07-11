@@ -1,221 +1,221 @@
 /* * */
 
-import type { MonStop } from './NETWORKDB.types';
+import type { MonStop } from './NETWORKDB.types.js';
 
 /* * */
 
 export interface Line {
-  line_id: string;
-  short_name: string;
-  long_name: string;
-  color: string;
-  text_color: string;
-  route_ids: string[];
-  pattern_ids: string[];
-  facilities: string[];
-  localities: string[];
-  municipality_ids: string[];
+	color: string
+	facilities: string[]
+	line_id: string
+	localities: string[]
+	long_name: string
+	municipality_ids: string[]
+	pattern_ids: string[]
+	route_ids: string[]
+	short_name: string
+	text_color: string
 }
 
 /* * */
 
 export interface Route {
-  line_id: string;
-  route_id: string;
-  short_name: string;
-  long_name: string;
-  color: string;
-  text_color: string;
-  pattern_ids: string[];
-  facilities: string[];
-  localities: string[];
-  municipality_ids: string[];
+	color: string
+	facilities: string[]
+	line_id: string
+	localities: string[]
+	long_name: string
+	municipality_ids: string[]
+	pattern_ids: string[]
+	route_id: string
+	short_name: string
+	text_color: string
 }
 
 /* * */
 
 export interface PatternGroup {
-  line_id: string;
-  route_id: string;
-  pattern_id: string;
-  pattern_group_id: string;
-  short_name: string;
-  color: string;
-  text_color: string;
-  direction: string;
-  headsign: string;
-  shape_id: string;
-  path: PatternGroupPath[];
-  trip_groups: PatternGroupTripGroup;
-  valid_on: string[];
-  facilities: string[];
-  localities: string[];
-  municipality_ids: string[];
+	color: string
+	direction: string
+	facilities: string[]
+	headsign: string
+	line_id: string
+	localities: string[]
+	municipality_ids: string[]
+	path: PatternGroupPath[]
+	pattern_group_id: string
+	pattern_id: string
+	route_id: string
+	shape_id: string
+	short_name: string
+	text_color: string
+	trip_groups: PatternGroupTripGroup
+	valid_on: string[]
 }
 
 /* * */
 
 export interface PatternGroupPath {
-  stop: MonStop;
-  stop_sequence: number;
-  allow_pickup: boolean;
-  allow_drop_off: boolean;
-  distance_delta: number;
+	allow_drop_off: boolean
+	allow_pickup: boolean
+	distance_delta: number
+	stop: MonStop
+	stop_sequence: number
 }
 
 /* * */
 
 export interface PatternGroupTripGroup {
-  schedule: PatternGroupTripGroupSchedule[];
-  dates: [];
-  trip_ids: [];
+	dates: []
+	schedule: PatternGroupTripGroupSchedule[]
+	trip_ids: []
 }
 
 /* * */
 
 export interface PatternGroupTripGroupSchedule {
-  stop_id: string;
-  stop_sequence: string;
-  arrival_time: string;
-  arrival_time_24h: string;
+	arrival_time: string
+	arrival_time_24h: string
+	stop_id: string
+	stop_sequence: string
 }
 
 /* * */
 
 interface GTFSMunicipality {
-  municipality_prefix: string;
-  municipality_id: string;
-  municipality_name: string;
-  district_id: string;
-  district_name: string;
-  region_id: string;
-  region_name: string;
+	district_id: string
+	district_name: string
+	municipality_id: string
+	municipality_name: string
+	municipality_prefix: string
+	region_id: string
+	region_name: string
 }
 
 interface GTFSShape {
-  shape_id: string;
-  shape_pt_lat: number;
-  shape_pt_lon: number;
-  shape_pt_sequence: number;
-  shape_dist_traveled: number;
+	shape_dist_traveled: number
+	shape_id: string
+	shape_pt_lat: number
+	shape_pt_lon: number
+	shape_pt_sequence: number
 }
 
 interface GTFSStop {
-  stop_id: string;
-  stop_name: string;
-  stop_short_name: string;
-  tts_stop_name: string;
-  stop_lat: string;
-  stop_lon: string;
-  locality: string;
-  parish_id: string;
-  parish_name: string;
-  municipality_id: string;
-  municipality_name: string;
-  district_id: string;
-  district_name: string;
-  region_id: string;
-  region_name: string;
-  wheelchair_boarding: string;
-  near_health_clinic: boolean;
-  near_hospital: boolean;
-  near_university: boolean;
-  near_school: boolean;
-  near_police_station: boolean;
-  near_fire_station: boolean;
-  near_shopping: boolean;
-  near_historic_building: boolean;
-  near_transit_office: boolean;
-  light_rail: boolean;
-  subway: boolean;
-  train: boolean;
-  boat: boolean;
-  airport: boolean;
-  bike_sharing: boolean;
-  bike_parking: boolean;
-  car_parking: boolean;
+	airport: boolean
+	bike_parking: boolean
+	bike_sharing: boolean
+	boat: boolean
+	car_parking: boolean
+	district_id: string
+	district_name: string
+	light_rail: boolean
+	locality: string
+	municipality_id: string
+	municipality_name: string
+	near_fire_station: boolean
+	near_health_clinic: boolean
+	near_historic_building: boolean
+	near_hospital: boolean
+	near_police_station: boolean
+	near_school: boolean
+	near_shopping: boolean
+	near_transit_office: boolean
+	near_university: boolean
+	parish_id: string
+	parish_name: string
+	region_id: string
+	region_name: string
+	stop_id: string
+	stop_lat: string
+	stop_lon: string
+	stop_name: string
+	stop_short_name: string
+	subway: boolean
+	train: boolean
+	tts_stop_name: string
+	wheelchair_boarding: string
 }
 
 interface MonPattern {
-  id: string;
-  line_id: string;
-  route_id: string;
-  short_name: string;
-  direction: number;
-  headsign: string;
-  color: string;
-  text_color: string;
-  valid_on: string[];
-  municipalities: string[];
-  localities: string[];
-  facilities: Facility[];
-  shape_id: string;
-  path: Path[];
-  trips: Trip[];
+	color: string
+	direction: number
+	facilities: Facility[]
+	headsign: string
+	id: string
+	line_id: string
+	localities: string[]
+	municipalities: string[]
+	path: Path[]
+	route_id: string
+	shape_id: string
+	short_name: string
+	text_color: string
+	trips: Trip[]
+	valid_on: string[]
 }
 
 interface Path {
-  Stop: Stop;
-  stop_sequence: number;
-  allow_pickup: boolean;
-  allow_drop_off: boolean;
-  distance_delta: number;
+	Stop: Stop
+	allow_drop_off: boolean
+	allow_pickup: boolean
+	distance_delta: number
+	stop_sequence: number
 }
 
 interface Stop {
-  id: string;
-  name: string;
-  short_name: string|null;
-  tts_name: string;
-  lat: string;
-  lon: string;
-  locality: string;
-  parish_id: string|null;
-  parish_name: string|null;
-  municipality_id: string;
-  municipality_name: string;
-  district_id: string;
-  district_name: string;
-  region_id: string;
-  region_name: string;
-  wheelchair_boarding: string|null;
-  facilities: string[];
-  lines: string[];
-  routes: string[];
-  patterns: string[];
+	district_id: string
+	district_name: string
+	facilities: string[]
+	id: string
+	lat: string
+	lines: string[]
+	locality: string
+	lon: string
+	municipality_id: string
+	municipality_name: string
+	name: string
+	parish_id: null | string
+	parish_name: null | string
+	patterns: string[]
+	region_id: string
+	region_name: string
+	routes: string[]
+	short_name: null | string
+	tts_name: string
+	wheelchair_boarding: null | string
 }
 
 interface Trip {
-  id: string;
-  calendar_id: string;
-  calendar_description: string;
-  dates: string[];
-  schedule: Schedule[];
+	calendar_description: string
+	calendar_id: string
+	dates: string[]
+	id: string
+	schedule: Schedule[]
 }
 
 interface Schedule {
-  stop_id: string;
-  stop_sequence: number;
-  arrival_time: string;
-  arrival_time_operation: string;
-  travel_time: string;
+	arrival_time: string
+	arrival_time_operation: string
+	stop_id: string
+	stop_sequence: number
+	travel_time: string
 }
 enum Facility {
-  NEAR_HEALTH_CLINIC = 'near_health_clinic',
-  NEAR_HOSPITAL = 'near_hospital',
-  NEAR_UNIVERSITY = 'near_university',
-  NEAR_SCHOOL = 'near_school',
-  NEAR_POLICE_STATION = 'near_police_station',
-  NEAR_FIRE_STATION = 'near_fire_station',
-  NEAR_SHOPPING = 'near_shopping',
-  NEAR_HISTORIC_BUILDING = 'near_historic_building',
-  NEAR_TRANSIT_OFFICE = 'near_transit_office',
-  LIGHT_RAIL = 'light_rail',
-  SUBWAY = 'subway',
-  TRAIN = 'train',
-  BOAT = 'boat',
-  AIRPORT = 'airport',
-  BIKE_SHARING = 'bike_sharing',
-  BIKE_PARKING = 'bike_parking',
-  CAR_PARKING = 'car_parking',
+	AIRPORT = 'airport',
+	BIKE_PARKING = 'bike_parking',
+	BIKE_SHARING = 'bike_sharing',
+	BOAT = 'boat',
+	CAR_PARKING = 'car_parking',
+	LIGHT_RAIL = 'light_rail',
+	NEAR_FIRE_STATION = 'near_fire_station',
+	NEAR_HEALTH_CLINIC = 'near_health_clinic',
+	NEAR_HISTORIC_BUILDING = 'near_historic_building',
+	NEAR_HOSPITAL = 'near_hospital',
+	NEAR_POLICE_STATION = 'near_police_station',
+	NEAR_SCHOOL = 'near_school',
+	NEAR_SHOPPING = 'near_shopping',
+	NEAR_TRANSIT_OFFICE = 'near_transit_office',
+	NEAR_UNIVERSITY = 'near_university',
+	SUBWAY = 'subway',
+	TRAIN = 'train',
 }

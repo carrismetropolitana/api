@@ -1,16 +1,19 @@
 /* * */
 
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
-import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '../services/NETWORKDB.types';
-import collator from '../modules/sortCollator';
-import { getElapsedTime } from '../modules/timeCalc';
+import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@/services/NETWORKDB.types.js';
+
+import collator from '@/modules/sortCollator.js';
+import { getElapsedTime } from '@/modules/timeCalc.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 
 function calculateTimeDifference(time1: string, time2: string): string {
 	// Handle the case where time1 is zero
-	if (time1 === '00:00:00') { return '00:00:00'; }
+	if (time1 === '00:00:00') {
+		return '00:00:00';
+	}
 	// Convert time strings to seconds
 	const [
 		h1, m1, s1,
@@ -29,7 +32,9 @@ function calculateTimeDifference(time1: string, time2: string): string {
 	let timeDifference = totalSeconds2 - totalSeconds1;
 
 	// Handle negative time difference
-	if (timeDifference < 0) { timeDifference += 86400; }
+	if (timeDifference < 0) {
+		timeDifference += 86400;
+	}
 
 	// Convert time difference back to "HH:MM:SS" format
 	const hours = Math.floor(timeDifference / 3600);
@@ -127,20 +132,25 @@ export default async () => {
 	// Get all stops and build a hashmap for quick retrieval
 	const allStopsTxt = await SERVERDB.client.get('stops:all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
-	const allStopsHashmap = new Map(allStopsJson.map((obj) => [
+	const allStopsHashmap = new Map(allStopsJson.map(obj => [
 		obj.id, obj,
 	]));
 
 	// 4.
 	// Query Postgres for all calendar dates and build a hashmap for quick retrieval
 	const allDatesRaw = await NETWORKDB.client.query<GTFSCalendarDate>(`SELECT * FROM calendar_dates`);
-	const allDatesHashmap = new Map;
-	const allCalendarDatesHashmap = new Map;
+	const allDatesHashmap = new Map();
+	const allCalendarDatesHashmap = new Map();
 	for (const row of allDatesRaw.rows) {
 		// Build a hashmap for dates, periods and day_types
-		if (!allDatesHashmap.has(row.date)) { allDatesHashmap.set(row.date, { period: row.period, day_type: row.day_type }); }
+		if (!allDatesHashmap.has(row.date)) {
+			allDatesHashmap.set(row.date, { day_type: row.day_type, period: row.period });
+		}
 		// Build a hashmap for calendar dates
-		if (allCalendarDatesHashmap.has(row.service_id)) { allCalendarDatesHashmap.get(row.service_id).push(row.date); } else {
+		if (allCalendarDatesHashmap.has(row.service_id)) {
+			allCalendarDatesHashmap.get(row.service_id).push(row.date);
+		}
+		else {
 			allCalendarDatesHashmap.set(row.service_id, [
 				row.date,
 			]);
@@ -158,22 +168,23 @@ export default async () => {
 		//
 		// 7.1.
 		// Check if the route_short_name already exists as a line
-		const existingLine = result.find((line) => line.short_name === route.route_short_name);
+		const existingLine = result.find(line => line.short_name === route.route_short_name);
 
 		// 7.2.
 		// Add the route to the existing line or create a new line with the route
 		if (existingLine) {
 			existingLine.routes.push(route);
-		} else {
+		}
+		else {
 			result.push({
-				id: route.route_short_name,
-				short_name: route.route_short_name,
-				long_name: route.route_long_name,
 				color: route.route_color,
-				text_color: route.route_text_color,
+				id: route.route_short_name,
+				long_name: route.route_long_name,
 				routes: [
 					route,
 				],
+				short_name: route.route_short_name,
+				text_color: route.route_text_color,
 			});
 		}
 
@@ -194,9 +205,9 @@ export default async () => {
 
 	// 8.
 	// Initiate variables to keep track of updated _ids
-	const updatedLineKeys = new Set;
-	const updatedRouteKeys = new Set;
-	const updatedPatternKeys = new Set;
+	const updatedLineKeys = new Set();
+	const updatedRouteKeys = new Set();
+	const updatedPatternKeys = new Set();
 
 	// 9.
 	// For all trips of all routes of each line,
@@ -209,32 +220,32 @@ export default async () => {
 
 		// 9.2.
 		// Initiate other holding variables
-		const linePassesByMunicipalities = new Set;
-		const linePassesByLocalities = new Set;
-		const linePassesByFacilities = new Set;
+		const linePassesByMunicipalities = new Set();
+		const linePassesByLocalities = new Set();
+		const linePassesByFacilities = new Set();
 
 		// 9.4.
 		// Build parsed line object
 		const lineParsed = {
+			color: lineRaw.color ? `#${lineRaw.color}` : '#000000',
+			facilities: [
+			],
 			//
 			id: lineRaw.id,
-			//
-			short_name: lineRaw.short_name,
+			localities: [
+			],
 			long_name: lineRaw.long_name,
-			color: lineRaw.color ? `#${lineRaw.color}` : '#000000',
-			text_color: lineRaw.text_color ? `#${lineRaw.text_color}` : '#FFFFFF',
 			//
-			routes: [
+			municipalities: [
 			],
 			patterns: [
 			],
 			//
-			municipalities: [
+			routes: [
 			],
-			localities: [
-			],
-			facilities: [
-			],
+			//
+			short_name: lineRaw.short_name,
+			text_color: lineRaw.text_color ? `#${lineRaw.text_color}` : '#FFFFFF',
 			//
 		};
 
@@ -249,32 +260,32 @@ export default async () => {
 
 			// 9.4.2.
 			// Initiate other holding variables
-			const routePassesByMunicipalities = new Set;
-			const routePassesByLocalities = new Set;
-			const routePassesByFacilities = new Set;
+			const routePassesByMunicipalities = new Set();
+			const routePassesByLocalities = new Set();
+			const routePassesByFacilities = new Set();
 
 			// 9.4.5.
 			// Build parsed route object
 			const routeParsed = {
+				color: lineParsed.color,
+				facilities: [
+				],
 				//
 				id: routeRaw.route_id,
 				//
 				line_id: lineParsed.id,
-				//
-				short_name: routeRaw.route_short_name,
+				localities: [
+				],
 				long_name: routeRaw.route_long_name,
-				color: lineParsed.color,
-				text_color: lineParsed.text_color,
+				//
+				municipalities: [
+				],
 				//
 				patterns: [
 				],
 				//
-				municipalities: [
-				],
-				localities: [
-				],
-				facilities: [
-				],
+				short_name: routeRaw.route_short_name,
+				text_color: lineParsed.text_color,
 				//
 			};
 
@@ -317,9 +328,9 @@ export default async () => {
 				let prevTravelDistance = 0;
 				let prevArrivalTime = '00:00:00';
 
-				const patternPassesByMunicipalities = new Set;
-				const patternPassesByLocalities = new Set;
-				const patternPassesByFacilities = new Set;
+				const patternPassesByMunicipalities = new Set();
+				const patternPassesByLocalities = new Set();
+				const patternPassesByFacilities = new Set();
 
 				// 9.4.4.4.
 				// For each path sequence
@@ -347,21 +358,21 @@ export default async () => {
 					// Save formatted stop_time to path if no pattern with the unique combination exists yet
 					if (!patternParsed) {
 						formattedPath.push({
+							allow_drop_off: !stopTimeRaw.drop_off_type,
+							allow_pickup: !stopTimeRaw.pickup_type,
+							distance_delta: currentDistanceDelta,
 							stop: existingStopDocument,
 							stop_sequence: stopTimeRaw.stop_sequence,
-							allow_pickup: !stopTimeRaw.pickup_type,
-							allow_drop_off: !stopTimeRaw.drop_off_type,
-							distance_delta: currentDistanceDelta,
 						});
 					}
 
 					// 9.4.4.4.6.
 					// Save formatted stop_time to schedule
 					formattedSchedule.push({
-						stop_id: existingStopDocument.id,
-						stop_sequence: stopTimeRaw.stop_sequence,
 						arrival_time: arrivalTimeFormatted,
 						arrival_time_operation: stopTimeRaw.arrival_time,
+						stop_id: existingStopDocument.id,
+						stop_sequence: stopTimeRaw.stop_sequence,
 						travel_time: currentTravelTime,
 					});
 
@@ -393,10 +404,10 @@ export default async () => {
 				// 9.4.4.6.
 				// Create a new formatted trip object
 				const tripParsed = {
-					id: tripRaw.trip_id,
-					calendar_id: tripRaw.service_id,
 					calendar_description: tripRaw.calendar_desc || '',
+					calendar_id: tripRaw.service_id,
 					dates: tripDates,
+					id: tripRaw.trip_id,
 					schedule: formattedSchedule,
 				};
 
@@ -419,31 +430,31 @@ export default async () => {
 				// then create a new one with the formatted path and formatted trip values.
 				parsedPatternsForThisRoute.push({
 					//
+					color: lineParsed.color,
+					direction: tripRaw.direction_id,
+					facilities: Array.from(patternPassesByFacilities),
+					headsign: tripRaw.trip_headsign,
+					//
 					id: tripRaw.pattern_id,
 					//
 					line_id: lineParsed.id,
-					route_id: routeRaw.route_id,
-					//
-					short_name: lineParsed.short_name,
-					direction: tripRaw.direction_id,
-					headsign: tripRaw.trip_headsign,
-					//
-					color: lineParsed.color,
-					text_color: lineParsed.text_color,
-					//
-					valid_on: tripDates,
+					localities: Array.from(patternPassesByLocalities),
 					//
 					municipalities: Array.from(patternPassesByMunicipalities),
-					localities: Array.from(patternPassesByLocalities),
-					facilities: Array.from(patternPassesByFacilities),
+					//
+					path: formattedPath,
+					route_id: routeRaw.route_id,
 					//
 					shape_id: tripRaw.shape_id,
 					//
-					path: formattedPath,
+					short_name: lineParsed.short_name,
+					text_color: lineParsed.text_color,
 					//
 					trips: [
 						tripParsed,
 					],
+					//
+					valid_on: tripDates,
 					//
 				});
 
@@ -454,7 +465,7 @@ export default async () => {
 			// Save all created patterns to the database and update parent route and line
 			for (const patternParsed of parsedPatternsForThisRoute) {
 				//
-				const preParsedData = patternParsed.trips.map((trip) => ({ id: trip.id, dates: trip.dates }));
+				const preParsedData = patternParsed.trips.map(trip => ({ dates: trip.dates, id: trip.id }));
 				const patternGroups = createPatternGroups(preParsedData);
 				await SERVERDB.client.set(`patterns_groups:${patternParsed.id}`, JSON.stringify(patternGroups));
 
@@ -525,32 +536,42 @@ export default async () => {
 	// Delete stale patterns not present in the current update
 	const allPatternKeysInTheDatabase = [
 	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'patterns:*' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'patterns:*', TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 
-	const stalePatternKeys = allPatternKeysInTheDatabase.filter((key) => !updatedPatternKeys.has(key));
-	if (stalePatternKeys.length) { await SERVERDB.client.del(stalePatternKeys); }
+	const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));
+	if (stalePatternKeys.length) {
+		await SERVERDB.client.del(stalePatternKeys);
+	}
 	console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
 	// 13.
 	// Delete stale routes not present in the current update
 	const allRouteKeysInTheDatabase = [
 	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'routes:*' })) { allRouteKeysInTheDatabase.push(key); }
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'routes:*', TYPE: 'string' })) {
+		allRouteKeysInTheDatabase.push(key);
+	}
 
-	const staleRouteKeys = allRouteKeysInTheDatabase.filter((key) => !updatedRouteKeys.has(key));
-	if (staleRouteKeys.length) { await SERVERDB.client.del(staleRouteKeys); }
+	const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
+	if (staleRouteKeys.length) {
+		await SERVERDB.client.del(staleRouteKeys);
+	}
 	console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
 
 	// 14.
 	// Delete stale lines not present in the current update
 	const allLineKeysInTheDatabase = [
 	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'lines:*' })) { allLineKeysInTheDatabase.push(key); }
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'lines:*', TYPE: 'string' })) {
+		allLineKeysInTheDatabase.push(key);
+	}
 
-	const staleLineKeys = allLineKeysInTheDatabase.filter((key) => !updatedLineKeys.has(key));
-	if (staleLineKeys.length) { await SERVERDB.client.del(staleLineKeys); }
+	const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
+	if (staleLineKeys.length) {
+		await SERVERDB.client.del(staleLineKeys);
+	}
 	console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 
 	// 15.

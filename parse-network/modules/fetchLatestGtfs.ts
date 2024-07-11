@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { Readable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 
-import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings';
+import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings.js';
 
 /* * */
 

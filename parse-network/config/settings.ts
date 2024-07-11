@@ -1,7 +1,5 @@
 /* * */
 
-export const RUN_INTERVAL = 300000; // 5 minutes
-
 export const SINGLE_RUN = process.env.SINGLE_RUN === 'true' || false;
 
 /* * */

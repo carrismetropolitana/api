@@ -1,9 +1,8 @@
 /* * */
 
+import { BASE_DIR, GTFS_BASE_DIR, GTFS_RAW_DIR } from '@/config/settings.js';
 import extract from 'extract-zip';
 import fs from 'node:fs';
-
-import { BASE_DIR, GTFS_BASE_DIR, GTFS_RAW_DIR } from '../config/settings';
 
 /* * */
 

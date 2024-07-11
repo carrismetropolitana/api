@@ -1,9 +1,9 @@
 /* * */
 
-import collator from '../modules/sortCollator';
-import { getElapsedTime } from '../modules/timeCalc';
-import NETWORKDB from '../services/NETWORKDB';
-import SERVERDB from '../services/SERVERDB';
+import collator from '@/modules/sortCollator.js';
+import { getElapsedTime } from '@/modules/timeCalc.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 

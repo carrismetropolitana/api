@@ -1,10 +1,11 @@
 /* * */
 
-import SERVERDB from '../services/SERVERDB';
-import NETWORKDB from '../services/NETWORKDB';
-import type { MonStop } from '../services/NETWORKDB.types';
-import collator from '../modules/sortCollator';
-import { getElapsedTime } from '../modules/timeCalc';
+import type { MonStop } from '@/services/NETWORKDB.types.js';
+
+import collator from '@/modules/sortCollator.js';
+import { getElapsedTime } from '@/modules/timeCalc.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
 
 /* * */
 
@@ -18,44 +19,44 @@ export default async () => {
 	// Query Postgres for all unique stops by stop_id
 	console.log(`⤷ Querying database...`);
 	const allStops = await NETWORKDB.client.query<{
-    stop_id: string;
-    stop_name: string;
-    stop_short_name: string;
-    tts_stop_name: string;
-    operational_status: string;
-    stop_lat: string;
-    stop_lon: string;
-    locality: string;
-    parish_id: string;
-    parish_name: string;
-    municipality_id: string;
-    municipality_name: string;
-    district_id: string;
-    district_name: string;
-    region_id: string;
-    region_name: string;
-    wheelchair_boarding: string;
-    near_health_clinic: boolean;
-    near_hospital: boolean;
-    near_university: boolean;
-    near_school: boolean;
-    near_police_station: boolean;
-    near_fire_station: boolean;
-    near_shopping: boolean;
-    near_historic_building: boolean;
-    near_transit_office: boolean;
-    light_rail: boolean;
-    subway: boolean;
-    train: boolean;
-    boat: boolean;
-    airport: boolean;
-    bike_sharing: boolean;
-    bike_parking: boolean;
-    car_parking: boolean;
-    route_ids: string[];
-    line_ids: string[];
-    pattern_ids: string[];
-  }>(`
+		airport: boolean
+		bike_parking: boolean
+		bike_sharing: boolean
+		boat: boolean
+		car_parking: boolean
+		district_id: string
+		district_name: string
+		light_rail: boolean
+		line_ids: string[]
+		locality: string
+		municipality_id: string
+		municipality_name: string
+		near_fire_station: boolean
+		near_health_clinic: boolean
+		near_historic_building: boolean
+		near_hospital: boolean
+		near_police_station: boolean
+		near_school: boolean
+		near_shopping: boolean
+		near_transit_office: boolean
+		near_university: boolean
+		operational_status: string
+		parish_id: string
+		parish_name: string
+		pattern_ids: string[]
+		region_id: string
+		region_name: string
+		route_ids: string[]
+		stop_id: string
+		stop_lat: string
+		stop_lon: string
+		stop_name: string
+		stop_short_name: string
+		subway: boolean
+		train: boolean
+		tts_stop_name: string
+		wheelchair_boarding: string
+	}>(`
     SELECT
         s.*,
         r.route_ids,
@@ -88,7 +89,7 @@ export default async () => {
 	// Initate a temporary variable to hold updated Stops
 	const allStopsData: MonStop[] = [
 	];
-	const updatedStopKeys = new Set;
+	const updatedStopKeys = new Set();
 
 	// 5.
 	// For each stop, update its entry in the database
@@ -115,31 +116,31 @@ export default async () => {
 		if (stop.car_parking) { facilities.push('car_parking'); }
 		// Initiate a variable to hold the parsed stop
 		const parsedStop = {
-			id: stop.stop_id,
-			name: stop.stop_name,
-			short_name: stop.stop_short_name,
-			tts_name: stop.tts_stop_name,
-			operational_status: stop.operational_status,
-			lat: stop.stop_lat,
-			lon: stop.stop_lon,
-			locality: stop.locality,
-			parish_id: stop.parish_id,
-			parish_name: stop.parish_name,
-			municipality_id: stop.municipality_id,
-			municipality_name: stop.municipality_name,
 			district_id: stop.district_id,
 			district_name: stop.district_name,
-			region_id: stop.region_id,
-			region_name: stop.region_name,
-			wheelchair_boarding: stop.wheelchair_boarding,
 			facilities: facilities || [
 			],
+			id: stop.stop_id,
+			lat: stop.stop_lat,
 			lines: stop.line_ids || [
 			],
-			routes: stop.route_ids || [
-			],
+			locality: stop.locality,
+			lon: stop.stop_lon,
+			municipality_id: stop.municipality_id,
+			municipality_name: stop.municipality_name,
+			name: stop.stop_name,
+			operational_status: stop.operational_status,
+			parish_id: stop.parish_id,
+			parish_name: stop.parish_name,
 			patterns: stop.pattern_ids || [
 			],
+			region_id: stop.region_id,
+			region_name: stop.region_name,
+			routes: stop.route_ids || [
+			],
+			short_name: stop.stop_short_name,
+			tts_name: stop.tts_stop_name,
+			wheelchair_boarding: stop.wheelchair_boarding,
 		};
 		// Update or create new document
 		allStopsData.push(parsedStop);
@@ -162,9 +163,9 @@ export default async () => {
 	// Delete all Stops not present in the current update
 	const allSavedStopKeys = [
 	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'stops:*' })) { allSavedStopKeys.push(key); }
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'stops:*', TYPE: 'string' })) { allSavedStopKeys.push(key); }
 
-	const staleStopKeys = allSavedStopKeys.filter((id) => !updatedStopKeys.has(id));
+	const staleStopKeys = allSavedStopKeys.filter(id => !updatedStopKeys.has(id));
 	if (staleStopKeys.length) { await SERVERDB.client.del(staleStopKeys); }
 	console.log(`⤷ Deleted ${staleStopKeys.length} stale Stops.`);
 

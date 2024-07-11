@@ -1,6 +1,6 @@
 /* * */
 
-import { BASE_DIR, GTFS_BASE_DIR, GTFS_PREPARED_DIR, GTFS_RAW_DIR } from './settings';
+import { BASE_DIR, GTFS_BASE_DIR, GTFS_PREPARED_DIR, GTFS_RAW_DIR } from './settings.js';
 
 /* * */
 

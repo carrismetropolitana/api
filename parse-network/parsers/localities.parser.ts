@@ -1,10 +1,10 @@
 /* * */
 
 import { createHash } from 'node:crypto';
-import SERVERDB from '../services/SERVERDB';
-import NETWORKDB from '../services/NETWORKDB';
-import collator from '../modules/sortCollator';
-import { getElapsedTime } from '../modules/timeCalc';
+import SERVERDB from '@/services/SERVERDB.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import collator from '@/modules/sortCollator.js';
+import { getElapsedTime } from '@/modules/timeCalc.js';
 
 /* * */
 

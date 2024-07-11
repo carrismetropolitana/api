@@ -1,7 +1,8 @@
 /* * */
 
 import { mkdirSync, rmSync } from 'node:fs';
-import { BASE_DIR } from '../config/settings';
+
+import { BASE_DIR } from '../config/settings.js';
 
 /* * */
 
@@ -9,7 +10,7 @@ export default async () => {
 	//
 
 	// Remove directory, if exists
-	rmSync(BASE_DIR, { recursive: true, force: true });
+	rmSync(BASE_DIR, { force: true, recursive: true });
 	console.log(`⤷ Removed directory "${BASE_DIR}" successfully.`);
 
 	// Create directory

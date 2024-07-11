@@ -1,8 +1,8 @@
 /* * */
 
-import { createReadStream } from 'node:fs';
+import { BASE_DIR, GTFS_BASE_DIR } from '@/config/settings.js';
 import crypto from 'node:crypto';
-import { BASE_DIR, GTFS_BASE_DIR } from '../config/settings';
+import { createReadStream } from 'node:fs';
 
 /* * */
 
