@@ -121,12 +121,13 @@ jobs:
         id: calculate-hash
         run: |
           find "./sync-rtevents" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > sync-rtevents.hash
+          echo "SHA256_HASH=$(cat sync-rtevents.hash)" >> $GITHUB_ENV
 
       - uses: actions/cache@v4
         id: cache
         with:
           path: sync-rtevents.hash
-          key: sync-rtevents-${{ cat sync-rtevents.hash }}
+          key: sync-rtevents-${{ env.SHA256_HASH }}
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
