@@ -129,13 +129,13 @@ jobs:
           restore-keys: sync-rtevents-hash-
 
       - name: Compare hashes
-            run: |
-              if [ -f sync-rtevents.hash.prev ] && cmp -s sync-rtevents.hash sync-rtevents.hash.prev; then
-                echo "sync-rtevents unchanged"
-                exit 1  # This will fail the step and job
-              else
-                echo "sync-rtevents changed"
-              fi
+        run: |
+          if [ -f sync-rtevents.hash.prev ] && cmp -s sync-rtevents.hash sync-rtevents.hash.prev; then
+            echo "sync-rtevents unchanged"
+            exit 1  # This will fail the step and job
+          else
+            echo "sync-rtevents changed"
+          fi
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@master
