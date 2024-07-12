@@ -35,15 +35,15 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 
 export const ENABLED_MODULES = [
 	'gtfs_import',
-	'municipalities_parser',
-	'localities_parser',
-	'periods_parser',
-	'dates_parser',
-	'archives_parser',
-	'stops_parser',
-	'shapes_parser',
-	'lines_routes_patterns_parser',
-	'timetables_parser',
+	// 'municipalities_parser',
+	// 'localities_parser',
+	// 'periods_parser',
+	// 'dates_parser',
+	// 'archives_parser',
+	// 'stops_parser',
+	// 'shapes_parser',
+	// 'lines_routes_patterns_parser',
+	// 'timetables_parser',
 ];
 
 /* * */
