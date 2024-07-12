@@ -6,7 +6,8 @@ import type { Line, PatternGroup, Route } from '@/services/SERVERDB.types.js';
 import sortCollator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
-import TIMETRACKER from '@/services/TIMETRACKER.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
 import crypto from 'node:crypto';
 
 /* * */
@@ -45,7 +46,7 @@ export default async () => {
 	 * we simplify consumption while improving service readability as a whole. A schedule represents all trips serving the same path at the same time.
 	 */
 
-	const globalTimeTracker = new TIMETRACKER('newLinesRoutesPatterns.parser/global');
+	const globalTimer = new TIMETRACKER();
 
 	//
 	// Build hashmaps for GTFS entities that will be reused multiple times.
@@ -427,7 +428,7 @@ export default async () => {
 	if (stalePatternKeys.length) {
 		await SERVERDB.client.del(stalePatternKeys);
 	}
-	console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
+	console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns`);
 
 	//
 	// Delete stale routes
@@ -441,7 +442,7 @@ export default async () => {
 	if (staleRouteKeys.length) {
 		await SERVERDB.client.del(staleRouteKeys);
 	}
-	console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
+	console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes`);
 
 	// 7.
 	// Delete stale routes
@@ -455,7 +456,11 @@ export default async () => {
 	if (staleLineKeys.length) {
 		await SERVERDB.client.del(staleLineKeys);
 	}
-	console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
+	console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines`);
+
+	//
+
+	LOGGER.success(`Done updating Lines, Routes and Patterns v2 (${globalTimer.get()})`);
 
 	//
 };
