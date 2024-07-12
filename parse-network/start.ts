@@ -37,8 +37,8 @@ export const ENABLED_MODULES = [
 	'gtfs_import',
 	'municipalities_parser',
 	'localities_parser',
-	// 'periods_parser',
-	// 'dates_parser',
+	'periods_parser',
+	'dates_parser',
 	// 'archives_parser',
 	// 'stops_parser',
 	// 'shapes_parser',
@@ -155,8 +155,8 @@ export default async () => {
 		/* * */
 
 		if (ENABLED_MODULES.includes('periods_parser')) {
-			console.log();
-			console.log('STEP 1.3: Parse Periods');
+			LOGGER.spacer(1);
+			LOGGER.title('3.3. Parse Periods');
 			await periodsParser();
 		}
 

@@ -1,43 +1,41 @@
 /* * */
 
+import collator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
-import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
 export default async () => {
 	//
-	// 1.
-	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
 
-	// 2.
-	// Fetch all Dates from Postgres
-	console.log(`⤷ Querying database...`);
+	const globalTimer = new TIMETRACKER();
+
+	//
+	// Fetch all municipalities from NETWORKDB
+
+	LOGGER.info(`Querying database...`);
 	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
 
-	// 3.
+	//
 	// Initate a temporary variable to hold updated Dates
-	const allDatesData = [
-	];
-	const updatedDateKeys = new Set;
 
-	// 4.
-	// Log progress
-	console.log(`⤷ Updating Dates...`);
+	const allDatesData = [];
+	const updatedDateKeys = new Set();
 
-	// 5.
+	//
 	// For each date, update its entry in the database
+
 	for (const date of allDates.rows) {
 		// Parse date
 		const parsedDate = {
 			date: date.date,
-			period: date.period,
 			day_type: date.day_type,
-			holiday: date.holiday,
 			description: date.description,
+			holiday: date.holiday,
+			period: date.period,
 		};
 		// Update or create new document
 		allDatesData.push(parsedDate);
@@ -45,30 +43,33 @@ export default async () => {
 		updatedDateKeys.add(`dates:${parsedDate.date}`);
 	}
 
-	// 6.
-	// Log count of updated Dates
-	console.log(`⤷ Updated ${updatedDateKeys.size} Dates.`);
+	LOGGER.info(`Updated ${updatedDateKeys.size} Dates`);
 
-	// 7.
+	//
 	// Add the 'all' option
+
 	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
 	await SERVERDB.client.set('dates:all', JSON.stringify(allDatesData));
 	updatedDateKeys.add('dates:all');
 
-	// 8.
+	//
 	// Delete all Dates not present in the current update
-	const allSavedDateKeys = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'dates:*' })) { allSavedDateKeys.push(key); }
 
-	const staleDateKeys = allSavedDateKeys.filter((date) => !updatedDateKeys.has(date));
-	if (staleDateKeys.length) { await SERVERDB.client.del(staleDateKeys); }
-	console.log(`⤷ Deleted ${staleDateKeys.length} stale Dates.`);
+	const allSavedDateKeys = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'dates:*', TYPE: 'string' })) {
+		allSavedDateKeys.push(key);
+	}
 
-	// 9.
-	// Log elapsed time in the current operation
-	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Dates (${elapsedTime}).`);
+	const staleDateKeys = allSavedDateKeys.filter(date => !updatedDateKeys.has(date));
+	if (staleDateKeys.length) {
+		await SERVERDB.client.del(staleDateKeys);
+	}
+
+	LOGGER.info(`Deleted ${staleDateKeys.length} stale Dates`);
+
+	//
+
+	LOGGER.success(`Done updating Dates (${globalTimer.get()})`);
 
 	//
 };

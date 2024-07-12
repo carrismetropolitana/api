@@ -1,55 +1,61 @@
 /* * */
 
-import type { GTFSDate, GTFSPeriod } from '@/services/NETWORKDB.types.js';
-
 import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
 
 /* * */
 
 export default async () => {
 	//
-	// 1.
-	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
 
-	// 2.
-	// Fetch all calendar dates from Postgres
-	console.log(`⤷ Querying database...`);
-	const allPeriods = await NETWORKDB.client.query<GTFSPeriod>('SELECT * FROM periods');
-	const allDates = await NETWORKDB.client.query<GTFSDate>('SELECT * FROM dates');
+	const globalTimer = new TIMETRACKER();
 
-	// 3.
+	//
+	// Fetch all Periods and Dates from NETWORKDB
+
+	LOGGER.info(`Querying database...`);
+	const allPeriods = await NETWORKDB.client.query('SELECT * FROM periods');
+	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
+
+	//
 	// Build periods hashmap
+
 	const allPeriodsParsed = allPeriods.rows.map((period) => {
 		//
-		// 3.1.
+
+		//
 		// Parse the dates associated with this period
+
 		const datesForThisPeriod = allDates.rows
 			.filter(date => date.period === period.period_id)
 			.map(date => date.date)
 			.sort((a, b) => collator.compare(a, b));
 
-		// 3.2.
+		//
 		// Initiate a variable to hold the active blocks for this period
+
 		const validFromUntil: {
 			from: string
 			until?: string
-		}[] = [
-		];
+		}[] = [];
 
-		// 3.3.
+		//
 		// Start the block with the first date for this period
+
 		let currentBlock: {
 			from: string
 			until?: string
-		} = { from: datesForThisPeriod[0] };
+		} = {
+			from: datesForThisPeriod[0],
+		};
 
-		// 3.4.
+		//
 		// Iterate on all dates for this period
+
 		for (let i = 1; i < datesForThisPeriod.length; i++) {
 			// Setup the next and previous date strings
 			const prevDateString = datesForThisPeriod[i - 1];
@@ -67,13 +73,15 @@ export default async () => {
 			}
 		}
 
-		// 3.5.
+		//
 		// Add the last block
+
 		currentBlock.until = datesForThisPeriod[datesForThisPeriod.length - 1];
 		validFromUntil.push(currentBlock);
 
-		// 3.6.
+		//
 		// Return the parsed period
+
 		return {
 			dates: datesForThisPeriod,
 			id: period.period_id,
@@ -84,22 +92,21 @@ export default async () => {
 		//
 	});
 
-	// 4.
+	//
 	// Sort each period in the array
+
 	allPeriodsParsed.sort((a, b) => collator.compare(a.id, b.id));
 
-	// 5.
-	// Log count of updated Periods
-	console.log(`⤷ Updated ${allPeriodsParsed.length} Periods.`);
-
-	// 6.
+	//
 	// Save the array to the database
+
 	await SERVERDB.client.set('periods:all', JSON.stringify(allPeriodsParsed));
 
-	// 7.
-	// Log elapsed time in the current operation
-	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Periods (${elapsedTime}).`);
+	LOGGER.info(`Updated ${allPeriodsParsed.length} Periods`);
+
+	//
+
+	LOGGER.success(`Done updating Periods (${globalTimer.get()})`);
 
 	//
 };
