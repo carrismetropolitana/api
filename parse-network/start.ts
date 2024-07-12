@@ -15,10 +15,10 @@ import { finished } from 'node:stream/promises';
 
 import archivesParser from '@/parsers/archives.parser.js';
 import datesParser from '@/parsers/dates.parsers.js';
-import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser.js';
+import linesRoutesPatternsParserV1 from '@/parsers/linesRoutesPatternsV1.parser.js';
+import linesRoutesPatternsParserV2 from '@/parsers/linesRoutesPatternsV2.parser.js';
 import localitiesParser from '@/parsers/localities.parser.js';
 import municipalitiesParser from '@/parsers/municipalities.parser.js';
-import newLinesRoutesPatternsParser from '@/parsers/newLinesRoutesPatterns.parser.js';
 import periodsParser from '@/parsers/periods.parser.js';
 import shapesParser from '@/parsers/shapes.parser.js';
 import stopsParser from '@/parsers/stops.parser.js';
@@ -45,7 +45,8 @@ export const ENABLED_MODULES = [
 	'archives_parser',
 	'stops_parser',
 	'shapes_parser',
-	// 'lines_routes_patterns_parser',
+	'lines_routes_patterns_parser_v1',
+	// 'lines_routes_patterns_parser_v2',
 	// 'timetables_parser',
 ];
 
@@ -197,18 +198,18 @@ export default async () => {
 
 		/* * */
 
-		if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
+		if (ENABLED_MODULES.includes('lines_routes_patterns_parser_v1')) {
 			LOGGER.spacer(1);
 			LOGGER.title('3.8.1. Parse Lines, Routes and Patterns (v1)');
-			await linesRoutesPatternsParser();
+			await linesRoutesPatternsParserV1();
 		}
 
 		/* * */
 
-		if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
+		if (ENABLED_MODULES.includes('lines_routes_patterns_parser_v2')) {
 			LOGGER.spacer(1);
 			LOGGER.title('3.8.2. Parse Lines, Routes and Patterns (v2)');
-			await newLinesRoutesPatternsParser();
+			await linesRoutesPatternsParserV2();
 		}
 
 		/* * */
