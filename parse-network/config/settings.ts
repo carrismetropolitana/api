@@ -1,9 +1,5 @@
 /* * */
 
-export const SINGLE_RUN = process.env.SINGLE_RUN === 'true' || false;
-
-/* * */
-
 export const ENABLED_MODULES = [
 	'gtfs_import',
 	'municipalities_parser',

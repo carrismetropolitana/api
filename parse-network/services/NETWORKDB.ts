@@ -1,28 +1,26 @@
 /* * */
 
+import LOGGER from '@helperkits/logger';
 import pg from 'pg';
-const { Client } = pg;
-
-const { NETWORKDB_HOST, NETWORKDB_PASSWORD, NETWORKDB_USER } = process.env;
 
 /* * */
 
-const client = new Client({
+const client = new pg.Client({
 	connectionTimeoutMillis: 10000,
-	database: NETWORKDB_USER,
-	host: NETWORKDB_HOST,
-	password: NETWORKDB_PASSWORD,
-	user: NETWORKDB_USER,
+	database: process.env.NETWORKDB_USER,
+	host: process.env.NETWORKDB_HOST,
+	password: process.env.NETWORKDB_PASSWORD,
+	user: process.env.NETWORKDB_USER,
 });
 
 async function connect() {
 	await client.connect();
-	console.log(`⤷ Connected to NETWORKDB.`);
+	LOGGER.success('Connected to NETWORKDB');
 }
 
 async function disconnect() {
 	await client.end();
-	console.log(`⤷ Disconnected from NETWORKDB.`);
+	LOGGER.success('Disconnected from NETWORKDB');
 }
 
 /* * */

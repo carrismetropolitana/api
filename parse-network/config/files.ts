@@ -1,35 +1,33 @@
 /* * */
 
-import { BASE_DIR, GTFS_BASE_DIR, GTFS_PREPARED_DIR, GTFS_RAW_DIR } from './settings.js';
-
-/* * */
-
-interface File {
-	file_extension: string
-	file_headers: string[]
-	file_name: string
+export interface GtfsFile {
+	_key: string
+	extension: string
+	headers: string[]
 	index_queries: string[]
-	prepared_dir: string
-	raw_dir: string
 	table_query: string
 }
 
-const files: File[] = [
+/* * */
+
+const allGtfsFiles: GtfsFile[] = [
 	//
 
-	//
-	// MUNICIPALITIES
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'municipality_prefix', 'municipality_id', 'municipality_name', 'district_id', 'district_name', 'region_id', 'region_name',
+		_key: 'municipalities',
+		extension: 'txt',
+		headers: [
+			'municipality_prefix',
+			'municipality_id',
+			'municipality_name',
+			'district_id',
+			'district_name',
+			'region_id',
+			'region_name',
 		],
-		file_name: 'municipalities',
 		index_queries: [
 			'CREATE INDEX municipalities_municipality_id_idx ON municipalities ("municipality_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE municipalities (
 			municipality_prefix VARCHAR(2),
 			municipality_id VARCHAR(4),
@@ -41,38 +39,35 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// PERIODS
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'period_id', 'period_name',
+		_key: 'periods',
+		extension: 'txt',
+		headers: [
+			'period_id',
+			'period_name',
 		],
-		file_name: 'periods',
 		index_queries: [
 			'CREATE INDEX periods_period_id_idx ON periods ("period_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE periods (
 			period_id VARCHAR(1),
 			period_name VARCHAR(255)
 		);`,
 	},
 
-	//
-	// DATES
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'date', 'period', 'day_type', 'holiday', 'description',
+		_key: 'dates',
+		extension: 'txt',
+		headers: [
+			'date',
+			'period',
+			'day_type',
+			'holiday',
+			'description',
 		],
-		file_name: 'dates',
 		index_queries: [
 			'CREATE INDEX dates_date_idx ON dates ("date");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE dates (
 			date VARCHAR(8),
 			period VARCHAR(1),
@@ -82,19 +77,18 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// PLANS
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'archive_id', 'operator_id', 'archive_start_date', 'archive_end_date',
+		_key: 'archives',
+		extension: 'txt',
+		headers: [
+			'archive_id',
+			'operator_id',
+			'archive_start_date',
+			'archive_end_date',
 		],
-		file_name: 'archives',
 		index_queries: [
 			'CREATE INDEX archives_archive_id_idx ON archives ("archive_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE archives (
 			archive_id VARCHAR(10),
 			operator_id VARCHAR(2),
@@ -103,19 +97,20 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// CALENDAR_DATES
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'service_id', 'date', 'period', 'day_type', 'holiday', 'exception_type',
+		_key: 'calendar_dates',
+		extension: 'txt',
+		headers: [
+			'service_id',
+			'date',
+			'period',
+			'day_type',
+			'holiday',
+			'exception_type',
 		],
-		file_name: 'calendar_dates',
 		index_queries: [
 			'CREATE INDEX calendar_dates_service_id_idx ON calendar_dates ("service_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE calendar_dates (
 			service_id VARCHAR(255),
 			date VARCHAR(8),
@@ -126,19 +121,21 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// ROUTES
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_color', 'route_text_color', 'line_id',
+		_key: 'routes',
+		extension: 'txt',
+		headers: [
+			'route_id',
+			'route_short_name',
+			'route_long_name',
+			'route_type',
+			'route_color',
+			'route_text_color',
+			'line_id',
 		],
-		file_name: 'routes',
 		index_queries: [
 			'CREATE INDEX routes_route_id_idx ON routes ("route_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE routes (
 			route_id VARCHAR(10),
 			route_short_name VARCHAR(10),
@@ -150,19 +147,19 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// SHAPES
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'shape_id', 'shape_pt_lat', 'shape_pt_lon', 'shape_pt_sequence', 'shape_dist_traveled',
+		_key: 'shapes',
+		extension: 'txt',
+		headers: [
+			'shape_id',
+			'shape_pt_lat',
+			'shape_pt_lon',
+			'shape_pt_sequence',
+			'shape_dist_traveled',
 		],
-		file_name: 'shapes',
 		index_queries: [
 			'CREATE INDEX shapes_shape_id_idx ON shapes ("shape_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE shapes (
 			shape_id VARCHAR(255),
 			shape_pt_lat FLOAT(6),
@@ -172,19 +169,24 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// TRIPS
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'route_id', 'pattern_id', 'service_id', 'trip_id', 'trip_headsign', 'direction_id', 'shape_id', 'calendar_desc',
+		_key: 'trips',
+		extension: 'txt',
+		headers: [
+			'route_id',
+			'pattern_id',
+			'service_id',
+			'trip_id',
+			'trip_headsign',
+			'direction_id',
+			'shape_id',
+			'calendar_desc',
 		],
-		file_name: 'trips',
 		index_queries: [
-			'CREATE INDEX trips_route_id_idx ON trips ("route_id");', 'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");', 'CREATE INDEX trips_pattern_id_idx ON trips (pattern_id);',
+			'CREATE INDEX trips_route_id_idx ON trips ("route_id");',
+			'CREATE INDEX trips_route_id_service_id_idx ON trips ("route_id", "service_id");',
+			'CREATE INDEX trips_pattern_id_idx ON trips (pattern_id);',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE trips (
 			route_id VARCHAR(255),
 			pattern_id VARCHAR(255),
@@ -197,19 +199,22 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// STOP_TIMES
 	{
-		file_extension: 'txt',
-		file_headers: [
-			'trip_id', 'arrival_time', 'stop_id', 'stop_sequence', 'shape_dist_traveled', 'pickup_type', 'drop_off_type',
+		_key: 'stop_times',
+		extension: 'txt',
+		headers: [
+			'trip_id',
+			'arrival_time',
+			'stop_id',
+			'stop_sequence',
+			'shape_dist_traveled',
+			'pickup_type',
+			'drop_off_type',
 		],
-		file_name: 'stop_times',
 		index_queries: [
-			'CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");', 'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");',
+			'CREATE INDEX stop_times_trip_id_idx ON stop_times ("trip_id");',
+			'CREATE INDEX stop_times_stop_id_idx ON stop_times ("stop_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE stop_times (
 			trip_id VARCHAR(255),
 			arrival_time VARCHAR(8),
@@ -221,11 +226,10 @@ const files: File[] = [
 		);`,
 	},
 
-	//
-	// STOPS
 	{
-		file_extension: 'txt',
-		file_headers: [
+		_key: 'stops',
+		extension: 'txt',
+		headers: [
 			'stop_id',
 			'stop_name',
 			'stop_short_name',
@@ -261,12 +265,9 @@ const files: File[] = [
 			'bike_parking',
 			'car_parking',
 		],
-		file_name: 'stops',
 		index_queries: [
 			'CREATE INDEX stops_stop_id_idx ON stops ("stop_id");',
 		],
-		prepared_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_PREPARED_DIR}`,
-		raw_dir: `${BASE_DIR}/${GTFS_BASE_DIR}/${GTFS_RAW_DIR}`,
 		table_query: `CREATE TABLE stops (
 			stop_id VARCHAR(6),
 			stop_name VARCHAR(255),
@@ -310,4 +311,4 @@ const files: File[] = [
 
 /* * */
 
-export default files;
+export default allGtfsFiles;
