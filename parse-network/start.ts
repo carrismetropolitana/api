@@ -43,7 +43,7 @@ export const ENABLED_MODULES = [
 	'periods_parser',
 	'dates_parser',
 	'archives_parser',
-	// 'stops_parser',
+	'stops_parser',
 	// 'shapes_parser',
 	// 'lines_routes_patterns_parser',
 	// 'timetables_parser',

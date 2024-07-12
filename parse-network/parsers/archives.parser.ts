@@ -26,7 +26,7 @@ export default async () => {
 	const updatedArchiveKeys = new Set();
 
 	//
-	// For each archive, update its entry in the database
+	// For each item, update its entry in the database
 
 	for (const archive of allArchives.rows) {
 		// Parse archive
@@ -53,7 +53,7 @@ export default async () => {
 	updatedArchiveKeys.add('archives:all');
 
 	//
-	// Delete all Archives not present in the current update
+	// Delete all items not present in the current update
 
 	const allSavedArchiveKeys = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'archives:*', TYPE: 'string' })) {
@@ -65,7 +65,7 @@ export default async () => {
 		await SERVERDB.client.del(staleArchiveKeys);
 	}
 
-	LOGGER.info(`Deleted ${staleArchiveKeys.length} stale Archives.`);
+	LOGGER.info(`Deleted ${staleArchiveKeys.length} stale Archives`);
 
 	//
 

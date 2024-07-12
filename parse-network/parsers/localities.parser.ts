@@ -33,7 +33,7 @@ export default async () => {
 	const updatedLocalityKeys = new Set();
 
 	//
-	// For each locality, update its entry in the database
+	// For each item, update its entry in the database
 
 	for (const localityData of allLocalities.rows) {
 		// Skip if the locality is the same as the municipality
@@ -69,7 +69,7 @@ export default async () => {
 	updatedLocalityKeys.add('localities:all');
 
 	// 8.
-	// Delete all Localities not present in the current update
+	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'localities:*', TYPE: 'string' })) {

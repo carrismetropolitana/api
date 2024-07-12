@@ -26,7 +26,7 @@ export default async () => {
 	const updatedMunicipalityKeys = new Set();
 
 	//
-	// For each municipality, update its entry in the database
+	// For each item, update its entry in the database
 
 	for (const municipality of allMunicipalities.rows) {
 		// Parse municipality
@@ -55,7 +55,7 @@ export default async () => {
 	updatedMunicipalityKeys.add('municipalities:all');
 
 	//
-	// Delete all Municipalities not present in the current update
+	// Delete all items not present in the current update
 
 	const allSavedMunicipalityKeys: string[] = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'municipalities:*', TYPE: 'string' })) {

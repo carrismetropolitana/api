@@ -26,7 +26,7 @@ export default async () => {
 	const updatedDateKeys = new Set();
 
 	//
-	// For each date, update its entry in the database
+	// For each item, update its entry in the database
 
 	for (const date of allDates.rows) {
 		// Parse date
@@ -53,7 +53,7 @@ export default async () => {
 	updatedDateKeys.add('dates:all');
 
 	//
-	// Delete all Dates not present in the current update
+	// Delete all items not present in the current update
 
 	const allSavedDateKeys = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'dates:*', TYPE: 'string' })) {
