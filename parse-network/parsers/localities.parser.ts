@@ -15,7 +15,7 @@ export default async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Fetch all unique localities, municipalities from NETWORKDB
+	// Fetch all unique Localities, Municipalities from NETWORKDB
 
 	LOGGER.info(`Querying database...`);
 	const allLocalities = await NETWORKDB.client.query(`
@@ -27,7 +27,7 @@ export default async () => {
 	`);
 
 	//
-	// Initate a temporary variable to hold updated Localities
+	// Initate a temporary variable to hold updated items
 
 	const allLocalitiesData = [];
 	const updatedLocalityKeys = new Set();

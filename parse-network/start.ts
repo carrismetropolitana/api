@@ -4,6 +4,15 @@ import allGtfsFiles from '@/config/files.js';
 import createHashFromFile from '@/modules/createHashFromFile.js';
 import normalizeDirectoryPermissions from '@/modules/normalizeDirectoryPermissions.js';
 import prepareAndImportFile from '@/modules/prepareAndImportFile.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
+import extract from 'extract-zip';
+import fs from 'node:fs';
+import { Readable } from 'node:stream';
+import { finished } from 'node:stream/promises';
+
+/* * */
+
 import archivesParser from '@/parsers/archives.parser.js';
 import datesParser from '@/parsers/dates.parsers.js';
 import linesRoutesPatternsParser from '@/parsers/linesRoutesPatterns.parser.js';
@@ -14,12 +23,6 @@ import periodsParser from '@/parsers/periods.parser.js';
 import shapesParser from '@/parsers/shapes.parser.js';
 import stopsParser from '@/parsers/stops.parser.js';
 import timetablesParser from '@/parsers/timetables.parser.js';
-import LOGGER from '@helperkits/logger';
-import TIMETRACKER from '@helperkits/timer';
-import extract from 'extract-zip';
-import fs from 'node:fs';
-import { Readable } from 'node:stream';
-import { finished } from 'node:stream/promises';
 
 /* * */
 
@@ -39,7 +42,7 @@ export const ENABLED_MODULES = [
 	'localities_parser',
 	'periods_parser',
 	'dates_parser',
-	// 'archives_parser',
+	'archives_parser',
 	// 'stops_parser',
 	// 'shapes_parser',
 	// 'lines_routes_patterns_parser',
@@ -163,56 +166,56 @@ export default async () => {
 		/* * */
 
 		if (ENABLED_MODULES.includes('dates_parser')) {
-			console.log();
-			console.log('STEP 1.4: Parse Dates');
+			LOGGER.spacer(1);
+			LOGGER.title('3.4. Parse Dates');
 			await datesParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('archives_parser')) {
-			console.log();
-			console.log('STEP 1.4: Parse Archives');
+			LOGGER.spacer(1);
+			LOGGER.title('3.5. Parse Archives');
 			await archivesParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('stops_parser')) {
-			console.log();
-			console.log('STEP 1.5: Parse Stops');
+			LOGGER.spacer(1);
+			LOGGER.title('3.6. Parse Stops');
 			await stopsParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('shapes_parser')) {
-			console.log();
-			console.log('STEP 1.6: Parse Shapes');
+			LOGGER.spacer(1);
+			LOGGER.title('3.7. Parse Shapes');
 			await shapesParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
-			console.log();
-			console.log('STEP 1.7: Parse Lines, Routes and Patterns');
+			LOGGER.spacer(1);
+			LOGGER.title('3.8.1. Parse Lines, Routes and Patterns (v1)');
 			await linesRoutesPatternsParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
-			console.log();
-			console.log('STEP 1.7.1: NEW Parse Lines, Routes and Patterns');
+			LOGGER.spacer(1);
+			LOGGER.title('3.8.2. Parse Lines, Routes and Patterns (v2)');
 			await newLinesRoutesPatternsParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('timetables_parser')) {
-			console.log();
-			console.log('STEP 1.8: Parse Timetables');
+			LOGGER.spacer(1);
+			LOGGER.title('3.9. Parse Timetables');
 			await timetablesParser();
 		}
 
@@ -222,9 +225,8 @@ export default async () => {
 
 		//
 	}
-	catch (err) {
-		console.log('An error occurred. Halting execution.', err);
-		return false;
+	catch (error) {
+		LOGGER.error('An error occurred. Halting execution.', error);
 	}
 
 	//

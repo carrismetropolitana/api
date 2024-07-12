@@ -1,34 +1,33 @@
 /* * */
 
 import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
 export default async () => {
 	//
-	// 1.
-	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
 
-	// 2.
-	// Fetch all Archives from Postgres
-	console.log(`⤷ Querying database...`);
+	const globalTimer = new TIMETRACKER();
+
+	//
+	// Fetch all Archives from NETWORKDB
+
+	LOGGER.info(`Querying database...`);
 	const allArchives = await NETWORKDB.client.query('SELECT * FROM archives');
 
-	// 3.
-	// Initate a temporary variable to hold updated Archives
+	//
+	// Initate a temporary variable to hold updated items
+
 	const allArchivesData = [];
 	const updatedArchiveKeys = new Set();
 
-	// 4.
-	// Log progress
-	console.log(`⤷ Updating Archives...`);
-
-	// 5.
+	//
 	// For each archive, update its entry in the database
+
 	for (const archive of allArchives.rows) {
 		// Parse archive
 		const parsedArchive = {
@@ -44,18 +43,18 @@ export default async () => {
 		updatedArchiveKeys.add(`archives:${parsedArchive.id}`);
 	}
 
-	// 6.
-	// Log count of updated Archives
-	console.log(`⤷ Updated ${updatedArchiveKeys.size} Archives.`);
+	LOGGER.info(`Updated ${updatedArchiveKeys.size} Archives`);
 
-	// 7.
+	//
 	// Add the 'all' option
+
 	allArchivesData.sort((a, b) => collator.compare(a.start_date, b.start_date));
 	await SERVERDB.client.set('archives:all', JSON.stringify(allArchivesData));
 	updatedArchiveKeys.add('archives:all');
 
-	// 8.
+	//
 	// Delete all Archives not present in the current update
+
 	const allSavedArchiveKeys = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'archives:*', TYPE: 'string' })) {
 		allSavedArchiveKeys.push(key);
@@ -65,12 +64,12 @@ export default async () => {
 	if (staleArchiveKeys.length) {
 		await SERVERDB.client.del(staleArchiveKeys);
 	}
-	console.log(`⤷ Deleted ${staleArchiveKeys.length} stale Archives.`);
 
-	// 9.
-	// Log elapsed time in the current operation
-	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Archives (${elapsedTime}).`);
+	LOGGER.info(`Deleted ${staleArchiveKeys.length} stale Archives.`);
+
+	//
+
+	LOGGER.success(`Done updating Archives (${globalTimer.get()})`);
 
 	//
 };

@@ -14,13 +14,13 @@ export default async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Fetch all municipalities from NETWORKDB
+	// Fetch all Municipalities from NETWORKDB
 
 	LOGGER.info(`Querying database...`);
 	const allMunicipalities = await NETWORKDB.client.query('SELECT * FROM municipalities');
 
 	//
-	// Initate a temporary variable to hold updated Municipalities
+	// Initate a temporary variable to hold updated items
 
 	const allMunicipalitiesData = [];
 	const updatedMunicipalityKeys = new Set();
