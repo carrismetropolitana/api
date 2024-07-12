@@ -18,7 +18,14 @@ services:
 
   watchtower:
     image: containrrr/watchtower
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 500mb
     logging:
       options:
         max-size: '1m'
@@ -37,7 +44,14 @@ services:
 
   promtail:
     image: grafana/promtail
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 500mb
     logging:
       options:
         max-size: '1m'
@@ -54,7 +68,14 @@ services:
 
   nginx:
     image: nginx:alpine-slim
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 1gb
     logging:
       options:
         max-size: '1m'
@@ -74,7 +95,14 @@ services:
 
   certbot:
     image: certbot/certbot
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 500mb
     logging:
       options:
         max-size: '1m'
@@ -89,7 +117,14 @@ services:
 
   serverdb:
     image: redis:alpine
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 4gb
     logging:
       options:
         max-size: '1m'
@@ -104,7 +139,14 @@ services:
 
   server:
     image: ghcr.io/carrismetropolitana/api-server:beta
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 2gb
     logging:
       options:
         max-size: '1m'
@@ -119,7 +161,14 @@ services:
 
   parse-datasets:
     image: ghcr.io/carrismetropolitana/api-parse-datasets:beta
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 2gb
     logging:
       options:
         max-size: '1m'
@@ -132,7 +181,14 @@ services:
 
   networkdb:
     image: postgres:alpine
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 4gb
     logging:
       options:
         max-size: '1m'
@@ -146,7 +202,14 @@ services:
 
   parse-network:
     image: ghcr.io/carrismetropolitana/api-parse-network:beta
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 2gb
     logging:
       options:
         max-size: '1m'
@@ -163,7 +226,14 @@ services:
 
   switch:
     image: ghcr.io/carrismetropolitana/api-switch:beta
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 500mb
     logging:
       options:
         max-size: '1m'
@@ -174,7 +244,14 @@ services:
 
   sync-rtevents:
     image: ghcr.io/carrismetropolitana/api-sync-rtevents:beta
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 2gb
     logging:
       options:
         max-size: '1m'
@@ -189,7 +266,14 @@ services:
 
   sync-encm:
     image: ghcr.io/carrismetropolitana/api-sync-encm:beta
-    restart: unless-stopped
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      resources:
+        limits:
+          memory: 500mb
     logging:
       options:
         max-size: '1m'
