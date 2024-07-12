@@ -46,7 +46,7 @@ export const ENABLED_MODULES = [
 	'stops_parser',
 	'shapes_parser',
 	'lines_routes_patterns_parser_v1',
-	// 'lines_routes_patterns_parser_v2',
+	'lines_routes_patterns_parser_v2',
 	// 'timetables_parser',
 ];
 

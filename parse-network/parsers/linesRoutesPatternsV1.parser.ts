@@ -3,9 +3,47 @@
 import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@/services/NETWORKDB.types.js';
 
 import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+
+/* * */
+
+function getElapsedTime(startTime: [number, number]) {
+	const interval = process.hrtime(startTime);
+
+	const elapsedMiliseconds = Math.floor(
+		// seconds -> milliseconds +
+		interval[0] * 1000
+		// + nanoseconds -> milliseconds
+		+ interval[1] / 1000000,
+	);
+
+	//
+	const dateObj = new Date(elapsedMiliseconds);
+	//
+	const milliseconds = dateObj.getMilliseconds();
+	const seconds = dateObj.getSeconds();
+	const minutes = dateObj.getMinutes();
+	const hours = dateObj.getHours();
+
+	let string = '';
+
+	if (hours > 0) {
+		string += `${hours}h `;
+	}
+	if (minutes > 0) {
+		string += `${minutes}m `;
+	}
+	if (seconds > 0) {
+		string += `${seconds}s `;
+	}
+	if (milliseconds > 0) {
+		string += `${milliseconds}ms`;
+	}
+
+	return string;
+	//
+}
 
 /* * */
 
@@ -15,12 +53,8 @@ function calculateTimeDifference(time1: string, time2: string): string {
 		return '00:00:00';
 	}
 	// Convert time strings to seconds
-	const [
-		h1, m1, s1,
-	] = time1.split(':').map(Number);
-	const [
-		h2, m2, s2,
-	] = time2.split(':').map(Number);
+	const [h1, m1, s1] = time1.split(':').map(Number);
+	const [h2, m2, s2] = time2.split(':').map(Number);
 	let totalSeconds1 = h1 * 3600 + m1 * 60 + s1;
 	let totalSeconds2 = h2 * 3600 + m2 * 60 + s2;
 
@@ -55,10 +89,8 @@ function createPatternGroups(allTrips) {
 	allTrips.forEach((trip) => {
 		trip.dates.forEach((date) => {
 			if (!dateMap[date]) {
-				dateMap[date] = [
-				];
+				dateMap[date] = [];
 			}
-
 			dateMap[date].push(trip.id);
 		});
 	});
@@ -71,16 +103,14 @@ function createPatternGroups(allTrips) {
 			const newKey = values.sort().join(',');
 
 			if (!reversedMap[newKey]) {
-				reversedMap[newKey] = [
-				];
+				reversedMap[newKey] = [];
 			}
 
 			reversedMap[newKey].push(key);
 		}
 	}
 
-	const finalGroups = [
-	];
+	const finalGroups = [];
 
 	for (const key in reversedMap) {
 		finalGroups.push({
@@ -132,9 +162,7 @@ export default async () => {
 	// Get all stops and build a hashmap for quick retrieval
 	const allStopsTxt = await SERVERDB.client.get('stops:all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
-	const allStopsHashmap = new Map(allStopsJson.map(obj => [
-		obj.id, obj,
-	]));
+	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
 
 	// 4.
 	// Query Postgres for all calendar dates and build a hashmap for quick retrieval
@@ -151,9 +179,7 @@ export default async () => {
 			allCalendarDatesHashmap.get(row.service_id).push(row.date);
 		}
 		else {
-			allCalendarDatesHashmap.set(row.service_id, [
-				row.date,
-			]);
+			allCalendarDatesHashmap.set(row.service_id, [row.date]);
 		}
 	}
 
@@ -180,9 +206,7 @@ export default async () => {
 				color: route.route_color,
 				id: route.route_short_name,
 				long_name: route.route_long_name,
-				routes: [
-					route,
-				],
+				routes: [route],
 				short_name: route.route_short_name,
 				text_color: route.route_text_color,
 			});
@@ -198,10 +222,8 @@ export default async () => {
 
 	// 7.
 	// Initiate variables to hold all lines and routes
-	const allLinesFinal = [
-	];
-	const allRoutesFinal = [
-	];
+	const allLinesFinal = [];
+	const allRoutesFinal = [];
 
 	// 8.
 	// Initiate variables to keep track of updated _ids
@@ -228,25 +250,15 @@ export default async () => {
 		// Build parsed line object
 		const lineParsed = {
 			color: lineRaw.color ? `#${lineRaw.color}` : '#000000',
-			facilities: [
-			],
-			//
+			facilities: [],
 			id: lineRaw.id,
-			localities: [
-			],
+			localities: [],
 			long_name: lineRaw.long_name,
-			//
-			municipalities: [
-			],
-			patterns: [
-			],
-			//
-			routes: [
-			],
-			//
+			municipalities: [],
+			patterns: [],
+			routes: [],
 			short_name: lineRaw.short_name,
 			text_color: lineRaw.text_color ? `#${lineRaw.text_color}` : '#FFFFFF',
-			//
 		};
 
 		// 9.4.
@@ -255,8 +267,7 @@ export default async () => {
 			//
 			// 9.4.1.
 			// Initiate a variable to hold parsed patterns
-			const parsedPatternsForThisRoute = [
-			];
+			const parsedPatternsForThisRoute = [];
 
 			// 9.4.2.
 			// Initiate other holding variables
@@ -268,32 +279,20 @@ export default async () => {
 			// Build parsed route object
 			const routeParsed = {
 				color: lineParsed.color,
-				facilities: [
-				],
-				//
+				facilities: [],
 				id: routeRaw.route_id,
-				//
 				line_id: lineParsed.id,
-				localities: [
-				],
+				localities: [],
 				long_name: routeRaw.route_long_name,
-				//
-				municipalities: [
-				],
-				//
-				patterns: [
-				],
-				//
+				municipalities: [],
+				patterns: [],
 				short_name: routeRaw.route_short_name,
 				text_color: lineParsed.text_color,
-				//
 			};
 
 			// 9.4.3.
 			// Get all trips associated with this route
-			const allTripsRaw = await NETWORKDB.client.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [
-				routeRaw.route_id,
-			]);
+			const allTripsRaw = await NETWORKDB.client.query<GTFSTrip>(`SELECT * FROM trips WHERE route_id = $1`, [routeRaw.route_id]);
 
 			// 9.4.4.
 			// Reduce all trips into unique patterns. Do this for all routes of the current line.
@@ -314,16 +313,12 @@ export default async () => {
 
 				// 9.4.4.2.
 				// Get the current trip stop_times
-				const allStopTimesRaw = await NETWORKDB.client.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [
-					tripRaw.trip_id,
-				]);
+				const allStopTimesRaw = await NETWORKDB.client.query<GTFSStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRaw.trip_id]);
 
 				// 9.4.4.3.
 				// Initiate temporary holding variables
-				const formattedPath = [
-				];
-				const formattedSchedule = [
-				];
+				const formattedPath = [];
+				const formattedSchedule = [];
 
 				let prevTravelDistance = 0;
 				let prevArrivalTime = '00:00:00';
@@ -416,11 +411,7 @@ export default async () => {
 				// then update it with the current formatted trip and new valid_on dates
 				// and skip to the next iteration.
 				if (patternParsed) {
-					patternParsed.valid_on = [
-						...new Set([
-							...patternParsed.valid_on, ...tripDates,
-						]),
-					];
+					patternParsed.valid_on = [...new Set([...patternParsed.valid_on, ...tripDates])];
 					patternParsed.trips.push(tripParsed);
 					continue;
 				}
@@ -429,33 +420,21 @@ export default async () => {
 				// If no pattern was found matching the unique combination,
 				// then create a new one with the formatted path and formatted trip values.
 				parsedPatternsForThisRoute.push({
-					//
 					color: lineParsed.color,
 					direction: tripRaw.direction_id,
 					facilities: Array.from(patternPassesByFacilities),
 					headsign: tripRaw.trip_headsign,
-					//
 					id: tripRaw.pattern_id,
-					//
 					line_id: lineParsed.id,
 					localities: Array.from(patternPassesByLocalities),
-					//
 					municipalities: Array.from(patternPassesByMunicipalities),
-					//
 					path: formattedPath,
 					route_id: routeRaw.route_id,
-					//
 					shape_id: tripRaw.shape_id,
-					//
 					short_name: lineParsed.short_name,
 					text_color: lineParsed.text_color,
-					//
-					trips: [
-						tripParsed,
-					],
-					//
+					trips: [tripParsed],
 					valid_on: tripDates,
-					//
 				});
 
 				//
@@ -534,8 +513,7 @@ export default async () => {
 
 	// 12.
 	// Delete stale patterns not present in the current update
-	const allPatternKeysInTheDatabase = [
-	];
+	const allPatternKeysInTheDatabase = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'patterns:*', TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
@@ -548,8 +526,7 @@ export default async () => {
 
 	// 13.
 	// Delete stale routes not present in the current update
-	const allRouteKeysInTheDatabase = [
-	];
+	const allRouteKeysInTheDatabase = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'routes:*', TYPE: 'string' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
@@ -562,8 +539,7 @@ export default async () => {
 
 	// 14.
 	// Delete stale lines not present in the current update
-	const allLineKeysInTheDatabase = [
-	];
+	const allLineKeysInTheDatabase = [];
 	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'lines:*', TYPE: 'string' })) {
 		allLineKeysInTheDatabase.push(key);
 	}

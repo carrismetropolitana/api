@@ -2,7 +2,6 @@
 
 import type { GTFSPeriod } from '@/services/NETWORKDB.types.js';
 
-import { formatTime, getElapsedTime } from '@/modules/timeCalc.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
 
@@ -10,10 +9,40 @@ import type { Timetable } from './timetableExample.js';
 
 /* * */
 
+export function formatTime(time: bigint) {
+	// time is in ns
+
+	const dateObj = new Date(Number(time / BigInt(1000000)));
+	//
+	const milliseconds = dateObj.getMilliseconds();
+	const seconds = dateObj.getSeconds();
+	const minutes = dateObj.getMinutes();
+	const hours = dateObj.getHours();
+
+	let string = '';
+
+	if (hours > 0) {
+		string += `${hours}h `;
+	}
+	if (minutes > 0) {
+		string += `${minutes}m `;
+	}
+	if (seconds > 0) {
+		string += `${seconds}s `;
+	}
+	if (milliseconds > 0) {
+		string += `${milliseconds}ms`;
+	}
+
+	return string;
+	//
+}
+
+/* * */
+
 export default async () => {
 	// 1.
 	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
 
 	// Data to be bulk inserted at the end of parsing
 	const bulkData: [string, string][] = [];
@@ -357,11 +386,6 @@ export default async () => {
 		updated_at: (new Date()).toISOString(),
 	};
 	await SERVERDB.client.set('timetables:index', JSON.stringify(index));
-
-	// 9.
-	// Log elapsed time parsing timetables
-	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Timetables (${elapsedTime}).`);
 
 	//
 };
