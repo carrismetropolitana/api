@@ -1,35 +1,33 @@
 /* * */
 
 import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
 export default async () => {
 	//
-	// 1.
-	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
 
-	// 2.
-	// Fetch all Municipalities from Postgres
-	console.log(`⤷ Querying database...`);
+	const globalTimer = new TIMETRACKER();
+
+	//
+	// Fetch all municipalities from NETWORKDB
+
+	LOGGER.info(`Querying database...`);
 	const allMunicipalities = await NETWORKDB.client.query('SELECT * FROM municipalities');
 
-	// 3.
+	//
 	// Initate a temporary variable to hold updated Municipalities
-	const allMunicipalitiesData = [
-	];
+
+	const allMunicipalitiesData = [];
 	const updatedMunicipalityKeys = new Set();
 
-	// 4.
-	// Log progress
-	console.log(`⤷ Updating Municipalities...`);
-
-	// 5.
+	//
 	// For each municipality, update its entry in the database
+
 	for (const municipality of allMunicipalities.rows) {
 		// Parse municipality
 		const parsedMunicipality = {
@@ -47,30 +45,33 @@ export default async () => {
 		updatedMunicipalityKeys.add(`municipalities:${parsedMunicipality.id}`);
 	}
 
-	// 6.
-	// Log count of updated Municipalities
-	console.log(`⤷ Updated ${updatedMunicipalityKeys.size} Municipalities.`);
+	LOGGER.info(`Updated ${updatedMunicipalityKeys.size} Municipalities`);
 
-	// 7.
+	//
 	// Add the 'all' option
+
 	allMunicipalitiesData.sort((a, b) => collator.compare(a.id, b.id));
 	await SERVERDB.client.set('municipalities:all', JSON.stringify(allMunicipalitiesData));
 	updatedMunicipalityKeys.add('municipalities:all');
 
-	// 8.
+	//
 	// Delete all Municipalities not present in the current update
-	const allSavedMunicipalityKeys: string[] = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'municipalities:*', TYPE: 'string' })) { allSavedMunicipalityKeys.push(key); }
+
+	const allSavedMunicipalityKeys: string[] = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'municipalities:*', TYPE: 'string' })) {
+		allSavedMunicipalityKeys.push(key);
+	}
 
 	const staleMunicipalityKeys = allSavedMunicipalityKeys.filter(id => !updatedMunicipalityKeys.has(id));
-	if (staleMunicipalityKeys.length) { await SERVERDB.client.del(staleMunicipalityKeys); }
-	console.log(`⤷ Deleted ${staleMunicipalityKeys.length} stale Municipalities.`);
+	if (staleMunicipalityKeys.length) {
+		await SERVERDB.client.del(staleMunicipalityKeys);
+	}
 
-	// 9.
-	// Log elapsed time in the current operation
-	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Municipalities (${elapsedTime}).`);
+	LOGGER.info(`Deleted ${staleMunicipalityKeys.length} stale Municipalities`);
+
+	//
+
+	LOGGER.success(`Done updating Municipalities (${globalTimer.get()})`);
 
 	//
 };

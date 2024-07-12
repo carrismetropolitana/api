@@ -90,7 +90,6 @@ export default async function (preparedDirPath: string, rawFilePath: string, gtf
 
 	//
 
-	LOGGER.spacer(1);
 	LOGGER.success(`Prepare and Import complete for "${gtfsFile._key}" file (${globalTimer.get()})`);
 
 	//

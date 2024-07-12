@@ -35,7 +35,7 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 
 export const ENABLED_MODULES = [
 	'gtfs_import',
-	// 'municipalities_parser',
+	'municipalities_parser',
 	// 'localities_parser',
 	// 'periods_parser',
 	// 'dates_parser',
@@ -58,7 +58,7 @@ export default async () => {
 		/* * */
 
 		LOGGER.spacer(1);
-		LOGGER.title(`1. Fetching latest GTFS...`);
+		LOGGER.title('1. Fetching latest GTFS...');
 		const importGtfsTimer = new TIMETRACKER();
 
 		//
@@ -106,7 +106,7 @@ export default async () => {
 
 		if (ENABLED_MODULES.includes('gtfs_import')) {
 			LOGGER.spacer(1);
-			LOGGER.title(`2. Unzip, prepare and import each GTFS file...`);
+			LOGGER.title('2. Unzip, prepare and import each GTFS file...');
 
 			//
 			// Extract GTFS archive into prepared directory
@@ -115,7 +115,7 @@ export default async () => {
 			await extract(RAW_FILE_PATH, { dir: RAW_DIR_PATH });
 			normalizeDirectoryPermissions(RAW_DIR_PATH);
 
-			LOGGER.success('Done extracting GTFS archive and normalizing directory permissions.');
+			LOGGER.success('Done extracting GTFS archive and normalizing directory permissions');
 
 			//
 			// For each file, eliminate unwanted columns and normalize their positions.
@@ -139,8 +139,8 @@ export default async () => {
 		/* * */
 
 		if (ENABLED_MODULES.includes('municipalities_parser')) {
-			console.log();
-			console.log('STEP 1.1: Parse Municipalities');
+			LOGGER.spacer(1);
+			LOGGER.title('3.1. Parse Municipalities');
 			await municipalitiesParser();
 		}
 
