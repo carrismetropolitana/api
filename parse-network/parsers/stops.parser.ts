@@ -49,7 +49,7 @@ export default async () => {
 	const updatedStopKeys = new Set();
 
 	//
-	// For each stop, update its entry in the database
+	// For each item, update its entry in the database
 
 	for (const stop of allStops.rows) {
 		// Discover which facilities this stop is near to
