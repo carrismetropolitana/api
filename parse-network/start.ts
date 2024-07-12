@@ -36,7 +36,7 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 export const ENABLED_MODULES = [
 	'gtfs_import',
 	'municipalities_parser',
-	// 'localities_parser',
+	'localities_parser',
 	// 'periods_parser',
 	// 'dates_parser',
 	// 'archives_parser',
@@ -73,13 +73,13 @@ export default async () => {
 
 		if (process.env.GTFS_URL.startsWith('file://')) {
 			// If the source is a local file
-			LOGGER.info(`Copying file from "${process.env.GTFS_URL}" to "${RAW_FILE_PATH}"...`);
+			LOGGER.info(`Copying file from "${process.env.GTFS_URL}"...`);
 			const normalizedSourceFilePath = process.env.GTFS_URL.replace('file://', '');
 			fs.copyFileSync(normalizedSourceFilePath, RAW_FILE_PATH);
 		}
 		else {
 			// If the source is a URL
-			LOGGER.info(`Downloading file from "${process.env.GTFS_URL}" to "${RAW_FILE_PATH}"...`);
+			LOGGER.info(`Downloading file from "${process.env.GTFS_URL}"...`);
 			const stream = fs.createWriteStream(RAW_FILE_PATH);
 			const response: Response = await fetch(process.env.GTFS_URL);
 			// @ts-expect-error Readable.fromWeb actually accepts a ReadableStream<Uint8Array>, even though we are mixing nodejs and web ReadableStreams
@@ -147,8 +147,8 @@ export default async () => {
 		/* * */
 
 		if (ENABLED_MODULES.includes('localities_parser')) {
-			console.log();
-			console.log('STEP 1.2: Parse Localities');
+			LOGGER.spacer(1);
+			LOGGER.title('3.2. Parse Localities');
 			await localitiesParser();
 		}
 

@@ -1,45 +1,45 @@
 /* * */
 
-import { createHash } from 'node:crypto';
-import SERVERDB from '@/services/SERVERDB.js';
-import NETWORKDB from '@/services/NETWORKDB.js';
 import collator from '@/modules/sortCollator.js';
-import { getElapsedTime } from '@/modules/timeCalc.js';
+import NETWORKDB from '@/services/NETWORKDB.js';
+import SERVERDB from '@/services/SERVERDB.js';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
+import { createHash } from 'node:crypto';
 
 /* * */
 
 export default async () => {
 	//
-	// 1.
-	// Record the start time to later calculate operation duration
-	const startTime = process.hrtime();
 
-	// 2.
-	// Query Postgres for all unique localities, municipalities
-	console.log(`⤷ Querying database...`);
+	const globalTimer = new TIMETRACKER();
+
+	//
+	// Fetch all unique localities, municipalities from NETWORKDB
+
+	LOGGER.info(`Querying database...`);
 	const allLocalities = await NETWORKDB.client.query(`
-    SELECT DISTINCT ON (locality, municipality_id, municipality_name)
-        locality,
-        municipality_id,
-        municipality_name
-    FROM stops;
-  `);
+		SELECT DISTINCT ON (locality, municipality_id, municipality_name)
+			locality,
+			municipality_id,
+			municipality_name
+		FROM stops;
+	`);
 
-	// 3.
-	// Log progress
-	console.log(`⤷ Updating Localities...`);
-
-	// 4.
+	//
 	// Initate a temporary variable to hold updated Localities
-	const allLocalitiesData = [
-	];
-	const updatedLocalityKeys = new Set;
 
-	// 5.
+	const allLocalitiesData = [];
+	const updatedLocalityKeys = new Set();
+
+	//
 	// For each locality, update its entry in the database
+
 	for (const localityData of allLocalities.rows) {
 		// Skip if the locality is the same as the municipality
-		if (!localityData.locality) { continue; } else if (localityData.locality === localityData.municipality_name) { continue; }
+		if (!localityData.locality || localityData.locality === localityData.municipality_name) {
+			continue;
+		}
 		// Setup the display string for this locality
 		const displayString = `${localityData.locality}, ${localityData.municipality_name}`;
 		// Setup a unique ID for this locality
@@ -47,8 +47,8 @@ export default async () => {
 		hash.update(displayString);
 		// Initiate a variable to hold the parsed locality
 		const parsedLocality = {
-			id: hash.digest('hex'),
 			display: displayString,
+			id: hash.digest('hex'),
 			locality: localityData.locality,
 			municipality_id: localityData.municipality_id,
 			municipality_name: localityData.municipality_name,
@@ -57,33 +57,35 @@ export default async () => {
 		allLocalitiesData.push(parsedLocality);
 		await SERVERDB.client.set(`localities:${parsedLocality.id}`, JSON.stringify(parsedLocality));
 		updatedLocalityKeys.add(`localities:${parsedLocality.id}`);
-		//
 	}
 
-	// 6.
-	// Log count of updated Localities
-	console.log(`⤷ Updated ${updatedLocalityKeys.size} Localities.`);
+	LOGGER.info(`Updated ${updatedLocalityKeys.size} Localities`);
 
-	// 7.
+	//
 	// Add the 'all' option
+
 	allLocalitiesData.sort((a, b) => collator.compare(a.id, b.id));
 	await SERVERDB.client.set('localities:all', JSON.stringify(allLocalitiesData));
 	updatedLocalityKeys.add('localities:all');
 
 	// 8.
 	// Delete all Localities not present in the current update
-	const allSavedStopKeys = [
-	];
-	for await (const key of SERVERDB.client.scanIterator({ TYPE: 'string', MATCH: 'localities:*' })) { allSavedStopKeys.push(key); }
 
-	const staleLocalityKeys = allSavedStopKeys.filter((id) => !updatedLocalityKeys.has(id));
-	if (staleLocalityKeys.length) { await SERVERDB.client.del(staleLocalityKeys); }
-	console.log(`⤷ Deleted ${staleLocalityKeys.length} stale Localities.`);
+	const allSavedStopKeys = [];
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'localities:*', TYPE: 'string' })) {
+		allSavedStopKeys.push(key);
+	}
 
-	// 9.
-	// Log elapsed time in the current operation
-	const elapsedTime = getElapsedTime(startTime);
-	console.log(`⤷ Done updating Localities (${elapsedTime}).`);
+	const staleLocalityKeys = allSavedStopKeys.filter(id => !updatedLocalityKeys.has(id));
+	if (staleLocalityKeys.length) {
+		await SERVERDB.client.del(staleLocalityKeys);
+	}
+
+	LOGGER.info(`Deleted ${staleLocalityKeys.length} stale Localities`);
+
+	//
+
+	LOGGER.success(`Done updating Localities (${globalTimer.get()})`);
 
 	//
 };
