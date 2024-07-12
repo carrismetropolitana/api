@@ -43,7 +43,7 @@ export default async function (preparedDirPath: string, rawFilePath: string, gtf
 
 	const preparedFilePath = `${preparedDirPath}/${gtfsFile._key}.${gtfsFile.extension}`;
 
-	const csvWriter = new CsvWriter(gtfsFile._key, preparedFilePath);
+	const csvWriter = new CsvWriter(gtfsFile._key, preparedFilePath, { batch_size: 100000 });
 
 	//
 	// Prepare the file.
