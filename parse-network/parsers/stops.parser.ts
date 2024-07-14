@@ -16,7 +16,7 @@ export default async () => {
 	//
 	// Fetch all Stops from NETWORKDB
 
-	LOGGER.info(`Querying database...`);
+	LOGGER.info(`Starting...`);
 	const allStops = await NETWORKDB.client.query(`
 		SELECT
 			s.*,

@@ -17,7 +17,7 @@ export default async () => {
 	//
 	// Fetch all Periods and Dates from NETWORKDB
 
-	LOGGER.info(`Querying database...`);
+	LOGGER.info(`Starting...`);
 	const allPeriods = await NETWORKDB.client.query('SELECT * FROM periods');
 	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
 

@@ -17,7 +17,7 @@ export default async () => {
 	//
 	// Fetch all unique Localities, Municipalities from NETWORKDB
 
-	LOGGER.info(`Querying database...`);
+	LOGGER.info(`Starting...`);
 	const allLocalities = await NETWORKDB.client.query(`
 		SELECT DISTINCT ON (locality, municipality_id, municipality_name)
 			locality,

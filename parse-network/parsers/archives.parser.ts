@@ -16,7 +16,7 @@ export default async () => {
 	//
 	// Fetch all Archives from NETWORKDB
 
-	LOGGER.info(`Querying database...`);
+	LOGGER.info(`Starting...`);
 	const allArchives = await NETWORKDB.client.query('SELECT * FROM archives');
 
 	//

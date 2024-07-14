@@ -16,7 +16,7 @@ export default async () => {
 	//
 	// Fetch all Dates from NETWORKDB
 
-	LOGGER.info(`Querying database...`);
+	LOGGER.info(`Starting...`);
 	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
 
 	//

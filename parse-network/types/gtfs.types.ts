@@ -1,6 +1,6 @@
 /* * */
 
-export interface GTFSRoute {
+export interface GtfsRoute {
 	line_id: string
 	line_long_name: string
 	line_short_name: string
@@ -14,7 +14,7 @@ export interface GTFSRoute {
 
 /* * */
 
-export interface GTFSDate {
+export interface GtfsDate {
 	date: string
 	day_type: string
 	description: string
@@ -24,14 +24,14 @@ export interface GTFSDate {
 
 /* * */
 
-export interface GTFSPeriod {
+export interface GtfsPeriod {
 	period_id: string
 	period_name: string
 }
 
 /* * */
 
-export interface GTFSCalendarDate {
+export interface GtfsCalendarDate {
 	date: string
 	day_type: string
 	holiday: string
@@ -41,7 +41,7 @@ export interface GTFSCalendarDate {
 
 /* * */
 
-export interface GTFSTrip {
+export interface GtfsTrip {
 	calendar_desc: string
 	direction_id: number
 	pattern_id: string
@@ -54,7 +54,7 @@ export interface GTFSTrip {
 
 /* * */
 
-export interface GTFSStopTime {
+export interface GtfsStopTime {
 	arrival_time: string
 	drop_off_type: string
 	pickup_type: string
@@ -66,7 +66,7 @@ export interface GTFSStopTime {
 
 /* * */
 
-export interface MonStop {
+export interface NetworkStop {
 	district_id: string
 	district_name: string
 	facilities: string[]

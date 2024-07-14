@@ -17,7 +17,7 @@ export default async () => {
 	//
 	// Fetch all Shapes from NETWORKDB
 
-	LOGGER.info(`Querying database...`);
+	LOGGER.info(`Starting...`);
 	const allShapes = await NETWORKDB.client.query(`
 		SELECT
 			shape_id,
