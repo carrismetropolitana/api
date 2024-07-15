@@ -263,7 +263,7 @@ export default async () => {
 					shape_id: tripRawData.shape_id,
 					short_name: routeRawData.route_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
-					trip_groups: {}, // A map, not an array
+					trips: {}, // A map, not an array
 					valid_on: [],
 				};
 			}
@@ -300,8 +300,8 @@ export default async () => {
 			// Check if this trip group already exists, and create if it doesn't.
 			// The created trip group will have all the complete information not used to differentiate between groups.
 
-			if (!parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash]) {
-				parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash] = {
+			if (!parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash]) {
+				parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash] = {
 					dates: [],
 					schedule: stopTimesAsCompleteSchedule,
 					trip_ids: [],
@@ -311,8 +311,8 @@ export default async () => {
 			//
 			// Add to the current trip group (new or exising) the data retrieved from the current trip
 
-			parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash].dates = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash].dates, ...allCalendarDatesRawMap.get(tripRawData.service_id)]));
-			parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash].trip_ids = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].trip_groups[currentTripGroupHash].trip_ids, tripRawData.trip_id]));
+			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates, ...allCalendarDatesRawMap.get(tripRawData.service_id)]));
+			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids, tripRawData.trip_id]));
 
 			//
 			// Create the route object if it doesn't exist yet. Notice we're not using hashes here
@@ -375,7 +375,7 @@ export default async () => {
 
 		//
 		// After going through all the trips for the current pattern, the time comes to save them to the database.
-		// However, a small modification is required. The pattern group contains a trip_groups map that should be converted
+		// However, a small modification is required. The pattern group contains a trips map that should be converted
 		// to an array of trips. Also, the pattern groups themselves should be an array for the current pattern ID.
 
 		const finalizedPatternGroupsData: NetworkPattern[] = Object.values(parsedPatternGroups).map((item: NetworkPattern) => ({ ...item, trips: Object.values(item.trips) }));
