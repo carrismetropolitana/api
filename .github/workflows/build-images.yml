@@ -12,7 +12,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-server:
-    name: 'Docker Build - server'
+    name: server (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -61,7 +61,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-parse-datasets:
-    name: 'Docker Build - parse-datasets'
+    name: parse-datasets (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -110,7 +110,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-parse-network:
-    name: 'Docker Build - parse-network'
+    name: parse-network (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -159,7 +159,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-rtevents:
-    name: 'Docker Build - sync-rtevents'
+    name: sync-rtevents (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -208,7 +208,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-encm:
-    name: 'Docker Build - sync-encm'
+    name: sync-encm (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -257,7 +257,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-switch:
-    name: 'Docker Build - switch'
+    name: switch (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
