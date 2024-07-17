@@ -37,8 +37,7 @@ function convertToJson(allEvents) {
 /* * */
 
 function convertToProtobuf(allEvents) {
-	//
-	const allEventsPb = {
+	return {
 		entity: allEvents.map(event => ({
 			id: event.event_id,
 			vehicle: {
@@ -68,13 +67,6 @@ function convertToProtobuf(allEvents) {
 			timestamp: DateTime.now().toUnixInteger(),
 		},
 	};
-	// Do the conversion to Protobuf
-	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
-	const message = FeedMessage.fromObject(allEventsPb);
-	const buffer = FeedMessage.encode(message).finish();
-	//
-	return buffer;
-	//
 }
 
 /* * */
@@ -209,7 +201,7 @@ export default async () => {
 	await SERVERDB.client.set(`v2/network/vehicles/json`, JSON.stringify(allVehiclesUpdatedJson));
 
 	const allVehiclesUpdatedProtobuf = convertToProtobuf(allVehiclesUpdatedArray);
-	await SERVERDB.client.set(`v2/network/vehicles/protobuf`, Buffer.from(allVehiclesUpdatedProtobuf));
+	await SERVERDB.client.set(`v2/network/vehicles/protobuf`, JSON.stringify(allVehiclesUpdatedProtobuf));
 
 	LOGGER.info(`Converted unique Vehicles to JSON and Protobuf formats (${conversionsTimer.get()})`);
 
