@@ -29,7 +29,8 @@ const protobuf = async (_, reply) => {
 	// const message = FeedMessage.fromObject(allRtEvents);
 	// const buffer = FeedMessage.encode(message).finish();
 	const allRtEventsBuffer = await SERVERDB.client.get('v2/network/vehicles/protobuf');
-	return reply.send(allRtEventsBuffer);
+	const buffer = new TextEncoder().encode(allRtEventsBuffer);
+	return reply.send(new Uint8Array(buffer));
 };
 
 /* * */
