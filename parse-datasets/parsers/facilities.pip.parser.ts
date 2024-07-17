@@ -53,8 +53,8 @@ export default async () => {
 		};
 		// Save to database
 		allItemsData.push(parsedItemData);
-		await SERVERDB.client.set(`datasets/facilities/pip/${parsedItemData.id}`, JSON.stringify(parsedItemData));
-		updatedItemKeys.add(`datasets/facilities/pip/${parsedItemData.id}`);
+		await SERVERDB.client.set(`v2/datasets/facilities/pip/${parsedItemData.id}`, JSON.stringify(parsedItemData));
+		updatedItemKeys.add(`v2/datasets/facilities/pip/${parsedItemData.id}`);
 		//
 	}
 
@@ -67,14 +67,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allItemsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('datasets/facilities/pip/all', JSON.stringify(allItemsData));
-	updatedItemKeys.add('datasets/facilities/pip/all');
+	await SERVERDB.client.set('v2/datasets/facilities/pip/all', JSON.stringify(allItemsData));
+	updatedItemKeys.add('v2/datasets/facilities/pip/all');
 
 	// 6.
 	// Delete all items not present in the current update
 
 	const allSavedItemKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'datasets/facilities/pip/*', TYPE: 'string' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2/datasets/facilities/pip/*', TYPE: 'string' })) {
 		allSavedItemKeys.push(key);
 	}
 	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));
