@@ -158,8 +158,8 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-rtevents:
-    name: sync-rtevents (Docker)
+  api-sync-vehicles:
+    name: sync-vehicles (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -170,7 +170,7 @@ jobs:
     steps:
       - name: Set module key
         run: |
-          echo "MODULE_KEY=sync-rtevents" >> $GITHUB_ENV
+          echo "MODULE_KEY=sync-vehicles" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@main

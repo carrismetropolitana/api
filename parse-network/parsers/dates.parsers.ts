@@ -39,8 +39,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allDatesData.push(parsedDate);
-		await SERVERDB.client.set(`dates:${parsedDate.date}`, JSON.stringify(parsedDate));
-		updatedDateKeys.add(`dates:${parsedDate.date}`);
+		await SERVERDB.client.set(`v2/network/dates/${parsedDate.date}`, JSON.stringify(parsedDate));
+		updatedDateKeys.add(`v2/network/dates/${parsedDate.date}`);
 	}
 
 	LOGGER.info(`Updated ${updatedDateKeys.size} Dates`);
@@ -49,14 +49,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
-	await SERVERDB.client.set('dates:all', JSON.stringify(allDatesData));
-	updatedDateKeys.add('dates:all');
+	await SERVERDB.client.set('v2/network/dates/all', JSON.stringify(allDatesData));
+	updatedDateKeys.add('v2/network/dates/all');
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedDateKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'dates:*', TYPE: 'string' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2/network/dates/*', TYPE: 'string' })) {
 		allSavedDateKeys.push(key);
 	}
 

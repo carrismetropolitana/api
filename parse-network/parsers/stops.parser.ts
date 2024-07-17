@@ -97,8 +97,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allStopsData.push(parsedStop);
-		await SERVERDB.client.set(`stops:${parsedStop.id}`, JSON.stringify(parsedStop));
-		updatedStopKeys.add(`stops:${parsedStop.id}`);
+		await SERVERDB.client.set(`v2/network/stops/${parsedStop.id}`, JSON.stringify(parsedStop));
+		updatedStopKeys.add(`v2/network/stops/${parsedStop.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedStopKeys.size} Stops`);
@@ -107,14 +107,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('stops:all', JSON.stringify(allStopsData));
-	updatedStopKeys.add('stops:all');
+	await SERVERDB.client.set('v2/network/stops/all', JSON.stringify(allStopsData));
+	updatedStopKeys.add('v2/network/stops/all');
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'stops:*', TYPE: 'string' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2/network/stops/*', TYPE: 'string' })) {
 		allSavedStopKeys.push(key);
 	}
 

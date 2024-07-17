@@ -232,8 +232,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-rtevents:
-    image: ghcr.io/carrismetropolitana/api-sync-rtevents:beta
+  sync-vehicles:
+    image: ghcr.io/carrismetropolitana/api-sync-vehicles:beta
     deploy:
       restart_policy:
         condition: on-failure
