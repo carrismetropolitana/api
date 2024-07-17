@@ -35,10 +35,10 @@ const protobuf = async (_, reply) => {
 /* * */
 
 FASTIFY.server.get('/vehicles', json);
-FASTIFY.server.get('/vehicles/:id', protobuf);
+FASTIFY.server.get('/vehicles.pb', protobuf);
 
 FASTIFY.server.get('/v1/vehicles', json);
-FASTIFY.server.get('/v1/vehicles/:id', protobuf);
+FASTIFY.server.get('/v1/vehicles.pb', protobuf);
 
 FASTIFY.server.get('/v2/vehicles', json);
 FASTIFY.server.get('/v2/vehicles.pb', protobuf);
