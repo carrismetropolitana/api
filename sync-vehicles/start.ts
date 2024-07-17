@@ -102,7 +102,7 @@ export default async () => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.client.get('archives:all');
+	const allArchivesTxt = await SERVERDB.client.get('v2/network/archives/all');
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
