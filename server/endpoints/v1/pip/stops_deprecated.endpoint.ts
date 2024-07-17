@@ -158,6 +158,6 @@ const realtimeForPips = async (request, reply) => {
 
 /* * */
 
-FASTIFY.server.get('/stops/pip', realtimeForPips);
+FASTIFY.server.post('/stops/pip', realtimeForPips);
 
-FASTIFY.server.get('/v1/stops/pip', realtimeForPips);
+FASTIFY.server.post('/v1/stops/pip', realtimeForPips);
