@@ -22,13 +22,14 @@ const json = async (_, reply) => {
 
 const protobuf = async (_, reply) => {
 	// Get the saved events from RTEVENTS
-	const allRtEventsTxt = await SERVERDB.client.get('v2/network/vehicles/protobuf');
-	const allRtEvents = await JSON.parse(allRtEventsTxt);
+	// const allRtEventsTxt = await SERVERDB.client.get('v2/network/vehicles/protobuf');
+	// const allRtEvents = await JSON.parse(allRtEventsTxt);
 	// Do the conversion to Protobuf
-	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
-	const message = FeedMessage.fromObject(allRtEvents);
-	const buffer = FeedMessage.encode(message).finish();
-	return reply.send(buffer);
+	// const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
+	// const message = FeedMessage.fromObject(allRtEvents);
+	// const buffer = FeedMessage.encode(message).finish();
+	const allRtEventsBuffer = await SERVERDB.client.get('v2/network/vehicles/protobuf');
+	return reply.send(allRtEventsBuffer);
 };
 
 /* * */
