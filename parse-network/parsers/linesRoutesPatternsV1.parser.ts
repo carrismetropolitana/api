@@ -160,7 +160,7 @@ export default async () => {
 
 	// 3.
 	// Get all stops and build a hashmap for quick retrieval
-	const allStopsTxt = await SERVERDB.client.get('stops:all');
+	const allStopsTxt = await SERVERDB.client.get('v2/network/stops/all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
 	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
 
@@ -334,6 +334,9 @@ export default async () => {
 					// 9.4.4.4.1.
 					// Get existing stop document from database
 					const existingStopDocument = allStopsHashmap.get(stopTimeRaw.stop_id);
+					if (existingStopDocument == undefined) {
+						console.log(`${stopTimeRaw.stop_id} not found in ${Array.from(allStopsHashmap.entries())}.`);
+					}
 
 					// 9.4.4.4.2.
 					// Calculate distance delta and update variable
