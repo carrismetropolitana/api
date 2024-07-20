@@ -1,6 +1,6 @@
 /* * */
 
-import '@/endpoints/v2/debug/time.endpoint.js';
+import '@/endpoints/v2/status/time.endpoint.js';
 
 /* * */
 

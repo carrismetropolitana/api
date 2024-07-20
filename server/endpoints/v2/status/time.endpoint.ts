@@ -21,5 +21,6 @@ const main = async (_, reply) => {
 
 /* * */
 
-FASTIFY.server.get('/v1/debug/time', main);
-FASTIFY.server.get('/v2/debug/time', main);
+FASTIFY.server.get('/status/time', main);
+
+FASTIFY.server.get('/v2/status/time', main);
