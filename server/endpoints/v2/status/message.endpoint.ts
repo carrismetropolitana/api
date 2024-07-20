@@ -12,6 +12,7 @@ const main = async (_, reply) => {
 		.header('Content-Type', 'application/json; charset=utf-8')
 		.send(
 			JSON.stringify({
+				style: 'warning', // 'info', 'warning', 'error', 'success'
 				title: 'Instabilidade temporária no tempo real',
 				body: 'Estamos a desenvolver todos os esforços para resolver a situação. Obrigado pela sua compreensão.',
 				more_info: {
