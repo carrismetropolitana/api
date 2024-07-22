@@ -12,13 +12,10 @@ const main = async (_, reply) => {
 		.header('Content-Type', 'application/json; charset=utf-8')
 		.send(
 			JSON.stringify({
-				style: 'warning', // 'info', 'warning', 'error', 'success'
+				style: 'warning', // 'info', 'warning', 'error', 'ok'
 				title: 'Instabilidade temporária no tempo real',
 				body: 'Estamos a desenvolver todos os esforços para resolver a situação. Obrigado pela sua compreensão.',
-				more_info: {
-					label: 'Saber Mais',
-					href: 'https://developer.carrismetropolitana.pt/blog/...',
-				},
+				more_info: 'https://developer.carrismetropolitana.pt/blog/...',
 			}),
 		);
 };
