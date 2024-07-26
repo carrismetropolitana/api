@@ -76,9 +76,12 @@ export default async () => {
 
 		// Check if the line is in the list of available lines
 		counter++;
-		if (counter % 10000 === 0) LOGGER.info(`Parsed ${counter} transactions`);
+		if (counter % 10000 === 0) {
+			LOGGER.info(`Parsed ${counter} transactions`);
+			console.log(allLinesSet);
+		}
 
-		// console.log(!allLinesSet.has(doc.transaction.lineLongID), doc.transaction.lineLongID);
+		console.log(!allLinesSet.has(doc.transaction.lineLongID), doc.transaction.lineLongID);
 		// console.log(!allStopsSet.has(doc.transaction.stopLongID), doc.transaction.stopLongID);
 
 		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
