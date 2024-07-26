@@ -52,7 +52,8 @@ export default async () => {
 		'transaction.validationStatus': { $in: apexValidationStatuses },
 	};
 
-	console.log(validationsQuery);
+	LOGGER.info('Streaming validations from PCGIDB...');
+	LOGGER.info(`Operator IDs: ${operatorIds.join(', ')} | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: ${apexValidationStatuses.join(', ')}`);
 
 	const validationsStream = await PCGIDB.ValidationEntity
 		.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
@@ -117,7 +118,7 @@ export default async () => {
 	validationsByStopArray.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
 	await SERVERDB.client.set('v2/metrics/demand/by_stop', JSON.stringify(validationsByStopArray));
 
-	LOGGER.terminate(`Updated ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
+	LOGGER.terminate(`Parsed ${validCounter} validations, skipped ${totalCounter - validCounter} validations and updated ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
 
 	LOGGER.divider();
 
