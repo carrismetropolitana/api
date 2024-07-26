@@ -60,6 +60,55 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
+  api-switch:
+    name: switch (Docker)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Set module key
+        run: |
+          echo "MODULE_KEY=switch" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Calculate module SHA256 hash
+        run: |
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
+
+      - name: Fetch hash cache
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+
+      - name: Login to GitHub Container Registry
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: docker/build-push-action@master
+        with:
+          push: true
+          context: ./${{ env.MODULE_KEY }}
+          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   api-parse-datasets:
     name: parse-datasets (Docker)
     runs-on: ubuntu-latest
@@ -256,8 +305,8 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-switch:
-    name: switch (Docker)
+  api-sync-metrics:
+    name: sync-metrics (Docker)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -268,7 +317,7 @@ jobs:
     steps:
       - name: Set module key
         run: |
-          echo "MODULE_KEY=switch" >> $GITHUB_ENV
+          echo "MODULE_KEY=sync-metrics" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@main

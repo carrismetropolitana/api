@@ -132,6 +132,26 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
+  networkdb:
+    image: postgres:alpine
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 4gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    environment:
+      - POSTGRES_USER=networkdbuser
+      - POSTGRES_PASSWORD=networkdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   server:
     image: ghcr.io/carrismetropolitana/api-server:beta
     deploy:
@@ -149,6 +169,23 @@ services:
       - ./.env
     secrets:
       - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  switch:
+    image: ghcr.io/carrismetropolitana/api-switch:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 500mb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -172,26 +209,6 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  networkdb:
-    image: postgres:alpine
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 4gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    environment:
-      - POSTGRES_USER=networkdbuser
-      - POSTGRES_PASSWORD=networkdbpassword
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
   parse-network:
     image: ghcr.io/carrismetropolitana/api-parse-network:beta
     deploy:
@@ -211,23 +228,6 @@ services:
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
       - NETWORKDB_PASSWORD=networkdbpassword
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  switch:
-    image: ghcr.io/carrismetropolitana/api-switch:beta
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 500mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -268,3 +268,24 @@ services:
         max-file: '1'
     env_file:
       - ./.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-metrics:
+    image: ghcr.io/carrismetropolitana/api-sync-metrics:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+    secrets:
+      - pcgidbkey
