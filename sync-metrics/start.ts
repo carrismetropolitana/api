@@ -32,10 +32,6 @@ export default async () => {
 	const allLinesData = JSON.parse(allLinesTxt);
 	const allLinesSet = new Set(allLinesData.map(item => item.line_id));
 
-	console.log(allLinesData);
-	LOGGER.divider();
-	console.log(allLinesSet);
-
 	const allStopsTxt = await SERVERDB.client.get('v2/network/stops/all');
 	const allStopsData = JSON.parse(allStopsTxt);
 	const allStopsSet = new Set(allStopsData.map(item => item.stop_id));
@@ -69,22 +65,22 @@ export default async () => {
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
 
-	let counter = 0;
+	let totalCounter = 0;
+	let validCounter = 0;
 
 	for await (const doc of validationsStream) {
 		//
 
+		totalCounter++;
+
+		if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
+		if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
+
 		// Check if the line is in the list of available lines
-		counter++;
-		if (counter % 10000 === 0) {
-			LOGGER.info(`Parsed ${counter} transactions`);
+		validCounter++;
+		if (validCounter % 10000 === 0) {
+			LOGGER.info(`Parsed ${validCounter} transactions | ${totalCounter} total | ${totalCounter - validCounter} skipped`);
 		}
-
-		console.log(allLinesSet.has(doc.transaction.lineLongID), doc.transaction.lineLongID);
-		console.log(allStopsSet.has(doc.transaction.stopLongID), doc.transaction.stopLongID);
-
-		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
-		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
 
 		// Increment the line count
 
