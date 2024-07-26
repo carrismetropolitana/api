@@ -1,5 +1,3 @@
-/* eslint-disable perfectionist/sort-objects */
-
 /* * */
 
 import PCGIDB from '@/services/PCGIDB.js';
@@ -7,14 +5,6 @@ import SERVERDB from '@/services/SERVERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
-
-/* * */
-
-const AVAILABLE_METRICS = [
-	{ title: 'demand_by_line', description: 'Ticket validations + on board sales per line, for the last 15 days.' },
-	{ title: 'demand_by_stop', description: 'Ticket validations + on board sales per stop, for the last 15 days' },
-	{ title: 'demand_by_line_by_hour', description: 'Ticket validations + on board sales per stop, for the last 15 days' },
-];
 
 /* * */
 
@@ -106,8 +96,8 @@ export default async () => {
 
 	// Parse maps into arrays
 
-	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, count]) => ({ line_id: lineId, start_date: startDateString, end_date: endDateString, count: count }));
-	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, count]) => ({ stop_id: stopId, start_date: startDateString, end_date: endDateString, count: count }));
+	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, count]) => ({ count: count, end_date: endDateString, line_id: lineId, start_date: startDateString }));
+	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, count]) => ({ count: count, end_date: endDateString, start_date: startDateString, stop_id: stopId }));
 
 	// 4.
 	// Save all documents
