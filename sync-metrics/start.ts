@@ -69,7 +69,7 @@ export default async () => {
 
 		// Check if the line is in the list of available lines
 		counter++;
-		console.log(`> Found validation | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | counter: ${counter}`);
+		if (counter % 1000 === 0) console.log(`> Found validation | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | counter: ${counter}`);
 
 		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
 		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
