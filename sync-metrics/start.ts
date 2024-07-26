@@ -30,15 +30,11 @@ export default async () => {
 
 	const allLinesTxt = await SERVERDB.client.get('v2/network/lines/all');
 	const allLinesData = JSON.parse(allLinesTxt);
-	const allLinesSet = new Set(allLinesData.map(item => item.id));
-
-	console.log('allLinesData', allLinesData);
+	const allLinesSet = new Set(allLinesData.map(item => item.line_id));
 
 	const allStopsTxt = await SERVERDB.client.get('v2/network/stops/all');
 	const allStopsData = JSON.parse(allStopsTxt);
-	const allStopsSet = new Set(allStopsData.map(item => item.id));
-
-	console.log('allStopsSet', allStopsSet);
+	const allStopsSet = new Set(allStopsData.map(item => item.stop_id));
 
 	//
 	// Setup PCGIDB validations stream
@@ -78,8 +74,8 @@ export default async () => {
 		counter++;
 		if (counter % 10000 === 0) LOGGER.info(`Parsed ${counter} transactions`);
 
-		// console.log(!allLinesSet.has(doc.transaction.lineLongID), doc.transaction.lineLongID);
-		// console.log(!allStopsSet.has(doc.transaction.stopLongID), doc.transaction.stopLongID);
+		console.log(!allLinesSet.has(doc.transaction.lineLongID), doc.transaction.lineLongID);
+		console.log(!allStopsSet.has(doc.transaction.stopLongID), doc.transaction.stopLongID);
 
 		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
 		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;

@@ -92,6 +92,7 @@ export default async () => {
 			region_name: stop.region_name,
 			routes: stop.route_ids || [],
 			short_name: stop.stop_short_name,
+			stop_id: stop.stop_id,
 			tts_name: stop.tts_stop_name,
 			wheelchair_boarding: stop.wheelchair_boarding,
 		};
