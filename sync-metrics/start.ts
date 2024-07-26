@@ -52,6 +52,8 @@ export default async () => {
 		'transaction.validationStatus': { $in: apexValidationStatuses },
 	};
 
+	console.log(validationsQuery);
+
 	const validationsStream = await PCGIDB.ValidationEntity.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 }).stream();
 
 	//
