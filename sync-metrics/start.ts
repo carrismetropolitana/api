@@ -67,8 +67,10 @@ export default async () => {
 
 		// Check if the line is in the list of available lines
 
-		if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
-		if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
+		console.log(`> Found matching <validations> transaction | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
+
+		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
+		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
 
 		// Increment the line count
 
