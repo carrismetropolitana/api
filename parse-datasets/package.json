@@ -13,15 +13,15 @@
   },
   "dependencies": {
 	"@helperkits/timer": "20240627.34.23",
-	"@helperkits/logger": "20240627.34.42",
+	"@helperkits/logger": "20240703.1726.24",
     "luxon": "3.4.4",
     "papaparse": "5.4.1",
-    "redis": "4.6.14"
+    "redis": "4.6.15"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "20240622.50.2",
-    "@types/node": "20.14.9",
+    "@carrismetropolitana/eslint": "20240722.1548.55",
+    "@types/node": "20.14.12",
     "resolve-tspaths": "0.8.19",
-    "typescript": "5.5.2"
+    "typescript": "5.5.4"
   }
 }

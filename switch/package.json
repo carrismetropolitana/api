@@ -12,12 +12,12 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "fastify": "4.28.0"
+    "fastify": "4.28.1"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "20240622.50.2",
-    "@types/node": "20.14.8",
+    "@carrismetropolitana/eslint": "20240722.1548.55",
+    "@types/node": "20.14.12",
     "resolve-tspaths": "0.8.19",
-    "typescript": "5.5.2"
+    "typescript": "5.5.4"
   }
 }

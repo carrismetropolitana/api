@@ -12,17 +12,19 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@helperkits/logger": "20240702.29.13",
+    "@helperkits/logger": "20240703.1726.24",
     "@helperkits/timer": "20240627.34.23",
     "dotenv": "16.4.5",
     "luxon": "3.4.4",
-    "redis": "4.6.14"
+    "redis": "4.6.15",
+    "mongodb": "6.8.0",
+    "tunnel-ssh": "5.1.2"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "20240622.50.2",
+    "@carrismetropolitana/eslint": "20240722.1548.55",
     "@types/luxon": "3.4.2",
-    "@types/node": "20.14.9",
+    "@types/node": "20.14.12",
     "resolve-tspaths": "0.8.19",
-    "typescript": "5.5.3"
+    "typescript": "5.5.4"
   }
 }
