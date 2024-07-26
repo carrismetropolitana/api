@@ -54,7 +54,10 @@ export default async () => {
 
 	console.log(validationsQuery);
 
-	const validationsStream = await PCGIDB.ValidationEntity.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 }).project({ _id: 1 }).stream();
+	const validationsStream = await PCGIDB.ValidationEntity
+		.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
+		.project({ '_id': 1, 'transaction.lineLongID': 1, 'transaction.stopLongID': 1 })
+		.stream();
 
 	//
 	// Parse data
@@ -69,7 +72,7 @@ export default async () => {
 
 		// Check if the line is in the list of available lines
 		counter++;
-		if (counter % 10000 === 0) console.log(`> Found validation | _id: ${doc._id} | counter: ${counter}`);
+		if (counter % 10000 === 0) LOGGER.info(`Parsed ${counter} transactions`);
 
 		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
 		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
