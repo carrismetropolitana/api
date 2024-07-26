@@ -32,7 +32,7 @@ export default async () => {
 	const allLinesData = JSON.parse(allLinesTxt);
 	const allLinesSet = new Set(allLinesData.map(item => item.id));
 
-	console.log('allLinesSet', allLinesSet);
+	console.log('allLinesData', allLinesData);
 
 	const allStopsTxt = await SERVERDB.client.get('v2/network/stops/all');
 	const allStopsData = JSON.parse(allStopsTxt);
