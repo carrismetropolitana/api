@@ -53,6 +53,8 @@ export default async () => {
 	//
 	// Parse data
 
+	const parseTimer = new TIMETRACKER();
+
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
 	const validationsByLineAndHourMap = new Map();
@@ -72,7 +74,8 @@ export default async () => {
 		// Check if the line is in the list of available lines
 		validCounter++;
 		if (validCounter % 10000 === 0) {
-			LOGGER.info(`Parsed ${validCounter} transactions | ${totalCounter} total | ${totalCounter - validCounter} skipped`);
+			LOGGER.info(`Parsed ${validCounter} transactions | ${totalCounter} total | ${totalCounter - validCounter} skipped (${parseTimer.get()})`);
+			parseTimer.reset();
 		}
 
 		// Increment the line count
