@@ -62,12 +62,14 @@ export default async () => {
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
 
+	let counter = 0;
+
 	for await (const doc of validationsStream) {
 		//
 
 		// Check if the line is in the list of available lines
-
-		console.log(`> Found matching <validations> transaction | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | apex_version: ${doc.transaction.apexVersion}`);
+		counter++;
+		console.log(`> Found validation | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | counter: ${counter}`);
 
 		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
 		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
