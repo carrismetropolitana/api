@@ -39,7 +39,7 @@ export default async () => {
 	//
 	// Setup PCGIDB validations stream
 
-	const operatorIds = ['44'];
+	const operatorIds = ['41'];
 
 	const startDateString = DateTime.now().setZone('Europe/Lisbon').minus({ days: 2 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const endDateString = DateTime.now().setZone('Europe/Lisbon').toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
@@ -69,7 +69,7 @@ export default async () => {
 
 		// Check if the line is in the list of available lines
 		counter++;
-		if (counter % 1000 === 0) console.log(`> Found validation | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | counter: ${counter}`);
+		if (counter % 10000 === 0) console.log(`> Found validation | _id: ${doc._id} | tx_id: ${doc.transaction.transactionId} | counter: ${counter}`);
 
 		// if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
 		// if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
