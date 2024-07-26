@@ -94,7 +94,7 @@ export default async () => {
 		}
 
 		// Extract hour from transaction date
-		const transactionDate = DateTime.fromFormat(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'00\':\'00').setZone('Europe/Lisbon');
+		const transactionDate = DateTime.fromFormat(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss').setZone('Europe/Lisbon');
 		const hour = transactionDate.get('hour');
 
 		// Increment the line-hour count
