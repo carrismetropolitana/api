@@ -35,3 +35,7 @@ import '@/endpoints/v2/datasets/connections/train_stations.endpoint.js';
 import '@/endpoints/v2/datasets/facilities/facilities.endpoint.js';
 import '@/endpoints/v2/datasets/facilities/encm.endpoint.js';
 import '@/endpoints/v2/datasets/facilities/schools.endpoint.js';
+
+/* * */
+
+import '@/endpoints/v2/metrics/demand.endpoint.js';
