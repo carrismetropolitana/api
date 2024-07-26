@@ -47,7 +47,7 @@ export default async () => {
 
 	const validationsStream = await PCGIDB.ValidationEntity
 		.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
-		.project({ '_id': 1, 'transaction.lineLongID': 1, 'transaction.stopLongID': 1 })
+		.project({ '_id': 1, 'transaction.lineLongID': 1, 'transaction.stopLongID': 1, 'transaction.transactionDate': 1 })
 		.stream();
 
 	//
@@ -55,6 +55,8 @@ export default async () => {
 
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
+	const validationsByLineAndHourMap = new Map();
+	const validationsByStopAndHourMap = new Map();
 
 	let totalCounter = 0;
 	let validCounter = 0;
@@ -91,22 +93,74 @@ export default async () => {
 			validationsByStopMap.set(doc.transaction.stopLongID, 1);
 		}
 
+		// Extract hour from transaction date
+		const transactionDate = DateTime.fromFormat(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'00\':\'00').setZone('Europe/Lisbon');
+		const hour = transactionDate.get('hour');
+
+		// Increment the line-hour count
+		if (!validationsByLineAndHourMap.has(doc.transaction.lineLongID)) {
+			validationsByLineAndHourMap.set(doc.transaction.lineLongID, new Map());
+		}
+		const lineHourMap = validationsByLineAndHourMap.get(doc.transaction.lineLongID);
+		if (lineHourMap.has(hour)) {
+			lineHourMap.set(hour, lineHourMap.get(hour) + 1);
+		}
+		else {
+			lineHourMap.set(hour, 1);
+		}
+
+		// Increment the stop-hour count
+		if (!validationsByStopAndHourMap.has(doc.transaction.stopLongID)) {
+			validationsByStopAndHourMap.set(doc.transaction.stopLongID, new Map());
+		}
+		const stopHourMap = validationsByStopAndHourMap.get(doc.transaction.stopLongID);
+		if (stopHourMap.has(hour)) {
+			stopHourMap.set(hour, stopHourMap.get(hour) + 1);
+		}
+		else {
+			stopHourMap.set(hour, 1);
+		}
+
 		//
 	}
 
+	//
 	// Parse maps into arrays
 
-	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, count]) => ({ count: count, end_date: endDateString, line_id: lineId, start_date: startDateString }));
-	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, count]) => ({ count: count, end_date: endDateString, start_date: startDateString, stop_id: stopId }));
+	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, totalQty]) => {
+		const hourlyDistribution = validationsByLineAndHourMap.get(lineId);
+		return {
+			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
+			end_date: endDateString,
+			line_id: lineId,
+			start_date: startDateString,
+			total_qty: totalQty,
+		};
+	});
 
-	// 4.
+	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, totalQty]) => {
+		const hourlyDistribution = validationsByStopAndHourMap.get(stopId);
+		return {
+			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
+			end_date: endDateString,
+			start_date: startDateString,
+			stop_id: stopId,
+			total_qty: totalQty,
+		};
+	});
+
+	//
 	// Save all documents
 
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+
 	validationsByLineArray.sort((a, b) => collator.compare(a.line_id, b.line_id));
 	await SERVERDB.client.set('v2/metrics/demand/by_line', JSON.stringify(validationsByLineArray));
+
 	validationsByStopArray.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
 	await SERVERDB.client.set('v2/metrics/demand/by_stop', JSON.stringify(validationsByStopArray));
+
+	//
 
 	LOGGER.terminate(`Parsed ${validCounter} validations, skipped ${totalCounter - validCounter} validations and updated ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
 
