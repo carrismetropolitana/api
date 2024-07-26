@@ -109,7 +109,7 @@ export default async () => {
 	validationsByStopArray.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
 	await SERVERDB.client.set('v2/metrics/demand/by_stop', JSON.stringify(validationsByStopArray));
 
-	LOGGER.terminate(`Updated ${validationsByLineArray.length} Lines and ${validationsByStopArray} Stops (${globalTimer.get()})`);
+	LOGGER.terminate(`Updated ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
 
 	LOGGER.divider();
 
