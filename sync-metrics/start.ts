@@ -44,7 +44,7 @@ export default async () => {
 	};
 
 	LOGGER.info('Streaming validations from PCGIDB...');
-	LOGGER.info(`Operator IDs: ${operatorIds.join(', ')} | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: ${apexValidationStatuses.join(', ')}`);
+	LOGGER.info(`Operator IDs: [${operatorIds.join(', ')}] | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: [${apexValidationStatuses.join(', ')}]`);
 
 	const validationsStream = await PCGIDB.ValidationEntity
 		.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
@@ -78,7 +78,7 @@ export default async () => {
 
 		validCounter++;
 
-		if (validCounter % 10000 === 0) {
+		if (validCounter % 100000 === 0) {
 			LOGGER.info(`Parsed ${validCounter} transactions | ${totalCounter} total | ${totalCounter - validCounter} skipped (${parseTimer.get()})`);
 			parseTimer.reset();
 		}
