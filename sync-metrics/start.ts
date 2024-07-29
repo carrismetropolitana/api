@@ -2,6 +2,7 @@
 
 import PCGIDB from '@/services/PCGIDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import getOperationalDay from '@/services/getOperationalDay.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -55,6 +56,7 @@ export default async () => {
 
 	const parseTimer = new TIMETRACKER();
 
+	const validationsByDayMap = new Map();
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
 	const validationsByLineAndHourMap = new Map();
@@ -68,16 +70,39 @@ export default async () => {
 
 		totalCounter++;
 
+		//
+		// Check if this validation is for a known line and known stop
+
 		if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
 		if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
 
-		// Check if the line is in the list of available lines
 		validCounter++;
+
 		if (validCounter % 10000 === 0) {
 			LOGGER.info(`Parsed ${validCounter} transactions | ${totalCounter} total | ${totalCounter - validCounter} skipped (${parseTimer.get()})`);
 			parseTimer.reset();
 		}
 
+		//
+		// Extract timestamp components from transaction
+
+		const transactionDate = DateTime.fromFormat(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss').setZone('Europe/Lisbon');
+
+		const hourComponent = transactionDate.get('hour');
+
+		const operationalDay = getOperationalDay(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
+
+		//
+		// Increment the day count
+
+		if (validationsByDayMap.has(operationalDay)) {
+			validationsByDayMap.set(operationalDay, validationsByDayMap.get(operationalDay) + 1);
+		}
+		else {
+			validationsByDayMap.set(operationalDay, 1);
+		}
+
+		//
 		// Increment the line count
 
 		if (validationsByLineMap.has(doc.transaction.lineLongID)) {
@@ -87,6 +112,7 @@ export default async () => {
 			validationsByLineMap.set(doc.transaction.lineLongID, 1);
 		}
 
+		//
 		// Increment the stop count
 
 		if (validationsByStopMap.has(doc.transaction.stopLongID)) {
@@ -96,32 +122,36 @@ export default async () => {
 			validationsByStopMap.set(doc.transaction.stopLongID, 1);
 		}
 
-		// Extract hour from transaction date
-		const transactionDate = DateTime.fromFormat(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss').setZone('Europe/Lisbon');
-		const hour = transactionDate.get('hour');
-
+		//
 		// Increment the line-hour count
+
 		if (!validationsByLineAndHourMap.has(doc.transaction.lineLongID)) {
 			validationsByLineAndHourMap.set(doc.transaction.lineLongID, new Map());
 		}
+
 		const lineHourMap = validationsByLineAndHourMap.get(doc.transaction.lineLongID);
-		if (lineHourMap.has(hour)) {
-			lineHourMap.set(hour, lineHourMap.get(hour) + 1);
+
+		if (lineHourMap.has(hourComponent)) {
+			lineHourMap.set(hourComponent, lineHourMap.get(hourComponent) + 1);
 		}
 		else {
-			lineHourMap.set(hour, 1);
+			lineHourMap.set(hourComponent, 1);
 		}
 
+		//
 		// Increment the stop-hour count
+
 		if (!validationsByStopAndHourMap.has(doc.transaction.stopLongID)) {
 			validationsByStopAndHourMap.set(doc.transaction.stopLongID, new Map());
 		}
+
 		const stopHourMap = validationsByStopAndHourMap.get(doc.transaction.stopLongID);
-		if (stopHourMap.has(hour)) {
-			stopHourMap.set(hour, stopHourMap.get(hour) + 1);
+
+		if (stopHourMap.has(hourComponent)) {
+			stopHourMap.set(hourComponent, stopHourMap.get(hourComponent) + 1);
 		}
 		else {
-			stopHourMap.set(hour, 1);
+			stopHourMap.set(hourComponent, 1);
 		}
 
 		//
@@ -129,6 +159,13 @@ export default async () => {
 
 	//
 	// Parse maps into arrays
+
+	const validationsByDayArray = Array.from(validationsByDayMap).map(([operationalDay, totalQty]) => {
+		return {
+			operational_day: operationalDay,
+			total_qty: totalQty,
+		};
+	});
 
 	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, totalQty]) => {
 		const hourlyDistribution = validationsByLineAndHourMap.get(lineId);
@@ -157,6 +194,9 @@ export default async () => {
 
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
+	validationsByDayArray.sort((a, b) => collator.compare(a.operational_day, b.operational_day));
+	await SERVERDB.client.set('v2/metrics/demand/by_day', JSON.stringify(validationsByDayArray));
+
 	validationsByLineArray.sort((a, b) => collator.compare(a.line_id, b.line_id));
 	await SERVERDB.client.set('v2/metrics/demand/by_line', JSON.stringify(validationsByLineArray));
 
@@ -165,7 +205,7 @@ export default async () => {
 
 	//
 
-	LOGGER.terminate(`Parsed ${validCounter} validations, skipped ${totalCounter - validCounter} validations and updated ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
+	LOGGER.terminate(`Parsed ${validCounter} validations, skipped ${totalCounter - validCounter} validations and updated ${validationsByDayArray.length} Days, ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
 
 	LOGGER.divider();
 
