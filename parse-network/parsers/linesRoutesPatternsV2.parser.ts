@@ -6,6 +6,7 @@ import type { NetworkLine, NetworkPattern, NetworkPatternPathItem, NetworkPatter
 import sortCollator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import crypto from 'node:crypto';
@@ -357,6 +358,7 @@ export default async () => {
 					route_ids: [],
 					short_name: routeRawData.line_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
+					tts_name: tts.makeText(routeRawData.line_long_name, []),
 				};
 			}
 
