@@ -265,6 +265,7 @@ export default async () => {
 					short_name: routeRawData.route_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
 					trips: {}, // A map, not an array
+					tts_name: tts.makeText(tripRawData.trip_headsign),
 					valid_on: [],
 				};
 			}
@@ -331,6 +332,7 @@ export default async () => {
 					route_id: routeRawData.route_id,
 					short_name: routeRawData.route_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
+					tts_name: tts.makeText(routeRawData.route_long_name),
 				};
 			}
 
@@ -358,7 +360,7 @@ export default async () => {
 					route_ids: [],
 					short_name: routeRawData.line_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
-					tts_name: tts.makeText(routeRawData.line_long_name, []),
+					tts_name: tts.makeText(routeRawData.line_long_name),
 				};
 			}
 
