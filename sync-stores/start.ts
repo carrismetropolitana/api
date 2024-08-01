@@ -103,6 +103,7 @@ export default async () => {
 		const updatedDocument = {
 			...foundDocument,
 			active_counters: encmActiveCountersUnique.length,
+			current_ratio: activeCountersToPeopleWaitingRatio,
 			current_status: currentStatus,
 			currently_waiting: encmTicketsWaiting?.length || 0,
 			expected_wait_time: encmTotalWaitTime || 0,

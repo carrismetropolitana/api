@@ -41,6 +41,7 @@ export default async () => {
 			active_counters: 0,
 			address: itemCsv.address,
 			brand_name: itemCsv.brand_name,
+			current_ratio: 0,
 			current_status: 'unknown',
 			currently_waiting: 0,
 			district_id: itemCsv.district_id,
