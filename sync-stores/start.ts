@@ -8,11 +8,13 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-const ENCM_TIME_BY_CATEGORY = {
+const BUSY_RATIO = 0.1;
+
+const TIME_BY_CATEGORY = {
 	A: { avg_seconds_per_ticket: 300, category_code: 'A', category_name: 'Cartões' },
-	B: { avg_seconds_per_ticket: 200, category_code: 'B', category_name: 'Carregamentos' },
+	B: { avg_seconds_per_ticket: 180, category_code: 'B', category_name: 'Carregamentos' },
 	C: { avg_seconds_per_ticket: 180, category_code: 'C', category_name: 'Perdidos e Achados' },
-	D: { avg_seconds_per_ticket: 230, category_code: 'D', category_name: 'Prioritário' },
+	D: { avg_seconds_per_ticket: 200, category_code: 'D', category_name: 'Prioritário' },
 	default: { avg_seconds_per_ticket: 200, category_code: 'N/A', category_name: 'Unknown' },
 };
 
@@ -70,13 +72,30 @@ export default async () => {
 		let encmTotalWaitTime = 0;
 
 		encmTicketsWaiting?.forEach((ticket) => {
-			if (ENCM_TIME_BY_CATEGORY[ticket.categoryCode]) {
-				encmTotalWaitTime += ENCM_TIME_BY_CATEGORY[ticket.categoryCode].avg_seconds_per_ticket / (encmActiveCountersUnique.length || 1);
+			if (TIME_BY_CATEGORY[ticket.categoryCode]) {
+				encmTotalWaitTime += TIME_BY_CATEGORY[ticket.categoryCode].avg_seconds_per_ticket / (encmActiveCountersUnique.length || 1);
 			}
 			else {
-				encmTotalWaitTime += ENCM_TIME_BY_CATEGORY.default.avg_seconds_per_ticket / (encmActiveCountersUnique.length || 1);
+				encmTotalWaitTime += TIME_BY_CATEGORY.default.avg_seconds_per_ticket / (encmActiveCountersUnique.length || 1);
 			}
 		});
+
+		// 3.4.
+		// Calculate the current status of the ENCM
+
+		let currentStatus;
+
+		const activeCountersToPeopleWaitingRatio = encmActiveCountersUnique.length / (encmTicketsWaiting?.length || 1);
+
+		if (encmActiveCountersUnique.length > 0 && activeCountersToPeopleWaitingRatio > BUSY_RATIO) {
+			currentStatus = 'open';
+		}
+		else if (encmActiveCountersUnique.length > 0) {
+			currentStatus = 'busy';
+		}
+		else {
+			currentStatus = 'closed';
+		}
 
 		// 3.4.
 		// Format the update query with the request results
@@ -84,6 +103,7 @@ export default async () => {
 		const updatedDocument = {
 			...foundDocument,
 			active_counters: encmActiveCountersUnique.length,
+			current_status: currentStatus,
 			currently_waiting: encmTicketsWaiting?.length || 0,
 			expected_wait_time: encmTotalWaitTime || 0,
 			is_open: encmActiveCountersUnique.length > 0 ? true : false,

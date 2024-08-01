@@ -4,7 +4,7 @@
 
   "files.eol": "\n",
 
-  "eslint.workingDirectories": ["./parse-datasets", "./parse-network", "./server", "./switch", "./sync"],
+  "eslint.workingDirectories": ["./parse-datasets", "./parse-network", "./server", "./switch", "./sync-stores", "./sync-vehicles"],
 
   // Enable the ESlint flat config support
   "eslint.useFlatConfig": true,

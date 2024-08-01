@@ -12,7 +12,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-server:
-    name: server (Docker)
+    name: server (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -61,7 +61,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-switch:
-    name: switch (Docker)
+    name: switch (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -110,7 +110,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-parse-datasets:
-    name: parse-datasets (Docker)
+    name: parse-datasets (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -159,7 +159,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-parse-network:
-    name: parse-network (Docker)
+    name: parse-network (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -208,7 +208,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-vehicles:
-    name: sync-vehicles (Docker)
+    name: sync-vehicles (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -256,8 +256,8 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-encm:
-    name: sync-encm (Docker)
+  api-sync-stores:
+    name: sync-stores (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -268,7 +268,7 @@ jobs:
     steps:
       - name: Set module key
         run: |
-          echo "MODULE_KEY=sync-encm" >> $GITHUB_ENV
+          echo "MODULE_KEY=sync-stores" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@main
@@ -306,7 +306,7 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-metrics:
-    name: sync-metrics (Docker)
+    name: sync-metrics (NodeJS)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

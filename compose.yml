@@ -253,8 +253,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-encm:
-    image: ghcr.io/carrismetropolitana/api-sync-encm:beta
+  sync-stores:
+    image: ghcr.io/carrismetropolitana/api-sync-stores:beta
     deploy:
       restart_policy:
         condition: on-failure

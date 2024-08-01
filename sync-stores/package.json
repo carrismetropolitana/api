@@ -1,5 +1,5 @@
 {
-  "name": "@carrismetropolitana/api-sync-encm",
+  "name": "@carrismetropolitana/api-sync-stores",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -16,12 +16,12 @@
     "@helperkits/timer": "20240627.34.23",
     "dotenv": "16.4.5",
     "luxon": "3.4.4",
-    "redis": "4.6.15"
+    "redis": "4.7.0"
   },
   "devDependencies": {
     "@carrismetropolitana/eslint": "20240722.1548.55",
     "@types/luxon": "3.4.2",
-    "@types/node": "20.14.12",
+    "@types/node": "22.0.2",
     "resolve-tspaths": "0.8.19",
     "typescript": "5.5.4"
   }
