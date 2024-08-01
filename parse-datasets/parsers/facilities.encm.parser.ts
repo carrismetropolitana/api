@@ -67,6 +67,7 @@ export default async () => {
 			postal_code: itemCsv.postal_code,
 			region_id: itemCsv.region_id,
 			region_name: itemCsv.region_name,
+			short_name: itemCsv.short_name,
 			stops: itemCsv.stops?.length ? itemCsv.stops.split('|') : [],
 			url: itemCsv.url,
 		};
