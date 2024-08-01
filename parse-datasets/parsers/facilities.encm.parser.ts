@@ -40,6 +40,8 @@ export default async () => {
 		const parsedItemData = {
 			active_counters: 0,
 			address: itemCsv.address,
+			brand_name: itemCsv.brand_name,
+			current_status: 'unknown',
 			currently_waiting: 0,
 			district_id: itemCsv.district_id,
 			district_name: itemCsv.district_name,
