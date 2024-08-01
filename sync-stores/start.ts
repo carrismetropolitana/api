@@ -116,7 +116,7 @@ export default async () => {
 		await SERVERDB.client.set(`v2/datasets/facilities/encm/${updatedDocument.id}`, JSON.stringify(updatedDocument));
 
 		// Log progress
-		LOGGER.info(`id: ${foundDocument.id} | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | active_counters: ${updatedDocument.active_counters} | is_open: ${updatedDocument.is_open} | name: ${foundDocument.name}`);
+		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | short_name: ${foundDocument.short_name}`);
 		//
 	}
 
