@@ -28,7 +28,7 @@ export default async () => {
 
 	const saveTimer = new TIMETRACKER();
 
-	const allAlertsArray = alertsFeedData?.entity.map(item => item.alert);
+	const allAlertsArray = alertsFeedData?.entity.map(item => ({ _id: item.id, ...item.alert }));
 	await SERVERDB.client.set(`v2/network/alerts/json`, JSON.stringify(allAlertsArray));
 
 	await SERVERDB.client.set(`v2/network/alerts/protobuf`, JSON.stringify(alertsFeedData));
