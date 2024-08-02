@@ -152,44 +152,6 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  server:
-    image: ghcr.io/carrismetropolitana/api-server:beta
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 1gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./.env
-    secrets:
-      - pcgidbkey
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  switch:
-    image: ghcr.io/carrismetropolitana/api-switch:beta
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 100mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
   parse-datasets:
     image: ghcr.io/carrismetropolitana/api-parse-datasets:beta
     deploy:
@@ -232,8 +194,46 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-vehicles:
-    image: ghcr.io/carrismetropolitana/api-sync-vehicles:beta
+  server:
+    image: ghcr.io/carrismetropolitana/api-server:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+    secrets:
+      - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  switch:
+    image: ghcr.io/carrismetropolitana/api-switch:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 100mb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-alerts:
+    image: ghcr.io/carrismetropolitana/api-sync-alerts:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -241,6 +241,25 @@ services:
       resources:
         limits:
           memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-metrics:
+    image: ghcr.io/carrismetropolitana/api-sync-metrics:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
     logging:
       options:
         max-size: '1m'
@@ -272,15 +291,15 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-metrics:
-    image: ghcr.io/carrismetropolitana/api-sync-metrics:beta
+  sync-vehicles:
+    image: ghcr.io/carrismetropolitana/api-sync-vehicles:beta
     deploy:
       restart_policy:
         condition: on-failure
         delay: 30s
       resources:
         limits:
-          memory: 1gb
+          memory: 2gb
     logging:
       options:
         max-size: '1m'

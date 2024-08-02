@@ -7,6 +7,7 @@ import '@/endpoints/v1/network/timetables.endpoint.js';
 
 /* * */
 
+import '@/endpoints/v1/network/alerts.endpoint.js';
 import '@/endpoints/v1/pip/stops_deprecated.endpoint.js';
 
 /* * */

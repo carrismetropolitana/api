@@ -5,11 +5,6 @@ import SERVERDB from '@/services/SERVERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
-import protobufjs from 'protobufjs';
-
-/* * */
-
-const gtfsRealtime = protobufjs.loadSync(`${process.env.PWD}/services/gtfs-realtime.proto`);
 
 /* * */
 
