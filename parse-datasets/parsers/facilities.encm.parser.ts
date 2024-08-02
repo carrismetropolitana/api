@@ -48,6 +48,7 @@ export default async () => {
 			district_name: itemCsv.district_name,
 			email: itemCsv.email,
 			expected_wait_time: 0,
+			google_place_id: itemCsv.google_place_id,
 			hours_friday: itemCsv.hours_friday?.length ? itemCsv.hours_friday.split('|') : [],
 			hours_monday: itemCsv.hours_monday?.length ? itemCsv.hours_monday.split('|') : [],
 			hours_saturday: itemCsv.hours_saturday?.length ? itemCsv.hours_saturday.split('|') : [],
