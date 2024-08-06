@@ -398,7 +398,7 @@ export default async () => {
 	const finalizedAllRoutesData: NetworkRoute[] = (Object.values(allRoutesParsed) as NetworkRoute[]).sort((a, b) => sortCollator.compare(a.route_id, b.route_id));
 
 	for (const finalizedRouteData of finalizedAllRoutesData) {
-		await SERVERDB.client.set(`v2/network/routes/${finalizedRouteData.route_id}`, JSON.stringify(finalizedAllRoutesData));
+		await SERVERDB.client.set(`v2/network/routes/${finalizedRouteData.route_id}`, JSON.stringify(finalizedRouteData));
 		updatedRouteKeys.add(`v2/network/routes/${finalizedRouteData.route_id}`);
 	}
 
@@ -413,7 +413,7 @@ export default async () => {
 	const finalizedAllLinesData: NetworkLine[] = (Object.values(allLinesParsed) as NetworkLine[]).sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
 
 	for (const finalizedLineData of finalizedAllLinesData) {
-		await SERVERDB.client.set(`v2/network/lines/${finalizedLineData.line_id}`, JSON.stringify(finalizedAllLinesData));
+		await SERVERDB.client.set(`v2/network/lines/${finalizedLineData.line_id}`, JSON.stringify(finalizedLineData));
 		updatedLineKeys.add(`v2/network/lines/${finalizedLineData.line_id}`);
 	}
 
