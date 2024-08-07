@@ -6,7 +6,7 @@ import type { NetworkLine, NetworkPattern, NetworkPatternPathItem, NetworkPatter
 import sortCollator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
-import tts from '@carrismetropolitana/tts';
+// import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import crypto from 'node:crypto';
