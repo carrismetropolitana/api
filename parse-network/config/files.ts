@@ -125,25 +125,29 @@ const allGtfsFiles: GtfsFile[] = [
 		_key: 'routes',
 		extension: 'txt',
 		headers: [
+			'line_id',
+			'line_short_name',
+			'line_long_name',
 			'route_id',
 			'route_short_name',
 			'route_long_name',
 			'route_type',
 			'route_color',
 			'route_text_color',
-			'line_id',
 		],
 		index_queries: [
 			'CREATE INDEX routes_route_id_idx ON routes ("route_id");',
 		],
 		table_query: `CREATE TABLE routes (
+			line_id VARCHAR(10),
+			line_short_name VARCHAR(10),
+			line_long_name VARCHAR(255),
 			route_id VARCHAR(10),
 			route_short_name VARCHAR(10),
 			route_long_name VARCHAR(255),
 			route_type VARCHAR(255),
 			route_color VARCHAR(6),
-			route_text_color VARCHAR(6),
-			line_id VARCHAR(10)
+			route_text_color VARCHAR(6)
 		);`,
 	},
 
