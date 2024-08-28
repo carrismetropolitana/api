@@ -12,29 +12,29 @@
 		"watch": "tsc -w"
 	},
 	"dependencies": {
-		"@carrismetropolitana/tts": "20240627.2021.43",
+		"@carrismetropolitana/tts": "20240818.1842.38",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20240725.1819.20",
-		"@turf/turf": "7.0.0",
-		"adm-zip": "0.5.14",
+		"@turf/turf": "7.1.0",
+		"adm-zip": "0.5.15",
 		"csv-parse": "5.5.6",
-		"csv-stringify": "6.5.0",
+		"csv-stringify": "6.5.1",
 		"dotenv": "16.4.5",
 		"extract-zip": "2.0.1",
-		"luxon": "3.4.4",
+		"luxon": "3.5.0",
 		"papaparse": "5.4.1",
 		"pg": "8.12.0",
 		"pg-copy-streams": "6.0.6",
-		"redis": "4.6.15"
+		"redis": "4.7.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20240722.1548.55",
 		"@types/adm-zip": "0.5.5",
 		"@types/luxon": "3.4.2",
-		"@types/node": "20.14.12",
+		"@types/node": "22.5.1",
 		"@types/papaparse": "5.3.14",
-		"@types/pg": "8.11.6",
+		"@types/pg": "8.11.7",
 		"@types/pg-copy-streams": "1.2.5",
 		"resolve-tspaths": "0.8.19",
 		"typescript": "5.5.4"
