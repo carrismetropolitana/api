@@ -12,7 +12,7 @@
 		"watch": "tsc -w"
 	},
 	"dependencies": {
-		"@carrismetropolitana/tts": "20240818.1842.38",
+		"@carrismetropolitana/tts": "20240828.858.0",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20240725.1819.20",
