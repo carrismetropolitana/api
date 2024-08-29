@@ -12,7 +12,7 @@
 		"watch": "tsc -w"
 	},
 	"dependencies": {
-		"@carrismetropolitana/tts": "20240828.858.0",
+		"@carrismetropolitana/tts": "20240829.1149.56",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20240725.1819.20",
@@ -34,7 +34,7 @@
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.5.1",
 		"@types/papaparse": "5.3.14",
-		"@types/pg": "8.11.7",
+		"@types/pg": "8.11.8",
 		"@types/pg-copy-streams": "1.2.5",
 		"resolve-tspaths": "0.8.19",
 		"typescript": "5.5.4"
