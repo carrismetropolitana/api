@@ -18,6 +18,8 @@ server.get('/horarios/:line_id/:direction_id/:stop_id', horariosHandler);
 
 server.get('/accao-app-2024', async (_, reply) => reply.redirect(`https://www.carrismetropolitana.pt/viagemvirtual`));
 
+server.get('/app-install-cmm', async (_, reply) => reply.redirect(`https://alpha.carrismetropolitana.pt/app`));
+
 /* * */
 
 server.listen({ host: '0.0.0.0', port: 5050 }, async (err, address) => {
