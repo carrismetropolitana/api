@@ -79,6 +79,7 @@ export interface NetworkPattern {
 export interface NetworkPatternPathItem {
 	allow_drop_off: boolean
 	allow_pickup: boolean
+	distance: number
 	distance_delta: number
 	stop: NetworkStop
 	stop_sequence: number

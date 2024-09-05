@@ -174,6 +174,7 @@ export default async () => {
 				stopTimesAsCompletePath.push({
 					allow_drop_off: stopTimeRawData.drop_off_type !== '1',
 					allow_pickup: stopTimeRawData.pickup_type !== '1',
+					distance: Number(stopTimeRawData.shape_dist_traveled),
 					distance_delta: 0,
 					stop: stopParsedData,
 					stop_sequence: stopTimeRawData.stop_sequence,
