@@ -9,10 +9,12 @@ export default function parseAlertV2(item) {
 		console.log('---');
 		if (entity.routeId) {
 			console.log('entity.routeId', entity.routeId);
-			return {
+			const resultWithLineId = {
 				lineId: entity.routeId.substring(0, 4),
 				...entity,
 			};
+			console.log('resultWithLineId', resultWithLineId);
+			return resultWithLineId;
 		}
 		console.log('-----------------------------------------------');
 		return entity;
