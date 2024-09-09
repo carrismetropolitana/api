@@ -1,6 +1,7 @@
 /* * */
 
 import SERVERDB from '@/services/SERVERDB.js';
+import parseAlertV2 from '@/services/parseAlertV2.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -28,7 +29,7 @@ export default async () => {
 
 	const saveTimer = new TIMETRACKER();
 
-	const allAlertsArray = alertsFeedData?.entity.map(item => ({ _id: item.id, ...item.alert }));
+	const allAlertsArray = alertsFeedData?.entity.map(item => parseAlertV2(item));
 	await SERVERDB.client.set(`v2/network/alerts/json`, JSON.stringify(allAlertsArray));
 
 	await SERVERDB.client.set(`v2/network/alerts/protobuf`, JSON.stringify(alertsFeedData));
