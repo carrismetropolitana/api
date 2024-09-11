@@ -6,7 +6,8 @@
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"paths": {
-			"@/services/*": ["services/*"]
+			"@/services/*": ["services/*"],
+			"@/types/*": ["types/*"]
 		},
 		"allowJs": true,
 		"outDir": "dist",

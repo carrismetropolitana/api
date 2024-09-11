@@ -1,9 +1,11 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB.js';
 import parseAlertV2 from '@/services/parseAlertV2.js';
+import SERVERDB from '@/services/SERVERDB.js';
+import { Alert } from '@/types/alerts.types.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { messaging } from 'firebase-admin';
 import crypto from 'node:crypto';
 
 /* * */
@@ -54,7 +56,7 @@ export default async () => {
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt);
 
 	const hashFunction = crypto.createHash('sha1');
-	const allAlertsParsedV2Hashes = allAlertsParsedV2.map(alertData => ({
+	const allAlertsParsedV2Hashes = allAlertsParsedV2.map((alertData: Alert) => ({
 		alert: alertData,
 		hash: hashFunction.update(JSON.stringify(alertData)).digest('hex'),
 	}));
@@ -63,12 +65,30 @@ export default async () => {
 
 	let sentNotificationCounter = 0;
 
-	for (const alertItem of allAlertsParsedV2Hashes) {
+	for (const alertItem of allAlertsParsedV2Hashes as { alert: Alert, hash: string }[]) {
 		if (!allSentNotifications.includes(alertItem.hash)) {
-			// sendNotification(alertItem.alert);
-			sentNotificationCounter++;
-			allSentNotifications.push(alertItem.hash);
-			LOGGER.success(`Sent notification for alert: ${alertItem.alert.alert_id}`);
+			// Send the notification
+			try {
+				for (const entity of alertItem.alert.informedEntity) {
+					await messaging().send({
+						data: {},
+						notification: {
+							body: alertItem.alert.descriptionText[0].text, // TODO: Handle multiple languages
+							title: alertItem.alert.headerText[0].text,
+						},
+						topic: 'cm.realtime.alerts.route.' + entity.routeId,
+					});
+				}
+
+				sentNotificationCounter++;
+				allSentNotifications.push(alertItem.hash);
+				LOGGER.success(`Sent notification for alert: ${alertItem.alert._id}`);
+			}
+			catch (error) {
+				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert._id}`);
+				LOGGER.error(error);
+				continue;
+			}
 		}
 	}
 
