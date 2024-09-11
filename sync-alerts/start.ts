@@ -55,11 +55,14 @@ export default async () => {
 	const allSentNotificationsTxt = await SERVERDB.client.get(`v2/network/alerts/sent_notifications`);
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt);
 
-	const hashFunction = crypto.createHash('sha1');
-	const allAlertsParsedV2Hashes = allAlertsParsedV2.map((alertData: Alert) => ({
-		alert: alertData,
-		hash: hashFunction.update(JSON.stringify(alertData)).digest('hex'),
-	}));
+	const allAlertsParsedV2Hashes = allAlertsParsedV2.map((alertData: Alert) => {
+		const hashFunction = crypto.createHash('sha1');
+		const hashValue = hashFunction.update(JSON.stringify(alertData));
+		return {
+			alert: alertData,
+			hash: hashValue.digest('hex'),
+		};
+	});
 
 	// Send the notifications
 
