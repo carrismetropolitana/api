@@ -1,7 +1,7 @@
 /* * */
 
-import parseAlertV2 from '@/services/parseAlertV2.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import parseAlertV2 from '@/services/parseAlertV2.js';
 import { Alert } from '@/types/alerts.types.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
