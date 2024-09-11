@@ -53,7 +53,7 @@ export default async () => {
 	const notificationsTimer = new TIMETRACKER();
 
 	const allSentNotificationsTxt = await SERVERDB.client.get(`v2/network/alerts/sent_notifications`);
-	const allSentNotifications = await JSON.parse(allSentNotificationsTxt);
+	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
 
 	const allAlertsParsedV2Hashes = allAlertsParsedV2.map((alertData: Alert) => {
 		const hashFunction = crypto.createHash('sha1');
