@@ -92,7 +92,7 @@ export default async () => {
 					}
 					else {
 						// Do the 'all' topic
-						notificationMessage.topic = `none`;
+						notificationMessage.topic = `cm.everyone`;
 					}
 					await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
