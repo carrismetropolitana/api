@@ -1,7 +1,7 @@
 /* * */
 
 import SERVERDB from '@/services/SERVERDB.js';
-import * as firebase from 'firebase-admin';
+import firebase from 'firebase-admin';
 
 import start from './start.js';
 

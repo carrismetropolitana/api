@@ -9,6 +9,8 @@ volumes:
 secrets:
   pcgidbkey:
     file: PCGIDB.key
+  firebasekey:
+    file: FIREBASE.json
 
 services:
   #
@@ -247,6 +249,8 @@ services:
         max-file: '1'
     env_file:
       - ./.env
+    secrets:
+      - firebasekey
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #

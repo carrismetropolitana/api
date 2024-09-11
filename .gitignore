@@ -125,3 +125,4 @@ results/
 nginx/uptime.conf
 
 build/
+FIREBASE.json
