@@ -5,7 +5,7 @@ import parseAlertV2 from '@/services/parseAlertV2.js';
 import { Alert } from '@/types/alerts.types.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { messaging } from 'firebase-admin';
+import firebaseAdmin from 'firebase-admin';
 import crypto from 'node:crypto';
 
 /* * */
@@ -70,7 +70,7 @@ export default async () => {
 			// Send the notification
 			try {
 				for (const entity of alertItem.alert.informedEntity) {
-					await messaging().send({
+					await firebaseAdmin.messaging().send({
 						data: {},
 						notification: {
 							body: alertItem.alert.descriptionText[0].text, // TODO: Handle multiple languages
