@@ -70,25 +70,23 @@ export default async () => {
 
 	for (const alertItem of allAlertsParsedV2Hashes as { alert: Alert, hash: string }[]) {
 		if (!allSentNotifications.includes(alertItem.hash)) {
-			// Send the notification
 			try {
 				for (const entity of alertItem.alert.informedEntity) {
 					await firebaseAdmin.messaging().send({
 						data: {},
 						notification: {
-							body: alertItem.alert.descriptionText[0].text, // TODO: Handle multiple languages
-							title: alertItem.alert.headerText[0].text,
+							body: alertItem.alert.descriptionText.translation[0].text, // TODO: Handle multiple languages
+							title: alertItem.alert.headerText.translation[0].text,
 						},
 						topic: 'cm.realtime.alerts.route.' + entity.routeId,
 					});
+					sentNotificationCounter++;
 				}
-
-				sentNotificationCounter++;
 				allSentNotifications.push(alertItem.hash);
-				LOGGER.success(`Sent notification for alert: ${alertItem.alert._id}`);
+				LOGGER.success(`Sent notification for alert: ${alertItem.alert.alert_id}`);
 			}
 			catch (error) {
-				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert._id}`);
+				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert.alert_id}`);
 				LOGGER.error(error);
 				continue;
 			}
