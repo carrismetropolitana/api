@@ -8,7 +8,6 @@ import parseAlertV2 from '@/services/parseAlertV2.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import firebaseAdmin from 'firebase-admin';
-import crypto from 'node:crypto';
 
 /* * */
 
@@ -43,7 +42,7 @@ export default async () => {
 
 	const jsonTimer = new TIMETRACKER();
 
-	const allAlertsParsedV2 = alertsFeedData?.entity.map(item => parseAlertV2(item));
+	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
 
 	await SERVERDB.client.set(`v2/network/alerts/json`, JSON.stringify(allAlertsParsedV2));
 
@@ -56,24 +55,16 @@ export default async () => {
 
 	const allSentNotificationsTxt = await SERVERDB.client.get(`v2/network/alerts/sent_notifications`);
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
-
-	const allAlertsParsedV2Hashes = allAlertsParsedV2.map((alertData: Alert) => {
-		const hashFunction = crypto.createHash('sha1');
-		const hashValue = hashFunction.update(JSON.stringify(alertData));
-		return {
-			alert: alertData,
-			hash: hashValue.digest('hex'),
-		};
-	});
+	const allSentNotificationsSet = new Set(allSentNotifications);
 
 	// Send the notifications
 
 	let sentNotificationCounter = 0;
 
-	for (const alertItem of allAlertsParsedV2Hashes as { alert: Alert, hash: string }[]) {
-		if (!allSentNotifications.includes(alertItem.hash)) {
+	for (const alertItem of allAlertsParsedV2) {
+		if (!allSentNotificationsSet.has(alertItem.alert_id)) {
 			try {
-				for (const entity of alertItem.alert.informedEntity) {
+				for (const entity of alertItem.informedEntity) {
 					// Setup notification message
 					const notificationMessage: TopicMessage = {
 						notification: {
@@ -84,12 +75,12 @@ export default async () => {
 						topic: '',
 					};
 					// Include title
-					notificationMessage.notification.title = alertItem.alert?.headerText?.translation[0]?.text || '';
+					notificationMessage.notification.title = alertItem.headerText?.translation[0]?.text || '';
 					// Include description
-					const messageDescription = alertItem.alert?.descriptionText?.translation[0]?.text || '';
+					const messageDescription = alertItem.descriptionText?.translation[0]?.text || '';
 					notificationMessage.notification.body = messageDescription.length > 200 ? messageDescription.substring(0, 200) + '...' : messageDescription;
 					// Include image
-					notificationMessage.notification.imageUrl = alertItem.alert?.image?.localizedImage[0]?.url || undefined;
+					notificationMessage.notification.imageUrl = alertItem.image?.localizedImage[0]?.url || undefined;
 					// Include topics
 					if (entity.routeId) {
 						notificationMessage.topic = `cm.realtime.alerts.line.${entity.routeId.substring(0, 4)}`;
@@ -104,18 +95,18 @@ export default async () => {
 					// await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
-				allSentNotifications.push(alertItem.hash);
-				LOGGER.success(`Sent notification for alert: ${alertItem.alert.alert_id}`);
+				allSentNotificationsSet.add(alertItem.alert_id);
+				LOGGER.success(`Sent notification for alert: ${alertItem.alert_id}`);
 			}
 			catch (error) {
-				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert.alert_id}`);
+				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert_id}`);
 				LOGGER.error(error);
 				continue;
 			}
 		}
 	}
 
-	await SERVERDB.client.set(`v2/network/alerts/sent_notifications`, JSON.stringify(allSentNotifications));
+	await SERVERDB.client.set(`v2/network/alerts/sent_notifications`, JSON.stringify(Array.from(allSentNotificationsSet)));
 
 	LOGGER.info(`Sent ${sentNotificationCounter} Notifications (${notificationsTimer.get()})`);
 

@@ -1,6 +1,10 @@
 /* * */
 
-export default function parseAlertV2(item) {
+import type { Alert } from '@/types/alerts.types.js';
+
+/* * */
+
+export default function parseAlertV2(item): Alert {
 	//
 
 	const parsedInformedEntity = item.alert.informedEntity.map((entity) => {
