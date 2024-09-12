@@ -101,7 +101,7 @@ export default async () => {
 						// Do the 'all' topic
 						notificationMessage.topic = `cm.everyone`;
 					}
-					// await firebaseAdmin.messaging().send(notificationMessage);
+					await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
 				allSentNotifications.push(alertItem.hash);
