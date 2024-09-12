@@ -75,7 +75,14 @@ export default async () => {
 			try {
 				for (const entity of alertItem.alert.informedEntity) {
 					// Setup notification message
-					let notificationMessage: TopicMessage;
+					const notificationMessage: TopicMessage = {
+						notification: {
+							body: '',
+							imageUrl: '',
+							title: '',
+						},
+						topic: '',
+					};
 					// Include title
 					notificationMessage.notification.title = alertItem.alert?.headerText?.translation[0]?.text || '';
 					// Include description
@@ -94,7 +101,7 @@ export default async () => {
 						// Do the 'all' topic
 						notificationMessage.topic = `cm.everyone`;
 					}
-					await firebaseAdmin.messaging().send(notificationMessage);
+					// await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
 				allSentNotifications.push(alertItem.hash);
