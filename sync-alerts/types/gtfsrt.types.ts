@@ -67,6 +67,7 @@ export interface EntitySelector {
 	 */
 
 	agencyId?: string
+	lineId?: string // Non-standard
 	routeId?: string
 	stopId?: string
 	tripId?: string

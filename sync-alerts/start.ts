@@ -83,7 +83,7 @@ export default async () => {
 					notificationMessage.notification.imageUrl = alertItem.image?.localizedImage[0]?.url || undefined;
 					// Include topics
 					if (entity.routeId) {
-						notificationMessage.topic = `cm.realtime.alerts.line.${entity.routeId.substring(0, 4)}`;
+						notificationMessage.topic = `cm.realtime.alerts.line.${entity.lineId}`;
 					}
 					else if (entity.stopId) {
 						notificationMessage.topic = `cm.realtime.alerts.stop.${entity.stopId}`;
