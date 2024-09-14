@@ -56,6 +56,23 @@ const realtime = async (request, reply) => {
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
 	const result = response.map((estimate) => {
 		const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('estimate.stopArrivalEta', estimate.stopArrivalEta);
+		console.log('estimate.stopDepartureEta', estimate.stopDepartureEta);
+		console.log('compensatedEstimatedArrival', compensatedEstimatedArrival);
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('estimate', estimate);
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
 		return {
 			estimated_arrival: compensatedEstimatedArrival,
 			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedEstimatedArrival),
