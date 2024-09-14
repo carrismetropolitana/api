@@ -16,13 +16,13 @@ export default {
 		// Extract the individual components of the time string (HH:MM:SS)
 		const [hoursOperation, minutesOperation, secondsOperation] = regularTimeString.split(':').map(Number);
 
-		// Because the operational time string can be greater than 24 (expressing an operational day after midnight, or longer),
-		// calculate how many days are in the hour component, and how many hours are left after the parsing
-		const daysInTheHourComponent = Math.floor(hoursOperation / 24);
-		const hoursLeftAfterDayConversion = hoursOperation % 24;
-
+		// If the 24-hour string is between 0 and 4, it means that the service is actually on the day before.
+		// In this case, we need to add 24 hours to the time string, to compensate for the day before
 		if (hoursOperation < 4 && hoursOperation >= 0) {
-			return `${(hoursOperation + daysInTheHourComponent * 24 + hoursLeftAfterDayConversion).toString().padStart(2, '0')}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
+			const compensatedHoursOperation = hoursOperation + 24;
+			const compensatedMinutesOperation = minutesOperation;
+			const compensatedSecondsOperation = secondsOperation;
+			return `${compensatedHoursOperation.toString().padStart(2, '0')}:${compensatedMinutesOperation.toString().padStart(2, '0')}:${compensatedSecondsOperation.toString().padStart(2, '0')}`;
 		}
 
 		return `${hoursOperation.toString().padStart(2, '0')}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
