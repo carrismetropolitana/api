@@ -55,10 +55,9 @@ const realtime = async (request, reply) => {
 	if (!regexPatternForStopId.test(request.params.id)) return reply.status(400).send([]);
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
 	const result = response.map((estimate) => {
-		const compensatedArrivalTime = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
 		return {
-			estimated_arrival: compensatedArrivalTime,
-			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedArrivalTime),
+			estimated_arrival: DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta),
+			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta, false) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta, false),
 			headsign: estimate.tripHeadsign,
 			line_id: estimate.lineId,
 			observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,

@@ -22,10 +22,10 @@ export default {
 		const hoursLeftAfterDayConversion = hoursOperation % 24;
 
 		if (hoursOperation < 4 && hoursOperation >= 0) {
-			return `${hoursOperation + daysInTheHourComponent * 24 + hoursLeftAfterDayConversion}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
+			return `${(hoursOperation + daysInTheHourComponent * 24 + hoursLeftAfterDayConversion).toString().padStart(2, '0')}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
 		}
 
-		return `${hoursOperation}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
+		return `${hoursOperation.toString().padStart(2, '0')}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
 
 		//
 	},

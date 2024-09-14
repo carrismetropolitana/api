@@ -85,13 +85,13 @@ const main = async (request, reply) => {
 		})
 		.map((estimate) => {
 			// Check if the estimated time for this estimate is in the past
-			const estimatedTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta);
+			const estimatedTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta, false) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta, false);
 			const estimatedTimeInSeconds = estimatedTimeInUnixSeconds - DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
 			const estimatedTimeInMinutes = Math.floor(estimatedTimeInSeconds / 60);
 			//
 			return {
 				estimatedArrivalTime: DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta),
-				estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+				estimatedDepartureTime: DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta),
 				estimatedTimeString: `${estimatedTimeInMinutes} min`,
 				estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
 				journeyId: estimate.tripId,
