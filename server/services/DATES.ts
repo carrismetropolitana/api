@@ -18,7 +18,7 @@ export default {
 
 		// If the 24-hour string is between 0 and 4, it means that the service is actually on the day before.
 		// In this case, we need to add 24 hours to the time string, to compensate for the day before
-		if (hoursOperation < 4 && hoursOperation >= 0) {
+		if (hoursOperation >= 0 && hoursOperation < 4) {
 			const compensatedHoursOperation = hoursOperation + 24;
 			const compensatedMinutesOperation = minutesOperation;
 			const compensatedSecondsOperation = secondsOperation;
@@ -30,7 +30,7 @@ export default {
 		//
 	},
 
-	convert24HourPlusOperationTimeStringToUnixTimestamp: (operationTimeString: string, use24HourPlusString = true) => {
+	convert24HourPlusOperationTimeStringToUnixTimestamp: (operationTimeString: string): number => {
 		//
 
 		// Return early if no time string is provided
@@ -62,7 +62,7 @@ export default {
 
 		// If the time string represents a service in another day (but in the same operational day),
 		// add the corresponding amount of days to the DateTime object
-		if (use24HourPlusString && daysInTheHourComponent > 0) {
+		if (daysInTheHourComponent > 0) {
 			theDateTimeObject = theDateTimeObject.plus({ days: daysInTheHourComponent });
 		}
 
