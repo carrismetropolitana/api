@@ -49,7 +49,7 @@ export default {
 
 		// Since this is a on-the-fly conversion, there is the case where the server time will be between 00 and 04,
 		// in which case we need to set the DateTime object as the day before, before applying the actual time component calculations
-		if (use24HourPlusString && theDateTimeObject.hour >= 0 && theDateTimeObject.hour < 4) {
+		if (theDateTimeObject.hour >= 0 && theDateTimeObject.hour < 4) {
 			theDateTimeObject = theDateTimeObject.set({ day: theDateTimeObject.day - 1 });
 		}
 
