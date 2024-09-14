@@ -57,7 +57,7 @@ const realtime = async (request, reply) => {
 	const result = response.map((estimate) => {
 		return {
 			estimated_arrival: estimate.stopArrivalEta || estimate.stopDepartureEta,
-			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta),
+			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopArrivalEta, false) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopDepartureEta, false),
 			headsign: estimate.tripHeadsign,
 			line_id: estimate.lineId,
 			observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
