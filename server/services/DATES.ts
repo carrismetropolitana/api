@@ -62,7 +62,7 @@ export default {
 
 		// If the time string represents a service in another day (but in the same operational day),
 		// add the corresponding amount of days to the DateTime object
-		if (daysInTheHourComponent > 0) {
+		if (use24HourPlusString && daysInTheHourComponent > 0) {
 			theDateTimeObject = theDateTimeObject.plus({ days: daysInTheHourComponent });
 		}
 
