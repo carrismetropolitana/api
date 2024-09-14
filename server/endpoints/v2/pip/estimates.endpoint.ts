@@ -90,7 +90,7 @@ const main = async (request, reply) => {
 			const estimatedTimeInMinutes = Math.floor(estimatedTimeInSeconds / 60);
 			//
 			return {
-				estimatedArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+				estimatedArrivalTime: DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta),
 				estimatedDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				estimatedTimeString: `${estimatedTimeInMinutes} min`,
 				estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,

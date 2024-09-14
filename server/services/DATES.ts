@@ -7,6 +7,29 @@ import { DateTime } from 'luxon';
 export default {
 	//
 
+	compensate24HourRegularStringInto24HourPlusOperationTimeString: (regularTimeString: string): string => {
+		//
+
+		// Return early if no time string is provided
+		if (!regularTimeString) return null;
+
+		// Extract the individual components of the time string (HH:MM:SS)
+		const [hoursOperation, minutesOperation, secondsOperation] = regularTimeString.split(':').map(Number);
+
+		// Because the operational time string can be greater than 24 (expressing an operational day after midnight, or longer),
+		// calculate how many days are in the hour component, and how many hours are left after the parsing
+		const daysInTheHourComponent = Math.floor(hoursOperation / 24);
+		const hoursLeftAfterDayConversion = hoursOperation % 24;
+
+		if (hoursOperation < 4 && hoursOperation >= 0) {
+			return `${hoursOperation + daysInTheHourComponent * 24 + hoursLeftAfterDayConversion}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
+		}
+
+		return `${hoursOperation}:${minutesOperation.toString().padStart(2, '0')}:${secondsOperation.toString().padStart(2, '0')}`;
+
+		//
+	},
+
 	convert24HourPlusOperationTimeStringToUnixTimestamp: (operationTimeString: string, use24HourPlusString = true) => {
 		//
 
