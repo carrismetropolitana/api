@@ -158,6 +158,10 @@ export default async () => {
 
 				const stopParsedData = allStopsParsedMap.get(stopTimeRawData.stop_id);
 
+				if (!stopParsedData) {
+					continue;
+				}
+
 				//
 				// Buld the simplified path with only the stop_id and stop_sequence.
 				// This will be used to dictacte if this trip belongs to an existing or a new pattern group.
