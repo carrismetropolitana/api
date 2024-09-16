@@ -8,6 +8,7 @@
 		"paths": {
 			"@/services/*": ["services/*"],
 			"@/endpoints/*": ["endpoints/*"],
+			"@/types/*": ["types/*"],
 		},
 		"allowJs": true,
 		"outDir": "dist",

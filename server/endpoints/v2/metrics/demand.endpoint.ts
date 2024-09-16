@@ -2,6 +2,8 @@
 
 import FASTIFY from '@/services/FASTIFY.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import { LineMetrics } from '@/types/line-metrics.js';
+import { StopMetrics } from '@/types/stop-metrics.js';
 
 /* * */
 
@@ -23,10 +25,10 @@ const byLine = async (_, reply) => {
 
 const byLineId = async (request, reply) => {
 	const allItems = await SERVERDB.client.get(`v2/metrics/demand/by_line`);
-	
+
 	const lineId = request.params.lineId;
-	const line = allItems.find((item) => item.lineId === lineId);
-	
+	const line = JSON.parse(allItems).find((item: LineMetrics) => item.line_id === lineId);
+
 	if (!line) {
 		return reply
 			.code(404)
@@ -38,7 +40,7 @@ const byLineId = async (request, reply) => {
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
 		.send(line);
-}
+};
 
 const byStop = async (_, reply) => {
 	const allItems = await SERVERDB.client.get('v2/metrics/demand/by_stop');
@@ -50,10 +52,10 @@ const byStop = async (_, reply) => {
 
 const byStopId = async (request, reply) => {
 	const allItems = await SERVERDB.client.get(`v2/metrics/demand/by_stop`);
-	
+
 	const stopId = request.params.stopId;
-	const stop = allItems.find((item) => item.stopId === stopId);
-	
+	const stop = JSON.parse(allItems).find((item: StopMetrics) => item.stop_id === stopId);
+
 	if (!stop) {
 		return reply
 			.code(404)
@@ -65,7 +67,7 @@ const byStopId = async (request, reply) => {
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
 		.send(stop);
-}
+};
 
 /* * */
 
