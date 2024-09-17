@@ -72,8 +72,13 @@ export default async () => {
 							imageUrl: '',
 							title: '',
 						},
+						data: {
+							alertId: ''
+						},
 						topic: '',
 					};
+					// Include alert id
+					notificationMessage.data.alertId = alertItem.alert_id;
 					// Include title
 					notificationMessage.notification.title = alertItem.headerText?.translation[0]?.text || '';
 					// Include description
