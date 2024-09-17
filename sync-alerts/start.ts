@@ -3,8 +3,8 @@
 import type { Alert } from '@/types/alerts.types.js';
 import type { TopicMessage } from 'firebase-admin/messaging';
 
-import SERVERDB from '@/services/SERVERDB.js';
 import parseAlertV2 from '@/services/parseAlertV2.js';
+import SERVERDB from '@/services/SERVERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import firebaseAdmin from 'firebase-admin';
