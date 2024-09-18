@@ -57,6 +57,7 @@ export default async () => {
 	const parseTimer = new TIMETRACKER();
 
 	const validationsByDayMap = new Map();
+	const validationsByMonthMap = new Map();
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
 	const validationsByLineAndHourMap = new Map();
@@ -92,6 +93,8 @@ export default async () => {
 
 		const operationalDay = getOperationalDay(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 
+		const monthComponent = transactionDate.toFormat('yyyy-LL');
+
 		//
 		// Increment the day count
 
@@ -100,6 +103,14 @@ export default async () => {
 		}
 		else {
 			validationsByDayMap.set(operationalDay, 1);
+		}
+
+		// Increment the month count
+		if (validationsByMonthMap.has(monthComponent)) {
+			validationsByMonthMap.set(monthComponent, validationsByMonthMap.get(monthComponent) + 1);
+		}
+		else {
+			validationsByMonthMap.set(monthComponent, 1);
 		}
 
 		//
@@ -167,6 +178,13 @@ export default async () => {
 		};
 	});
 
+	const validationsByMonthArray = Array.from(validationsByMonthMap).map(([month, totalQty]) => {
+		return {
+			month: month,
+			total_qty: totalQty,
+		};
+	});
+
 	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, totalQty]) => {
 		const hourlyDistribution = validationsByLineAndHourMap.get(lineId);
 		return {
@@ -196,6 +214,9 @@ export default async () => {
 
 	validationsByDayArray.sort((a, b) => collator.compare(a.operational_day, b.operational_day));
 	await SERVERDB.client.set('v2/metrics/demand/by_day', JSON.stringify(validationsByDayArray));
+
+	validationsByMonthArray.sort((a, b) => collator.compare(a.month, b.month));
+	await SERVERDB.client.set('v2/metrics/demand/by_month', JSON.stringify(validationsByMonthArray));
 
 	validationsByLineArray.sort((a, b) => collator.compare(a.line_id, b.line_id));
 	await SERVERDB.client.set('v2/metrics/demand/by_line', JSON.stringify(validationsByLineArray));
