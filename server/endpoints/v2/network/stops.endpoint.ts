@@ -24,20 +24,6 @@ const all = async (_, reply) => {
 
 const single = async (request, reply) => {
 	if (!regexPatternForStopId.test(request.params.id)) {
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('REGEX TEST FAILED FOR ID', request.params.id);
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
-		console.log('------------------------------------');
 		return reply.status(400).send('{}');
 	}
 	const singleItem = await SERVERDB.client.get(`v2/network/stops/${request.params.id}`);
