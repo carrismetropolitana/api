@@ -14,7 +14,6 @@ const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 const all = async (_, reply) => {
 	const allItems = await SERVERDB.client.get('v2/network/stops/all');
-	reply.header('Content-Type', 'application/json');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -24,9 +23,27 @@ const all = async (_, reply) => {
 /* * */
 
 const single = async (request, reply) => {
-	if (!regexPatternForStopId.test(request.params.id)) return reply.status(400).send([]);
+	if (!regexPatternForStopId.test(request.params.id)) {
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('REGEX TEST FAILED FOR ID', request.params.id);
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		console.log('------------------------------------');
+		return reply.status(400).send('{}');
+	}
 	const singleItem = await SERVERDB.client.get(`v2/network/stops/${request.params.id}`);
-	reply.header('Content-Type', 'application/json');
+	if (!singleItem) {
+		return reply.status(404).send('{}');
+	}
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -56,23 +73,6 @@ const realtime = async (request, reply) => {
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
 	const result = response.map((estimate) => {
 		const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('estimate.stopArrivalEta', estimate.stopArrivalEta);
-		// console.log('estimate.stopDepartureEta', estimate.stopDepartureEta);
-		// console.log('compensatedEstimatedArrival', compensatedEstimatedArrival);
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('estimate', estimate);
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
-		// console.log('------------------------------------');
 		return {
 			estimated_arrival: compensatedEstimatedArrival,
 			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedEstimatedArrival),
