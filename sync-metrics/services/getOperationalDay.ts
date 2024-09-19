@@ -4,11 +4,18 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-export default function getOperationalDay(timestamp: string, format: string) {
+export default function getOperationalDay(timestamp?: string, format?: string): string {
 //
 
 	// Parse the transaction date using the provided format
-	const transactionDate = DateTime.fromFormat(timestamp, format);
+	let transactionDate: DateTime;
+
+	if (!timestamp || !format) {
+		transactionDate = DateTime.now();
+	}
+	else {
+		transactionDate = DateTime.fromFormat(timestamp, format);
+	}
 
 	// Check if the time is between 00:00 and 03:59
 	if (transactionDate.hour < 4) {
