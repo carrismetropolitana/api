@@ -2,8 +2,7 @@
 
 import FASTIFY from '@/services/FASTIFY.js';
 import SERVERDB from '@/services/SERVERDB.js';
-import { LineMetrics } from '@/types/line-metrics.js';
-import { StopMetrics } from '@/types/stop-metrics.js';
+import { LineMetrics, OperatorMetrics, StopMetrics } from '@/types/metrics.types.js';
 
 /* * */
 
@@ -81,22 +80,33 @@ const byOperator = async (request, reply) => {
 	const operatorId = request.params.operator_id;
 	const date = request.params.date;
 
-	let operation;
+	let metric: OperatorMetrics | OperatorMetrics[];
 	if (operatorId === 'cm') {
 		const operators = ['41', '42', '43', '44'];
+		metric = [];
 
-		operators.forEach(async (operator) => {
-			const data = await SERVERDB.client.get(`v2/metrics/demand/operator/${operator}/${date}`);
-			if (data) {
-				operation.push(data);
+		for (const operator of operators) {
+			const operation = await SERVERDB.client.get(`v2/metrics/demand/operator/${operator}/${date}`);
+
+			if (!operation) {
+				continue;
 			}
-		});
+
+			metric.push({
+				...JSON.parse(operation),
+				operator_id: operator,
+			});
+		}
 	}
 	else {
-		operation = await SERVERDB.client.get(`v2/metrics/demand/operator/${operatorId}/${date}`);
+		const operation = await SERVERDB.client.get(`v2/metrics/demand/operator/${operatorId}/${date}`);
+		metric = {
+			...JSON.parse(operation),
+			operator_id: operatorId,
+		};
 	}
 
-	if (!operation) {
+	if (!metric) {
 		return reply
 			.code(404)
 			.header('Content-Type', 'application/json; charset=utf-8')
@@ -106,7 +116,7 @@ const byOperator = async (request, reply) => {
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(JSON.parse(operation));
+		.send(metric);
 };
 
 /* * */
@@ -117,6 +127,7 @@ FASTIFY.server.get('/metrics/demand/by_line', byLine);
 FASTIFY.server.get('/metrics/demand/by_line/:lineId', byLineId);
 FASTIFY.server.get('/metrics/demand/by_stop', byStop);
 FASTIFY.server.get('/metrics/demand/by_stop/:stopId', byStopId);
+FASTIFY.server.get('/metrics/demand/operator/:operator_id/:date', byOperator);
 
 FASTIFY.server.get('/v2/metrics/demand/by_day', byDay);
 FASTIFY.server.get('/v2/metrics/demand/by_month', byMonth);
