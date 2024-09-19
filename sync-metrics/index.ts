@@ -2,27 +2,48 @@
 
 import PCGIDB from '@/services/PCGIDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import LOGGER from '@helperkits/logger';
+import 'dotenv/config';
 
-import start from './start.js';
+import daily from './src/daily.js';
+import start from './src/start.js';
 
 /* * */
 
-const RUN_INTERVAL = 3600000; // 1 hour
+const HOUR_INTERVAL = 3600000; // 1 hour
+const DAY_INTERVAL = 86400000; // 1 day
 
 /* * */
 
 (async function init() {
 	//
 
+	LOGGER.init();
+
 	await SERVERDB.connect();
 	await PCGIDB.connect();
 
-	const runOnInterval = async () => {
-		await start();
-		setTimeout(runOnInterval, RUN_INTERVAL);
+	const runEveryHour = async () => {
+		start().catch((error) => {
+			LOGGER.divider();
+			LOGGER.error(error.stack);
+			LOGGER.divider();
+		});
+		setTimeout(runEveryHour, HOUR_INTERVAL);
 	};
 
-	runOnInterval();
+	const runEveryDay = () => {
+		daily().catch ((error) => {
+			LOGGER.divider();
+			LOGGER.error(error.stack);
+			LOGGER.divider();
+		});
+
+		setTimeout(runEveryDay, DAY_INTERVAL);
+	};
+
+	runEveryHour();
+	runEveryDay();
 
 	//
 })();
