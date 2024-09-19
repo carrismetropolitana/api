@@ -4,7 +4,7 @@ import PCGIDB from '@/services/PCGIDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { DateTime } from 'luxon';
+import { DateTime, Info } from 'luxon';
 
 /* * */
 
@@ -33,8 +33,9 @@ export default async () => {
 
 	// Loop through all months of the current year until the current month not included
 	for (let i = 1; i < currentDate.month; i++) {
-		if (ByMonthData && ByMonthData.find(item => item.month === i)) {
-			LOGGER.info(`Month ${i} already exists in database. Skipping...`);
+		if (ByMonthData && ByMonthData.find(item => item.month === i && item.year === currentDate.year)) {
+			LOGGER.info(`Data for month ${Info.months('long')[i - 1]}/${currentDate.year} already exists in database.`);
+
 			by_month.push(ByMonthData.find(item => item.month === i));
 			continue;
 		}
@@ -53,7 +54,7 @@ export default async () => {
 
 		const promise = PCGIDB.ValidationEntity.countDocuments(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
 			.then((count) => {
-				by_month.push({ count, month: i });
+				by_month.push({ count, month: i, year: currentDate.year });
 			});
 
 		promises.push(promise);

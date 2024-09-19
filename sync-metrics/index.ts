@@ -24,26 +24,20 @@ const DAY_INTERVAL = 86400000; // 1 day
 	await PCGIDB.connect();
 
 	const runEveryHour = async () => {
-		try {
-			start();
-		}
-		catch (error) {
+		start().catch((error) => {
 			LOGGER.divider();
 			LOGGER.error(error.stack);
 			LOGGER.divider();
-		}
+		});
 		setTimeout(runEveryHour, HOUR_INTERVAL);
 	};
 
 	const runEveryDay = () => {
-		try {
-			daily();
-		}
-		catch (error) {
+		daily().catch ((error) => {
 			LOGGER.divider();
 			LOGGER.error(error.stack);
 			LOGGER.divider();
-		}
+		});
 
 		setTimeout(runEveryDay, DAY_INTERVAL);
 	};
