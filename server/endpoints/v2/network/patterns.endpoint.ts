@@ -42,7 +42,7 @@ const realtime = async (request, reply) => {
 			return item.patternId === request.params.id;
 		})
 		.map(async (item) => {
-			const route = await SERVERDB.client.get(`v2/network/routes/${request.params.id}`);
+			const route = await SERVERDB.client.get(`v2/network/routes/${item.routeId}`);
 
 			return {
 				estimated_arrival: item.stopArrivalEta || item.stopDepartureEta,
