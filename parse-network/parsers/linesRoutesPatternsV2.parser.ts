@@ -266,6 +266,8 @@ export default async () => {
 					pattern_group_id: currentPatternGroupHash,
 					pattern_id: tripRawData.pattern_id,
 					route_id: routeRawData.route_id,
+					route_long_name: routeRawData.route_long_name,
+					route_short_name: routeRawData.route_short_name,
 					shape_id: tripRawData.shape_id,
 					short_name: routeRawData.route_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',

@@ -11,27 +11,10 @@ import { DateTime } from 'luxon';
 const single = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`v2/network/patterns/${request.params.id}`);
 
-	if (!singleItem) {
-		return reply
-			.code(404)
-			.header('Content-Type', 'application/json; charset=utf-8')
-			.send({
-				error: 'Not Found',
-				message: 'The requested resource could not be found.',
-			});
-	}
-
-	const singleItemJson = await JSON.parse(singleItem);
-	FASTIFY.server.log.info(`[v2/network/patterns] routeID: ${singleItemJson.route_id}`);
-	const route = await SERVERDB.client.get(`v2/network/routes/${singleItemJson.route_id}`);
-	const routeJson = route ? await JSON.parse(route) : null;
-
-	singleItemJson.route = routeJson;
-
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(singleItemJson || {});
+		.send(singleItem || {});
 };
 
 /* * */
