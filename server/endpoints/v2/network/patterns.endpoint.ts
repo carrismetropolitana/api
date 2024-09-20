@@ -23,11 +23,11 @@ const single = async (request, reply) => {
 
 	const singleItemJson = await JSON.parse(singleItem);
 
-	FASTIFY.server.log.info(`JUSI`, singleItem);
+	FASTIFY.server.log.info(`JUSI ${singleItem} JSON`);
 	const route = await SERVERDB.client.get(`v2/network/routes/${singleItemJson.route_id}`);
 	const routeJson = route ? await JSON.parse(route) : null;
 
-	FASTIFY.server.log.info(`JUSI Route`, route);
+	FASTIFY.server.log.info(`JUSI ${route} Route`);
 
 	singleItemJson.route = routeJson;
 
