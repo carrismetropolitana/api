@@ -10,10 +10,17 @@ import { DateTime } from 'luxon';
 
 const single = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`v2/network/patterns/${request.params.id}`);
+	const singleItemJson = await JSON.parse(singleItem);
+
+	const route = await SERVERDB.client.get(`v2/network/routes/${singleItemJson.route_id}`);
+	const routeJson = await JSON.parse(route);
+
+	singleItemJson.route = routeJson;
+
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(singleItem || {});
+		.send(singleItemJson || {});
 };
 
 /* * */
@@ -41,9 +48,7 @@ const realtime = async (request, reply) => {
 		.filter((item) => {
 			return item.patternId === request.params.id;
 		})
-		.map(async (item) => {
-			const route = await SERVERDB.client.get(`v2/network/routes/${item.routeId}`);
-
+		.map((item) => {
 			return {
 				estimated_arrival: item.stopArrivalEta || item.stopDepartureEta,
 				estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopDepartureEta),
@@ -52,7 +57,6 @@ const realtime = async (request, reply) => {
 				observed_arrival: item.stopObservedArrivalTime || item.stopObservedDepartureTime,
 				observed_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopObservedArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopObservedDepartureTime),
 				pattern_id: item.patternId,
-				route: route || 'na',
 				route_id: item.routeId,
 				scheduled_arrival: item.stopScheduledArrivalTime || item.stopScheduledDepartureTime,
 				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
