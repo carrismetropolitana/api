@@ -10,10 +10,21 @@ import { DateTime } from 'luxon';
 
 const single = async (request, reply) => {
 	const singleItem = await SERVERDB.client.get(`v2/network/patterns/${request.params.id}`);
+
+	if (!singleItem) {
+		return reply
+			.code(404)
+			.header('Content-Type', 'application/json; charset=utf-8')
+			.send({
+				error: 'Not Found',
+				message: 'The requested resource could not be found.',
+			});
+	}
+
 	const singleItemJson = await JSON.parse(singleItem);
 
 	const route = await SERVERDB.client.get(`v2/network/routes/${singleItemJson.route_id}`);
-	const routeJson = await JSON.parse(route);
+	const routeJson = route ? await JSON.parse(route) : null;
 
 	singleItemJson.route = routeJson;
 
