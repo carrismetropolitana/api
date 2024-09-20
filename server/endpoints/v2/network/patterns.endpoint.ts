@@ -41,7 +41,9 @@ const realtime = async (request, reply) => {
 		.filter((item) => {
 			return item.patternId === request.params.id;
 		})
-		.map((item) => {
+		.map(async (item) => {
+			const route = await SERVERDB.client.get(`v2/network/routes/${request.params.id}`);
+
 			return {
 				estimated_arrival: item.stopArrivalEta || item.stopDepartureEta,
 				estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopDepartureEta),
@@ -50,6 +52,7 @@ const realtime = async (request, reply) => {
 				observed_arrival: item.stopObservedArrivalTime || item.stopObservedDepartureTime,
 				observed_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopObservedArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopObservedDepartureTime),
 				pattern_id: item.patternId,
+				route: route && JSON.parse(route),
 				route_id: item.routeId,
 				scheduled_arrival: item.stopScheduledArrivalTime || item.stopScheduledDepartureTime,
 				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
