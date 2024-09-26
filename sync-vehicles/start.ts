@@ -171,7 +171,7 @@ export default async () => {
 			longitude: pcgiVehicleEvent.content.entity[0].vehicle.position.longitude,
 			pattern_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.patternId,
 			route_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.routeId,
-			schedule_relationship: 'SCHEDULED', // pcgiVehicleEvent.content.entity[0].vehicle.trip.scheduleRelationship === 'SCHEDULED' ? 'SCHEDULED' : 'DUPLICATED', // Schedule relationship can be SCHEDULED for archivened trips or ADDED for new trips created by the driver
+			schedule_relationship: pcgiVehicleEvent.content.entity[0].vehicle.trip.scheduleRelationship === 'SCHEDULED' ? 'SCHEDULED' : 'DUPLICATED', // Schedule relationship can be SCHEDULED for archivened trips or ADDED for new trips created by the driver
 			shift_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.shiftId,
 			speed: vehicleSpeed,
 			stop_id: pcgiVehicleEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
