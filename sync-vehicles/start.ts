@@ -126,8 +126,8 @@ export default async () => {
 		if (!pcgiVehicleEvent.content?.entity[0]?.vehicle?.trip?.tripId?.length) continue;
 		// Does this event have a valid latitude and longitude
 		if (!Math.floor(pcgiVehicleEvent?.content?.entity[0]?.vehicle?.position?.latitude) || !Math.floor(pcgiVehicleEvent?.content?.entity[0]?.vehicle?.position?.longitude)) continue;
-		// Skip if the trip is not scheduled
-		if (pcgiVehicleEvent.content?.entity[0]?.vehicle?.trip?.scheduleRelationship !== 'SCHEDULED') continue;
+		// // Skip if the trip is not scheduled
+		// if (pcgiVehicleEvent.content?.entity[0]?.vehicle?.trip?.scheduleRelationship !== 'SCHEDULED') continue;
 		// Skip if the route id is excessively long
 		if (pcgiVehicleEvent.content?.entity[0]?.vehicle?.trip?.routeId?.length > 8) continue;
 		// Skip if the stop id is not 6 digits
