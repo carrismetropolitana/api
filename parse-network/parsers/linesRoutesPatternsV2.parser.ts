@@ -56,7 +56,7 @@ export default async () => {
 	// Using hashmaps allows for O(1) lookups instead of linear scans.
 
 	// For Stops
-	const allStopsParsedTxt = await SERVERDB.client.get('stops:all');
+	const allStopsParsedTxt = await SERVERDB.client.get('v2/network/stops/all');
 	const allStopsParsedJson: NetworkStop[] = JSON.parse(allStopsParsedTxt);
 	console.log('allStopsParsedJson', allStopsParsedJson);
 	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.id, item]));
