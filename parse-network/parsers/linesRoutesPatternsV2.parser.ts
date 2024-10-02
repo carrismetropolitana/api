@@ -58,10 +58,12 @@ export default async () => {
 	// For Stops
 	const allStopsParsedTxt = await SERVERDB.client.get('stops:all');
 	const allStopsParsedJson: NetworkStop[] = JSON.parse(allStopsParsedTxt);
+	console.log('allStopsParsedJson', allStopsParsedJson);
 	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.id, item]));
 
 	// For Routes
 	const allRoutesRaw = await NETWORKDB.client.query<GtfsRoute>('SELECT * FROM routes');
+	console.log('allRoutesRaw', allRoutesRaw);
 	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [item.route_id, item]));
 
 	// For Calendar Dates
