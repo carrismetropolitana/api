@@ -15,14 +15,14 @@
     "@helperkits/logger": "20240703.1726.24",
     "@helperkits/timer": "20240627.34.23",
     "dotenv": "16.4.5",
-    "luxon": "3.4.4",
+    "luxon": "3.5.0",
     "redis": "4.7.0"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "20240722.1548.55",
+    "@carrismetropolitana/eslint": "20241001.1357.32",
     "@types/luxon": "3.4.2",
-    "@types/node": "22.0.2",
-    "resolve-tspaths": "0.8.19",
-    "typescript": "5.5.4"
+    "@types/node": "22.7.4",
+    "resolve-tspaths": "0.8.22",
+    "typescript": "5.6.2"
   }
 }
