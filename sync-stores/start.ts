@@ -42,9 +42,6 @@ export default async () => {
 	const allEncmTicketsWaiting = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'ticket', status: 'W' });
 	const allEncmCounters = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'siteReportByCounter' });
 
-	console.log('allEncmTicketsWaiting', allEncmTicketsWaiting);
-	console.log('allEncmCounters', allEncmCounters);
-
 	// 3.
 	// Add realtime status to each ENCM
 
