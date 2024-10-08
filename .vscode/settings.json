@@ -5,8 +5,8 @@
 	"files.eol": "\n",
 
 	"eslint.workingDirectories": [
-		"./parse-datasets",
-		"./parse-network",
+		"./sync-datasets",
+		"./sync-network",
 		"./server",
 		"./switch",
 		"./sync-alerts",

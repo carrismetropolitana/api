@@ -1,5 +1,5 @@
 {
-	"name": "@carrismetropolitana/api-parse-network",
+	"name": "@carrismetropolitana/api-sync-network",
 	"type": "module",
 	"version": "1.0.0",
 	"private": true,

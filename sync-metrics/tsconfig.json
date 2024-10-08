@@ -7,7 +7,7 @@
 		"moduleResolution": "NodeNext",
 		"paths": {
 			"@/services/*": ["services/*"],
-			"src/*": ["src/*"]
+			"@/src/*": ["src/*"]
 		},
 		"allowJs": true,
 		"outDir": "dist",

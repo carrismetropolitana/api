@@ -154,48 +154,6 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  parse-datasets:
-    image: ghcr.io/carrismetropolitana/api-parse-datasets:beta
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 1gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./.env
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  parse-network:
-    image: ghcr.io/carrismetropolitana/api-parse-network:beta
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 2gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./.env
-    environment:
-      - NETWORKDB_HOST=networkdb
-      - NETWORKDB_USER=networkdbuser
-      - NETWORKDB_PASSWORD=networkdbpassword
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
   server:
     image: ghcr.io/carrismetropolitana/api-server:beta
     deploy:
@@ -255,6 +213,25 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
+  sync-datasets:
+    image: ghcr.io/carrismetropolitana/api-sync-datasets:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   sync-metrics:
     image: ghcr.io/carrismetropolitana/api-sync-metrics:beta
     deploy:
@@ -272,6 +249,29 @@ services:
       - ./.env
     secrets:
       - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-network:
+    image: ghcr.io/carrismetropolitana/api-sync-network:beta
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env
+    environment:
+      - NETWORKDB_HOST=networkdb
+      - NETWORKDB_USER=networkdbuser
+      - NETWORKDB_PASSWORD=networkdbpassword
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #

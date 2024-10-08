@@ -2,12 +2,11 @@
 
 import PCGIDB from '@/services/PCGIDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
+import daily from '@/src/daily.js';
+import operator from '@/src/operator.js';
+import start from '@/src/start.js';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
-
-import daily from './src/daily.js';
-import operator from './src/operator.js';
-import start from './src/start.js';
 
 /* * */
 

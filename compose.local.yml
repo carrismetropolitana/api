@@ -63,8 +63,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  parse-network:
-    build: ./parse-network
+  sync-network:
+    build: ./sync-network
     restart: unless-stopped
     logging:
       options:
