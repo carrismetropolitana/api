@@ -1,4 +1,4 @@
-name: Build & Publish Docker Images
+name: Build & Publish Docker Images (ARM)
 
 on:
   push:
