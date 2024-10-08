@@ -13,7 +13,7 @@ jobs:
 
   api-server:
     name: server (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -62,7 +62,7 @@ jobs:
 
   api-switch:
     name: switch (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -111,7 +111,7 @@ jobs:
 
   api-sync-alerts:
     name: sync-alerts (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -160,7 +160,7 @@ jobs:
 
   api-sync-datasets:
     name: sync-datasets (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -209,7 +209,7 @@ jobs:
 
   api-sync-metrics:
     name: sync-metrics (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -258,7 +258,7 @@ jobs:
 
   api-sync-network:
     name: sync-network (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -307,7 +307,7 @@ jobs:
 
   api-sync-stores:
     name: sync-stores (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -356,7 +356,7 @@ jobs:
 
   api-sync-vehicles:
     name: sync-vehicles (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:

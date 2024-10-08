@@ -86,7 +86,6 @@ export default async () => {
 			LOGGER.info(`Downloading file from "${process.env.GTFS_URL}"...`);
 			const stream = fs.createWriteStream(RAW_FILE_PATH);
 			const response: Response = await fetch(process.env.GTFS_URL);
-			// @ts-expect-error Readable.fromWeb actually accepts a ReadableStream<Uint8Array>, even though we are mixing nodejs and web ReadableStreams
 			await finished(Readable.fromWeb(response.body).pipe(stream));
 		}
 
