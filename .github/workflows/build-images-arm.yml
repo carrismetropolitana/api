@@ -13,7 +13,7 @@ jobs:
 
   api-server:
     name: server (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -55,14 +55,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-switch:
     name: switch (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -104,14 +104,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-alerts:
     name: sync-alerts (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -153,14 +153,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-datasets:
     name: sync-datasets (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -202,14 +202,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-metrics:
     name: sync-metrics (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -251,14 +251,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-network:
     name: sync-network (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -300,14 +300,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-stores:
     name: sync-stores (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -349,14 +349,14 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-vehicles:
     name: sync-vehicles (NodeJS)
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       fail-fast: false
     permissions:
@@ -398,4 +398,4 @@ jobs:
           push: true
           context: ./${{ env.MODULE_KEY }}
           file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}:arm
