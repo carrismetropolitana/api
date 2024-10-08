@@ -21,7 +21,7 @@
     "tunnel-ssh": "5.1.2"
   },
   "devDependencies": {
-    "@carrismetropolitana/eslint": "20241001.1357.32",
+    "@carrismetropolitana/eslint": "20241008.2247.34",
     "@types/luxon": "3.4.2",
     "@types/node": "22.7.5",
     "resolve-tspaths": "0.8.22",
