@@ -22,7 +22,7 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 ---
 
-### Base URL: `https://api.carrismetropolitana.pt/[endpoint]`
+### Base URL: `https://api.cmet.pt/[endpoint]`
 
 ---
 

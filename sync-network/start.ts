@@ -22,7 +22,6 @@ import municipalitiesParser from '@/parsers/municipalities.parser.js';
 import periodsParser from '@/parsers/periods.parser.js';
 import shapesParser from '@/parsers/shapes.parser.js';
 import stopsParser from '@/parsers/stops.parser.js';
-import timetablesParser from '@/parsers/timetables.parser.js';
 
 /* * */
 
@@ -47,7 +46,6 @@ export const ENABLED_MODULES = [
 	'shapes_parser',
 	'lines_routes_patterns_parser_v1',
 	'lines_routes_patterns_parser_v2',
-	'timetables_parser',
 ];
 
 /* * */
@@ -209,14 +207,6 @@ export default async () => {
 			LOGGER.spacer(1);
 			LOGGER.title('3.8.2. Parse Lines, Routes and Patterns (v2)');
 			await linesRoutesPatternsParserV2();
-		}
-
-		/* * */
-
-		if (ENABLED_MODULES.includes('timetables_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.9. Parse Timetables');
-			await timetablesParser();
 		}
 
 		//
