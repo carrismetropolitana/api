@@ -30,15 +30,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -79,15 +79,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -128,15 +128,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -177,15 +177,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -226,15 +226,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -275,15 +275,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -324,15 +324,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
@@ -373,15 +373,15 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.arm.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.arm.hash)" >> $GITHUB_ENV
+          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
         uses: actions/cache@v4
         id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.arm.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: ${{ env.MODULE_KEY }}.hash
+          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
 
       - name: Login to GitHub Container Registry
         if: steps.cache.outputs.cache-hit != 'true'
