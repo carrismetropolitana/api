@@ -18,6 +18,10 @@ import connectionsTrainStationsParser from '@/parsers/connections.train_stations
 
 /* * */
 
+import metricsSlaParser from '@/parsers/metrics.sla.parser.js';
+
+/* * */
+
 export default async () => {
 	//
 
@@ -69,6 +73,12 @@ export default async () => {
 		console.log();
 		console.log('STEP 2.4. Parse datasets/connections/train_stations');
 		await connectionsTrainStationsParser();
+
+		//
+
+		console.log();
+		console.log('STEP 3.1. Parse datasets/metrics/sla');
+		await metricsSlaParser();
 
 		//
 
