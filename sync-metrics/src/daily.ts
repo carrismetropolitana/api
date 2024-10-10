@@ -18,7 +18,7 @@ export default async () => {
 	//
 	// Get Data from redis
 
-	const ByMonthTxt = await SERVERDB.client.get('v2/metrics/demand/by_month');
+	const ByMonthTxt = await SERVERDB.client.get('v2:metrics:demand:by_month');
 	const ByMonthData = JSON.parse(ByMonthTxt);
 
 	//
@@ -64,7 +64,7 @@ export default async () => {
 
 	//
 	// Save all documents
-	await SERVERDB.client.set('v2/metrics/demand/by_month', JSON.stringify(by_month));
+	await SERVERDB.client.set('v2:metrics:demand:by_month', JSON.stringify(by_month));
 
 	//
 	LOGGER.info('Metrics saved to database. | Time elapsed: ' + globalTimer.get());

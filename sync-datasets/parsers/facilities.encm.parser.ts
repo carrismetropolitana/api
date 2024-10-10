@@ -77,8 +77,8 @@ export default async () => {
 		};
 		// Save to database
 		allItemsData.push(parsedItemData);
-		await SERVERDB.client.set(`v2/datasets/facilities/encm/${parsedItemData.id}`, JSON.stringify(parsedItemData));
-		updatedItemKeys.add(`v2/datasets/facilities/encm/${parsedItemData.id}`);
+		await SERVERDB.client.set(`v2:datasets:facilities:encm:${parsedItemData.id}`, JSON.stringify(parsedItemData));
+		updatedItemKeys.add(`v2:datasets:facilities:encm:${parsedItemData.id}`);
 		//
 	}
 
@@ -91,14 +91,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allItemsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('v2/datasets/facilities/encm/all', JSON.stringify(allItemsData));
-	updatedItemKeys.add('v2/datasets/facilities/encm/all');
+	await SERVERDB.client.set('v2:datasets:facilities:encm:all', JSON.stringify(allItemsData));
+	updatedItemKeys.add('v2:datasets:facilities:encm:all');
 
 	// 6.
 	// Delete all items not present in the current update
 
 	const allSavedItemKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2/datasets/facilities/encm/*', TYPE: 'string' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:datasets:facilities:encm:*', TYPE: 'string' })) {
 		allSavedItemKeys.push(key);
 	}
 	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));

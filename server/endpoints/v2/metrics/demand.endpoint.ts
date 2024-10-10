@@ -15,7 +15,7 @@ const byDay = async (_, reply) => {
 };
 
 const byMonth = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/metrics/demand/by_month');
+	const allItems = await SERVERDB.client.get('v2:metrics:demand:by_month');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -86,7 +86,7 @@ const byOperator = async (request, reply) => {
 		metric = [];
 
 		for (const operator of operators) {
-			const operation = await SERVERDB.client.get(`v2/metrics/demand/operator/${operator}/${date}`);
+			const operation = await SERVERDB.client.get(`v2:metrics:demand:operator:${operator}:${date}`);
 
 			if (!operation) {
 				continue;
@@ -99,7 +99,7 @@ const byOperator = async (request, reply) => {
 		}
 	}
 	else {
-		const operation = await SERVERDB.client.get(`v2/metrics/demand/operator/${operatorId}/${date}`);
+		const operation = await SERVERDB.client.get(`v2:metrics:demand:operator:${operatorId}:${date}`);
 		metric = {
 			...JSON.parse(operation),
 			operator_id: operatorId,
