@@ -33,3 +33,12 @@ export interface OperatorMetrics {
 	timestamp: number
 	value: number
 }
+
+export interface SlaMetrics {
+	agencyId: string
+	lineId: string
+	operationalDay: string
+	passTripCount: number
+	passTripPercentage: number
+	totalTripCount: number
+}
