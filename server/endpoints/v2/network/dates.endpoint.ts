@@ -6,7 +6,7 @@ import SERVERDB from '@/services/SERVERDB.js';
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/network/dates/all');
+	const allItems = await SERVERDB.client.get('v2:network:dates:all');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -14,7 +14,7 @@ const all = async (_, reply) => {
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`v2/network/dates/${request.params.date}`);
+	const singleItem = await SERVERDB.client.get(`v2:network:dates:${request.params.date}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

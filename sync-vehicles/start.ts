@@ -89,7 +89,7 @@ export default async () => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.client.get('v2/network/archives/all');
+	const allArchivesTxt = await SERVERDB.client.get('v2:network:archives:all');
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
@@ -193,10 +193,10 @@ export default async () => {
 	const allVehiclesUpdatedArray = Array.from(allVehiclesUpdated.values());
 
 	const allVehiclesUpdatedJson = convertToJson(allVehiclesUpdatedArray);
-	await SERVERDB.client.set(`v2/network/vehicles/json`, JSON.stringify(allVehiclesUpdatedJson));
+	await SERVERDB.client.set(`v2:network:vehicles:json`, JSON.stringify(allVehiclesUpdatedJson));
 
 	const allVehiclesUpdatedProtobuf = convertToProtobuf(allVehiclesUpdatedArray);
-	await SERVERDB.client.set(`v2/network/vehicles/protobuf`, JSON.stringify(allVehiclesUpdatedProtobuf));
+	await SERVERDB.client.set(`v2:network:vehicles:protobuf`, JSON.stringify(allVehiclesUpdatedProtobuf));
 
 	LOGGER.info(`Converted unique Vehicles to JSON and Protobuf formats (${conversionsTimer.get()})`);
 

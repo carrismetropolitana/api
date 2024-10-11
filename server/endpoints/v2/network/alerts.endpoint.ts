@@ -11,7 +11,7 @@ const gtfsRealtime = protobufjs.loadSync(`${process.env.PWD}/services/gtfs-realt
 /* * */
 
 const json = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/network/alerts/json');
+	const allItems = await SERVERDB.client.get('v2:network:alerts:json');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -21,7 +21,7 @@ const json = async (_, reply) => {
 /* * */
 
 const protobuf = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/network/alerts/protobuf');
+	const allItems = await SERVERDB.client.get('v2:network:alerts:protobuf');
 	const allAlerts = JSON.parse(allItems);
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
 	const message = FeedMessage.fromObject(allAlerts);

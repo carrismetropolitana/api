@@ -100,7 +100,7 @@ export default async () => {
 	//
 	// Save the array to the database
 
-	await SERVERDB.client.set('v2/network/periods/all', JSON.stringify(allPeriodsParsed));
+	await SERVERDB.client.set('v2:network:periods:all', JSON.stringify(allPeriodsParsed));
 
 	LOGGER.info(`Updated ${allPeriodsParsed.length} Periods`);
 

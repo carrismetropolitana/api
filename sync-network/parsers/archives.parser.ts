@@ -39,8 +39,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allArchivesData.push(parsedArchive);
-		await SERVERDB.client.set(`v2/network/archives/${parsedArchive.id}`, JSON.stringify(parsedArchive));
-		updatedArchiveKeys.add(`v2/network/archives/${parsedArchive.id}`);
+		await SERVERDB.client.set(`v2:network:archives/${parsedArchive.id}`, JSON.stringify(parsedArchive));
+		updatedArchiveKeys.add(`v2:network:archives/${parsedArchive.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedArchiveKeys.size} Archives`);
@@ -49,14 +49,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allArchivesData.sort((a, b) => collator.compare(a.start_date, b.start_date));
-	await SERVERDB.client.set('v2/network/archives/all', JSON.stringify(allArchivesData));
-	updatedArchiveKeys.add('v2/network/archives/all');
+	await SERVERDB.client.set('v2:network:archives:all', JSON.stringify(allArchivesData));
+	updatedArchiveKeys.add('v2:network:archives:all');
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedArchiveKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2/network/archives/*', TYPE: 'string' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:archives/*', TYPE: 'string' })) {
 		allSavedArchiveKeys.push(key);
 	}
 

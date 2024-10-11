@@ -7,7 +7,7 @@ import { LineMetrics, OperatorMetrics, StopMetrics } from '@/types/metrics.types
 /* * */
 
 const byDay = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/metrics/demand/by_day');
+	const allItems = await SERVERDB.client.get('v2:metrics:demand:by_day');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -23,7 +23,7 @@ const byMonth = async (_, reply) => {
 };
 
 const byLine = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/metrics/demand/by_line');
+	const allItems = await SERVERDB.client.get('v2:metrics:demand:by_line');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -31,7 +31,7 @@ const byLine = async (_, reply) => {
 };
 
 const byLineId = async (request, reply) => {
-	const allItems = await SERVERDB.client.get(`v2/metrics/demand/by_line`);
+	const allItems = await SERVERDB.client.get(`v2:metrics:demand:by_line`);
 
 	const lineId = request.params.lineId;
 	const line = JSON.parse(allItems).find((item: LineMetrics) => item.line_id === lineId);
@@ -50,7 +50,7 @@ const byLineId = async (request, reply) => {
 };
 
 const byStop = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2/metrics/demand/by_stop');
+	const allItems = await SERVERDB.client.get('v2:metrics:demand:by_stop');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -58,7 +58,7 @@ const byStop = async (_, reply) => {
 };
 
 const byStopId = async (request, reply) => {
-	const allItems = await SERVERDB.client.get(`v2/metrics/demand/by_stop`);
+	const allItems = await SERVERDB.client.get(`v2:metrics:demand:by_stop`);
 
 	const stopId = request.params.stopId;
 	const stop = JSON.parse(allItems).find((item: StopMetrics) => item.stop_id === stopId);

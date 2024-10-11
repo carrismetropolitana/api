@@ -62,8 +62,8 @@ export default async () => {
 		const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
 		parsedShape.extension = Math.floor(shapeExtensionMeters);
 		// Update or create new document
-		await SERVERDB.client.set(`v2/network/shapes/${parsedShape.id}`, JSON.stringify(parsedShape));
-		updatedShapeKeys.add(`v2/network/shapes/${parsedShape.id}`);
+		await SERVERDB.client.set(`v2:network:shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
+		updatedShapeKeys.add(`v2:network:shapes:${parsedShape.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedShapeKeys.size} Shapes`);
@@ -72,7 +72,7 @@ export default async () => {
 	// Add the 'all' option
 
 	const allSavedShapeKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2/network/shapes/*', TYPE: 'string' })) {
+	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:shapes:*', TYPE: 'string' })) {
 		allSavedShapeKeys.push(key);
 	}
 

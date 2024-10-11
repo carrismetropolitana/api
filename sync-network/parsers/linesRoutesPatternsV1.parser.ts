@@ -160,7 +160,7 @@ export default async () => {
 
 	// 3.
 	// Get all stops and build a hashmap for quick retrieval
-	const allStopsTxt = await SERVERDB.client.get('v2/network/stops/all');
+	const allStopsTxt = await SERVERDB.client.get('v2:network:stops:all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
 	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
 

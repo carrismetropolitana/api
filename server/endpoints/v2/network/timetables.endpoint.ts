@@ -6,7 +6,7 @@ import SERVERDB from '@/services/SERVERDB.js';
 /* * */
 
 const index = async (_, reply) => {
-	const index = await SERVERDB.client.get(`v2/network/timetables/index`);
+	const index = await SERVERDB.client.get(`v2:network:timetables:index`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -15,7 +15,7 @@ const index = async (_, reply) => {
 
 const single = async (request, reply) => {
 	// 4512/010136
-	const singleItem = await SERVERDB.client.get(`v2/network/timetables/${request.params.line_id}/${request.params.direction_id}/${request.params.stop_id}`);
+	const singleItem = await SERVERDB.client.get(`v2:network:timetables:${request.params.line_id}/${request.params.direction_id}/${request.params.stop_id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

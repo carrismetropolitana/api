@@ -6,7 +6,7 @@ import SERVERDB from '@/services/SERVERDB.js';
 /* * */
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`v2/network/shapes/${request.params.id}`);
+	const singleItem = await SERVERDB.client.get(`v2:network:shapes:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
