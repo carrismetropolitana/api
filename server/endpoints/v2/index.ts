@@ -38,5 +38,5 @@ import '@/endpoints/v2/datasets/facilities/schools.endpoint.js';
 
 /* * */
 
-import '@/endpoints/v2/metrics/sla.endpoint.js';
+import '@/endpoints/v2/metrics/service.endpoint.js';
 import '@/endpoints/v2/metrics/demand.endpoint.js';
