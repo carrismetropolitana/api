@@ -34,7 +34,7 @@ export interface OperatorMetrics {
 	value: number
 }
 
-export interface SlaMetrics {
+export interface ServiceMetrics {
 	agencyId: string
 	lineId: string
 	operationalDay: string
