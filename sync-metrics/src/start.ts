@@ -170,6 +170,7 @@ export default async () => {
 	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, totalQty]) => {
 		const hourlyDistribution = validationsByLineAndHourMap.get(lineId);
 		return {
+			by_day: validationsByDayArray,
 			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
 			end_date: endDateString,
 			line_id: lineId,
@@ -181,6 +182,7 @@ export default async () => {
 	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, totalQty]) => {
 		const hourlyDistribution = validationsByStopAndHourMap.get(stopId);
 		return {
+			by_day: validationsByDayArray,
 			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
 			end_date: endDateString,
 			start_date: startDateString,
