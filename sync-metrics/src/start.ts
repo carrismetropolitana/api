@@ -60,7 +60,9 @@ export default async () => {
 	const validationsByLineMap = new Map();
 	const validationsByStopMap = new Map();
 	const validationsByLineAndHourMap = new Map();
+	const validationsByLineAndDayMap = new Map();
 	const validationsByStopAndHourMap = new Map();
+	const validationsByStopAndDayMap = new Map();
 
 	let totalCounter = 0;
 	let validCounter = 0;
@@ -155,6 +157,33 @@ export default async () => {
 		}
 
 		//
+		// Increment the line-day count
+
+		if (!validationsByLineAndDayMap.has(doc.transaction.lineLongID)) {
+			validationsByLineAndDayMap.set(doc.transaction.lineLongID, new Map());
+		}
+
+		const lineDayMap = validationsByLineAndDayMap.get(doc.transaction.lineLongID);
+
+		if (lineDayMap.has(operationalDay)) {
+			lineDayMap.set(operationalDay, lineDayMap.get(operationalDay) + 1);
+		}
+		else {
+			lineDayMap.set(operationalDay, 1);
+		}
+
+		//
+		// Increment the stop-day count
+
+		if (!validationsByStopAndDayMap.has(doc.transaction.stopLongID)) {
+			validationsByStopAndDayMap.set(doc.transaction.stopLongID, new Map());
+		}
+
+		const stopDayMap = validationsByStopAndDayMap.get(doc.transaction.stopLongID);
+
+		if (stopDayMap.has(operationalDay)) {
+			stopDayMap.set(operationalDay, stopDayMap.get(operationalDay) + 1);
+		}
 	}
 
 	//
@@ -168,9 +197,10 @@ export default async () => {
 	});
 
 	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, totalQty]) => {
+		const dailyDistribution = validationsByLineAndDayMap.get(lineId);
 		const hourlyDistribution = validationsByLineAndHourMap.get(lineId);
 		return {
-			by_day: validationsByDayArray,
+			by_day: dailyDistribution ? Array.from(dailyDistribution).map(([day, dailyQty]) => ({ day: day, qty: dailyQty })) : [],
 			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
 			end_date: endDateString,
 			line_id: lineId,
@@ -180,9 +210,10 @@ export default async () => {
 	});
 
 	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, totalQty]) => {
+		const dailyDistribution = validationsByStopAndDayMap.get(stopId);
 		const hourlyDistribution = validationsByStopAndHourMap.get(stopId);
 		return {
-			by_day: validationsByDayArray,
+			by_day: dailyDistribution ? Array.from(dailyDistribution).map(([day, dailyQty]) => ({ day: day, qty: dailyQty })) : [],
 			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
 			end_date: endDateString,
 			start_date: startDateString,
