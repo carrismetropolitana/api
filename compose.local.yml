@@ -26,6 +26,8 @@ services:
       - serverdb:/data
     environment:
       - REDIS_ARGS=--save 5 1
+    ports:
+      - "6379:6379"
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
