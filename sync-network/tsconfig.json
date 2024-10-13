@@ -1,21 +1,21 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
+		"allowJs": true,
 		"baseUrl": "./",
-		"rootDir": "./",
+		"esModuleInterop": true,
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
+		"outDir": "dist",
 		"paths": {
-			"@/types/*": ["types/*"],
 			"@/config/*": ["config/*"],
 			"@/modules/*": ["modules/*"],
+			"@/parsers/*": ["parsers/*"],
 			"@/services/*": ["services/*"],
-			"@/parsers/*": ["parsers/*"]
+			"@/types/*": ["types/*"]
 		},
-		"allowJs": true,
-		"outDir": "dist",
+		"rootDir": "./",
 		"sourceMap": true,
-		"esModuleInterop": true
+		"target": "ESNext"
 	},
 	"exclude": ["**/node_modules", "**/.*/", "**/dist/"]
 }

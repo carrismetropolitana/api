@@ -1,21 +1,21 @@
 {
 	"name": "@carrismetropolitana/api-sync-network",
-	"type": "module",
 	"version": "1.0.0",
 	"private": true,
+	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"start": "tsc && resolve-tspaths && node dist/index.js",
+		"build": "tsc && resolve-tspaths",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"build": "tsc && resolve-tspaths",
+		"start": "tsc && resolve-tspaths && node dist/index.js",
 		"watch": "tsc -w"
 	},
 	"dependencies": {
 		"@carrismetropolitana/tts": "20240923.2019.13",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"@helperkits/writer": "20240725.1819.20",
+		"@helperkits/writer": "20241010.1355.31",
 		"@turf/turf": "7.1.0",
 		"adm-zip": "0.5.16",
 		"csv-parse": "5.5.6",
