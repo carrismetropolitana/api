@@ -1,6 +1,6 @@
 /* * */
 
-import type { Alert } from '@/types/alerts.types.js';
+import type { Alert } from '@api/types';
 
 /* * */
 

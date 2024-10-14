@@ -1,7 +1,6 @@
 /* * */
 
-import type { GtfsCalendarDate, GtfsRoute, GtfsStopTime, GtfsTrip } from '@/types/gtfs.types.js';
-import type { NetworkLine, NetworkPattern, NetworkPatternPathItem, NetworkPatternTripSchedule, NetworkRoute, NetworkStop } from '@/types/network.types.js';
+import type { GtfsCalendarDate, GtfsRoute, GtfsStopTime, GtfsTrip, NetworkLine, NetworkPattern, NetworkPatternPathItem, NetworkPatternTripSchedule, NetworkRoute, NetworkStop } from '@api/types';
 
 import sortCollator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
@@ -280,10 +279,10 @@ export default async () => {
 			//
 			// Add to the current pattern group (new or exising) the data retrieved from the current trip
 
-			parsedPatternGroups[currentPatternGroupHash].valid_on = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].valid_on, ...allCalendarDatesRawMap.get(tripRawData.service_id)]));
-			parsedPatternGroups[currentPatternGroupHash].facilities = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].facilities, ...facilitiesList]));
-			parsedPatternGroups[currentPatternGroupHash].localities = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].localities, ...localitiesList]));
-			parsedPatternGroups[currentPatternGroupHash].municipality_ids = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].municipality_ids, ...municipalityIdsList]));
+			parsedPatternGroups[currentPatternGroupHash].valid_on = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...parsedPatternGroups[currentPatternGroupHash].valid_on]));
+			parsedPatternGroups[currentPatternGroupHash].facilities = Array.from(new Set([...facilitiesList, ...parsedPatternGroups[currentPatternGroupHash].facilities]));
+			parsedPatternGroups[currentPatternGroupHash].localities = Array.from(new Set([...localitiesList, ...parsedPatternGroups[currentPatternGroupHash].localities]));
+			parsedPatternGroups[currentPatternGroupHash].municipality_ids = Array.from(new Set([...municipalityIdsList, ...parsedPatternGroups[currentPatternGroupHash].municipality_ids]));
 
 			//
 			// Create a simplified version of this trip with the goal of finding the same trip,
@@ -320,8 +319,8 @@ export default async () => {
 			//
 			// Add to the current trip group (new or exising) the data retrieved from the current trip
 
-			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates, ...allCalendarDatesRawMap.get(tripRawData.service_id)]));
-			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids = Array.from(new Set([...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids, tripRawData.trip_id]));
+			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates]));
+			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids = Array.from(new Set([tripRawData.trip_id, ...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids]));
 
 			//
 			// Create the route object if it doesn't exist yet. Notice we're not using hashes here
@@ -346,7 +345,7 @@ export default async () => {
 			//
 			// Add to the current route (new or exising) the data retrieved from the current trip
 
-			allRoutesParsed[tripRawData.route_id].pattern_ids = Array.from(new Set([...allRoutesParsed[tripRawData.route_id].pattern_ids, tripRawData.pattern_id]));
+			allRoutesParsed[tripRawData.route_id].pattern_ids = Array.from(new Set([tripRawData.pattern_id, ...allRoutesParsed[tripRawData.route_id].pattern_ids]));
 
 			allRoutesParsed[tripRawData.route_id].facilities = Array.from(new Set([...allRoutesParsed[tripRawData.route_id].facilities, ...facilitiesList]));
 			allRoutesParsed[tripRawData.route_id].localities = Array.from(new Set([...allRoutesParsed[tripRawData.route_id].localities, ...localitiesList]));
@@ -374,8 +373,8 @@ export default async () => {
 			//
 			// Add to the current line (new or exising) the data retrieved from the current trip
 
-			allLinesParsed[routeRawData.line_id].route_ids = Array.from(new Set([...allLinesParsed[routeRawData.line_id].route_ids, tripRawData.route_id]));
-			allLinesParsed[routeRawData.line_id].pattern_ids = Array.from(new Set([...allLinesParsed[routeRawData.line_id].pattern_ids, tripRawData.pattern_id]));
+			allLinesParsed[routeRawData.line_id].route_ids = Array.from(new Set([tripRawData.route_id, ...allLinesParsed[routeRawData.line_id].route_ids]));
+			allLinesParsed[routeRawData.line_id].pattern_ids = Array.from(new Set([tripRawData.pattern_id, ...allLinesParsed[routeRawData.line_id].pattern_ids]));
 
 			allLinesParsed[routeRawData.line_id].facilities = Array.from(new Set([...allLinesParsed[routeRawData.line_id].facilities, ...facilitiesList]));
 			allLinesParsed[routeRawData.line_id].localities = Array.from(new Set([...allLinesParsed[routeRawData.line_id].localities, ...localitiesList]));

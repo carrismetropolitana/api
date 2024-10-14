@@ -2,8 +2,7 @@
 
 import FASTIFY from '@/services/FASTIFY.js';
 import { SERVERDB } from '@api/services';
-
-import { LineMetrics, OperatorMetrics, StopMetrics } from '@/types/metrics.types.js';
+import { LineMetrics, OperatorMetrics, StopMetrics } from '@api/types';
 
 /* * */
 

@@ -1,6 +1,6 @@
 /* * */
 
-import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@/services/NETWORKDB.types.js';
+import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@api/types';
 
 import collator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';

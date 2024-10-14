@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "generate": "tsc",
     "dev": "tsc -w",
     "lint": "eslint . --ext .ts"
   },

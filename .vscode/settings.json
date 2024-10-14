@@ -58,6 +58,9 @@
 		"yaml",
 		"toml",
 		"astro"
-	]
+	],
+	"[typescript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	}
 
 }

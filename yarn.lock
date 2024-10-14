@@ -10,6 +10,7 @@ __metadata:
   resolution: "@api/api-server@workspace:apps/server"
   dependencies:
     "@api/services": "*"
+    "@api/types": "*"
     "@carrismetropolitana/eslint": 20241008.2247.34
     "@types/luxon": 3.4.2
     "@types/node": 22.7.5
@@ -40,6 +41,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@api/api-sync-alerts@workspace:apps/sync-alerts"
   dependencies:
+    "@api/types": "*"
     "@carrismetropolitana/eslint": 20241008.2247.34
     "@helperkits/logger": 20240703.1726.24
     "@helperkits/timer": 20240627.34.23
@@ -128,7 +130,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@api/types@workspace:packages/types":
+"@api/types@*, @api/types@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@api/types@workspace:packages/types"
   dependencies:
@@ -196,6 +198,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@carrismetropolitana/api-sync-network@workspace:apps/sync-network"
   dependencies:
+    "@api/types": "*"
     "@carrismetropolitana/eslint": 20241008.2247.34
     "@carrismetropolitana/tts": 20240923.2019.13
     "@helperkits/logger": 20240703.1726.24
