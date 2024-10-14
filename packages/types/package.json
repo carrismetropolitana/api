@@ -1,0 +1,6 @@
+{
+  "name": "@api/types",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
