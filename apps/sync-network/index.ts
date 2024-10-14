@@ -1,7 +1,7 @@
 /* * */
 
 import NETWORKDB from '@/services/NETWORKDB.js';
-import SERVERDB from '@/services/SERVERDB.js';
+import { SERVERDB } from '@api/services';
 import 'dotenv/config';
 
 import start from './start.js';

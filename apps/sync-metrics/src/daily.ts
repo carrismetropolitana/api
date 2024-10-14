@@ -1,7 +1,6 @@
 /* * */
 
-import PCGIDB from '@/services/PCGIDB.js';
-import SERVERDB from '@/services/SERVERDB.js';
+import { PCGIDB, SERVERDB } from '@api/services';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime, Info } from 'luxon';

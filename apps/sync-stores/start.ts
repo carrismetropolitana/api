@@ -1,7 +1,6 @@
 /* * */
 
-import IXAPI from '@/services/IXAPI.js';
-import SERVERDB from '@/services/SERVERDB.js';
+import { IXAPI, SERVERDB } from '@api/services';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

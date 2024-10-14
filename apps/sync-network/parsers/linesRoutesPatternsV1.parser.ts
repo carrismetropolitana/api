@@ -4,7 +4,7 @@ import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } fro
 
 import collator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
-import SERVERDB from '@/services/SERVERDB.js';
+import { SERVERDB } from '@api/services';
 
 /* * */
 

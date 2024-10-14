@@ -22,6 +22,9 @@
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
+		"@api/services": "*",
+		"@api/types": "*",
+		"@api/utils": "*",
 		"@carrismetropolitana/eslint": "20241008.2247.34",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.7.5",

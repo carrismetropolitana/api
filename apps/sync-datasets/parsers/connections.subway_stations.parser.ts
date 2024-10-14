@@ -1,7 +1,7 @@
 /* * */
 
-import SERVERDB from '@/services/SERVERDB.js';
 import collator from '@/services/sortCollator.js';
+import { SERVERDB } from '@api/services';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 

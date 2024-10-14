@@ -2,9 +2,7 @@
 
 import DATES from '@/services/DATES.js';
 import FASTIFY from '@/services/FASTIFY.js';
-import PCGIAPI from '@/services/PCGIAPI.js';
-import { SERVERDB } from '@api/services';
-
+import { PCGIAPI, SERVERDB } from '@api/services';
 import { DateTime } from 'luxon';
 
 /* * */
