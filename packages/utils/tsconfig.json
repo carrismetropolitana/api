@@ -1,6 +1,7 @@
 {
 	"extends": "@carrismetropolitana/api-tsconfig/base.json",
 	"compilerOptions": {
+		"baseUrl": ".",
 		"outDir": "dist",
 		"rootDir": "src"
 	},

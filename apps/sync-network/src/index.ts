@@ -1,6 +1,6 @@
 /* * */
 
-import NETWORKDB from '@/services/NETWORKDB.js';
+import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import 'dotenv/config';
 

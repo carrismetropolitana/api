@@ -1,11 +1,12 @@
 /* * */
 
-import daily from '@/src/daily.js';
-import operator from '@/src/operator.js';
-import start from '@/src/start.js';
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
+
+import daily from './daily.js';
+import operator from './operator.js';
+import start from './start.js';
 
 /* * */
 

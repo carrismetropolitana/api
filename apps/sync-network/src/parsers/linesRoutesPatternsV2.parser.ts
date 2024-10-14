@@ -3,7 +3,7 @@
 import type { GtfsCalendarDate, GtfsRoute, GtfsStopTime, GtfsTrip, NetworkLine, NetworkPattern, NetworkPatternPathItem, NetworkPatternTripSchedule, NetworkRoute, NetworkStop } from '@carrismetropolitana/api-types';
 
 import sortCollator from '@/modules/sortCollator.js';
-import NETWORKDB from '@/services/NETWORKDB.js';
+import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';

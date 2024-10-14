@@ -8,8 +8,6 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import extract from 'extract-zip';
 import fs from 'node:fs';
-import { Readable } from 'node:stream';
-import { finished } from 'node:stream/promises';
 
 /* * */
 
@@ -82,9 +80,9 @@ export default async () => {
 		else {
 			// If the source is a URL
 			LOGGER.info(`Downloading file from "${process.env.GTFS_URL}"...`);
-			const stream = fs.createWriteStream(RAW_FILE_PATH);
-			const response: Response = await fetch(process.env.GTFS_URL);
-			await finished(Readable.fromWeb(response.body).pipe(stream));
+			const downloadedCsvFile = await fetch(process.env.GTFS_URL);
+			const downloadedCsvArrayBuffer = await downloadedCsvFile.arrayBuffer();
+			fs.writeFileSync(RAW_FILE_PATH, Buffer.from(downloadedCsvArrayBuffer));
 		}
 
 		LOGGER.success(`Done fetching latest GTFS (${importGtfsTimer.get()})`);

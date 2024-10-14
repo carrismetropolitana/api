@@ -25,12 +25,8 @@ async function disconnect() {
 
 /* * */
 
-const networkdb = {
+export const NETWORKDB = {
 	client,
 	connect,
 	disconnect,
 };
-
-/* * */
-
-export { networkdb };
