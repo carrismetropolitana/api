@@ -1,10 +1,10 @@
 /* * */
 
-import type { Alert } from '@api/types';
+import type { Alert } from '@carrismetropolitana/api-types';
 import type { TopicMessage } from 'firebase-admin/messaging';
 
 import parseAlertV2 from '@/services/parseAlertV2.js';
-import { SERVERDB } from '@api/services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import firebaseAdmin from 'firebase-admin';

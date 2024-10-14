@@ -1,6 +1,6 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@api/services';
+import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

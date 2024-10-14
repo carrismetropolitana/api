@@ -1,10 +1,10 @@
 /* * */
 
-import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@api/types';
+import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@carrismetropolitana/api-types';
 
 import collator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
-import { SERVERDB } from '@api/services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
 
 /* * */
 

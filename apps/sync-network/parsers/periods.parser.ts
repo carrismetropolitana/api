@@ -2,7 +2,7 @@
 
 import collator from '@/modules/sortCollator.js';
 import NETWORKDB from '@/services/NETWORKDB.js';
-import { SERVERDB } from '@api/services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

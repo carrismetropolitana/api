@@ -1,7 +1,7 @@
 /* * */
 
 import NETWORKDB from '@/services/NETWORKDB.js';
-import { SERVERDB } from '@api/services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
 import 'dotenv/config';
 
 import start from './start.js';

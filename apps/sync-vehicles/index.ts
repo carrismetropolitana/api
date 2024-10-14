@@ -1,6 +1,6 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@api/services';
+import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 
 import start from './start.js';
 

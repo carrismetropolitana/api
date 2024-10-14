@@ -1,5 +1,5 @@
 {
-	"name": "@api/api-sync-vehicles",
+	"name": "@carrismetropolitana/api-sync-vehicles",
 	"version": "1.0.0",
 	"private": true,
 	"type": "module",
@@ -22,12 +22,10 @@
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
-		"@api/services": "*",
-		"@carrismetropolitana/eslint": "20241008.2247.34",
+		"@carrismetropolitana/api-services": "*",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.7.5",
 		"resolve-tspaths": "0.8.22",
-		"tsx": "^4.19.1",
-		"typescript": "5.6.3"
+		"typescript": "^5.6.3"
 	}
 }

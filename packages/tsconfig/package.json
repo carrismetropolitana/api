@@ -1,0 +1,12 @@
+{
+	"name": "@carrismetropolitana/api-tsconfig",
+	"version": "1.0.0",
+	"license": "MIT",
+	"private": true,
+	"publishConfig": {
+		"access": "public"
+	},
+	"dependencies": {
+		"typescript": "^5.6.3"
+	}
+}

@@ -1,1 +1,1 @@
-export * from './getOperationalDay'
+export * from './getOperationalDay';

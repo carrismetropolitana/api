@@ -1,6 +1,6 @@
 /* * */
 
-import { SERVERDB } from '@api/services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
 
 import start from './start.js';
 

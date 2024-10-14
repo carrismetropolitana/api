@@ -1,6 +1,6 @@
 /* * */
 
-import { EntitySelector, TimeRange, TranslatedImage, TranslatedString } from '@api/types';
+import { EntitySelector, TimeRange, TranslatedImage, TranslatedString } from '@carrismetropolitana/api-types';
 
 /* * */
 

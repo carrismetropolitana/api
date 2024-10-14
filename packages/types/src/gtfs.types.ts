@@ -66,7 +66,6 @@ export interface GtfsStopTime {
 
 /* * */
 
-
 export interface MonPeriod {
 	dates: string[]
 	id: string

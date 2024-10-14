@@ -1,0 +1,22 @@
+{
+	"name": "@carrismetropolitana/api-settings",
+	"type": "module",
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsc --watch"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/api-tsconfig": "*",
+		"typescript": "^5.6.3"
+	},
+	"exports": {
+		"./add": {
+			"default": "./dist/add.js",
+			"types": "./src/add.ts"
+		},
+		"./subtract": {
+			"default": "./dist/subtract.js",
+			"types": "./src/subtract.ts"
+		}
+	}
+}

@@ -1,7 +1,7 @@
 /* * */
 
 import collator from '@/services/sortCollator.js';
-import { SERVERDB } from '@api/services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 

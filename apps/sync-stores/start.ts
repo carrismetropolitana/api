@@ -1,6 +1,6 @@
 /* * */
 
-import { IXAPI, SERVERDB } from '@api/services';
+import { IXAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

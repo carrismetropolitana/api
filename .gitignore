@@ -118,7 +118,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .DS_Store
-package-lock.json
 temp/
 results/
 

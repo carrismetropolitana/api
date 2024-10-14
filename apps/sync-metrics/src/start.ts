@@ -1,7 +1,7 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@api/services';
-import { getOperationalDay } from '@api/utils';
+import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
