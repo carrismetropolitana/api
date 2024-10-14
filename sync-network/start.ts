@@ -13,13 +13,13 @@ import { finished } from 'node:stream/promises';
 
 /* * */
 
-import archivesParser from '@/parsers/archives.parser.js';
-import datesParser from '@/parsers/dates.parsers.js';
+import { syncArchives } from '@/parsers/archives.parser.js';
+import { syncDates } from '@/parsers/dates.parsers.js';
 import linesRoutesPatternsParserV1 from '@/parsers/linesRoutesPatternsV1.parser.js';
 import linesRoutesPatternsParserV2 from '@/parsers/linesRoutesPatternsV2.parser.js';
-import localitiesParser from '@/parsers/localities.parser.js';
+import { syncLocalities } from '@/parsers/localities.parser.js';
 import municipalitiesParser from '@/parsers/municipalities.parser.js';
-import periodsParser from '@/parsers/periods.parser.js';
+import { syncPeriods } from '@/parsers/periods.parser.js';
 import shapesParser from '@/parsers/shapes.parser.js';
 import stopsParser from '@/parsers/stops.parser.js';
 
@@ -148,33 +148,25 @@ export default async () => {
 		/* * */
 
 		if (ENABLED_MODULES.includes('localities_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.2. Parse Localities');
-			await localitiesParser();
+			await syncLocalities();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('periods_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.3. Parse Periods');
-			await periodsParser();
+			await syncPeriods();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('dates_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.4. Parse Dates');
-			await datesParser();
+			await syncDates();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('archives_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.5. Parse Archives');
-			await archivesParser();
+			await syncArchives();
 		}
 
 		/* * */

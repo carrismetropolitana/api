@@ -2,27 +2,44 @@
 
 import PCGIDB from '@/services/PCGIDB.js';
 import SERVERDB from '@/services/SERVERDB.js';
-
-import start from './start.js';
-
-/* * */
-
-const RUN_INTERVAL = 5000; // 5 seconds
+import { syncMetadata } from '@/tasks/sync-metadata.js';
+import { syncPositions } from '@/tasks/sync-positions.js';
+import LOGGER from '@helperkits/logger';
+import dotenv from 'dotenv';
 
 /* * */
 
 (async function init() {
 	//
 
+	dotenv.config({ path: '../.env.local' });
+
+	LOGGER.init();
+
 	await PCGIDB.connect();
 	await SERVERDB.connect();
 
-	const runOnInterval = async () => {
-		await start();
-		setTimeout(runOnInterval, RUN_INTERVAL);
+	//
+
+	const SYNC_METADATA_INTERVAL = 60000;
+
+	const syncMetadataOnInterval = async () => {
+		await syncMetadata();
+		setTimeout(syncMetadataOnInterval, SYNC_METADATA_INTERVAL);
 	};
 
-	runOnInterval();
+	syncMetadataOnInterval();
+
+	//
+
+	const SYNC_POSITIONS_INTERVAL = 5000; // 5 seconds
+
+	const syncPositionsOnInterval = async () => {
+		await syncPositions();
+		setTimeout(syncPositionsOnInterval, SYNC_POSITIONS_INTERVAL);
+	};
+
+	// syncPositionsOnInterval();
 
 	//
 })();

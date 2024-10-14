@@ -9,15 +9,19 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-export default async () => {
+const REDIS_BASE_KEY = 'v2:network:periods';
+
+/* * */
+
+export const syncPeriods = async () => {
 	//
 
+	LOGGER.title(`Sync Periods`);
 	const globalTimer = new TIMETRACKER();
 
 	//
 	// Fetch all Periods and Dates from NETWORKDB
 
-	LOGGER.info(`Starting...`);
 	const allPeriods = await NETWORKDB.client.query('SELECT * FROM periods');
 	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
 
@@ -100,13 +104,9 @@ export default async () => {
 	//
 	// Save the array to the database
 
-	await SERVERDB.client.set('v2:network:periods:all', JSON.stringify(allPeriodsParsed));
+	await SERVERDB.client.set(`${REDIS_BASE_KEY}:all`, JSON.stringify(allPeriodsParsed));
 
-	LOGGER.info(`Updated ${allPeriodsParsed.length} Periods`);
-
-	//
-
-	LOGGER.success(`Done updating Periods (${globalTimer.get()})`);
+	LOGGER.success(`Done updating ${allPeriodsParsed.length} Periods (${globalTimer.get()})`);
 
 	//
 };

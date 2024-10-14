@@ -7,15 +7,15 @@
 		"moduleResolution": "NodeNext",
 		"outDir": "dist",
 		"paths": {
-			"@/config/*": ["config/*"],
-			"@/modules/*": ["modules/*"],
-			"@/parsers/*": ["parsers/*"],
-			"@/services/*": ["services/*"],
-			"@/types/*": ["types/*"]
+			"@/*": ["src/*"]
 		},
 		"rootDir": "./",
 		"sourceMap": true,
 		"target": "ESNext"
 	},
-	"exclude": ["**/node_modules", "**/.*/", "**/dist/"]
+	"exclude": [
+		"**/node_modules",
+		"**/.*/",
+		"**/dist/"
+	]
 }

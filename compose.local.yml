@@ -79,3 +79,18 @@ services:
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
       - NETWORKDB_PASSWORD=networkdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-datasets:
+    build: ./sync-datasets
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./.env.local
+    environment:
+      - SERVERDB_HOST=serverdb

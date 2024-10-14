@@ -8,6 +8,10 @@ import { DateTime } from 'luxon';
 
 /* * */
 
+const REDIS_BASE_KEY = 'v2:network:vehicles';
+
+/* * */
+
 function convertToJson(allEvents) {
 	return allEvents.map(event => ({
 		bearing: event.bearing,
@@ -66,10 +70,11 @@ function convertToProtobuf(allEvents) {
 
 /* * */
 
-export default async () => {
+export const syncPositions = async () => {
 	//
 
-	LOGGER.init();
+	LOGGER.divider();
+	LOGGER.title(`SYNC POSITIONS`);
 
 	const globalTimer = new TIMETRACKER();
 
@@ -185,7 +190,7 @@ export default async () => {
 
 	LOGGER.info(`Parsed ${allPcgiVehicleEvents.length} Vehicle Events into ${allVehiclesUpdated.size} unique Vehicles (${parseTimer.get()})`);
 
-	// 4.
+	//
 	// Prepare the Vehicle Events data in JSON and Protobuf formats
 
 	const conversionsTimer = new TIMETRACKER();
