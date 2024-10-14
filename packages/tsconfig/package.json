@@ -1,15 +1,8 @@
 {
 	"name": "@carrismetropolitana/api-tsconfig",
 	"version": "1.0.0",
-	"type": "module",
-	"files": ["dist"],
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
-	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
-	},
-	"dependencies": {
-		"typescript": "5.6.3"
+	"private": true,
+	"publishConfig": {
+		"access": "public"
 	}
 }

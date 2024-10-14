@@ -7,14 +7,15 @@
 		"esModuleInterop": true,
 		"incremental": false,
 		"isolatedModules": true,
-		"lib": ["es2022", "DOM", "DOM.Iterable"],
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"module": "NodeNext",
 		"moduleDetection": "force",
 		"moduleResolution": "NodeNext",
 		"noUncheckedIndexedAccess": true,
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
+		"sourceMap": true,
 		"strict": true,
-		"target": "ES2022"
+		"target": "ESNext"
 	}
 }
