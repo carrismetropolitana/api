@@ -1,11 +1,12 @@
 /* * */
 
-import redis from 'redis';
+import * as redis from 'redis';
 
 /* * */
 
 class SERVERDBClass {
 	//
+	public readonly client: redis.RedisClientType;
 
 	constructor() {
 		this.client = redis.createClient({ socket: { host: process.env.SERVERDB_HOST } });

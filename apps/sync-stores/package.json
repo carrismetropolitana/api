@@ -1,28 +1,30 @@
 {
-  "name": "@api/api-sync-stores",
-  "type": "module",
-  "version": "1.0.0",
-  "private": true,
-  "main": "index.js",
-  "scripts": {
-    "start": "tsc && resolve-tspaths && node dist/index.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": "tsc && resolve-tspaths",
-    "watch": "tsc -w"
-  },
-  "dependencies": {
-    "@helperkits/logger": "20240703.1726.24",
-    "@helperkits/timer": "20240627.34.23",
-    "dotenv": "16.4.5",
-    "luxon": "3.5.0",
-    "redis": "4.7.0"
-  },
-  "devDependencies": {
-    "@carrismetropolitana/eslint": "20241008.2247.34",
-    "@types/luxon": "3.4.2",
-    "@types/node": "22.7.5",
-    "resolve-tspaths": "0.8.22",
-    "typescript": "5.6.3"
-  }
+	"name": "@api/api-sync-stores",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc && resolve-tspaths",
+		"dev": "tsx watch index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start": "tsc && resolve-tspaths && node dist/index.js",
+		"watch": "tsc -w"
+	},
+	"dependencies": {
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
+		"dotenv": "16.4.5",
+		"luxon": "3.5.0",
+		"redis": "4.7.0"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20241008.2247.34",
+		"@types/luxon": "3.4.2",
+		"@types/node": "22.7.5",
+		"resolve-tspaths": "0.8.22",
+		"tsx": "^4.19.1",
+		"typescript": "5.6.3"
+	}
 }

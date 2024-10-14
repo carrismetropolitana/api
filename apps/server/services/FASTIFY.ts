@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* * */
 
 import { SERVERDB } from '@api/services';
@@ -12,11 +13,25 @@ class FASTIFY {
 
 	constructor() {
 		this.server = fastify({ logger: true, requestTimeout: 10000 });
-		this.server.listen({ host: '0.0.0.0', port: 5050 }, async (err, address) => {
-			if (err) throw err;
-			console.log(`Fastify server listening on ${address}`);
-			await SERVERDB.connect();
-		});
+		const startServer = (port: number) => {
+			this.server.listen({ host: '0.0.0.0', port }, async (err: any, address: any) => {
+				if (err) {
+					if (err.code === 'EADDRINUSE') {
+						console.log(`Port ${port} is in use, trying another port...`);
+						startServer(port + 1);
+					}
+					else {
+						throw err;
+					}
+				}
+				else {
+					console.log(`Fastify server listening on ${address}`);
+					await SERVERDB.connect();
+				}
+			});
+		};
+
+		startServer(5050);
 	}
 
 	//

@@ -6,7 +6,7 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc && resolve-tspaths",
-		"dev": "start --watch",
+		"dev": "tsx watch index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"start": "tsc && resolve-tspaths && node dist/index.js"
@@ -26,6 +26,7 @@
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.7.5",
 		"resolve-tspaths": "0.8.22",
+		"tsx": "^4.19.1",
 		"typescript": "5.6.3"
 	}
 }
