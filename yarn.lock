@@ -52,6 +52,24 @@ __metadata:
     firebase-admin: ^12.6.0
     redis: 4.7.0
     resolve-tspaths: 0.8.22
+    tsx: ^4.19.1
+    typescript: 5.6.3
+  languageName: unknown
+  linkType: soft
+
+"@api/api-sync-datasets@workspace:apps/sync-datasets":
+  version: 0.0.0-use.local
+  resolution: "@api/api-sync-datasets@workspace:apps/sync-datasets"
+  dependencies:
+    "@carrismetropolitana/eslint": 20241008.2247.34
+    "@helperkits/logger": 20240703.1726.24
+    "@helperkits/timer": 20240627.34.23
+    "@types/node": 22.7.5
+    luxon: 3.5.0
+    papaparse: 5.4.1
+    redis: 4.7.0
+    resolve-tspaths: 0.8.22
+    tsx: ^4.19.1
     typescript: 5.6.3
   languageName: unknown
   linkType: soft
@@ -60,6 +78,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@api/api-sync-metrics@workspace:apps/sync-metrics"
   dependencies:
+    "@api/services": "*"
+    "@api/types": "*"
+    "@api/utils": "*"
     "@carrismetropolitana/eslint": 20241008.2247.34
     "@helperkits/logger": 20240703.1726.24
     "@helperkits/timer": 20240627.34.23
@@ -70,7 +91,41 @@ __metadata:
     mongodb: 6.9.0
     redis: 4.7.0
     resolve-tspaths: 0.8.22
+    tsx: ^4.19.1
     tunnel-ssh: 5.1.2
+    typescript: 5.6.3
+  languageName: unknown
+  linkType: soft
+
+"@api/api-sync-network@workspace:apps/sync-network":
+  version: 0.0.0-use.local
+  resolution: "@api/api-sync-network@workspace:apps/sync-network"
+  dependencies:
+    "@api/types": "*"
+    "@carrismetropolitana/eslint": 20241008.2247.34
+    "@carrismetropolitana/tts": 20240923.2019.13
+    "@helperkits/logger": 20240703.1726.24
+    "@helperkits/timer": 20240627.34.23
+    "@helperkits/writer": 20241010.1355.31
+    "@turf/turf": 7.1.0
+    "@types/adm-zip": 0.5.5
+    "@types/luxon": 3.4.2
+    "@types/node": 22.7.5
+    "@types/papaparse": 5.3.14
+    "@types/pg": 8.11.10
+    "@types/pg-copy-streams": 1.2.5
+    adm-zip: 0.5.16
+    csv-parse: 5.5.6
+    csv-stringify: 6.5.1
+    dotenv: 16.4.5
+    extract-zip: 2.0.1
+    luxon: 3.5.0
+    papaparse: 5.4.1
+    pg: 8.13.0
+    pg-copy-streams: 6.0.6
+    redis: 4.7.0
+    resolve-tspaths: 0.8.22
+    tsx: ^4.19.1
     typescript: 5.6.3
   languageName: unknown
   linkType: soft
@@ -79,6 +134,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@api/api-sync-stores@workspace:apps/sync-stores"
   dependencies:
+    "@api/services": "*"
+    "@api/types": "*"
+    "@api/utils": "*"
     "@carrismetropolitana/eslint": 20241008.2247.34
     "@helperkits/logger": 20240703.1726.24
     "@helperkits/timer": 20240627.34.23
@@ -88,6 +146,7 @@ __metadata:
     luxon: 3.5.0
     redis: 4.7.0
     resolve-tspaths: 0.8.22
+    tsx: ^4.19.1
     typescript: 5.6.3
   languageName: unknown
   linkType: soft
@@ -96,6 +155,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@api/api-sync-vehicles@workspace:apps/sync-vehicles"
   dependencies:
+    "@api/services": "*"
     "@carrismetropolitana/eslint": 20241008.2247.34
     "@helperkits/logger": 20240703.1726.24
     "@helperkits/timer": 20240627.34.23
@@ -106,6 +166,7 @@ __metadata:
     mongodb: 6.9.0
     redis: 4.7.0
     resolve-tspaths: 0.8.22
+    tsx: ^4.19.1
     tunnel-ssh: 5.1.2
     typescript: 5.6.3
   languageName: unknown
@@ -141,7 +202,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@api/utils@workspace:packages/utils":
+"@api/utils@*, @api/utils@workspace:packages/utils":
   version: 0.0.0-use.local
   resolution: "@api/utils@workspace:packages/utils"
   dependencies:
@@ -179,54 +240,6 @@ __metadata:
   checksum: b6aa45c5bf7ecc16b8204bbed90335706131ac6cacb0f1bfb1b862ada3741539c913b56c9d26beb56cece0c231ffab36f66aa36aac6b04b32669c314705203f2
   languageName: node
   linkType: hard
-
-"@carrismetropolitana/api-sync-datasets@workspace:apps/sync-datasets":
-  version: 0.0.0-use.local
-  resolution: "@carrismetropolitana/api-sync-datasets@workspace:apps/sync-datasets"
-  dependencies:
-    "@carrismetropolitana/eslint": 20241008.2247.34
-    "@helperkits/logger": 20240703.1726.24
-    "@helperkits/timer": 20240627.34.23
-    "@types/node": 22.7.5
-    luxon: 3.5.0
-    papaparse: 5.4.1
-    redis: 4.7.0
-    resolve-tspaths: 0.8.22
-    typescript: 5.6.3
-  languageName: unknown
-  linkType: soft
-
-"@carrismetropolitana/api-sync-network@workspace:apps/sync-network":
-  version: 0.0.0-use.local
-  resolution: "@carrismetropolitana/api-sync-network@workspace:apps/sync-network"
-  dependencies:
-    "@api/types": "*"
-    "@carrismetropolitana/eslint": 20241008.2247.34
-    "@carrismetropolitana/tts": 20240923.2019.13
-    "@helperkits/logger": 20240703.1726.24
-    "@helperkits/timer": 20240627.34.23
-    "@helperkits/writer": 20241010.1355.31
-    "@turf/turf": 7.1.0
-    "@types/adm-zip": 0.5.5
-    "@types/luxon": 3.4.2
-    "@types/node": 22.7.5
-    "@types/papaparse": 5.3.14
-    "@types/pg": 8.11.10
-    "@types/pg-copy-streams": 1.2.5
-    adm-zip: 0.5.16
-    csv-parse: 5.5.6
-    csv-stringify: 6.5.1
-    dotenv: 16.4.5
-    extract-zip: 2.0.1
-    luxon: 3.5.0
-    papaparse: 5.4.1
-    pg: 8.13.0
-    pg-copy-streams: 6.0.6
-    redis: 4.7.0
-    resolve-tspaths: 0.8.22
-    typescript: 5.6.3
-  languageName: unknown
-  linkType: soft
 
 "@carrismetropolitana/eslint@npm:20241008.2247.34":
   version: 20241008.2247.34
@@ -293,6 +306,26 @@ __metadata:
   peerDependencies:
     postcss-selector-parser: ^6.1.0
   checksum: 7076c1d8af0fba94f06718f87fba5bfea583f39089efa906ae38b5ecd6912d3d5865f7047a871ac524b1057e4c970622b2ade456b90d69fb9393902250057994
+  languageName: node
+  linkType: hard
+
+"@dotenvx/dotenvx@npm:^1.19.2":
+  version: 1.19.2
+  resolution: "@dotenvx/dotenvx@npm:1.19.2"
+  dependencies:
+    commander: ^11.1.0
+    dotenv: ^16.4.5
+    eciesjs: ^0.4.6
+    execa: ^5.1.1
+    fdir: ^6.2.0
+    ignore: ^5.3.0
+    object-treeify: 1.1.33
+    picomatch: ^4.0.2
+    which: ^4.0.0
+  bin:
+    dotenvx: src/cli/dotenvx.js
+    git-dotenvx: src/cli/dotenvx.js
+  checksum: c256bded736b5c1a31fb30c419571aefe9ddfee2277829039ac7ee33aa4d3de8b6d6bcb0fba58431f0b0f4830c05f75652d2c90c3e29b56c07675e5d680d7eff
   languageName: node
   linkType: hard
 
@@ -899,6 +932,29 @@ __metadata:
   dependencies:
     sparse-bitfield: ^3.0.3
   checksum: 6f13983e41c9fbd5273eeae9135e47e5b7a19125a63287bea69e33a618f8e034cfcf2258c77d0f5d6dcf386dfe2bb520bc01613afd1528c52f82c71172629242
+  languageName: node
+  linkType: hard
+
+"@noble/ciphers@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@noble/ciphers@npm:1.0.0"
+  checksum: fa34a8f794deca3c47b82002705d7d742046e772460f1b04156c8e9eb6e0c706b8cb474bb78bdc3f35fae8270b01784f0484d31b8f839b9e16319660b9f229de
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@noble/curves@npm:1.6.0"
+  dependencies:
+    "@noble/hashes": 1.5.0
+  checksum: 258f3feb2a6098cf35521562ecb7d452fd728e8a008ff9f1ef435184f9d0c782ceb8f7b7fa8df3317c3be7a19f53995ee124cd05c8080b130bd42e3cb072f24d
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:1.5.0, @noble/hashes@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@noble/hashes@npm:1.5.0"
+  checksum: 9cc031d5c888c455bfeef76af649b87f75380a4511405baea633c1e4912fd84aff7b61e99716f0231d244c9cfeda1fafd7d718963e6a0c674ed705e9b1b4f76b
   languageName: node
   linkType: hard
 
@@ -3456,6 +3512,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "api@workspace:."
   dependencies:
+    "@dotenvx/dotenvx": ^1.19.2
     "@types/node": ^22.7.5
     dotenv: ^16.4.5
     nodemon: ^3.1.7
@@ -3824,6 +3881,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^11.1.0":
+  version: 11.1.0
+  resolution: "commander@npm:11.1.0"
+  checksum: fd1a8557c6b5b622c89ecdfde703242ab7db3b628ea5d1755784c79b8e7cb0d74d65b4a262289b533359cd58e1bfc0bf50245dfbcd2954682a6f367c828b79ef
+  languageName: node
+  linkType: hard
+
 "commander@npm:^4.0.0":
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
@@ -4040,6 +4104,17 @@ __metadata:
   dependencies:
     safe-buffer: ^5.0.1
   checksum: 207f9ab1c2669b8e65540bce29506134613dd5f122cccf1e6a560f4d63f2732d427d938f8481df175505aad94583bcb32c688737bb39a6df0625f903d6d93c03
+  languageName: node
+  linkType: hard
+
+"eciesjs@npm:^0.4.6":
+  version: 0.4.8
+  resolution: "eciesjs@npm:0.4.8"
+  dependencies:
+    "@noble/ciphers": ^1.0.0
+    "@noble/curves": ^1.6.0
+    "@noble/hashes": ^1.5.0
+  checksum: ff9482b5ac488b63115e9b871b402670010e00ab773b17c6d94d493861dee9538765ad4187a1dc38c529f3e1810b6c408341e9463a3a7ea05039649941463c90
   languageName: node
   linkType: hard
 
@@ -4608,7 +4683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fdir@npm:^6.4.0":
+"fdir@npm:^6.2.0, fdir@npm:^6.4.0":
   version: 6.4.0
   resolution: "fdir@npm:6.4.0"
   peerDependencies:
@@ -5153,7 +5228,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:^5.2.0, ignore@npm:^5.3.1, ignore@npm:^5.3.2":
+"ignore@npm:^5.2.0, ignore@npm:^5.3.0, ignore@npm:^5.3.1, ignore@npm:^5.3.2":
   version: 5.3.2
   resolution: "ignore@npm:5.3.2"
   checksum: 2acfd32a573260ea522ea0bfeff880af426d68f6831f973129e2ba7363f422923cf53aab62f8369cbf4667c7b25b6f8a3761b34ecdb284ea18e87a5262a865be
@@ -6138,6 +6213,13 @@ __metadata:
   version: 3.0.0
   resolution: "object-hash@npm:3.0.0"
   checksum: 80b4904bb3857c52cc1bfd0b52c0352532ca12ed3b8a6ff06a90cd209dfda1b95cee059a7625eb9da29537027f68ac4619363491eedb2f5d3dddbba97494fd6c
+  languageName: node
+  linkType: hard
+
+"object-treeify@npm:1.1.33":
+  version: 1.1.33
+  resolution: "object-treeify@npm:1.1.33"
+  checksum: 3af7f889349571ee73f5bdfb5ac478270c85eda8bcba950b454eb598ce41759a1ed6b0b43fbd624cb449080a4eb2df906b602e5138b6186b9563b692231f1694
   languageName: node
   linkType: hard
 
