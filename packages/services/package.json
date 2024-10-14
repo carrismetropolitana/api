@@ -1,28 +1,23 @@
 {
 	"name": "@carrismetropolitana/api-services",
 	"version": "1.0.0",
-	"license": "MIT",
-	"files": [
-		"dist/**"
-	],
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"type": "module",
+	"files": ["dist"],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsc -w",
-		"generate": "tsc",
-		"lint": "eslint . --ext .ts"
+		"dev": "tsc -w"
 	},
 	"dependencies": {
-		"@helperkits/logger": "^20240703.1726.24",
-		"jwt-decode": "^4.0.0",
-		"mongodb": "^6.9.0",
-		"pg": "^8.13.0",
-		"redis": "^4.7.0",
-		"tunnel-ssh": "^5.1.2"
+		"@helperkits/logger": "20240703.1726.24",
+		"jwt-decode": "4.0.0",
+		"mongodb": "6.9.0",
+		"pg": "8.13.0",
+		"redis": "4.7.0",
+		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
-		"typescript": "^5.6.3"
-	},
-	"module": "./dist/index.mjs"
+		"typescript": "5.6.3"
+	}
 }

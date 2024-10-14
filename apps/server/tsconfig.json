@@ -1,19 +1,9 @@
 {
+	"extends": "@carrismetropolitana/api-tsconfig/base.json",
 	"compilerOptions": {
-		"target": "ESNext",
-		"baseUrl": "./",
-		"rootDir": "./",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"paths": {
-			"@/services/*": ["services/*"],
-			"@/endpoints/*": ["endpoints/*"],
-			"@/types/*": ["types/*"],
-		},
-		"allowJs": true,
 		"outDir": "dist",
-		"sourceMap": true,
-		"esModuleInterop": true
+		"rootDir": "src"
 	},
-	"exclude": ["**/node_modules", "**/.*/", "**/dist/"]
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"]
 }

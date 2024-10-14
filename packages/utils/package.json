@@ -1,23 +1,19 @@
 {
 	"name": "@carrismetropolitana/api-utils",
 	"version": "1.0.0",
-	"license": "MIT",
-	"files": [
-		"dist/**"
-	],
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"type": "module",
+	"files": ["dist"],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsc -w",
-		"generate": "tsc",
-		"lint": "eslint . --ext .ts"
+		"dev": "tsc -w"
 	},
 	"dependencies": {
-		"luxon": "^3.5.0"
+		"luxon": "3.5.0"
 	},
 	"devDependencies": {
-		"typescript": "^5.6.3"
+		"typescript": "5.6.3"
 	},
 	"module": "./dist/index.mjs"
 }
