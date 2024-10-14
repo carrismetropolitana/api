@@ -13,7 +13,7 @@ interface PCGIAPIRequestOptions {
 
 /* * */
 
-class PCGIAPI {
+class PCGIAPIClass {
 	//
 
 	access_token: string;
@@ -175,4 +175,4 @@ class PCGIAPI {
 
 /* * */
 
-export default new PCGIAPI();
+export const PCGIAPI = new PCGIAPIClass();

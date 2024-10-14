@@ -1,6 +1,6 @@
 /* * */
 
-import SERVERDB from '@api/services';
+import { SERVERDB } from '@api/services';
 import fastify from 'fastify';
 
 /* * */

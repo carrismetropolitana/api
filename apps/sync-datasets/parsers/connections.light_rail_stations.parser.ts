@@ -38,20 +38,20 @@ export default async () => {
 	for (const itemCsv of allItemsCsv.data) {
 		// Parse item
 		const parsedItemData = {
-			district_id: itemCsv.district_id,
-			district_name: itemCsv.district_name,
-			id: itemCsv.id,
-			lat: itemCsv.lat,
-			locality: itemCsv.locality,
-			lon: itemCsv.lon,
-			municipality_id: itemCsv.municipality_id,
-			municipality_name: itemCsv.municipality_name,
-			name: itemCsv.name,
-			parish_id: itemCsv.parish_id,
-			parish_name: itemCsv.parish_name,
-			region_id: itemCsv.region_id,
-			region_name: itemCsv.region_name,
-			stops: itemCsv.stops?.length ? itemCsv.stops.split('|') : [],
+			district_id: itemCsv['district_id'],
+			district_name: itemCsv['district_name'],
+			id: itemCsv['id'],
+			lat: itemCsv['lat'],
+			locality: itemCsv['locality'],
+			lon: itemCsv['lon'],
+			municipality_id: itemCsv['municipality_id'],
+			municipality_name: itemCsv['municipality_name'],
+			name: itemCsv['name'],
+			parish_id: itemCsv['parish_id'],
+			parish_name: itemCsv['parish_name'],
+			region_id: itemCsv['region_id'],
+			region_name: itemCsv['region_name'],
+			stops: itemCsv['stops']?.length ? itemCsv['stops'].split('|') : [],
 		};
 		// Save to database
 		allItemsData.push(parsedItemData);

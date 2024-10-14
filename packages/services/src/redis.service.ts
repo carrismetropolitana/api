@@ -11,7 +11,7 @@ export interface RedisClientOptions {
     };
 }
 
-export default class RedisService {
+export class RedisService {
     private static _instance: RedisService;
     private readonly client: redis.RedisClientType;
 

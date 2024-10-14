@@ -4,7 +4,7 @@ import redis from 'redis';
 
 /* * */
 
-class SERVERDB {
+class SERVERDBClass {
 	//
 
 	constructor() {
@@ -35,4 +35,4 @@ class SERVERDB {
 	//
 }
 
-export default new SERVERDB();
+export const SERVERDB = new SERVERDBClass();

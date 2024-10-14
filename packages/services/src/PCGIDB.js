@@ -10,7 +10,7 @@ const MAX_CONNECTION_RETRIES = 3;
 
 /* * */
 
-class PCGIDB {
+class PCGIDBClass {
 	//
 
 	constructor() {
@@ -283,4 +283,4 @@ class PCGIDB {
 
 /* * */
 
-export default new PCGIDB();
+export const PCGIDB = new PCGIDBClass();

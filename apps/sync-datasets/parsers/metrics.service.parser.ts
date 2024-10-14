@@ -48,12 +48,12 @@ export default async () => {
 	for (const itemCsv of allItemsCsv.data) {
 		// Parse item
 		const parsedItemData: LineData = {
-			agencyId: itemCsv.agency_id,
-			lineId: itemCsv.line_id,
-			operationalDay: itemCsv.operational_day,
-			passTripCount: itemCsv.pass_trip_count,
-			passTripPercentage: itemCsv.pass_trip_percentage,
-			totalTripCount: itemCsv.total_trip_count,
+			agencyId: itemCsv['agency_id'],
+			lineId: itemCsv['line_id'],
+			operationalDay: itemCsv['operational_day'],
+			passTripCount: itemCsv['pass_trip_count'],
+			passTripPercentage: itemCsv['pass_trip_percentage'],
+			totalTripCount: itemCsv['total_trip_count'],
 		};
 
 		// Save to database

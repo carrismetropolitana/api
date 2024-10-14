@@ -1,7 +1,12 @@
 {
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tsup.config.ts"],
+	"exclude": [
+        "**/node_modules",
+        "**/.*/",
+        "**/dist/"
+    ],
 	"compilerOptions": {
 		"module": "commonjs",
+		"allowJs": true,
 		"declaration": true,
 		"removeComments": true,
 		"emitDecoratorMetadata": true,

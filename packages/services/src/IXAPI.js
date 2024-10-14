@@ -4,7 +4,7 @@ import 'dotenv/config';
 
 /* * */
 
-class IXAPI {
+class IXAPIClass {
 	//
 
 	constructor() {
@@ -102,4 +102,4 @@ class IXAPI {
 
 /* * */
 
-export default new IXAPI();
+export const IXAPI = new IXAPIClass();

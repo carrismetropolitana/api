@@ -33,4 +33,4 @@ const networkdb = {
 
 /* * */
 
-export default networkdb;
+export { networkdb };

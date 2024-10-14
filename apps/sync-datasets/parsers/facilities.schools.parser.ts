@@ -44,31 +44,31 @@ export default async () => {
 		}
 		// Split stops into discrete IDs
 		let parsedSchoolStops = [];
-		if (itemCsv.stops?.length) parsedSchoolStops = itemCsv.stops.split('|');
+		if (itemCsv['stops']?.length) parsedSchoolStops = itemCsv['stops'].split('|');
 		// Initiate a variable to hold the parsed school
 		const parsedItemData = {
-			address: itemCsv.address,
+			address: itemCsv['address'],
 			cicles: cicles,
-			district_id: itemCsv.district_id,
-			district_name: itemCsv.district_name,
-			email: itemCsv.email,
-			grouping: itemCsv.grouping,
-			id: itemCsv.id,
-			lat: itemCsv.lat,
-			locality: itemCsv.locality,
-			lon: itemCsv.lon,
-			municipality_id: itemCsv.municipality_id,
-			municipality_name: itemCsv.municipality_name,
-			name: itemCsv.name,
-			nature: itemCsv.nature,
-			parish_id: itemCsv.parish_id,
-			parish_name: itemCsv.parish_name,
-			phone: itemCsv.phone,
-			postal_code: itemCsv.postal_code,
-			region_id: itemCsv.region_id,
-			region_name: itemCsv.region_name,
+			district_id: itemCsv['district_id'],
+			district_name: itemCsv['district_name'],
+			email: itemCsv['email'],
+			grouping: itemCsv['grouping'],
+			id: itemCsv['id'],
+			lat: itemCsv['lat'],
+			locality: itemCsv['locality'],
+			lon: itemCsv['lon'],
+			municipality_id: itemCsv['municipality_id'],
+			municipality_name: itemCsv['municipality_name'],
+			name: itemCsv['name'],
+			nature: itemCsv['nature'],
+			parish_id: itemCsv['parish_id'],
+			parish_name: itemCsv['parish_name'],
+			phone: itemCsv['phone'],
+			postal_code: itemCsv['postal_code'],
+			region_id: itemCsv['region_id'],
+			region_name: itemCsv['region_name'],
 			stops: parsedSchoolStops,
-			url: itemCsv.url,
+			url: itemCsv['url'],
 		};
 		// Save to database
 		allItemsData.push(parsedItemData);
