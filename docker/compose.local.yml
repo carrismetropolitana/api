@@ -47,7 +47,7 @@ services:
     ports:
       - 8081:8081
     environment:
-      - REDIS_HOSTS=local:redis://serverdb:6379
+      - REDIS_HOSTS=serverdb
     depends_on:
       serverdb:
         condition: service_healthy
@@ -71,3 +71,22 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  networkdb-client:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 8082:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=networkdbuser@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=networkdbpassword
+    depends_on:
+      networkdb:
+        condition: service_healthy
