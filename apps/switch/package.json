@@ -6,8 +6,12 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev:none": "tsx watch --env-file=.env.local ./src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start:none": "npm run build && node dist/index.js"
 	},
 	"dependencies": {
 		"fastify": "5.0.0"

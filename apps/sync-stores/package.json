@@ -6,8 +6,12 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev:sync": "tsx watch --env-file=.env.local ./src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start:sync": "npm run build && node dist/index.js"
 	},
 	"dependencies": {
 		"@helperkits/logger": "20240703.1726.24",

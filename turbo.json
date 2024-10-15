@@ -11,8 +11,17 @@
 			"cache": false,
 			"persistent": true
 		},
+		"dev:sync": {
+			"cache": false,
+			"persistent": true
+		},
 		"start": {
-			"dependsOn": ["^build"]
+			"dependsOn": ["^start"],
+			"outputs": ["dist/**"]
+		},
+		"start:sync": {
+			"dependsOn": ["^start:sync"],
+			"outputs": ["dist/**"]
 		}
 	},
 	"ui": "tui"
