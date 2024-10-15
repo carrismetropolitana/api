@@ -12,9 +12,6 @@
 		"moduleDetection": "force",
 		"moduleResolution": "NodeNext",
 		"noUncheckedIndexedAccess": true,
-		"paths": {
-			"@/*": ["src/*"]
-		},
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,

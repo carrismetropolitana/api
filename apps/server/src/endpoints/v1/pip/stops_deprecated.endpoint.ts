@@ -1,7 +1,7 @@
 /* * */
 
 import DATES from '@/services/DATES.js';
-import FASTIFY from '@/services/FASTIFY.js';
+import { FASTIFY } from '@/services/FASTIFY.js';
 import { PCGIAPI } from '@carrismetropolitana/api-services';
 import { DateTime } from 'luxon';
 

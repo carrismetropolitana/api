@@ -1,13 +1,15 @@
 {
 	"name": "@carrismetropolitana/api-server",
 	"version": "1.0.0",
+	"private": true,
 	"type": "module",
-	"files": ["dist"],
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"main": "index.js",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
+		"build": "tsc && resolve-tspaths",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start": "tsc && resolve-tspaths && node dist/index.js",
+		"watch": "tsc -w"
 	},
 	"dependencies": {
 		"dotenv": "16.4.5",
@@ -18,8 +20,7 @@
 		"redis": "4.7.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-services": "*",
-		"@carrismetropolitana/api-types": "*",
+		"@carrismetropolitana/eslint": "20241014.1938.30",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.7.5",
 		"resolve-tspaths": "0.8.22",

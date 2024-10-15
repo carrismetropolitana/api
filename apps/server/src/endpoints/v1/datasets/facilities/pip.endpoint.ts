@@ -1,8 +1,7 @@
 /* * */
 
-import FASTIFY from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
-
+import { FASTIFY } from '@/services/FASTIFY.js';
 
 /* * */
 

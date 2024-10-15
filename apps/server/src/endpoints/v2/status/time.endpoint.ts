@@ -1,7 +1,8 @@
 /* * */
 
-import FASTIFY from '@/services/FASTIFY.js';
 import { DateTime } from 'luxon';
+
+import { FASTIFY } from '../../../services/FASTIFY.js';
 
 /* * */
 

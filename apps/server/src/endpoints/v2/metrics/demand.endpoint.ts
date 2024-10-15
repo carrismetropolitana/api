@@ -1,6 +1,6 @@
 /* * */
 
-import FASTIFY from '@/services/FASTIFY.js';
+import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { LineMetrics, OperatorMetrics, StopMetrics } from '@carrismetropolitana/api-types';
 

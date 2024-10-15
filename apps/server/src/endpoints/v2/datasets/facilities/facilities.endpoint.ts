@@ -1,6 +1,6 @@
 /* * */
 
-import FASTIFY from '@/services/FASTIFY.js';
+import { FASTIFY } from '@/services/FASTIFY.js';
 
 const AVAILABLE_FACILITIES = ['schools', 'encm'];
 
