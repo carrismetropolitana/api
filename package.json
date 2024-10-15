@@ -4,7 +4,8 @@
 	"scripts": {
 		"build": "turbo run build",
 		"dev": "turbo run dev --concurrency=99",
-		"lint": "turbo run lint"
+		"lint": "turbo run lint",
+		"start": "turbo run start"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241014.1938.30",
