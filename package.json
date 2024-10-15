@@ -3,14 +3,15 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
-		"dev": "turbo run dev --concurrency=99",
-		"dev:sync": "turbo run dev:sync --concurrency=99",
+		"dev": "dotenv-run -- turbo run dev --concurrency=99",
+		"dev:sync": "dotenv-run -- turbo run dev:sync --concurrency=99",
 		"lint": "turbo run lint",
-		"start": "turbo run start",
-		"start:sync": "turbo run start:sync"
+		"start": "dotenv-run -- turbo run start",
+		"start:sync": "dotenv-run -- turbo run start:sync"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241014.1938.30",
+		"@dotenv-run/cli": "^1.3.6",
 		"turbo": "2.1.3"
 	},
 	"packageManager": "npm@10.9.0",

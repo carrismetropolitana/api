@@ -13,6 +13,7 @@
 		"start": "npm run build && node dist/index.js"
 	},
 	"dependencies": {
+		"@carrismetropolitana/api-services": "*",
 		"dotenv": "16.4.5",
 		"fastify": "5.0.0",
 		"jwt-decode": "4.0.0",

@@ -1,7 +1,7 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalDependencies": [".env", ".env.*"],
-	"globalEnv": ["NODE_ENV"],
+	"globalEnv": ["*"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
@@ -16,7 +16,7 @@
 			"persistent": true
 		},
 		"start": {
-			"dependsOn": ["^start"],
+			"dependsOn": ["^build", "^start"],
 			"outputs": ["dist/**"]
 		},
 		"start:sync": {
