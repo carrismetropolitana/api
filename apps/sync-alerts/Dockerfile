@@ -1,16 +1,48 @@
-FROM node:alpine
+###########################
+# Define the base image 
+###########################
+FROM node:20.16-alpine AS base
+
+ENV PROJECT=@carrismetropolitana/api-sync-alerts
+ENV PROJECT_FOLDER=sync-alerts
+
+RUN npm install -g turbo@^2
+
+###########################
+# Builder stage
+###########################
+FROM base AS pruner
 
 WORKDIR /app
 
-COPY package.json ./
-
-RUN npm install \
-    && npm cache clean --force
-
-RUN npx @helperkits/bumper bump
-
 COPY . .
 
-RUN ["npm", "run", "build"]
+RUN turbo prune --scope=${PROJECT} --docker
 
-CMD ["node", "dist/index.js"]
+###########################
+# Installer stage
+###########################
+FROM base AS builder
+
+WORKDIR /app
+
+# First install the dependencies (as they change less often)
+COPY --from=pruner /app/out/json/ .
+RUN npm install
+
+# Build the project
+COPY --from=pruner /app/out/full/ .
+RUN turbo run build --filter=${PROJECT}
+
+# CMD [ "node" , "apps/sync-alerts/dist/index.js" ]
+
+# ###########################
+# # Runner stage
+# ###########################
+FROM base AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app .
+
+CMD node apps/$PROJECT_FOLDER/dist/index.js

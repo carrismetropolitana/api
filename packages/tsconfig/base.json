@@ -9,12 +9,12 @@
 		"forceConsistentCasingInFileNames": true,
 		"inlineSources": false,
 		"isolatedModules": true,
-		"module": "ESNext",
-		"moduleResolution": "node",
+		"module": "NodeNext",
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
 		"preserveWatchOutput": true,
 		"skipLibCheck": true,
-		"target": "ESNext"
+		"target": "ESNext",
+		"types": ["node"]
 	}
 }

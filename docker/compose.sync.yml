@@ -1,0 +1,206 @@
+# # #
+
+name: cmet-api-sync
+
+volumes:
+  certbotdata:
+  serverdb:
+
+secrets:
+  pcgidbkey:
+    file: ../PCGIDB.key
+  firebasekey:
+    file: ../FIREBASE.json
+
+services:
+  #
+
+   # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  serverdb:
+    image: redis:alpine
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - serverdb:/data
+    environment:
+      - REDIS_ARGS=--save 5 1
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  serverdb-client:
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 8081:8081
+    environment:
+      - REDIS_HOSTS=local:redis://serverdb:6379
+    depends_on:
+      serverdb:
+        condition: service_healthy
+
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  networkdb:
+    image: postgres:alpine
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    environment:
+      - POSTGRES_USER=networkdbuser
+      - POSTGRES_PASSWORD=networkdbpassword
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "networkdbuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-alerts:
+    image: carrismetropolitana/api-sync-alerts
+    build: ../apps/sync-alerts
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ../.env.local
+    secrets:
+      - firebasekey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-datasets:
+    image: carrismetropolitana/api-sync-datasets
+    build: ../apps/sync-datasets
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ../.env.local
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-metrics:
+    image: carrismetropolitana/api-sync-metrics
+    build: ../apps/sync-metrics
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ../.env.local
+    secrets:
+      - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-network:
+    image: carrismetropolitana/api-sync-network
+    build: ../apps/sync-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ../.env.local
+    environment:
+      - NETWORKDB_HOST=networkdb
+      - NETWORKDB_USER=networkdbuser
+      - NETWORKDB_PASSWORD=networkdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-stores:
+    image: carrismetropolitana/api-sync-stores
+    build: ../apps/sync-stores
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 100mb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ../.env.local
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-vehicles:
+    image: carrismetropolitana/api-sync-vehicles
+    build: ../apps/sync-vehicles
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ../.env.local
+    secrets:
+      - pcgidbkey

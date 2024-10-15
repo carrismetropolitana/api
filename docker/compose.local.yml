@@ -1,0 +1,73 @@
+# # #
+
+name: cmet-api-local
+
+volumes:
+  serverdb:
+
+secrets:
+  pcgidbkey:
+    file: PCGIDB.key
+
+services:
+  #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  serverdb:
+    image: redis:alpine
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - serverdb:/data
+    environment:
+      - REDIS_ARGS=--save 5 1
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  serverdb-client:
+    image: rediscommander/redis-commander:latest
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 8081:8081
+    environment:
+      - REDIS_HOSTS=local:redis://serverdb:6379
+    depends_on:
+      serverdb:
+        condition: service_healthy
+
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  networkdb:
+    image: postgres:alpine
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    environment:
+      - POSTGRES_USER=networkdbuser
+      - POSTGRES_PASSWORD=networkdbpassword
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "networkdbuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
