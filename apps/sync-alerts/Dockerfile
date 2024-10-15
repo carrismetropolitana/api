@@ -3,8 +3,7 @@
 ###########################
 FROM node:20.16-alpine AS base
 
-ENV PROJECT=@carrismetropolitana/api-sync-alerts
-ENV PROJECT_FOLDER=sync-alerts
+ENV PROJECT=sync-alerts
 
 RUN npm install -g turbo@^2
 
@@ -17,7 +16,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN turbo prune --scope=${PROJECT} --docker
+RUN turbo prune --scope=@carrismetropolitana/api-${PROJECT} --docker
 
 ###########################
 # Installer stage
@@ -32,7 +31,7 @@ RUN npm install
 
 # Build the project
 COPY --from=pruner /app/out/full/ .
-RUN turbo run build --filter=${PROJECT}
+RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
 
 # CMD [ "node" , "apps/sync-alerts/dist/index.js" ]
 
@@ -45,4 +44,4 @@ WORKDIR /app
 
 COPY --from=builder /app .
 
-CMD node apps/$PROJECT_FOLDER/dist/index.js
+CMD node apps/$PROJECT/dist/index.js
