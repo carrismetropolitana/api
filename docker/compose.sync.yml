@@ -50,7 +50,7 @@ services:
     ports:
       - 8081:8081
     environment:
-      - REDIS_HOSTS=local:redis://serverdb:6379
+      - REDIS_HOSTS=serverdb
     depends_on:
       serverdb:
         condition: service_healthy
@@ -80,7 +80,9 @@ services:
 
   sync-alerts:
     image: carrismetropolitana/api-sync-alerts
-    build: ../apps/sync-alerts
+    build: 
+      context: ../
+      dockerfile: ./apps/sync-alerts/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -93,7 +95,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ../.env.local
+      - ../.env.sync
     secrets:
       - firebasekey
 
@@ -102,7 +104,9 @@ services:
 
   sync-datasets:
     image: carrismetropolitana/api-sync-datasets
-    build: ../apps/sync-datasets
+    build: 
+      context: ../
+      dockerfile: ./apps/sync-datasets/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -115,14 +119,16 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ../.env.local
+      - ../.env.sync
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-metrics:
     image: carrismetropolitana/api-sync-metrics
-    build: ../apps/sync-metrics
+    build: 
+      context: ../
+      dockerfile: ./apps/sync-metrics/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -135,7 +141,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ../.env.local
+      - ../.env.sync
     secrets:
       - pcgidbkey
 
@@ -144,7 +150,9 @@ services:
 
   sync-network:
     image: carrismetropolitana/api-sync-network
-    build: ../apps/sync-network
+    build: 
+      context: ../
+      dockerfile: ./apps/sync-network/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -157,7 +165,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ../.env.local
+      - ../.env.sync
     environment:
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
@@ -168,7 +176,9 @@ services:
 
   sync-stores:
     image: carrismetropolitana/api-sync-stores
-    build: ../apps/sync-stores
+    build: 
+      context: ../
+      dockerfile: ./apps/sync-stores/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -181,14 +191,16 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ../.env.local
+      - ../.env.sync
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-vehicles:
     image: carrismetropolitana/api-sync-vehicles
-    build: ../apps/sync-vehicles
+    build: 
+      context: ../
+      dockerfile: ./apps/sync-vehicles/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -201,6 +213,6 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ../.env.local
+      - ../.env.sync
     secrets:
       - pcgidbkey

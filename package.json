@@ -5,9 +5,13 @@
 		"build": "turbo run build",
 		"dev": "dotenv-run -- turbo run dev --concurrency=99",
 		"dev:sync": "dotenv-run -- turbo run dev:sync --concurrency=99",
+		"docker:local:down": "docker-compose -f docker/compose.local.yml down",
+		"docker:local:up": "docker-compose -f docker/compose.local.yml up -d",
+		"docker:sync:down": "docker-compose -f docker/compose.sync.yml down",
+		"docker:sync:up": "docker-compose -f docker/compose.sync.yml up -d",
 		"lint": "turbo run lint",
 		"start": "dotenv-run -- turbo run start",
-		"start:sync": "dotenv-run -- turbo run start:sync --filter=@carrismetropolitana/api-sync-alerts "
+		"start:sync": "dotenv-run -- turbo run start:sync"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241014.1938.30",
