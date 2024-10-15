@@ -5,10 +5,10 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"build": "tsc && resolve-tspaths",
+		"build": "tsc && resolve-tspaths && cp -r ./src/assets ./dist/assets",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"start": "tsc && resolve-tspaths && node dist/index.js",
+		"start": "npm run build && node dist/index.js",
 		"watch": "tsc -w"
 	},
 	"dependencies": {
