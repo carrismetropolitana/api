@@ -45,7 +45,16 @@ export default async () => {
 	const updatedItemKeys = new Set();
 	const lines = new Map<string, LineData[]>();
 
-	for (const itemCsv of allItemsCsv.data) {
+	interface CsvItem {
+		agency_id: string
+		line_id: string
+		operational_day: string
+		pass_trip_count: number
+		pass_trip_percentage: number
+		total_trip_count: number
+	}
+
+	for (const itemCsv of allItemsCsv.data as CsvItem[]) {
 		// Parse item
 		const parsedItemData: LineData = {
 			agencyId: itemCsv['agency_id'],

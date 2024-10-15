@@ -10,6 +10,7 @@
 		"dev": "tsc -w"
 	},
 	"dependencies": {
+		"@carrismetropolitana/api-services": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"luxon": "3.5.0",

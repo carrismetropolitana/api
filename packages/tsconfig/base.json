@@ -2,20 +2,18 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
 		"allowJs": true,
+		"composite": false,
 		"declaration": true,
 		"declarationMap": true,
 		"esModuleInterop": true,
-		"incremental": false,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSources": false,
 		"isolatedModules": true,
-		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"module": "NodeNext",
-		"moduleDetection": "force",
-		"moduleResolution": "NodeNext",
-		"noUncheckedIndexedAccess": true,
-		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"preserveWatchOutput": true,
 		"skipLibCheck": true,
-		"sourceMap": true,
-		"strict": false,
 		"target": "ESNext"
 	}
 }

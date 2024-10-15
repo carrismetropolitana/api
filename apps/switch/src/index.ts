@@ -4,8 +4,8 @@ import fastify from 'fastify';
 
 /* * */
 
-import horariosHandler from '@/handlers/horarios.handler.js';
-import pipHandler from '@/handlers/pip.handler.js';
+import horariosHandler from '@/handlers/horarios.handler';
+import pipHandler from '@/handlers/pip.handler';
 
 /* * */
 

@@ -20,12 +20,18 @@ class PCGIAPIClass {
 
 	authenticating: boolean;
 
-	expires_at: number;
+	expires_at: number | undefined;
 
 	/* * *
    * REQUEST
    * This function makes GET requests to PCGI API and agregates all the steps required for authentication.
    */
+
+	constructor() {
+		this.access_token = '';
+		this.authenticating = false;
+		this.expires_at = undefined;
+	}
 
 	async authenticate() {
 		//
@@ -50,11 +56,14 @@ class PCGIAPIClass {
 
 			//
 			// Initiate a new request to the token endpoint
+			if (!process.env.PCGI_AUTH_URL) {
+				throw new Error('PCGIAPI authentication endpoint not found.');
+			}
 
 			const response = await fetch(process.env.PCGI_AUTH_URL, {
 				body: new URLSearchParams({
-					client_id: process.env.PCGI_CLIENT_ID,
-					client_secret: process.env.PCGI_CLIENT_SECRET,
+					client_id: process.env.PCGI_CLIENT_ID || '',
+					client_secret: process.env.PCGI_CLIENT_SECRET || '',
 					grant_type: 'client_credentials',
 				}),
 				headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -105,7 +114,7 @@ class PCGIAPIClass {
 		//
 		// Check if the token is still valid
 
-		const isTokenExpired = this.expires_at < (Date.now() / 1000);
+		const isTokenExpired = this.expires_at ? this.expires_at < (Date.now() / 1000) : true;
 
 		//
 		// Request a new authentication token if it is expired or non-existent

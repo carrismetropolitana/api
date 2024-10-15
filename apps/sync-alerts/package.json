@@ -17,6 +17,7 @@
 		"redis": "4.7.0"
 	},
 	"devDependencies": {
+		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@types/node": "22.7.5",
 		"resolve-tspaths": "0.8.22",

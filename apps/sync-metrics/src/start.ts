@@ -19,11 +19,19 @@ export default async () => {
 	// Retrieve all Lines and Stops from database
 
 	const allLinesTxt = await SERVERDB.client.get('v2:network:lines:all');
-	const allLinesData = JSON.parse(allLinesTxt);
+
+	if (!allLinesTxt) {
+		throw new Error('No lines found in SERVERDB');
+	}
+
+	const allLinesData: any[] = JSON.parse(allLinesTxt);
 	const allLinesSet = new Set(allLinesData.map(item => item.line_id));
 
 	const allStopsTxt = await SERVERDB.client.get('v2:network:stops:all');
-	const allStopsData = JSON.parse(allStopsTxt);
+	if (!allStopsTxt) {
+		throw new Error('No stops found in SERVERDB');
+	}
+	const allStopsData: any[] = JSON.parse(allStopsTxt);
 	const allStopsSet = new Set(allStopsData.map(item => item.stop_id));
 
 	//

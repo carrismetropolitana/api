@@ -7,7 +7,7 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-function convertToJson(allEvents) {
+function convertToJson(allEvents: any[]) {
 	return allEvents.map(event => ({
 		bearing: event.bearing,
 		block_id: event.block_id,
@@ -30,7 +30,7 @@ function convertToJson(allEvents) {
 
 /* * */
 
-function convertToProtobuf(allEvents) {
+function convertToProtobuf(allEvents: any[]) {
 	return {
 		entity: allEvents.map(event => ({
 			id: event.event_id,
@@ -86,9 +86,14 @@ export default async () => {
 
 	const archivesTimer = new TIMETRACKER();
 
-	const currentArchiveIds = {};
+	const currentArchiveIds: any = {};
 
 	const allArchivesTxt = await SERVERDB.client.get('v2:network:archives:all');
+
+	if (!allArchivesTxt) {
+		throw new Error('No archives found in SERVERDB');
+	}
+
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {

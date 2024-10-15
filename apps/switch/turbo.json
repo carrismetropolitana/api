@@ -1,0 +1,12 @@
+{
+	"extends": [
+		"//"
+	],
+	"tasks": {
+		"generate": {
+			"dependsOn": [
+				"^build"
+			]
+		}
+	}
+}
