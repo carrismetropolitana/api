@@ -9,7 +9,7 @@ class SERVERDBClass {
 	public readonly client: redis.RedisClientType;
 
 	constructor() {
-		this.client = redis.createClient({ socket: { host: process.env.SERVERDB_HOST } });
+		this.client = redis.createClient({ socket: { host: process.env.SERVERDB_HOST, port: Number(process.env.SERVERDB_PORT) } });
 		this.client.on('error', err => console.log('Redis Client Error', err));
 	}
 
