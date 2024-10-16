@@ -6,9 +6,10 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "npm run clean && tsc",
+		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist",
-		"dev": "tsc -w"
+		"dev": "tsx watch ./src/index.ts",
+		"dev:sync": "npm run dev"
 	},
 	"dependencies": {
 		"@helperkits/logger": "20240703.1726.24",

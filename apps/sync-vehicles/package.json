@@ -2,21 +2,23 @@
 	"name": "@carrismetropolitana/api-sync-vehicles",
 	"version": "1.0.0",
 	"type": "module",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist",
-		"dev:sync": "tsx watch ./src/index.ts",
+		"dev:sync": "dotenv-run -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"start:sync": "npm run build && node dist/index.js"
+		"start:sync": "dotenv-run -- npm run build && node dist/index.js"
 	},
 	"dependencies": {
+		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"dotenv": "16.4.5",
 		"luxon": "3.5.0",
 		"mongodb": "6.9.0",
 		"redis": "4.7.0",
@@ -24,8 +26,12 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-services": "*",
+		"@carrismetropolitana/api-settings": "*",
+		"@carrismetropolitana/api-types": "*",
+		"@carrismetropolitana/api-utils": "*",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.7.5",
+		"gtfs-types": "^4.0.0",
 		"resolve-tspaths": "0.8.22",
 		"typescript": "5.6.3"
 	}

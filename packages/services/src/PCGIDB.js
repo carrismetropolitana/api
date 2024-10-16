@@ -203,8 +203,6 @@ class PCGIDBClass {
 				port: process.env.PCGIDB_TUNNEL_LOCAL_PORT,
 			};
 
-			console.log('iughdfuisdfhiudsfhisudhfisudfhusdifuhsdif', process.env.PCGIDB_SSH_HOST)
-
 			const sshOptions = {
 				host: process.env.PCGIDB_SSH_HOST,
 				port: process.env.PCGIDB_SSH_PORT,

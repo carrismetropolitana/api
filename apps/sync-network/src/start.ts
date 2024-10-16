@@ -11,7 +11,7 @@ import fs from 'node:fs';
 
 /* * */
 
-import archivesParser from '@/parsers/archives.parser.js';
+import { syncArchives } from '@/parsers/archives.parser.js';
 import datesParser from '@/parsers/dates.parsers.js';
 import linesRoutesPatternsParserV1 from '@/parsers/linesRoutesPatternsV1.parser.js';
 import linesRoutesPatternsParserV2 from '@/parsers/linesRoutesPatternsV2.parser.js';
@@ -172,7 +172,7 @@ export default async () => {
 		if (ENABLED_MODULES.includes('archives_parser')) {
 			LOGGER.spacer(1);
 			LOGGER.title('3.5. Parse Archives');
-			await archivesParser();
+			await syncArchives();
 		}
 
 		/* * */

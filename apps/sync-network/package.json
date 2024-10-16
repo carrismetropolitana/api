@@ -8,15 +8,17 @@
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist",
-		"dev:sync": "tsx watch ./src/index.ts",
+		"dev:sync": "dotenv-run -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"start:sync": "npm run build && node dist/index.js"
+		"start:sync": "dotenv-run -- npm run build && node dist/index.js"
 	},
 	"dependencies": {
 		"@carrismetropolitana/api-services": "*",
+		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/tts": "20240923.2019.13",
+		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20241010.1355.31",
@@ -24,7 +26,6 @@
 		"adm-zip": "0.5.16",
 		"csv-parse": "5.5.6",
 		"csv-stringify": "6.5.1",
-		"dotenv": "16.4.5",
 		"extract-zip": "2.0.1",
 		"luxon": "3.5.0",
 		"papaparse": "5.4.1",

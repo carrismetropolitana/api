@@ -1,6 +1,6 @@
 /* * */
 
-import { EntitySelector, TimeRange, TranslatedImage, TranslatedString } from './gtfsrt.types.js';
+import { EntitySelector, TimeRange, TranslatedImage, TranslatedString } from '../gtfsrt.types.js';
 
 /* * */
 

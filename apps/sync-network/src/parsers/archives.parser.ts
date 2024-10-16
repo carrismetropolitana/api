@@ -1,35 +1,32 @@
 /* * */
 
 import collator from '@/modules/sortCollator.js';
-import { NETWORKDB } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
-export default async () => {
+export const syncArchives = async () => {
 	//
 
+	LOGGER.title(`Sync Archives`);
 	const globalTimer = new TIMETRACKER();
 
 	//
 	// Fetch all Archives from NETWORKDB
 
-	LOGGER.info(`Starting...`);
 	const allArchives = await NETWORKDB.client.query('SELECT * FROM archives');
-
-	//
-	// Initate a temporary variable to hold updated items
-
-	const allArchivesData = [];
-	const updatedArchiveKeys = new Set();
 
 	//
 	// For each item, update its entry in the database
 
+	const allArchivesData = [];
+	let updatedArchivesCounter = 0;
+
 	for (const archive of allArchives.rows) {
-		// Parse archive
+		//
 		const parsedArchive = {
 			end_date: archive.archive_end_date,
 			id: archive.archive_id,
@@ -37,39 +34,20 @@ export default async () => {
 			start_date: archive.archive_start_date,
 
 		};
-		// Update or create new document
+		//
 		allArchivesData.push(parsedArchive);
-		await SERVERDB.client.set(`v2:network:archives/${parsedArchive.id}`, JSON.stringify(parsedArchive));
-		updatedArchiveKeys.add(`v2:network:archives/${parsedArchive.id}`);
+		//
+		updatedArchivesCounter++;
+		//
 	}
 
-	LOGGER.info(`Updated ${updatedArchiveKeys.size} Archives`);
-
 	//
-	// Add the 'all' option
+	// Save to the database
 
 	allArchivesData.sort((a, b) => collator.compare(a.start_date, b.start_date));
-	await SERVERDB.client.set('v2:network:archives:all', JSON.stringify(allArchivesData));
-	updatedArchiveKeys.add('v2:network:archives:all');
+	await SERVERDB.client.set(SERVERDB_KEYS.ARCHIVES.ALL, JSON.stringify(allArchivesData));
 
-	//
-	// Delete all items not present in the current update
-
-	const allSavedArchiveKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:archives/*', TYPE: 'string' })) {
-		allSavedArchiveKeys.push(key);
-	}
-
-	const staleArchiveKeys = allSavedArchiveKeys.filter(item => !updatedArchiveKeys.has(item));
-	if (staleArchiveKeys.length) {
-		await SERVERDB.client.del(staleArchiveKeys);
-	}
-
-	LOGGER.info(`Deleted ${staleArchiveKeys.length} stale Archives`);
-
-	//
-
-	LOGGER.success(`Done updating Archives (${globalTimer.get()})`);
+	LOGGER.success(`Done updating ${updatedArchivesCounter} Archives (${globalTimer.get()})`);
 
 	//
 };

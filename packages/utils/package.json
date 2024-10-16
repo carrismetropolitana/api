@@ -6,8 +6,10 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev": "tsx watch ./src/index.ts",
+		"dev:sync": "npm run dev"
 	},
 	"dependencies": {
 		"luxon": "3.5.0"

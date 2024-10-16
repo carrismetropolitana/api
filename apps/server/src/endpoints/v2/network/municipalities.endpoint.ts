@@ -3,7 +3,6 @@
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 
-
 /* * */
 
 const all = async (_, reply) => {

@@ -63,6 +63,8 @@ services:
       options:
         max-size: '1m'
         max-file: '1'
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=networkdbuser
       - POSTGRES_PASSWORD=networkdbpassword
@@ -71,7 +73,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-  
+
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 

@@ -2,7 +2,7 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
-import { LineMetrics, OperatorMetrics, StopMetrics } from '@carrismetropolitana/api-types';
+// import { LineMetrics, OperatorMetrics, StopMetrics } from '@carrismetropolitana/api-types';
 
 /* * */
 
@@ -30,24 +30,24 @@ const byLine = async (_, reply) => {
 		.send(allItems || []);
 };
 
-const byLineId = async (request, reply) => {
-	const allItems = await SERVERDB.client.get(`v2:metrics:demand:by_line`);
+// const byLineId = async (request, reply) => {
+// 	const allItems = await SERVERDB.client.get(`v2:metrics:demand:by_line`);
 
-	const lineId = request.params.lineId;
-	const line = JSON.parse(allItems).find((item: LineMetrics) => item.line_id === lineId);
+// 	const lineId = request.params.lineId;
+// 	const line = JSON.parse(allItems).find((item: LineMetrics) => item.line_id === lineId);
 
-	if (!line) {
-		return reply
-			.code(404)
-			.header('Content-Type', 'application/json; charset=utf-8')
-			.send({ message: 'Not found' });
-	}
+// 	if (!line) {
+// 		return reply
+// 			.code(404)
+// 			.header('Content-Type', 'application/json; charset=utf-8')
+// 			.send({ message: 'Not found' });
+// 	}
 
-	return reply
-		.code(200)
-		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(line);
-};
+// 	return reply
+// 		.code(200)
+// 		.header('Content-Type', 'application/json; charset=utf-8')
+// 		.send(line);
+// };
 
 const byStop = async (_, reply) => {
 	const allItems = await SERVERDB.client.get('v2:metrics:demand:by_stop');
@@ -57,82 +57,82 @@ const byStop = async (_, reply) => {
 		.send(allItems || []);
 };
 
-const byStopId = async (request, reply) => {
-	const allItems = await SERVERDB.client.get(`v2:metrics:demand:by_stop`);
+// const byStopId = async (request, reply) => {
+// 	const allItems = await SERVERDB.client.get(`v2:metrics:demand:by_stop`);
 
-	const stopId = request.params.stopId;
-	const stop = JSON.parse(allItems).find((item: StopMetrics) => item.stop_id === stopId);
+// 	const stopId = request.params.stopId;
+// 	const stop = JSON.parse(allItems).find((item: StopMetrics) => item.stop_id === stopId);
 
-	if (!stop) {
-		return reply
-			.code(404)
-			.header('Content-Type', 'application/json; charset=utf-8')
-			.send({ message: 'Not found' });
-	}
+// 	if (!stop) {
+// 		return reply
+// 			.code(404)
+// 			.header('Content-Type', 'application/json; charset=utf-8')
+// 			.send({ message: 'Not found' });
+// 	}
 
-	return reply
-		.code(200)
-		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(stop);
-};
+// 	return reply
+// 		.code(200)
+// 		.header('Content-Type', 'application/json; charset=utf-8')
+// 		.send(stop);
+// };
 
-const byOperator = async (request, reply) => {
-	const operatorId = request.params.operator_id;
-	const date = request.params.date;
+// const byOperator = async (request, reply) => {
+// 	const operatorId = request.params.operator_id;
+// 	const date = request.params.date;
 
-	let metric: OperatorMetrics | OperatorMetrics[];
-	if (operatorId === 'cm') {
-		const operators = ['41', '42', '43', '44'];
-		metric = [];
+// 	let metric: OperatorMetrics | OperatorMetrics[];
+// 	if (operatorId === 'cm') {
+// 		const operators = ['41', '42', '43', '44'];
+// 		metric = [];
 
-		for (const operator of operators) {
-			const operation = await SERVERDB.client.get(`v2:metrics:demand:operator:${operator}:${date}`);
+// 		for (const operator of operators) {
+// 			const operation = await SERVERDB.client.get(`v2:metrics:demand:operator:${operator}:${date}`);
 
-			if (!operation) {
-				continue;
-			}
+// 			if (!operation) {
+// 				continue;
+// 			}
 
-			metric.push({
-				...JSON.parse(operation),
-				operator_id: operator,
-			});
-		}
-	}
-	else {
-		const operation = await SERVERDB.client.get(`v2:metrics:demand:operator:${operatorId}:${date}`);
-		metric = {
-			...JSON.parse(operation),
-			operator_id: operatorId,
-		};
-	}
+// 			metric.push({
+// 				...JSON.parse(operation),
+// 				operator_id: operator,
+// 			});
+// 		}
+// 	}
+// 	else {
+// 		const operation = await SERVERDB.client.get(`v2:metrics:demand:operator:${operatorId}:${date}`);
+// 		metric = {
+// 			...JSON.parse(operation),
+// 			operator_id: operatorId,
+// 		};
+// 	}
 
-	if (!metric) {
-		return reply
-			.code(404)
-			.header('Content-Type', 'application/json; charset=utf-8')
-			.send({ message: 'Not found' });
-	}
+// 	if (!metric) {
+// 		return reply
+// 			.code(404)
+// 			.header('Content-Type', 'application/json; charset=utf-8')
+// 			.send({ message: 'Not found' });
+// 	}
 
-	return reply
-		.code(200)
-		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(metric);
-};
+// 	return reply
+// 		.code(200)
+// 		.header('Content-Type', 'application/json; charset=utf-8')
+// 		.send(metric);
+// };
 
 /* * */
 
 FASTIFY.server.get('/metrics/demand/by_day', byDay);
 FASTIFY.server.get('/metrics/demand/by_month', byMonth);
 FASTIFY.server.get('/metrics/demand/by_line', byLine);
-FASTIFY.server.get('/metrics/demand/by_line/:lineId', byLineId);
+// FASTIFY.server.get('/metrics/demand/by_line/:lineId', byLineId);
 FASTIFY.server.get('/metrics/demand/by_stop', byStop);
-FASTIFY.server.get('/metrics/demand/by_stop/:stopId', byStopId);
-FASTIFY.server.get('/metrics/demand/operator/:operator_id/:date', byOperator);
+// FASTIFY.server.get('/metrics/demand/by_stop/:stopId', byStopId);
+// FASTIFY.server.get('/metrics/demand/operator/:operator_id/:date', byOperator);
 
 FASTIFY.server.get('/v2/metrics/demand/by_day', byDay);
 FASTIFY.server.get('/v2/metrics/demand/by_month', byMonth);
 FASTIFY.server.get('/v2/metrics/demand/by_line', byLine);
-FASTIFY.server.get('/v2/metrics/demand/by_line/:lineId', byLineId);
+// FASTIFY.server.get('/v2/metrics/demand/by_line/:lineId', byLineId);
 FASTIFY.server.get('/v2/metrics/demand/by_stop', byStop);
-FASTIFY.server.get('/v2/metrics/demand/by_stop/:stopId', byStopId);
-FASTIFY.server.get('/v2/metrics/demand/operator/:operator_id/:date', byOperator);
+// FASTIFY.server.get('/v2/metrics/demand/by_stop/:stopId', byStopId);
+// FASTIFY.server.get('/v2/metrics/demand/operator/:operator_id/:date', byOperator);

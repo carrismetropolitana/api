@@ -2,15 +2,20 @@
 	"name": "@carrismetropolitana/api-types",
 	"version": "1.0.0",
 	"type": "module",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev": "tsx watch ./src/index.ts",
+		"dev:sync": "npm run dev"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
+		"gtfs-types": "^4.0.0",
 		"typescript": "5.6.3"
 	}
 }
