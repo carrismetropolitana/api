@@ -1,10 +1,11 @@
 /* * */
 
-import { PCGIAPI } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
-import { DateTime } from 'luxon';
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
+import { PCGIAPI } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -24,7 +25,7 @@ const realtime = async (request, reply) => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.get('v2:network:archives:all');
+	const allArchivesTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`);
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
