@@ -2,6 +2,7 @@
 
 import collator from '@/services/sortCollator.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 
@@ -53,8 +54,8 @@ export default async () => {
 		};
 		// Save to database
 		allItemsData.push(parsedItemData);
-		await SERVERDB.set(`v2:datasets:facilities:pip:${parsedItemData.id}`, JSON.stringify(parsedItemData));
-		updatedItemKeys.add(`v2:datasets:facilities:pip:${parsedItemData.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.DATASETS.FACILITIES_PIP}:${parsedItemData.id}`, JSON.stringify(parsedItemData));
+		updatedItemKeys.add(`${SERVERDB_KEYS.DATASETS.FACILITIES_PIP}:${parsedItemData.id}`);
 		//
 	}
 
@@ -67,14 +68,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allItemsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set('v2:datasets:facilities:pip:all', JSON.stringify(allItemsData));
-	updatedItemKeys.add('v2:datasets:facilities:pip:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.DATASETS.FACILITIES_PIP}:all`, JSON.stringify(allItemsData));
+	updatedItemKeys.add(`${SERVERDB_KEYS.DATASETS.FACILITIES_PIP}:all`);
 
 	// 6.
 	// Delete all items not present in the current update
 
 	const allSavedItemKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:datasets:facilities:pip:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.DATASETS.FACILITIES_PIP}:*`, TYPE: 'string' })) {
 		allSavedItemKeys.push(key);
 	}
 	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));
