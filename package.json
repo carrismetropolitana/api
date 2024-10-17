@@ -3,6 +3,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
+		"build:packages": "turbo run build --filter=./packages/*",
 		"dev": "export NODE_ENV=development && dotenv-run -- turbo run dev --concurrency=99",
 		"dev:sync": "export NODE_ENV=development &&  dotenv-run -- turbo run dev:sync --concurrency=99",
 		"docker:local:down": "docker-compose -f docker/compose.local.yml down",
