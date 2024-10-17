@@ -8,14 +8,16 @@ import 'dotenv/config';
 
 /* * */
 
+const RUN_INTERVAL = 5000; // 5 seconds
+
+/* * */
+
 (async function init() {
 	//
 
 	await PCGIDB.connect();
 
 	//
-
-	const SYNC_POSITIONS_INTERVAL = 5000; // 5 seconds
 
 	let counter = 0;
 
@@ -31,7 +33,7 @@ import 'dotenv/config';
 
 		await syncPositions();
 
-		setTimeout(runOnInterval, SYNC_POSITIONS_INTERVAL);
+		setTimeout(runOnInterval, RUN_INTERVAL);
 
 		counter++;
 
