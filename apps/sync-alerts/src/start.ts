@@ -5,9 +5,9 @@ import type { TopicMessage } from 'firebase-admin/messaging';
 
 import parseAlertV2 from '@/services/parseAlertV2.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import firebaseAdmin from 'firebase-admin';
 
 /* * */
 
@@ -33,7 +33,7 @@ export default async () => {
 
 	const protobufTimer = new TIMETRACKER();
 
-	await SERVERDB.set(`v2:network:alerts:protobuf`, JSON.stringify(alertsFeedData));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS_PROTOBUF, JSON.stringify(alertsFeedData));
 
 	LOGGER.info(`Saved Protobuf Alerts to ServerDB (${protobufTimer.get()})`);
 
@@ -44,7 +44,7 @@ export default async () => {
 
 	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
 
-	await SERVERDB.set(`v2:network:alerts:json`, JSON.stringify(allAlertsParsedV2));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS_JSON, JSON.stringify(allAlertsParsedV2));
 
 	LOGGER.info(`Saved ${allAlertsParsedV2.length} JSON Alerts to ServerDB (${jsonTimer.get()})`);
 
@@ -53,7 +53,7 @@ export default async () => {
 
 	const notificationsTimer = new TIMETRACKER();
 
-	const allSentNotificationsTxt = await SERVERDB.get(`v2:network:alerts:sent_notifications`);
+	const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS_SENT_NOTIFICATIONS);
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
 	const allSentNotificationsSet = new Set(allSentNotifications);
 
@@ -111,7 +111,7 @@ export default async () => {
 		}
 	}
 
-	await SERVERDB.set(`v2:network:alerts:sent_notifications`, JSON.stringify(Array.from(allSentNotificationsSet)));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS_SENT_NOTIFICATIONS, JSON.stringify(Array.from(allSentNotificationsSet)));
 
 	LOGGER.info(`Sent ${sentNotificationCounter} Notifications (${notificationsTimer.get()})`);
 

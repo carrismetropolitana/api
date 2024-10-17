@@ -2,6 +2,7 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import path from 'path';
 import protobufjs from 'protobufjs';
 import { fileURLToPath } from 'url';
@@ -18,7 +19,7 @@ const gtfsRealtime = protobufjs.loadSync(
 /* * */
 
 const json = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:network:alerts:json');
+	const allItems = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS_JSON);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
