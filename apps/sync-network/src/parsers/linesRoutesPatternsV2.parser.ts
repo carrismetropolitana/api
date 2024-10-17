@@ -409,8 +409,8 @@ export default async () => {
 		updatedRouteKeys.add(`v2:network:routes:${finalizedRouteData.route_id}`);
 	}
 
-	await SERVERDB.set('v2:network:routes:all', JSON.stringify(finalizedAllRoutesData));
-	updatedRouteKeys.add('v2:network:routes:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(finalizedAllRoutesData));
+	updatedRouteKeys.add(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`);
 
 	LOGGER.info(`Updated ${updatedRouteKeys.size} Routes`);
 
@@ -448,7 +448,7 @@ export default async () => {
 	// Delete stale routes
 
 	const allRouteKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:routes:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LOCALITIES}:*`, TYPE: 'string' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
 
