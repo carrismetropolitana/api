@@ -19,6 +19,8 @@ export class RedisService {
 		this.client = redis.createClient({
 			...options,
 		});
+		this.connect();
+		this.client.on('error', err => console.log('Redis Client Error', err));
 	}
 
 	public static getInstance(options?: RedisClientOptions) {
@@ -39,7 +41,7 @@ export class RedisService {
 			console.log(`⤷ Connected to Redis.`);
 		}
 		catch (error: any) {
-			throw new Error('Error connecting to Redis');
+			throw new Error('Error connecting to Redis', error);
 		}
 	}
 
