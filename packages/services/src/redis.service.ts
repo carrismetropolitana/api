@@ -37,10 +37,13 @@ export class RedisService {
 
 	async connect() {
 		try {
+			if (this.client.isOpen) return;
+
 			await this.client.connect();
 			console.log(`⤷ Connected to Redis.`);
 		}
-		catch (error) {
+		catch (error: any) {
+			console.error(`⤷ ERROR: Failed to connect to Redis.`, error);
 			throw new Error('Error connecting to Redis', error);
 		}
 	}
