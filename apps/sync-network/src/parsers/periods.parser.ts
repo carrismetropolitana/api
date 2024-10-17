@@ -3,6 +3,7 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -100,7 +101,7 @@ export default async () => {
 	//
 	// Save the array to the database
 
-	await SERVERDB.set('v2:network:periods:all', JSON.stringify(allPeriodsParsed));
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(allPeriodsParsed));
 
 	LOGGER.info(`Updated ${allPeriodsParsed.length} Periods`);
 
