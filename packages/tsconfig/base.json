@@ -2,7 +2,6 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"compilerOptions": {
 		"allowJs": true,
-		"strict": false,
 		"composite": false,
 		"declaration": true,
 		"declarationMap": true,
@@ -15,6 +14,7 @@
 		"noUnusedParameters": false,
 		"preserveWatchOutput": true,
 		"skipLibCheck": true,
+		"strict": false,
 		"target": "ESNext",
 		"types": ["node"]
 	}
