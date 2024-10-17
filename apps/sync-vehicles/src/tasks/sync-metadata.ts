@@ -19,7 +19,6 @@ const DATASET_FILE_URL = 'https://storage.carrismetropolitana.pt/static/test/veh
 export const syncMetadata = async () => {
 	//
 
-	LOGGER.divider();
 	LOGGER.title(`SYNC METADATA`);
 
 	const globalTimer = new TIMETRACKER();
