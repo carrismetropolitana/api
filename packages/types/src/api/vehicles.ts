@@ -115,4 +115,4 @@ export interface VehiclePosition extends VehicleMetadata {
 	vehicle_id: string
 }
 
-export type Vehicle = VehicleMetadata | VehiclePosition;
+export type Vehicle = VehicleMetadata & VehiclePosition;
