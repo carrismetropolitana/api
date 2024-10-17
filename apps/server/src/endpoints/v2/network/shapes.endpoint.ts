@@ -2,12 +2,12 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
-
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 /* * */
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.get(`v2:network:shapes:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.SHAPES}:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

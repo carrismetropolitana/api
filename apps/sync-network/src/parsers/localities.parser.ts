@@ -3,6 +3,7 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { createHash } from 'node:crypto';
@@ -55,8 +56,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allLocalitiesData.push(parsedLocality);
-		await SERVERDB.set(`v2:network:localities:${parsedLocality.id}`, JSON.stringify(parsedLocality));
-		updatedLocalityKeys.add(`v2:network:localities:${parsedLocality.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:${parsedLocality.id}`, JSON.stringify(parsedLocality));
+		updatedLocalityKeys.add(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:${parsedLocality.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedLocalityKeys.size} Localities`);
@@ -65,14 +66,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allLocalitiesData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set('v2:network:localities:all', JSON.stringify(allLocalitiesData));
-	updatedLocalityKeys.add('v2:network:localities:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(allLocalitiesData));
+	updatedLocalityKeys.add(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`);
 
 	// 8.
 	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:localities:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LOCALITIES}:*`, TYPE: 'string' })) {
 		allSavedStopKeys.push(key);
 	}
 

@@ -3,6 +3,7 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -98,8 +99,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allStopsData.push(parsedStop);
-		await SERVERDB.set(`v2:network:stops:${parsedStop.id}`, JSON.stringify(parsedStop));
-		updatedStopKeys.add(`v2:network:stops:${parsedStop.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.STOPS}:${parsedStop.id}`, JSON.stringify(parsedStop));
+		updatedStopKeys.add(`${SERVERDB_KEYS.NETWORK.STOPS}:${parsedStop.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedStopKeys.size} Stops`);
@@ -108,14 +109,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set('v2:network:stops:all', JSON.stringify(allStopsData));
-	updatedStopKeys.add('v2:network:stops:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.STOPS}:all`, JSON.stringify(allStopsData));
+	updatedStopKeys.add(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:stops:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.STOPS}:*`, TYPE: 'string' })) {
 		allSavedStopKeys.push(key);
 	}
 

@@ -14,14 +14,15 @@
 		"start:sync": "npm run build && node dist/index.js"
 	},
 	"dependencies": {
+		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"@dotenv-run/cli": "1.3.6",
 		"luxon": "3.5.0",
 		"redis": "4.7.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-services": "*",
+		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
 		"@types/luxon": "3.4.2",

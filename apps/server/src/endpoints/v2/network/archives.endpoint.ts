@@ -2,12 +2,12 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
-
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:network:archives:all');
+	const allItems = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -15,7 +15,7 @@ const all = async (_, reply) => {
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.get(`v2:network:archives:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

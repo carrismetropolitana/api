@@ -5,6 +5,7 @@ import type { GtfsCalendarDate, GtfsRoute, GtfsStopTime, GtfsTrip, NetworkLine, 
 import sortCollator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -55,7 +56,7 @@ export default async () => {
 	// Using hashmaps allows for O(1) lookups instead of linear scans.
 
 	// For Stops
-	const allStopsParsedTxt = await SERVERDB.get('v2:network:stops:all');
+	const allStopsParsedTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
 	const allStopsParsedJson: NetworkStop[] = JSON.parse(allStopsParsedTxt);
 	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.id, item]));
 
@@ -390,8 +391,8 @@ export default async () => {
 
 		const finalizedPatternGroupsData: NetworkPattern[] = Object.values(parsedPatternGroups).map((item: NetworkPattern) => ({ ...item, trips: Object.values(item.trips) }));
 
-		await SERVERDB.set(`v2:network:patterns:${patternId}`, JSON.stringify(finalizedPatternGroupsData));
-		updatedPatternKeys.add(`v2:network:patterns:${patternId}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${patternId}`, JSON.stringify(finalizedPatternGroupsData));
+		updatedPatternKeys.add(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${patternId}`);
 
 		//
 	}
@@ -404,12 +405,12 @@ export default async () => {
 	const finalizedAllRoutesData: NetworkRoute[] = (Object.values(allRoutesParsed) as NetworkRoute[]).sort((a, b) => sortCollator.compare(a.route_id, b.route_id));
 
 	for (const finalizedRouteData of finalizedAllRoutesData) {
-		await SERVERDB.set(`v2:network:routes:${finalizedRouteData.route_id}`, JSON.stringify(finalizedRouteData));
-		updatedRouteKeys.add(`v2:network:routes:${finalizedRouteData.route_id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.ROUTES}:${finalizedRouteData.route_id}`, JSON.stringify(finalizedRouteData));
+		updatedRouteKeys.add(`${SERVERDB_KEYS.NETWORK.ROUTES}:${finalizedRouteData.route_id}`);
 	}
 
-	await SERVERDB.set('v2:network:routes:all', JSON.stringify(finalizedAllRoutesData));
-	updatedRouteKeys.add('v2:network:routes:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(finalizedAllRoutesData));
+	updatedRouteKeys.add(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`);
 
 	LOGGER.info(`Updated ${updatedRouteKeys.size} Routes`);
 
@@ -419,12 +420,12 @@ export default async () => {
 	const finalizedAllLinesData: NetworkLine[] = (Object.values(allLinesParsed) as NetworkLine[]).sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
 
 	for (const finalizedLineData of finalizedAllLinesData) {
-		await SERVERDB.set(`v2:network:lines:${finalizedLineData.line_id}`, JSON.stringify(finalizedLineData));
-		updatedLineKeys.add(`v2:network:lines:${finalizedLineData.line_id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LINES}:${finalizedLineData.line_id}`, JSON.stringify(finalizedLineData));
+		updatedLineKeys.add(`${SERVERDB_KEYS.NETWORK.LINES}:${finalizedLineData.line_id}`);
 	}
 
-	await SERVERDB.set('v2:network:lines:all', JSON.stringify(finalizedAllLinesData));
-	updatedLineKeys.add('v2:network:lines:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LINES}:all`, JSON.stringify(finalizedAllLinesData));
+	updatedLineKeys.add(`${SERVERDB_KEYS.NETWORK.LINES}:all`);
 
 	LOGGER.info(`Updated ${updatedLineKeys.size} Lines`);
 
@@ -432,7 +433,7 @@ export default async () => {
 	// Delete stale patterns
 
 	const allPatternKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:patterns:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.PATTERNS}:*`, TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 
@@ -447,7 +448,7 @@ export default async () => {
 	// Delete stale routes
 
 	const allRouteKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:routes:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LOCALITIES}:*`, TYPE: 'string' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
 
@@ -462,7 +463,7 @@ export default async () => {
 	// Delete stale routes
 
 	const allLineKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:lines:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LINES}:*`, TYPE: 'string' })) {
 		allLineKeysInTheDatabase.push(key);
 	}
 

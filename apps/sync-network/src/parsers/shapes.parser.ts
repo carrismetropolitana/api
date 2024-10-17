@@ -3,6 +3,7 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import * as turf from '@turf/turf';
@@ -62,8 +63,8 @@ export default async () => {
 		const shapeExtensionMeters = shapeExtensionKm ? shapeExtensionKm * 1000 : 0;
 		parsedShape.extension = Math.floor(shapeExtensionMeters);
 		// Update or create new document
-		await SERVERDB.set(`v2:network:shapes:${parsedShape.id}`, JSON.stringify(parsedShape));
-		updatedShapeKeys.add(`v2:network:shapes:${parsedShape.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.SHAPES}:${parsedShape.id}`, JSON.stringify(parsedShape));
+		updatedShapeKeys.add(`${SERVERDB_KEYS.NETWORK.SHAPES}:${parsedShape.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedShapeKeys.size} Shapes`);
@@ -72,7 +73,7 @@ export default async () => {
 	// Add the 'all' option
 
 	const allSavedShapeKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:shapes:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.SHAPES}:*`, TYPE: 'string' })) {
 		allSavedShapeKeys.push(key);
 	}
 

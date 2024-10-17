@@ -1,8 +1,8 @@
 /* * */
 
 import collator from '@/modules/sortCollator.js';
-import { NETWORKDB } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -41,8 +41,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allMunicipalitiesData.push(parsedMunicipality);
-		await SERVERDB.set(`v2:network:municipalities:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
-		updatedMunicipalityKeys.add(`v2:network:municipalities:${parsedMunicipality.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.MUNICIPALITIES}:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
+		updatedMunicipalityKeys.add(`${SERVERDB_KEYS.NETWORK.MUNICIPALITIES}:${parsedMunicipality.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedMunicipalityKeys.size} Municipalities`);
@@ -51,14 +51,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allMunicipalitiesData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set('v2:network:municipalities:all', JSON.stringify(allMunicipalitiesData));
-	updatedMunicipalityKeys.add('v2:network:municipalities:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(allMunicipalitiesData));
+	updatedMunicipalityKeys.add(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`);
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedMunicipalityKeys: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:municipalities:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LOCALITIES}:*`, TYPE: 'string' })) {
 		allSavedMunicipalityKeys.push(key);
 	}
 
