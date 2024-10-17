@@ -2,12 +2,13 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 // import { LineMetrics, OperatorMetrics, StopMetrics } from '@carrismetropolitana/api-types';
 
 /* * */
 
 const byDay = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:metrics:demand:by_day');
+	const allItems = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -15,7 +16,7 @@ const byDay = async (_, reply) => {
 };
 
 const byMonth = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:metrics:demand:by_month');
+	const allItems = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -23,7 +24,7 @@ const byMonth = async (_, reply) => {
 };
 
 const byLine = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:metrics:demand:by_line');
+	const allItems = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -31,7 +32,7 @@ const byLine = async (_, reply) => {
 };
 
 // const byLineId = async (request, reply) => {
-// 	const allItems = await SERVERDB.get(`v2:metrics:demand:by_line`);
+// 	const allItems = await SERVERDB.get(`SERVERDB_KEYS.METRICS.DEMAND_BY_LINE`);
 
 // 	const lineId = request.params.lineId;
 // 	const line = JSON.parse(allItems).find((item: LineMetrics) => item.line_id === lineId);
@@ -50,7 +51,7 @@ const byLine = async (_, reply) => {
 // };
 
 const byStop = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:metrics:demand:by_stop');
+	const allItems = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND_BY_STOP);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

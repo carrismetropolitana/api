@@ -2,7 +2,7 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
-
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 /* * */
 
@@ -10,7 +10,7 @@ const byLine = async (request, reply) => {
 	const lineId = request.params.lineId;
 	const operationalDay = request.params.operationalDay || 'all';
 
-	const metrics = await SERVERDB.get(`v2:metrics:service:${lineId}:${operationalDay}`);
+	const metrics = await SERVERDB.get(`${SERVERDB_KEYS.METRICS.SERVICE}:${lineId}:${operationalDay}`);
 
 	if (!metrics) {
 		return reply
@@ -26,7 +26,7 @@ const byLine = async (request, reply) => {
 };
 
 const all = async (request, reply) => {
-	const metric = await SERVERDB.get(`v2:metrics:service:all`);
+	const metric = await SERVERDB.get(`${SERVERDB_KEYS.METRICS.SERVICE}:all`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

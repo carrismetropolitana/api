@@ -1,6 +1,7 @@
 /* * */
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime, Info } from 'luxon';
@@ -17,7 +18,7 @@ export default async () => {
 	//
 	// Get Data from redis
 
-	const ByMonthTxt = await SERVERDB.get('v2:metrics:demand:by_month');
+	const ByMonthTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH);
 	const ByMonthData = JSON.parse(ByMonthTxt);
 
 	//
@@ -63,7 +64,7 @@ export default async () => {
 
 	//
 	// Save all documents
-	await SERVERDB.set('v2:metrics:demand:by_month', JSON.stringify(by_month));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH, JSON.stringify(by_month));
 
 	//
 	LOGGER.info('Metrics saved to database. | Time elapsed: ' + globalTimer.get());

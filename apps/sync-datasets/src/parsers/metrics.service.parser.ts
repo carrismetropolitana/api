@@ -2,6 +2,7 @@
 
 import collator from '@/services/sortCollator.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 
@@ -69,14 +70,14 @@ export default async () => {
 		allItemsData.push(parsedItemData);
 
 		// Save by line:operational_day
-		await SERVERDB.set(`v2:metrics:service:${parsedItemData.lineId}:${parsedItemData.operationalDay}`, JSON.stringify(parsedItemData));
+		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:${parsedItemData.lineId}:${parsedItemData.operationalDay}`, JSON.stringify(parsedItemData));
 
 		// Save by Line
 		const savedLineData = lines.get(parsedItemData.lineId) || [];
 		savedLineData.push(parsedItemData);
 		lines.set(parsedItemData.lineId, savedLineData);
 
-		updatedItemKeys.add(`v2:metrics:service:${parsedItemData.lineId}:${parsedItemData.operationalDay}`);
+		updatedItemKeys.add(`${SERVERDB_KEYS.METRICS.SERVICE}:${parsedItemData.lineId}:${parsedItemData.operationalDay}`);
 		//
 	}
 
@@ -86,7 +87,7 @@ export default async () => {
 	console.log(`⤷ Saving lines...`);
 
 	for (const [lineId, lineData] of lines) {
-		await SERVERDB.set(`v2:metrics:service:${lineId}:all`, JSON.stringify(lineData));
+		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:${lineId}:all`, JSON.stringify(lineData));
 	}
 
 	// 4.
@@ -98,14 +99,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allItemsData.sort((a, b) => collator.compare(a.lineId, b.lineId));
-	await SERVERDB.set('v2:metrics:service:all', JSON.stringify(allItemsData));
-	updatedItemKeys.add('v2:metrics:service:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:all`, JSON.stringify(allItemsData));
+	updatedItemKeys.add(`${SERVERDB_KEYS.METRICS.SERVICE}:all`);
 
 	// 6.
 	// Delete all items not present in the current update
 
 	const allSavedItemKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:metrics:service/*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.METRICS.SERVICE}/*`, TYPE: 'string' })) {
 		allSavedItemKeys.push(key);
 	}
 	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));
