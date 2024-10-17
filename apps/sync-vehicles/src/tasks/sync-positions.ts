@@ -80,7 +80,7 @@ export const syncPositions = async () => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.ARCHIVES.ALL);
+	const allArchivesTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`);
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
@@ -101,7 +101,7 @@ export const syncPositions = async () => {
 
 	const fetchServerdbTimer = new TIMETRACKER();
 
-	const existingVehicleTxt = await SERVERDB.get(SERVERDB_KEYS.VEHICLES.ALL);
+	const existingVehicleTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`);
 	const existingVehicleData: Vehicle[] = JSON.parse(existingVehicleTxt);
 
 	const allVehiclesMap = new Map<string, Vehicle>();
@@ -251,7 +251,7 @@ export const syncPositions = async () => {
 	const saveTimer = new TIMETRACKER();
 
 	const allVehiclesMapArray = Array.from(allVehiclesMap.values());
-	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.ALL, JSON.stringify(allVehiclesMapArray));
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`, JSON.stringify(allVehiclesMapArray));
 
 	LOGGER.info(`Saved ${allVehiclesMap.size} Vehicles to SERVERDB (${saveTimer.get()})`);
 
@@ -261,10 +261,10 @@ export const syncPositions = async () => {
 	const conversionsTimer = new TIMETRACKER();
 
 	const allVehiclesMapJson = convertToJson(allVehiclesMapArray);
-	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.JSON, JSON.stringify(allVehiclesMapJson));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.VEHICLES_JSON, JSON.stringify(allVehiclesMapJson));
 
 	const allVehiclesMapProtobuf = convertToProtobuf(allVehiclesMapArray);
-	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.PROTOBUF, JSON.stringify(allVehiclesMapProtobuf));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.VEHICLES_PROTOBUF, JSON.stringify(allVehiclesMapProtobuf));
 
 	LOGGER.success(`Converted unique Vehicles to JSON and Protobuf formats (${conversionsTimer.get()})`);
 
