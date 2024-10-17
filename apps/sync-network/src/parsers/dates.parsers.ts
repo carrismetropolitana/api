@@ -3,6 +3,7 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -39,8 +40,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allDatesData.push(parsedDate);
-		await SERVERDB.set(`v2:network:dates:${parsedDate.date}`, JSON.stringify(parsedDate));
-		updatedDateKeys.add(`v2:network:dates:${parsedDate.date}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.DATES}:${parsedDate.date}`, JSON.stringify(parsedDate));
+		updatedDateKeys.add(`${SERVERDB_KEYS.NETWORK.DATES}:${parsedDate.date}`);
 	}
 
 	LOGGER.info(`Updated ${updatedDateKeys.size} Dates`);
@@ -49,8 +50,8 @@ export default async () => {
 	// Add the 'all' option
 
 	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
-	await SERVERDB.set('v2:network:dates:all', JSON.stringify(allDatesData));
-	updatedDateKeys.add('v2:network:dates:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.DATES}:all`, JSON.stringify(allDatesData));
+	updatedDateKeys.add(`${SERVERDB_KEYS.NETWORK.DATES}:all`);
 
 	//
 	// Delete all items not present in the current update
