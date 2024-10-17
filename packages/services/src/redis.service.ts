@@ -40,7 +40,7 @@ export class RedisService {
 			await this.client.connect();
 			console.log(`⤷ Connected to Redis.`);
 		}
-		catch (error: any) {
+		catch (error) {
 			throw new Error('Error connecting to Redis', error);
 		}
 	}
