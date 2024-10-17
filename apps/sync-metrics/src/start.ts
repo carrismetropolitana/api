@@ -28,7 +28,7 @@ export default async () => {
 	const allLinesData: any[] = JSON.parse(allLinesTxt);
 	const allLinesSet = new Set(allLinesData.map(item => item.line_id));
 
-	const allStopsTxt = await SERVERDB.get('v2:network:stops:all');
+	const allStopsTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
 	if (!allStopsTxt) {
 		throw new Error('No stops found in SERVERDB');
 	}

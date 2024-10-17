@@ -13,7 +13,7 @@ const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:network:stops:all');
+	const allItems = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -26,7 +26,7 @@ const single = async (request, reply) => {
 	if (!regexPatternForStopId.test(request.params.id)) {
 		return reply.status(400).send('{}');
 	}
-	const singleItem = await SERVERDB.get(`v2:network:stops:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.STOPS}:${request.params.id}`);
 	if (!singleItem) {
 		return reply.status(404).send('{}');
 	}

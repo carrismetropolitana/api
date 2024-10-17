@@ -3,8 +3,8 @@
 import type { GTFSCalendarDate, GTFSRoute, GTFSStopTime, GTFSTrip, MonStop } from '@carrismetropolitana/api-types';
 
 import collator from '@/modules/sortCollator.js';
-import { NETWORKDB } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 /* * */
 
@@ -160,7 +160,7 @@ export default async () => {
 
 	// 3.
 	// Get all stops and build a hashmap for quick retrieval
-	const allStopsTxt = await SERVERDB.get('v2:network:stops:all');
+	const allStopsTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
 	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
 
