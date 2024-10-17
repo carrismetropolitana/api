@@ -89,7 +89,13 @@ export function convertPropulsionCode(propulsionCode: string): Propulsion {
 
 /* * */
 
-export type OccupancyStatus = 'empty' | 'full' | 'moderate';
+export enum OccupancyStatus {
+	empty = 'empty',
+	full = 'full',
+	seats_available = 'seats_available',
+	standing_only = 'standing_only',
+	unknown = 'unknown',
+}
 
 /* * */
 

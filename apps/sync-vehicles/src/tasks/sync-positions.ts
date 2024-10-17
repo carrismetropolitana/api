@@ -2,7 +2,7 @@
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
-import { Vehicle } from '@carrismetropolitana/api-types/src/api';
+import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/src/api';
 import { TripScheduleRelationship, VehicleEvent } from '@carrismetropolitana/api-types/src/gtfs';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -71,10 +71,7 @@ function convertToProtobuf(allEvents) {
 export const syncPositions = async () => {
 	//
 
-	LOGGER.divider();
 	LOGGER.title(`SYNC POSITIONS`);
-
-	const globalTimer = new TIMETRACKER();
 
 	//
 	// Get all archives from SERVERDB to set the active archive_id for each operator
@@ -100,15 +97,6 @@ export const syncPositions = async () => {
 	LOGGER.info(`Fetched ${allArchivesData.length} Archives from SERVERDB (${archivesTimer.get()})`);
 
 	//
-	// Fetch latest events from PCGIDB
-
-	const pcgidbTimer = new TIMETRACKER();
-
-	const allPcgiVehicleEvents: VehicleEvent[] = await PCGIDB.VehicleEvents.find({ millis: { $gte: DateTime.now().minus({ minutes: 5 }).toMillis() } }).toArray();
-
-	LOGGER.info(`Fetched ${allPcgiVehicleEvents.length} Vehicle Events from PCGIDB (${pcgidbTimer.get()})`);
-
-	//
 	// Fetch existing vehicles from SERVERDB
 
 	const fetchServerdbTimer = new TIMETRACKER();
@@ -122,11 +110,22 @@ export const syncPositions = async () => {
 	LOGGER.info(`Fetched ${allVehiclesMap.size} Vehicles from SERVERDB (${fetchServerdbTimer.get()})`);
 
 	//
+	// Fetch latest events from PCGIDB
+
+	const pcgidbTimer = new TIMETRACKER();
+
+	const allPcgiVehicleEvents: VehicleEvent[] = await PCGIDB.VehicleEvents.find({ millis: { $gte: DateTime.now().minus({ minutes: 5 }).toMillis() } }).toArray();
+
+	const allPcgiVehicleEventsSorted = allPcgiVehicleEvents.sort((a, b) => a.content.entity[0].vehicle.timestamp - b.content.entity[0].vehicle.timestamp);
+
+	LOGGER.info(`Fetched ${allPcgiVehicleEvents.length} Vehicle Events from PCGIDB (${pcgidbTimer.get()})`);
+
+	//
 	// Update vehicles with the latest events
 
 	const parseTimer = new TIMETRACKER();
 
-	for (const pcgiVehicleEvent of allPcgiVehicleEvents) {
+	for (const pcgiVehicleEvent of allPcgiVehicleEventsSorted) {
 		//
 
 		//
@@ -157,28 +156,21 @@ export const syncPositions = async () => {
 		const vehicleTripId = pcgiVehicleEvent.content.entity[0].vehicle.trip.tripId;
 		const vehicleBearing = Math.floor(Number(pcgiVehicleEvent?.content?.entity[0]?.vehicle?.position?.bearing) || 0);
 		const vehicleSpeed = pcgiVehicleEvent?.content?.entity[0]?.vehicle?.position?.speed / 3.6 || 0; // in meters per second
-
-		//
-		// Check if a more recent event was already saved for this vehicle during this sync iteration
-
-		const existingVehicle = allVehiclesMap.get(vehicleId);
-
-		if (existingVehicle && 'timestamp' in existingVehicle && existingVehicle.timestamp >= vehicleTimestamp) {
-			continue;
-		}
-
 		const operatorId = pcgiVehicleEvent.content?.entity[0]?.vehicle?.agencyId;
 
 		//
-		// Fetch pattern information from SERVERDB
+		// Check if there is a vehicle with the same ID and a newer timestamp
 
-		// const patternDataTxt = await SERVERDB.get(`patterns:${pcgiVehicleEvent.content.entity[0].vehicle.trip.patternId}`);
-		// const patternDataJson = await JSON.parse(patternDataTxt);
+		const existingVehicle = allVehiclesMap.get(vehicleId);
+
+		if (existingVehicle && existingVehicle?.timestamp >= vehicleTimestamp) {
+			continue;
+		}
 
 		//
-		// Save the current event to the map variable
+		// Prepare the updated vehicle object
 
-		allVehiclesMap.set(vehicleId, {
+		const updateVehicleObject = {
 			...existingVehicle,
 			bearing: vehicleBearing,
 			block_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.blockId,
@@ -197,7 +189,56 @@ export const syncPositions = async () => {
 			timestamp: vehicleTimestamp, // Timestamp is in UTC
 			trip_id: `${vehicleTripId}_${currentArchiveIds[operatorId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
 			vehicle_id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
+		};
+
+		//
+		// Check if the Trip ID has changed between events.
+		// If it has, the current occupancy count is reset to 0.
+
+		if (existingVehicle?.trip_id !== pcgiVehicleEvent.content.entity[0].vehicle.trip.tripId) {
+			updateVehicleObject.occupancy_estimated = 0;
+			updateVehicleObject.occupancy_status = OccupancyStatus.empty;
+		}
+
+		//
+		// Update the occupancy status based on the estimated occupancy count sensors.
+		// First, extract the sensor values from the event, and then update the vehicle object adding or subtracting the values.
+		// Then, calculate the occupancy status based on the estimated occupancy count and the vehicle capacity.
+
+		let estimatedOccupancyIncoming = 0;
+		let estimatedOccupancyOutgoing = 0;
+
+		pcgiVehicleEvent.content.entity[0].vehicle.passengerCounting.counting.forEach((counting) => {
+			estimatedOccupancyIncoming += counting.incoming;
+			estimatedOccupancyOutgoing += counting.outgoing;
 		});
+
+		updateVehicleObject.occupancy_estimated = updateVehicleObject.occupancy_estimated + estimatedOccupancyIncoming - estimatedOccupancyOutgoing;
+
+		if (updateVehicleObject.occupancy_estimated < 0) {
+			updateVehicleObject.occupancy_estimated = 0;
+			updateVehicleObject.occupancy_status = OccupancyStatus.unknown;
+		}
+		else if (updateVehicleObject.occupancy_estimated < updateVehicleObject.capacity_seated) {
+			updateVehicleObject.occupancy_status = OccupancyStatus.seats_available;
+		}
+		else if (updateVehicleObject.occupancy_estimated >= updateVehicleObject.capacity_seated && updateVehicleObject.occupancy_estimated < updateVehicleObject.capacity_total) {
+			updateVehicleObject.occupancy_status = OccupancyStatus.standing_only;
+		}
+		else if (updateVehicleObject.occupancy_estimated >= updateVehicleObject.capacity_total) {
+			updateVehicleObject.occupancy_status = OccupancyStatus.full;
+		}
+
+		//
+		// Fetch pattern information from SERVERDB
+
+		// const patternDataTxt = await SERVERDB.client.get(`patterns:${pcgiVehicleEvent.content.entity[0].vehicle.trip.patternId}`);
+		// const patternDataJson = await JSON.parse(patternDataTxt);
+
+		//
+		// Save the updated vehicle to the Map
+
+		allVehiclesMap.set(vehicleId, updateVehicleObject);
 
 		//
 	}
@@ -225,9 +266,7 @@ export const syncPositions = async () => {
 	const allVehiclesMapProtobuf = convertToProtobuf(allVehiclesMapArray);
 	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.PROTOBUF, JSON.stringify(allVehiclesMapProtobuf));
 
-	LOGGER.info(`Converted unique Vehicles to JSON and Protobuf formats (${conversionsTimer.get()})`);
-
-	LOGGER.terminate(`Done with this iteration (${globalTimer.get()})`);
+	LOGGER.success(`Converted unique Vehicles to JSON and Protobuf formats (${conversionsTimer.get()})`);
 
 	//
 };
