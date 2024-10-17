@@ -2,7 +2,7 @@
 
 import { syncMetadata } from '@/tasks/sync-metadata.js';
 import { syncPositions } from '@/tasks/sync-positions.js';
-import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
@@ -12,7 +12,6 @@ import 'dotenv/config';
 	//
 
 	await PCGIDB.connect();
-	await SERVERDB.connect();
 
 	//
 
