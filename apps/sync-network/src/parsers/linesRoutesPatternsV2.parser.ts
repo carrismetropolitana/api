@@ -5,6 +5,7 @@ import type { GtfsCalendarDate, GtfsRoute, GtfsStopTime, GtfsTrip, NetworkLine, 
 import sortCollator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -419,12 +420,12 @@ export default async () => {
 	const finalizedAllLinesData: NetworkLine[] = (Object.values(allLinesParsed) as NetworkLine[]).sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
 
 	for (const finalizedLineData of finalizedAllLinesData) {
-		await SERVERDB.set(`v2:network:lines:${finalizedLineData.line_id}`, JSON.stringify(finalizedLineData));
-		updatedLineKeys.add(`v2:network:lines:${finalizedLineData.line_id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LINES}:${finalizedLineData.line_id}`, JSON.stringify(finalizedLineData));
+		updatedLineKeys.add(`${SERVERDB_KEYS.NETWORK.LINES}:${finalizedLineData.line_id}`);
 	}
 
-	await SERVERDB.set('v2:network:lines:all', JSON.stringify(finalizedAllLinesData));
-	updatedLineKeys.add('v2:network:lines:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LINES}:all`, JSON.stringify(finalizedAllLinesData));
+	updatedLineKeys.add(`${SERVERDB_KEYS.NETWORK.LINES}:all`);
 
 	LOGGER.info(`Updated ${updatedLineKeys.size} Lines`);
 

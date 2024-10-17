@@ -1,6 +1,7 @@
 /* * */
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -18,7 +19,7 @@ export default async () => {
 	//
 	// Retrieve all Lines and Stops from database
 
-	const allLinesTxt = await SERVERDB.get('v2:network:lines:all');
+	const allLinesTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.LINES}:all`);
 
 	if (!allLinesTxt) {
 		throw new Error('No lines found in SERVERDB');
