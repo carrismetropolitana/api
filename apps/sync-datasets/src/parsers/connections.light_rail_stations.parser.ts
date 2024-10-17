@@ -2,6 +2,7 @@
 
 import collator from '@/services/sortCollator.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 
@@ -55,8 +56,8 @@ export default async () => {
 		};
 		// Save to database
 		allItemsData.push(parsedItemData);
-		await SERVERDB.set(`v2:datasets:connections:light_rail_stations:${parsedItemData.id}`, JSON.stringify(parsedItemData));
-		updatedItemKeys.add(`v2:datasets:connections:light_rail_stations:${parsedItemData.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_LIGHT_RAIL_STATIONS}:${parsedItemData.id}`, JSON.stringify(parsedItemData));
+		updatedItemKeys.add(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_LIGHT_RAIL_STATIONS}:${parsedItemData.id}`);
 		//
 	}
 
@@ -69,14 +70,14 @@ export default async () => {
 	// Add the 'all' option
 
 	allItemsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set('v2:datasets:connections:light_rail_stations:all', JSON.stringify(allItemsData));
-	updatedItemKeys.add('v2:datasets:connections:light_rail_stations:all');
+	await SERVERDB.set(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_LIGHT_RAIL_STATIONS}:all`, JSON.stringify(allItemsData));
+	updatedItemKeys.add(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_LIGHT_RAIL_STATIONS}:all`);
 
 	// 6.
 	// Delete all items not present in the current update
 
 	const allSavedItemKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:datasets:connections:light_rail_stations:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.DATASETS.CONNECTIONS_LIGHT_RAIL_STATIONS}:*`, TYPE: 'string' })) {
 		allSavedItemKeys.push(key);
 	}
 	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));
