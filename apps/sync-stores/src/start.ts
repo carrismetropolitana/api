@@ -29,7 +29,7 @@ export default async () => {
 	// 1.
 	// Retrieve existing ENCM documents from database
 
-	const allEncmDocumentsTxt = await SERVERDB.client.get('v2:datasets:facilities:encm:all');
+	const allEncmDocumentsTxt = await SERVERDB.get('v2:datasets:facilities:encm:all');
 	const allEncmDocumentsData = JSON.parse(allEncmDocumentsTxt);
 
 	// 2.
@@ -113,7 +113,7 @@ export default async () => {
 		// Update the current document with the new values
 
 		allEncmData.push(updatedDocument);
-		await SERVERDB.client.set(`v2:datasets:facilities:encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
+		await SERVERDB.set(`v2:datasets:facilities:encm:${updatedDocument.id}`, JSON.stringify(updatedDocument));
 
 		// Log progress
 		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | expected_wait_time: ${updatedDocument.expected_wait_time} | short_name: ${foundDocument.short_name}`);
@@ -125,7 +125,7 @@ export default async () => {
 
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 	allEncmData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('v2:datasets:facilities:encm:all', JSON.stringify(allEncmData));
+	await SERVERDB.set('v2:datasets:facilities:encm:all', JSON.stringify(allEncmData));
 
 	LOGGER.terminate(`Updated ${allEncmDocumentsData.length} ENCM locations (${globalTimer.get()})`);
 

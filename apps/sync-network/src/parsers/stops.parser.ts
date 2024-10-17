@@ -98,7 +98,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allStopsData.push(parsedStop);
-		await SERVERDB.client.set(`v2:network:stops:${parsedStop.id}`, JSON.stringify(parsedStop));
+		await SERVERDB.set(`v2:network:stops:${parsedStop.id}`, JSON.stringify(parsedStop));
 		updatedStopKeys.add(`v2:network:stops:${parsedStop.id}`);
 	}
 
@@ -108,20 +108,20 @@ export default async () => {
 	// Add the 'all' option
 
 	allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('v2:network:stops:all', JSON.stringify(allStopsData));
+	await SERVERDB.set('v2:network:stops:all', JSON.stringify(allStopsData));
 	updatedStopKeys.add('v2:network:stops:all');
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:stops:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:stops:*', TYPE: 'string' })) {
 		allSavedStopKeys.push(key);
 	}
 
 	const staleStopKeys = allSavedStopKeys.filter(id => !updatedStopKeys.has(id));
 	if (staleStopKeys.length) {
-		await SERVERDB.client.del(staleStopKeys);
+		await SERVERDB.del(staleStopKeys);
 	}
 
 	LOGGER.info(`Deleted ${staleStopKeys.length} stale Stops`);

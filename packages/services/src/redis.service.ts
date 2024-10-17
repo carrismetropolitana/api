@@ -67,6 +67,10 @@ export class RedisService {
 		return this.client.keys(pattern);
 	}
 
+	async scanIterator(options: { MATCH: string, TYPE: string }) {
+		return this.client.scanIterator(options);
+	}
+
 	async set(key: string, value: string) {
 		return this.client.set(key, value);
 	}

@@ -41,7 +41,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allMunicipalitiesData.push(parsedMunicipality);
-		await SERVERDB.client.set(`v2:network:municipalities:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
+		await SERVERDB.set(`v2:network:municipalities:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
 		updatedMunicipalityKeys.add(`v2:network:municipalities:${parsedMunicipality.id}`);
 	}
 
@@ -51,20 +51,20 @@ export default async () => {
 	// Add the 'all' option
 
 	allMunicipalitiesData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('v2:network:municipalities:all', JSON.stringify(allMunicipalitiesData));
+	await SERVERDB.set('v2:network:municipalities:all', JSON.stringify(allMunicipalitiesData));
 	updatedMunicipalityKeys.add('v2:network:municipalities:all');
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedMunicipalityKeys: string[] = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:municipalities:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:municipalities:*', TYPE: 'string' })) {
 		allSavedMunicipalityKeys.push(key);
 	}
 
 	const staleMunicipalityKeys = allSavedMunicipalityKeys.filter(id => !updatedMunicipalityKeys.has(id));
 	if (staleMunicipalityKeys.length) {
-		await SERVERDB.client.del(staleMunicipalityKeys);
+		await SERVERDB.del(staleMunicipalityKeys);
 	}
 
 	LOGGER.info(`Deleted ${staleMunicipalityKeys.length} stale Municipalities`);

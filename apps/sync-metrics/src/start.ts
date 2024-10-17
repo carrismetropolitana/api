@@ -18,7 +18,7 @@ export default async () => {
 	//
 	// Retrieve all Lines and Stops from database
 
-	const allLinesTxt = await SERVERDB.client.get('v2:network:lines:all');
+	const allLinesTxt = await SERVERDB.get('v2:network:lines:all');
 
 	if (!allLinesTxt) {
 		throw new Error('No lines found in SERVERDB');
@@ -27,7 +27,7 @@ export default async () => {
 	const allLinesData: any[] = JSON.parse(allLinesTxt);
 	const allLinesSet = new Set(allLinesData.map(item => item.line_id));
 
-	const allStopsTxt = await SERVERDB.client.get('v2:network:stops:all');
+	const allStopsTxt = await SERVERDB.get('v2:network:stops:all');
 	if (!allStopsTxt) {
 		throw new Error('No stops found in SERVERDB');
 	}
@@ -235,13 +235,13 @@ export default async () => {
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
 	validationsByDayArray.sort((a, b) => collator.compare(a.operational_day, b.operational_day));
-	await SERVERDB.client.set('v2:metrics:demand:by_day', JSON.stringify(validationsByDayArray));
+	await SERVERDB.set('v2:metrics:demand:by_day', JSON.stringify(validationsByDayArray));
 
 	validationsByLineArray.sort((a, b) => collator.compare(a.line_id, b.line_id));
-	await SERVERDB.client.set('v2:metrics:demand:by_line', JSON.stringify(validationsByLineArray));
+	await SERVERDB.set('v2:metrics:demand:by_line', JSON.stringify(validationsByLineArray));
 
 	validationsByStopArray.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
-	await SERVERDB.client.set('v2:metrics:demand:by_stop', JSON.stringify(validationsByStopArray));
+	await SERVERDB.set('v2:metrics:demand:by_stop', JSON.stringify(validationsByStopArray));
 
 	//
 

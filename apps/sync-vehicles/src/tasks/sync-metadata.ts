@@ -70,7 +70,7 @@ export const syncMetadata = async () => {
 	// Save items to the database
 
 	allItemsData.sort((a, b) => sortCollator.compare(a.vehicle_id, b.vehicle_id));
-	await SERVERDB.client.set(SERVERDB_KEYS.VEHICLES.ALL, JSON.stringify(allItemsData));
+	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.ALL, JSON.stringify(allItemsData));
 
 	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.VEHICLES.ALL} (${globalTimer.get()}).`);
 

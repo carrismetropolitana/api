@@ -55,7 +55,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allLocalitiesData.push(parsedLocality);
-		await SERVERDB.client.set(`v2:network:localities:${parsedLocality.id}`, JSON.stringify(parsedLocality));
+		await SERVERDB.set(`v2:network:localities:${parsedLocality.id}`, JSON.stringify(parsedLocality));
 		updatedLocalityKeys.add(`v2:network:localities:${parsedLocality.id}`);
 	}
 
@@ -65,20 +65,20 @@ export default async () => {
 	// Add the 'all' option
 
 	allLocalitiesData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('v2:network:localities:all', JSON.stringify(allLocalitiesData));
+	await SERVERDB.set('v2:network:localities:all', JSON.stringify(allLocalitiesData));
 	updatedLocalityKeys.add('v2:network:localities:all');
 
 	// 8.
 	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:localities:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:localities:*', TYPE: 'string' })) {
 		allSavedStopKeys.push(key);
 	}
 
 	const staleLocalityKeys = allSavedStopKeys.filter(id => !updatedLocalityKeys.has(id));
 	if (staleLocalityKeys.length) {
-		await SERVERDB.client.del(staleLocalityKeys);
+		await SERVERDB.del(staleLocalityKeys);
 	}
 
 	LOGGER.info(`Deleted ${staleLocalityKeys.length} stale Localities`);

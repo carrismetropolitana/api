@@ -160,7 +160,7 @@ export default async () => {
 
 	// 3.
 	// Get all stops and build a hashmap for quick retrieval
-	const allStopsTxt = await SERVERDB.client.get('v2:network:stops:all');
+	const allStopsTxt = await SERVERDB.get('v2:network:stops:all');
 	const allStopsJson: MonStop[] = JSON.parse(allStopsTxt);
 	const allStopsHashmap = new Map(allStopsJson.map(obj => [obj.id, obj]));
 
@@ -449,9 +449,9 @@ export default async () => {
 				//
 				const preParsedData = patternParsed.trips.map(trip => ({ dates: trip.dates, id: trip.id }));
 				const patternGroups = createPatternGroups(preParsedData);
-				await SERVERDB.client.set(`patterns_groups:${patternParsed.id}`, JSON.stringify(patternGroups));
+				await SERVERDB.set(`patterns_groups:${patternParsed.id}`, JSON.stringify(patternGroups));
 
-				await SERVERDB.client.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
+				await SERVERDB.set(`patterns:${patternParsed.id}`, JSON.stringify(patternParsed));
 				updatedPatternKeys.add(`patterns:${patternParsed.id}`);
 				routeParsed.patterns.push(patternParsed.id);
 				lineParsed.patterns.push(patternParsed.id);
@@ -473,7 +473,7 @@ export default async () => {
 
 			// 9.4.10.
 			// Save the current route to the database
-			await SERVERDB.client.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
+			await SERVERDB.set(`routes:${routeParsed.id}`, JSON.stringify(routeParsed));
 			updatedRouteKeys.add(`routes:${routeParsed.id}`);
 
 			//
@@ -491,7 +491,7 @@ export default async () => {
 
 		// 9.7.
 		// Save the current line to the database
-		await SERVERDB.client.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
+		await SERVERDB.set(`lines:${lineParsed.id}`, JSON.stringify(lineParsed));
 		updatedLineKeys.add(`lines:${lineParsed.id}`);
 
 		// 9.8.
@@ -505,51 +505,51 @@ export default async () => {
 	// 10.
 	// Save all routes to the routes:all REDIS key
 	allRoutesFinal.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('routes:all', JSON.stringify(allRoutesFinal));
+	await SERVERDB.set('routes:all', JSON.stringify(allRoutesFinal));
 	updatedRouteKeys.add('routes:all');
 
 	// 11.
 	// Save all lines to the lines:all REDIS key
 	allLinesFinal.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.client.set('lines:all', JSON.stringify(allLinesFinal));
+	await SERVERDB.set('lines:all', JSON.stringify(allLinesFinal));
 	updatedLineKeys.add('lines:all');
 
 	// 12.
 	// Delete stale patterns not present in the current update
 	const allPatternKeysInTheDatabase = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'patterns:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'patterns:*', TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 
 	const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));
 	if (stalePatternKeys.length) {
-		await SERVERDB.client.del(stalePatternKeys);
+		await SERVERDB.del(stalePatternKeys);
 	}
 	console.log(`⤷ Deleted ${stalePatternKeys.length} stale Patterns.`);
 
 	// 13.
 	// Delete stale routes not present in the current update
 	const allRouteKeysInTheDatabase = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'routes:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'routes:*', TYPE: 'string' })) {
 		allRouteKeysInTheDatabase.push(key);
 	}
 
 	const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
 	if (staleRouteKeys.length) {
-		await SERVERDB.client.del(staleRouteKeys);
+		await SERVERDB.del(staleRouteKeys);
 	}
 	console.log(`⤷ Deleted ${staleRouteKeys.length} stale Routes.`);
 
 	// 14.
 	// Delete stale lines not present in the current update
 	const allLineKeysInTheDatabase = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'lines:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'lines:*', TYPE: 'string' })) {
 		allLineKeysInTheDatabase.push(key);
 	}
 
 	const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
 	if (staleLineKeys.length) {
-		await SERVERDB.client.del(staleLineKeys);
+		await SERVERDB.del(staleLineKeys);
 	}
 	console.log(`⤷ Deleted ${staleLineKeys.length} stale Lines.`);
 

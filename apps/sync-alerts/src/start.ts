@@ -33,7 +33,7 @@ export default async () => {
 
 	const protobufTimer = new TIMETRACKER();
 
-	await SERVERDB.client.set(`v2:network:alerts:protobuf`, JSON.stringify(alertsFeedData));
+	await SERVERDB.set(`v2:network:alerts:protobuf`, JSON.stringify(alertsFeedData));
 
 	LOGGER.info(`Saved Protobuf Alerts to ServerDB (${protobufTimer.get()})`);
 
@@ -44,7 +44,7 @@ export default async () => {
 
 	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
 
-	await SERVERDB.client.set(`v2:network:alerts:json`, JSON.stringify(allAlertsParsedV2));
+	await SERVERDB.set(`v2:network:alerts:json`, JSON.stringify(allAlertsParsedV2));
 
 	LOGGER.info(`Saved ${allAlertsParsedV2.length} JSON Alerts to ServerDB (${jsonTimer.get()})`);
 
@@ -53,7 +53,7 @@ export default async () => {
 
 	const notificationsTimer = new TIMETRACKER();
 
-	const allSentNotificationsTxt = await SERVERDB.client.get(`v2:network:alerts:sent_notifications`);
+	const allSentNotificationsTxt = await SERVERDB.get(`v2:network:alerts:sent_notifications`);
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
 	const allSentNotificationsSet = new Set(allSentNotifications);
 
@@ -111,7 +111,7 @@ export default async () => {
 		}
 	}
 
-	await SERVERDB.client.set(`v2:network:alerts:sent_notifications`, JSON.stringify(Array.from(allSentNotificationsSet)));
+	await SERVERDB.set(`v2:network:alerts:sent_notifications`, JSON.stringify(Array.from(allSentNotificationsSet)));
 
 	LOGGER.info(`Sent ${sentNotificationCounter} Notifications (${notificationsTimer.get()})`);
 

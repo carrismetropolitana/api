@@ -39,7 +39,7 @@ export default async () => {
 		};
 		// Update or create new document
 		allDatesData.push(parsedDate);
-		await SERVERDB.client.set(`v2:network:dates:${parsedDate.date}`, JSON.stringify(parsedDate));
+		await SERVERDB.set(`v2:network:dates:${parsedDate.date}`, JSON.stringify(parsedDate));
 		updatedDateKeys.add(`v2:network:dates:${parsedDate.date}`);
 	}
 
@@ -49,20 +49,20 @@ export default async () => {
 	// Add the 'all' option
 
 	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
-	await SERVERDB.client.set('v2:network:dates:all', JSON.stringify(allDatesData));
+	await SERVERDB.set('v2:network:dates:all', JSON.stringify(allDatesData));
 	updatedDateKeys.add('v2:network:dates:all');
 
 	//
 	// Delete all items not present in the current update
 
 	const allSavedDateKeys = [];
-	for await (const key of SERVERDB.client.scanIterator({ MATCH: 'v2:network:dates:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:dates:*', TYPE: 'string' })) {
 		allSavedDateKeys.push(key);
 	}
 
 	const staleDateKeys = allSavedDateKeys.filter(date => !updatedDateKeys.has(date));
 	if (staleDateKeys.length) {
-		await SERVERDB.client.del(staleDateKeys);
+		await SERVERDB.del(staleDateKeys);
 	}
 
 	LOGGER.info(`Deleted ${staleDateKeys.length} stale Dates`);

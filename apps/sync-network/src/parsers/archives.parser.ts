@@ -45,7 +45,7 @@ export const syncArchives = async () => {
 	// Save to the database
 
 	allArchivesData.sort((a, b) => collator.compare(a.start_date, b.start_date));
-	await SERVERDB.client.set(SERVERDB_KEYS.ARCHIVES.ALL, JSON.stringify(allArchivesData));
+	await SERVERDB.set(SERVERDB_KEYS.ARCHIVES.ALL, JSON.stringify(allArchivesData));
 
 	LOGGER.success(`Done updating ${updatedArchivesCounter} Archives (${globalTimer.get()})`);
 
