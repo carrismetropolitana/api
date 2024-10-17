@@ -30,7 +30,7 @@ export const SERVERDB_KEYS = Object.freeze({
 		PERIODS: 'v2:network:periods',
 		ROUTES: 'v2:network:routes',
 		STOPS: 'v2:network:stops',
-		TIMETABLES: 'v2:network:timetables:index',
+		TIMETABLES: 'v2:network:timetables',
 		VEHICLES: 'v2:network:vehicles',
 		VEHICLES_JSON: 'v2:network:vehicles:json',
 		VEHICLES_PROTOBUF: 'v2:network:vehicles:protobuf',
