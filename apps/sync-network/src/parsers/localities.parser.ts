@@ -73,7 +73,7 @@ export default async () => {
 	// Delete all items not present in the current update
 
 	const allSavedStopKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:localities:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LOCALITIES}:*`, TYPE: 'string' })) {
 		allSavedStopKeys.push(key);
 	}
 

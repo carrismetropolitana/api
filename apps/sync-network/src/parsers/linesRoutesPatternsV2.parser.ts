@@ -391,8 +391,8 @@ export default async () => {
 
 		const finalizedPatternGroupsData: NetworkPattern[] = Object.values(parsedPatternGroups).map((item: NetworkPattern) => ({ ...item, trips: Object.values(item.trips) }));
 
-		await SERVERDB.set(`v2:network:patterns:${patternId}`, JSON.stringify(finalizedPatternGroupsData));
-		updatedPatternKeys.add(`v2:network:patterns:${patternId}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${patternId}`, JSON.stringify(finalizedPatternGroupsData));
+		updatedPatternKeys.add(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${patternId}`);
 
 		//
 	}
@@ -405,8 +405,8 @@ export default async () => {
 	const finalizedAllRoutesData: NetworkRoute[] = (Object.values(allRoutesParsed) as NetworkRoute[]).sort((a, b) => sortCollator.compare(a.route_id, b.route_id));
 
 	for (const finalizedRouteData of finalizedAllRoutesData) {
-		await SERVERDB.set(`v2:network:routes:${finalizedRouteData.route_id}`, JSON.stringify(finalizedRouteData));
-		updatedRouteKeys.add(`v2:network:routes:${finalizedRouteData.route_id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.ROUTES}:${finalizedRouteData.route_id}`, JSON.stringify(finalizedRouteData));
+		updatedRouteKeys.add(`${SERVERDB_KEYS.NETWORK.ROUTES}:${finalizedRouteData.route_id}`);
 	}
 
 	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(finalizedAllRoutesData));
@@ -433,7 +433,7 @@ export default async () => {
 	// Delete stale patterns
 
 	const allPatternKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:patterns:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.PATTERNS}:*`, TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 
@@ -463,7 +463,7 @@ export default async () => {
 	// Delete stale routes
 
 	const allLineKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:lines:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LINES}:*`, TYPE: 'string' })) {
 		allLineKeysInTheDatabase.push(key);
 	}
 

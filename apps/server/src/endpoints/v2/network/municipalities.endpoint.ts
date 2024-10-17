@@ -15,7 +15,7 @@ const all = async (_, reply) => {
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.get(`v2:network:municipalities:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.MUNICIPALITIES}:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

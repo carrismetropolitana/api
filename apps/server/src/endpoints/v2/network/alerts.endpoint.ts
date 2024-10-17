@@ -29,7 +29,7 @@ const json = async (_, reply) => {
 /* * */
 
 const protobuf = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:network:alerts:protobuf');
+	const allItems = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS_PROTOBUF);
 	const allAlerts = JSON.parse(allItems);
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
 	const message = FeedMessage.fromObject(allAlerts);

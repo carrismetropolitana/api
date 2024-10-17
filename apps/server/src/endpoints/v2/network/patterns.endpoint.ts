@@ -10,7 +10,7 @@ import { DateTime } from 'luxon';
 /* * */
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.get(`v2:network:patterns:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${request.params.id}`);
 
 	return reply
 		.code(200)
@@ -35,7 +35,7 @@ const realtime = async (request, reply) => {
 		else currentArchiveIds[archiveData.operator_id] = archiveData.id;
 	}
 
-	const singleItem = await SERVERDB.get(`v2:network:patterns:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${request.params.id}`);
 	const singleItemJson = await JSON.parse(singleItem);
 	const stopIdsForThisPattern = singleItemJson?.path?.map(item => item.stop.id).join(',');
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);

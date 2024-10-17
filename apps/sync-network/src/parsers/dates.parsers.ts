@@ -57,7 +57,7 @@ export default async () => {
 	// Delete all items not present in the current update
 
 	const allSavedDateKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: 'v2:network:dates:*', TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.DATES}:*`, TYPE: 'string' })) {
 		allSavedDateKeys.push(key);
 	}
 

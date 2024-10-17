@@ -41,8 +41,8 @@ export default async () => {
 		};
 		// Update or create new document
 		allMunicipalitiesData.push(parsedMunicipality);
-		await SERVERDB.set(`v2:network:municipalities:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
-		updatedMunicipalityKeys.add(`v2:network:municipalities:${parsedMunicipality.id}`);
+		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.MUNICIPALITIES}:${parsedMunicipality.id}`, JSON.stringify(parsedMunicipality));
+		updatedMunicipalityKeys.add(`${SERVERDB_KEYS.NETWORK.MUNICIPALITIES}:${parsedMunicipality.id}`);
 	}
 
 	LOGGER.info(`Updated ${updatedMunicipalityKeys.size} Municipalities`);
