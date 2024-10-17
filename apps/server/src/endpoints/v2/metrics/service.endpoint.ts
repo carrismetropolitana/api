@@ -10,7 +10,7 @@ const byLine = async (request, reply) => {
 	const lineId = request.params.lineId;
 	const operationalDay = request.params.operationalDay || 'all';
 
-	const metrics = await SERVERDB.client.get(`v2:metrics:service:${lineId}:${operationalDay}`);
+	const metrics = await SERVERDB.get(`v2:metrics:service:${lineId}:${operationalDay}`);
 
 	if (!metrics) {
 		return reply
@@ -26,7 +26,7 @@ const byLine = async (request, reply) => {
 };
 
 const all = async (request, reply) => {
-	const metric = await SERVERDB.client.get(`v2:metrics:service:all`);
+	const metric = await SERVERDB.get(`v2:metrics:service:all`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

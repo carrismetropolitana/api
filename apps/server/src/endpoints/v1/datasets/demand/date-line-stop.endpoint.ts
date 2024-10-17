@@ -6,7 +6,7 @@ import { SERVERDB } from '@carrismetropolitana/api-services';
 /* * */
 
 const viewByDateForEachStop = async (_, reply) => {
-	const viewData = await SERVERDB.client.get('datasets/demand/date-line-stop/viewByDateForEachStop');
+	const viewData = await SERVERDB.get('datasets/demand/date-line-stop/viewByDateForEachStop');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -14,7 +14,7 @@ const viewByDateForEachStop = async (_, reply) => {
 };
 
 const viewByDateForEachLine = async (_, reply) => {
-	const viewData = await SERVERDB.client.get('datasets/demand/date-line-stop/viewByDateForEachLine');
+	const viewData = await SERVERDB.get('datasets/demand/date-line-stop/viewByDateForEachLine');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -22,7 +22,7 @@ const viewByDateForEachLine = async (_, reply) => {
 };
 
 const viewByDateForEachStopForEachLine = async (_, reply) => {
-	const viewData = await SERVERDB.client.get('datasets/demand/date-line-stop/viewByDateForEachStopForEachLine');
+	const viewData = await SERVERDB.get('datasets/demand/date-line-stop/viewByDateForEachStopForEachLine');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

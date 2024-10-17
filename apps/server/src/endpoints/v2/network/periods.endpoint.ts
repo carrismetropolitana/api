@@ -7,7 +7,7 @@ import { SERVERDB } from '@carrismetropolitana/api-services';
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2:network:periods:all');
+	const allItems = await SERVERDB.get('v2:network:periods:all');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

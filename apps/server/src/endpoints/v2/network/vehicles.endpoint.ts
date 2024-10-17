@@ -19,7 +19,7 @@ const gtfsRealtime = protobufjs.loadSync(
 /* * */
 
 const json = async (_, reply) => {
-	const allRtEvents = await SERVERDB.client.get('v2:network:vehicles:json');
+	const allRtEvents = await SERVERDB.get('v2:network:vehicles:json');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -30,7 +30,7 @@ const json = async (_, reply) => {
 
 const protobuf = async (_, reply) => {
 	// Get the saved events from RTEVENTS
-	const allRtEventsTxt = await SERVERDB.client.get('v2:network:vehicles:protobuf');
+	const allRtEventsTxt = await SERVERDB.get('v2:network:vehicles:protobuf');
 	const allRtEvents = await JSON.parse(allRtEventsTxt);
 	// Do the conversion to Protobuf
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');

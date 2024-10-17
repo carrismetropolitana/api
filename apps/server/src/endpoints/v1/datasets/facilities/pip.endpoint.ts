@@ -6,7 +6,7 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('datasets/facilities/pip/all');
+	const allItems = await SERVERDB.get('datasets/facilities/pip/all');
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -14,7 +14,7 @@ const all = async (_, reply) => {
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`datasets/facilities/pip/${request.params.id}`);
+	const singleItem = await SERVERDB.get(`datasets/facilities/pip/${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')

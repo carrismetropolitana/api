@@ -1,25 +1,21 @@
 /* * */
 
-import { SERVERDB } from '@carrismetropolitana/api-services';
-import fastify, { FastifyInstance } from 'fastify';
+import FastifyService from '@carrismetropolitana/api-services/dist/fastify.service.js';
+import { FastifyServerOptions } from 'fastify';
 
 /* * */
 
-class FASTIFYClass {
-	//
+const options: FastifyServerOptions = {
+	ignoreTrailingSlash: true,
+	logger: {
+		level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+		transport: process.env.NODE_ENV === 'development' && {
+			options: {
+				colorize: true,
+			},
+			target: 'pino-pretty',
+		},
+	},
+};
 
-	server: FastifyInstance;
-
-	constructor() {
-		this.server = fastify({ logger: true, requestTimeout: 10000 });
-		this.server.listen({ host: '0.0.0.0', port: 5050 }, async (err, address) => {
-			if (err) throw err;
-			console.log(`Fastify server listening on ${address}`);
-			await SERVERDB.connect();
-		});
-	}
-
-	//
-}
-
-export const FASTIFY = new FASTIFYClass();
+export const FASTIFY = FastifyService.getInstance(options);

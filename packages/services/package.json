@@ -2,17 +2,20 @@
 	"name": "@carrismetropolitana/api-services",
 	"version": "1.0.0",
 	"type": "module",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "npm run clean && tsc && resolve-tspaths",
+		"build": "npm run clean && tsc",
 		"clean": "rm -rf dist",
 		"dev": "tsx watch ./src/index.ts",
 		"dev:sync": "npm run dev"
 	},
 	"dependencies": {
 		"@helperkits/logger": "20240703.1726.24",
+		"fastify": "^5.0.0",
 		"jwt-decode": "4.0.0",
 		"mongodb": "6.9.0",
 		"pg": "8.13.0",

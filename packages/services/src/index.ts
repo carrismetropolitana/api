@@ -1,3 +1,4 @@
+export * from './fastify.service.js';
 export * from './IXAPI.js';
 export * from './NETWORKDB.js';
 export * from './PCGIAPI.js';

@@ -18,6 +18,7 @@
 		"fastify": "5.0.0",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.5.0",
+		"pino-pretty": "^11.3.0",
 		"protobufjs": "7.4.0",
 		"redis": "4.7.0"
 	},

@@ -9,7 +9,7 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 /* * */
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`v2:network:patterns:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`v2:network:patterns:${request.params.id}`);
 
 	return reply
 		.code(200)
@@ -24,7 +24,7 @@ const realtime = async (request, reply) => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.client.get('v2:network:archives:all');
+	const allArchivesTxt = await SERVERDB.get('v2:network:archives:all');
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
@@ -34,7 +34,7 @@ const realtime = async (request, reply) => {
 		else currentArchiveIds[archiveData.operator_id] = archiveData.id;
 	}
 
-	const singleItem = await SERVERDB.client.get(`v2:network:patterns:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`v2:network:patterns:${request.params.id}`);
 	const singleItemJson = await JSON.parse(singleItem);
 	const stopIdsForThisPattern = singleItemJson?.path?.map(item => item.stop.id).join(',');
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
