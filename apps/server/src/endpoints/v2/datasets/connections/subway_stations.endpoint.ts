@@ -2,12 +2,12 @@
 
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
-
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.get('v2:datasets:connections:subway_stations:all');
+	const allItems = await SERVERDB.get(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_SUBWAY_STATIONS}:all`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
@@ -15,7 +15,7 @@ const all = async (_, reply) => {
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.get(`v2:datasets:connections:subway_stations:${request.params.id}`);
+	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_SUBWAY_STATIONS}:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
