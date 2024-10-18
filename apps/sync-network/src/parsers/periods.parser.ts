@@ -1,24 +1,23 @@
 /* * */
 
 import collator from '@/modules/sortCollator.js';
-import { NETWORKDB } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
-import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
 
 /* * */
 
-export default async () => {
+export const syncPeriods = async () => {
 	//
 
+	LOGGER.title(`Sync Periods`);
 	const globalTimer = new TIMETRACKER();
 
 	//
 	// Fetch all Periods and Dates from NETWORKDB
 
-	LOGGER.info(`Starting...`);
 	const allPeriods = await NETWORKDB.client.query('SELECT * FROM periods');
 	const allDates = await NETWORKDB.client.query('SELECT * FROM dates');
 
@@ -101,13 +100,9 @@ export default async () => {
 	//
 	// Save the array to the database
 
-	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LOCALITIES}:all`, JSON.stringify(allPeriodsParsed));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.PERIODS.ALL, JSON.stringify(allPeriodsParsed));
 
-	LOGGER.info(`Updated ${allPeriodsParsed.length} Periods`);
-
-	//
-
-	LOGGER.success(`Done updating Periods (${globalTimer.get()})`);
+	LOGGER.success(`Done updating ${allPeriodsParsed.length} Periods (${globalTimer.get()})`);
 
 	//
 };

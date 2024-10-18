@@ -1,23 +1,22 @@
 /* * */
 
 import collator from '@/modules/sortCollator.js';
-import { NETWORKDB } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
-import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
-export default async () => {
+export const syncStops = async () => {
 	//
 
+	LOGGER.title(`Sync Stops`);
 	const globalTimer = new TIMETRACKER();
 
 	//
 	// Fetch all Stops from NETWORKDB
 
-	LOGGER.info(`Starting...`);
 	const allStops = await NETWORKDB.client.query(`
 		SELECT
 			s.*,
@@ -44,13 +43,10 @@ export default async () => {
 	`);
 
 	//
-	// Initate a temporary variable to hold updated items
+	// For each item, update its entry in the database
 
 	const allStopsData = [];
-	const updatedStopKeys = new Set();
-
-	//
-	// For each item, update its entry in the database
+	let updatedStopsCounter = 0;
 
 	for (const stop of allStops.rows) {
 		// Discover which facilities this stop is near to
@@ -97,39 +93,20 @@ export default async () => {
 			tts_name: stop.tts_stop_name,
 			wheelchair_boarding: stop.wheelchair_boarding,
 		};
-		// Update or create new document
+		//
 		allStopsData.push(parsedStop);
-		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.STOPS}:${parsedStop.id}`, JSON.stringify(parsedStop));
-		updatedStopKeys.add(`${SERVERDB_KEYS.NETWORK.STOPS}:${parsedStop.id}`);
+		//
+		updatedStopsCounter++;
+		//
 	}
 
-	LOGGER.info(`Updated ${updatedStopKeys.size} Stops`);
-
 	//
-	// Add the 'all' option
+	// Save to the database
 
 	allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.STOPS}:all`, JSON.stringify(allStopsData));
-	updatedStopKeys.add(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.STOPS.ALL, JSON.stringify(allStopsData));
 
-	//
-	// Delete all items not present in the current update
-
-	const allSavedStopKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.STOPS}:*`, TYPE: 'string' })) {
-		allSavedStopKeys.push(key);
-	}
-
-	const staleStopKeys = allSavedStopKeys.filter(id => !updatedStopKeys.has(id));
-	if (staleStopKeys.length) {
-		await SERVERDB.del(staleStopKeys);
-	}
-
-	LOGGER.info(`Deleted ${staleStopKeys.length} stale Stops`);
-
-	//
-
-	LOGGER.success(`Done updating Stops (${globalTimer.get()})`);
+	LOGGER.success(`Done updating ${updatedStopsCounter} Stops (${globalTimer.get()})`);
 
 	//
 };

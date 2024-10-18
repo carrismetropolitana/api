@@ -10,29 +10,6 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-function convertToJson(allEvents) {
-	return allEvents.map(event => ({
-		bearing: event.bearing,
-		block_id: event.block_id,
-		current_status: event.current_status,
-		direction_id: event.direction_id,
-		id: event.vehicle_id,
-		lat: event.latitude,
-		line_id: event.line_id,
-		lon: event.longitude,
-		pattern_id: event.pattern_id,
-		route_id: event.route_id,
-		schedule_relationship: event.schedule_relationship,
-		shift_id: event.shift_id,
-		speed: event.speed,
-		stop_id: event.stop_id,
-		timestamp: event.timestamp,
-		trip_id: event.trip_id,
-	}));
-}
-
-/* * */
-
 function convertToProtobuf(allEvents) {
 	return {
 		entity: allEvents.map(event => ({
@@ -80,7 +57,7 @@ export const syncPositions = async () => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.ARCHIVES.ALL);
+	const allArchivesTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`);
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
@@ -101,7 +78,7 @@ export const syncPositions = async () => {
 
 	const fetchServerdbTimer = new TIMETRACKER();
 
-	const existingVehicleTxt = await SERVERDB.get(SERVERDB_KEYS.VEHICLES.ALL);
+	const existingVehicleTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL);
 	const existingVehicleData: Vehicle[] = JSON.parse(existingVehicleTxt);
 
 	const allVehiclesMap = new Map<string, Vehicle>();
@@ -251,22 +228,19 @@ export const syncPositions = async () => {
 	const saveTimer = new TIMETRACKER();
 
 	const allVehiclesMapArray = Array.from(allVehiclesMap.values());
-	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.ALL, JSON.stringify(allVehiclesMapArray));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.VEHICLES.ALL, JSON.stringify(allVehiclesMapArray));
 
 	LOGGER.info(`Saved ${allVehiclesMap.size} Vehicles to SERVERDB (${saveTimer.get()})`);
 
 	//
-	// Prepare the Vehicle Events data in JSON and Protobuf formats
+	// Prepare the Vehicle Events data in Protobuf format
 
-	const conversionsTimer = new TIMETRACKER();
-
-	const allVehiclesMapJson = convertToJson(allVehiclesMapArray);
-	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.JSON, JSON.stringify(allVehiclesMapJson));
+	const conversionTimer = new TIMETRACKER();
 
 	const allVehiclesMapProtobuf = convertToProtobuf(allVehiclesMapArray);
-	await SERVERDB.set(SERVERDB_KEYS.VEHICLES.PROTOBUF, JSON.stringify(allVehiclesMapProtobuf));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.VEHICLES.PROTOBUF, JSON.stringify(allVehiclesMapProtobuf));
 
-	LOGGER.success(`Converted unique Vehicles to JSON and Protobuf formats (${conversionsTimer.get()})`);
+	LOGGER.info(`Converted unique Vehicles to Protobuf formats (${conversionTimer.get()})`);
 
 	//
 };

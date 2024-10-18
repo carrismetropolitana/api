@@ -8,6 +8,7 @@
 		"build": "npm run clean && tsc && resolve-tspaths && cp -r ./src/assets ./dist/assets",
 		"clean": "rm -rf dist",
 		"dev": "tsx watch ./src/index.ts",
+		"dev:sync": "dotenv-run -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"start": "npm run build && node dist/index.js"

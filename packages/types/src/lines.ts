@@ -1,6 +1,6 @@
 /* * */
 
-import { Locality } from './stops.js';
+import { Locality } from './api/locations.js';
 
 /* * */
 

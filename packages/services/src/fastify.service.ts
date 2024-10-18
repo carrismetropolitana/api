@@ -14,6 +14,7 @@ class FastifyService {
 
 	private constructor(options: FastifyServerOptions) {
 		this.server = fastify(options).withTypeProvider();
+		this._setupDefaultHooks();
 		this._setupDefaultRoutes();
 		this.start();
 	}
@@ -29,7 +30,7 @@ class FastifyService {
 		try {
 			await this.server.listen(options);
 		}
-		catch (error: any) {
+		catch (error) {
 			if (error.code === 'EADDRINUSE') {
 				this.server.log.warn(`Port ${options.port} in use, trying port ${++options.port}`);
 				await this._attemptStart(options);
@@ -43,6 +44,16 @@ class FastifyService {
 	private _handleStartError(error: Error): void {
 		this.server.log.error({ error, message: 'Error starting server' });
 		process.exit(1);
+	}
+
+	private _setupDefaultHooks(): void {
+		this.server.addHook('onSend', async (request, reply, payload) => {
+			// Check if Content-Type is already set for local override
+			if (!reply.hasHeader('Content-Type')) {
+				reply.header('Content-Type', 'application/json; charset=utf-8');
+			}
+			return payload;
+		});
 	}
 
 	private _setupDefaultRoutes(): void {

@@ -12,14 +12,12 @@ import fs from 'node:fs';
 /* * */
 
 import { syncArchives } from '@/parsers/archives.parser.js';
-import datesParser from '@/parsers/dates.parsers.js';
-import linesRoutesPatternsParserV1 from '@/parsers/linesRoutesPatternsV1.parser.js';
-import linesRoutesPatternsParserV2 from '@/parsers/linesRoutesPatternsV2.parser.js';
-import localitiesParser from '@/parsers/localities.parser.js';
-import municipalitiesParser from '@/parsers/municipalities.parser.js';
-import periodsParser from '@/parsers/periods.parser.js';
-import shapesParser from '@/parsers/shapes.parser.js';
-import stopsParser from '@/parsers/stops.parser.js';
+import { syncDates } from '@/parsers/dates.parsers.js';
+import { syncLinesRoutesPatterns } from '@/parsers/linesRoutesPatterns.parser.js';
+import { syncLocations } from '@/parsers/locations.parser.js';
+import { syncPeriods } from '@/parsers/periods.parser.js';
+import { syncShapes } from '@/parsers/shapes.parser.js';
+import { syncStops } from '@/parsers/stops.parser.js';
 
 /* * */
 
@@ -35,15 +33,13 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 
 export const ENABLED_MODULES = [
 	'gtfs_import',
-	'municipalities_parser',
-	'localities_parser',
+	'locations_parser',
 	'periods_parser',
 	'dates_parser',
 	'archives_parser',
 	'stops_parser',
 	'shapes_parser',
-	'lines_routes_patterns_parser_v1',
-	'lines_routes_patterns_parser_v2',
+	'lines_routes_patterns_parser',
 ];
 
 /* * */
@@ -137,74 +133,51 @@ export default async () => {
 
 		/* * */
 
-		if (ENABLED_MODULES.includes('municipalities_parser')) {
+		if (ENABLED_MODULES.includes('locations_parser')) {
+			await syncLocations();
 			LOGGER.spacer(1);
-			LOGGER.title('3.1. Parse Municipalities');
-			await municipalitiesParser();
-		}
-
-		/* * */
-
-		if (ENABLED_MODULES.includes('localities_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.2. Parse Localities');
-			await localitiesParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('periods_parser')) {
+			await syncPeriods();
 			LOGGER.spacer(1);
-			LOGGER.title('3.3. Parse Periods');
-			await periodsParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('dates_parser')) {
+			await syncDates();
 			LOGGER.spacer(1);
-			LOGGER.title('3.4. Parse Dates');
-			await datesParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('archives_parser')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.5. Parse Archives');
 			await syncArchives();
+			LOGGER.spacer(1);
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('stops_parser')) {
+			await syncStops();
 			LOGGER.spacer(1);
-			LOGGER.title('3.6. Parse Stops');
-			await stopsParser();
 		}
 
 		/* * */
 
 		if (ENABLED_MODULES.includes('shapes_parser')) {
+			await syncShapes();
 			LOGGER.spacer(1);
-			LOGGER.title('3.7. Parse Shapes');
-			await shapesParser();
 		}
 
 		/* * */
 
-		if (ENABLED_MODULES.includes('lines_routes_patterns_parser_v1')) {
+		if (ENABLED_MODULES.includes('lines_routes_patterns_parser')) {
+			await syncLinesRoutesPatterns();
 			LOGGER.spacer(1);
-			LOGGER.title('3.8.1. Parse Lines, Routes and Patterns (v1)');
-			await linesRoutesPatternsParserV1();
-		}
-
-		/* * */
-
-		if (ENABLED_MODULES.includes('lines_routes_patterns_parser_v2')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.8.2. Parse Lines, Routes and Patterns (v2)');
-			await linesRoutesPatternsParserV2();
 		}
 
 		//
