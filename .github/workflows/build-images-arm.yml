@@ -3,7 +3,7 @@ name: Build & Publish Docker Images (ARM)
 on:
   push:
     branches:
-      - alpha
+      - alpha-none
 
 jobs:
   #
