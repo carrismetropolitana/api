@@ -1,6 +1,6 @@
 /* * */
 
-import { CalendarDates, GTFSBool, Route, StopTime, Trip, WheelchairBoardingType } from 'gtfs-types';
+import { CalendarDates, GTFSBool, Route, StopTime, Trip } from 'gtfs-types';
 
 /* * */
 
