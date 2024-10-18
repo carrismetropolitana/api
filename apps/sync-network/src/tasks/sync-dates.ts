@@ -45,7 +45,7 @@ export const syncDates = async () => {
 	// Save to the database
 
 	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.DATES.ALL, JSON.stringify(allDatesData));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.DATES, JSON.stringify(allDatesData));
 
 	LOGGER.success(`Done updating ${updatedDatesCounter} Dates (${globalTimer.get()})`);
 

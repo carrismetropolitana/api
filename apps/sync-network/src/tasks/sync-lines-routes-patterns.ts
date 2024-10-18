@@ -1,12 +1,12 @@
 /* * */
 
-import type { Line, Path, Pattern, PatternGroup, Route, Schedule, Stop } from '@carrismetropolitana/api-types/src/api/index.js';
+import type { Line, Location, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/src/api/index.js';
 
 import sortCollator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Alight, CalendarDatesExtended, RouteExtended, StopTimeExtended, TripsExtended } from '@carrismetropolitana/api-types/src/gtfs/index.js';
+import { Alight, CalendarDatesExtended, RouteExtended, StopTimesExtended, TripsExtended } from '@carrismetropolitana/api-types/src/gtfs/index.js';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -48,16 +48,17 @@ export const syncLinesRoutesPatterns = async () => {
 	 * we simplify consumption while improving service readability as a whole. A schedule represents all trips serving the same path at the same time.
 	 */
 
+	LOGGER.title(`Sync Lines, Routes and Patterns`);
 	const globalTimer = new TIMETRACKER();
-
-	LOGGER.info(`Starting...`);
 
 	//
 	// Build hashmaps for GTFS entities that will be reused multiple times.
 	// Using hashmaps allows for O(1) lookups instead of linear scans.
 
+	const fetchRawDataTimer = new TIMETRACKER();
+
 	// For Stops
-	const allStopsParsedTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.STOPS}:all`);
+	const allStopsParsedTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
 	const allStopsParsedJson: Stop[] = JSON.parse(allStopsParsedTxt);
 	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.stop_id, item]));
 
@@ -77,27 +78,23 @@ export const syncLinesRoutesPatterns = async () => {
 		}
 	});
 
-	//
-	// Setup hashmap variables to hold final parsed data
-
-	const allLinesParsed = new Map<string, Line>();
-	const allRoutesParsed = new Map<string, Route>();
-
-	const updatedLineKeys = new Set<string>();
-	const updatedRouteKeys = new Set<string>();
-	const updatedPatternKeys = new Set<string>();
-
-	//
 	// Get all distinct Pattern IDs from trips table
-
-	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<{ pattern_id: string }>(`SELECT DISTINCT pattern_id FROM trips`);
+	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<{ pattern_id: string }>(`SELECT DISTINCT pattern_id FROM trips LIMIT 10`);
 	const allDistinctPatternIds = allDistinctPatternIdsRaw.rows.map(item => item.pattern_id);
+
+	LOGGER.info(`Fetched ${allDistinctPatternIdsRaw.rowCount} rows from NETWORKDB (${fetchRawDataTimer.get()})`);
 
 	//
 	// For each distinct pattern_id, parse trips into patterns and schedules.
 	// GTFS is built with trips as the central point holding most other entities together.
 	// By starting with trips, we can easily extract the patterns, route and line for the whole network,
 	// while keeping memory use low by processing one pattern at a time.
+
+	const processPatternsTimer = new TIMETRACKER();
+
+	const allLinesParsed = new Map<string, Line>();
+	const allRoutesParsed = new Map<string, Route>();
+	const updatedPatternKeys = new Set<string>();
 
 	for (const patternId of allDistinctPatternIds) {
 		//
@@ -110,11 +107,11 @@ export const syncLinesRoutesPatterns = async () => {
 		//
 		// Setup a variable to hold the parsed pattern groups
 
-		const parsedPatternGroups = {};
+		const parsedPatternsForThisPatternGroup = new Map<string, Pattern>();
 
 		//
 		// For each trip belonging to the current pattern ID,
-		// build the actual pattern groups, merge trips with the save path and arrival times,
+		// build the actual pattern groups, merge trips with the saved path and arrival times,
 		// and create the higher level route and line objects.
 
 		for (const tripRawData of allTripsForThisPatternRaw.rows) {
@@ -123,16 +120,16 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Get the stop_times data associated with the current trip
 
-			const stopTimesRaw = await NETWORKDB.client.query<StopTimeExtended>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRawData.trip_id]);
+			const stopTimesRaw = await NETWORKDB.client.query<StopTimesExtended>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRawData.trip_id]);
 
 			//
 			// With the same set of data (stop_times sequence of stops) we can find out different information.
-			// By creating a simplified version of path (just IDs) we can detect different itineraries for the same pattern,
-			// and this is used to build the pattern groups. The service ID associated with those trips dictactes when
+			// By creating a simplified version of path (just Stop IDs) we can detect different itineraries for the same pattern,
+			// and this is used to differentiate pattern versions. The service ID associated with those trips dictactes when
 			// this pattern group is valid. The complete path is the one actually saved to the database, since it has full stop details
 			// and pickup and dropoff types. To detect trips with the same arrival times at every stop of the path the schedule version is used.
 			// These trips are exactly the same, but they have different associated calendars. Depending on the source of the file, or the amount
-			// of information associated with each trip, this may be more or less evident. Take the case where the 9h trip happens every day the year,
+			// of information associated with each trip, this may be more or less evident. Take the case where the 9h trip happens every day of the year,
 			// but there is a need to associate different drivers or vehicles (blocks) to each trip, therefore creating the need to separate each run
 			// into multiple trips, each with its own calendar. GTFS motivates this separation to allow for flexibility, but it makes for a lot of duplication.
 			// By grouping trips with the same schedules we aim to simplify that consumption. Each trip_id is still available to be matched with
@@ -147,21 +144,16 @@ export const syncLinesRoutesPatterns = async () => {
 			const stopTimesAsCompleteSchedule: Schedule[] = [];
 
 			const facilitiesList = new Set<string>();
-
-			const localitiesList = new Set<string>();
-			const municipalityIdsList = new Set<string>();
+			const locationsList: Location[] = [];
 
 			for (const stopTimeRawData of stopTimesRaw.rows) {
 				//
 
 				//
-				// Get the current stop data from the map
+				// Get the stop data associated with the current stop_time
 
 				const stopParsedData = allStopsParsedMap.get(stopTimeRawData.stop_id);
-
-				if (!stopParsedData) {
-					continue;
-				}
+				if (!stopParsedData) continue;
 
 				//
 				// Buld the simplified path with only the stop_id and stop_sequence.
@@ -181,7 +173,7 @@ export const syncLinesRoutesPatterns = async () => {
 					allow_pickup: stopTimeRawData.pickup_type !== Alight.NOT_AVAILABLE,
 					distance: Number(stopTimeRawData.shape_dist_traveled),
 					distance_delta: 0,
-					stop: stopParsedData,
+					stop_id: stopTimeRawData.stop_id,
 					stop_sequence: stopTimeRawData.stop_sequence,
 				});
 
@@ -212,10 +204,9 @@ export const syncLinesRoutesPatterns = async () => {
 				stopParsedData.facilities.forEach(item => facilitiesList.add(item));
 
 				//
-				// Add the current stop locality and municipality to the list
+				// Add the current stop location to the list
 
-				localitiesList.add(stopParsedData.locality.locality_id);
-				municipalityIdsList.add(stopParsedData.locality.municipality_id);
+				locationsList.push(stopParsedData.location);
 
 				//
 			}
@@ -226,10 +217,10 @@ export const syncLinesRoutesPatterns = async () => {
 			const routeRawData = allRoutesRawMap.get(tripRawData.route_id);
 
 			//
-			// Create the pattern group object with the fields used to differentiate between each group.
-			// A pattern group is differentiated by the fields below, with special focus on direction_id,
+			// Create the pattern version object with only the fields used to differentiate between each version.
+			// A pattern version is differentiated by the fields below, with special focus on direction_id,
 			// trip_headsign, shape_id and the simplified version of path (stop_id and stop_sequence).
-			// This means that everytime any of these fields differs, a new group will be created,
+			// This means that everytime any of these fields differs, a new pattern version will be created,
 			// and a different set of dates will be associated with it.
 
 			const currentPatternGroup = {
@@ -246,34 +237,36 @@ export const syncLinesRoutesPatterns = async () => {
 			};
 
 			//
-			// Create a hash of the object to detect if this pattern group already exists
+			// Create a hash of the object to detect if this pattern version already exists
 
-			const currentPatternGroupHash = crypto.createHash('sha256').update(JSON.stringify(currentPatternGroup)).digest('hex');
+			const currentPatternVersionHash = crypto.createHash('sha256').update(JSON.stringify(currentPatternGroup)).digest('hex');
 
 			//
-			// Check if this pattern group already exists, and create if it doesn't.
-			// The created pattern group will have all the complete information not used to differentiate between groups.
+			// Check if this pattern version already exists, and create if it doesn't.
+			// The created pattern version will have all the complete information that was not used to differentiate between versions.
 
-			if (!parsedPatternGroups[currentPatternGroupHash]) {
-				parsedPatternGroups[currentPatternGroupHash] = {
+			let currentPatternObject: Pattern;
+
+			if (parsedPatternsForThisPatternGroup.has(currentPatternVersionHash)) {
+				currentPatternObject = parsedPatternsForThisPatternGroup.get(currentPatternVersionHash);
+			}
+			else {
+				currentPatternObject =	{
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
-					direction: tripRawData.direction_id,
+					direction_id: tripRawData.direction_id,
 					facilities: [],
 					headsign: tripRawData.trip_headsign,
 					line_id: routeRawData.line_id,
-					localities: [],
-					municipality_ids: [],
+					locations: [],
 					path: stopTimesAsCompletePath,
-					pattern_group_id: currentPatternGroupHash,
 					pattern_id: tripRawData.pattern_id,
+					pattern_version_id: currentPatternVersionHash,
 					route_id: routeRawData.route_id,
-					route_long_name: routeRawData.route_long_name,
-					route_short_name: routeRawData.route_short_name,
 					shape_id: tripRawData.shape_id,
 					short_name: routeRawData.route_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
-					trips: {}, // A map, not an array
-					tts_name: tts.makePattern(routeRawData.line_id, tripRawData.trip_headsign),
+					trip_groups: [],
+					tts_headsign: tts.makePattern(routeRawData.line_id, tripRawData.trip_headsign),
 					valid_on: [],
 				};
 			}
@@ -281,10 +274,18 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Add to the current pattern group (new or exising) the data retrieved from the current trip
 
-			parsedPatternGroups[currentPatternGroupHash].valid_on = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...parsedPatternGroups[currentPatternGroupHash].valid_on]));
-			parsedPatternGroups[currentPatternGroupHash].facilities = Array.from(new Set([...facilitiesList, ...parsedPatternGroups[currentPatternGroupHash].facilities]));
-			parsedPatternGroups[currentPatternGroupHash].localities = Array.from(new Set([...localitiesList, ...parsedPatternGroups[currentPatternGroupHash].localities]));
-			parsedPatternGroups[currentPatternGroupHash].municipality_ids = Array.from(new Set([...municipalityIdsList, ...parsedPatternGroups[currentPatternGroupHash].municipality_ids]));
+			currentPatternObject.valid_on = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...currentPatternObject.valid_on]));
+			currentPatternObject.facilities = Array.from(new Set([...currentPatternObject.facilities, ...facilitiesList]));
+
+			// Deduplicate locations by checking if the location ID or municipality_id is already present or not
+			// This is done to avoid having duplicate locations in the locations array
+
+			currentPatternObject.locations = [...currentPatternObject.locations, ...locationsList].filter((location, index, self) => {
+				return index === self.findIndex((loc) => {
+					if (location.locality_id) return loc.locality_id === location.locality_id;
+					else return loc.municipality_id === location.municipality_id;
+				});
+			});
 
 			//
 			// Create a simplified version of this trip with the goal of finding the same trip,
@@ -293,10 +294,10 @@ export const syncLinesRoutesPatterns = async () => {
 			// pattern groups, as in they are contained in it. In other words, the uniqueness of a trip is dependent
 			// on the pattern group it belongs to.
 
-			const currentTripGroup = {
+			const simplifiedTripGroup = {
 				direction_id: tripRawData.direction_id,
-				pattern_group_hash: currentPatternGroupHash,
 				pattern_id: tripRawData.pattern_id,
+				pattern_version_id: currentPatternVersionHash,
 				route_id: tripRawData.route_id,
 				simplified_schedule: stopTimesAsSimplifiedSchedule,
 			};
@@ -304,38 +305,57 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Create a hash of the object to detect if this trip group already exists
 
-			const currentTripGroupHash = crypto.createHash('sha256').update(JSON.stringify(currentTripGroup)).digest('hex');
+			const currentTripGroupHash = crypto.createHash('sha256').update(JSON.stringify(simplifiedTripGroup)).digest('hex');
 
 			//
 			// Check if this trip group already exists, and create if it doesn't.
 			// The created trip group will have all the complete information not used to differentiate between groups.
 
-			if (!parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash]) {
-				parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash] = {
-					dates: [],
+			const allTripGroupsForThisPattern = new Map<string, TripGroup>();
+			currentPatternObject.trip_groups.forEach(item => allTripGroupsForThisPattern.set(item.trip_group_id, item));
+
+			let currentTripGroupObject: TripGroup;
+
+			if (allTripGroupsForThisPattern.has(currentTripGroupHash)) {
+				currentTripGroupObject = allTripGroupsForThisPattern.get(currentTripGroupHash);
+			}
+			else {
+				currentTripGroupObject = {
 					schedule: stopTimesAsCompleteSchedule,
+					service_ids: [],
+					trip_group_id: currentTripGroupHash,
 					trip_ids: [],
+					valid_on: [],
 				};
 			}
 
 			//
 			// Add to the current trip group (new or exising) the data retrieved from the current trip
 
-			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].dates]));
-			parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids = Array.from(new Set([tripRawData.trip_id, ...parsedPatternGroups[currentPatternGroupHash].trips[currentTripGroupHash].trip_ids]));
+			currentTripGroupObject.valid_on = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...currentTripGroupObject.valid_on]));
+			currentTripGroupObject.service_ids = Array.from(new Set([tripRawData.service_id, ...currentTripGroupObject.service_ids]));
+			currentTripGroupObject.trip_ids = Array.from(new Set([tripRawData.trip_id, ...currentTripGroupObject.trip_ids]));
+
+			allTripGroupsForThisPattern.set(currentTripGroupHash, currentTripGroupObject);
+
+			currentPatternObject.trip_groups = Array.from(allTripGroupsForThisPattern.values());
 
 			//
 			// Create the route object if it doesn't exist yet. Notice we're not using hashes here
 			// because routes are supposed to be unique in the same GTFS file.
 
-			if (!allRoutesParsed[tripRawData.route_id]) {
-				allRoutesParsed[tripRawData.route_id] = {
+			let currentRouteObject: Route;
+
+			if (allRoutesParsed.has(tripRawData.route_id)) {
+				currentRouteObject = allRoutesParsed.get(tripRawData.route_id);
+			}
+			else {
+				currentRouteObject = {
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
 					facilities: [],
 					line_id: routeRawData.line_id,
-					localities: [],
+					locations: [],
 					long_name: routeRawData.route_long_name,
-					municipality_ids: [],
 					pattern_ids: [],
 					route_id: routeRawData.route_id,
 					short_name: routeRawData.route_short_name,
@@ -347,23 +367,35 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Add to the current route (new or exising) the data retrieved from the current trip
 
-			allRoutesParsed[tripRawData.route_id].pattern_ids = Array.from(new Set([tripRawData.pattern_id, ...allRoutesParsed[tripRawData.route_id].pattern_ids]));
+			currentRouteObject.pattern_ids = Array.from(new Set([tripRawData.pattern_id, ...currentRouteObject.pattern_ids]));
 
-			allRoutesParsed[tripRawData.route_id].facilities = Array.from(new Set([...allRoutesParsed[tripRawData.route_id].facilities, ...facilitiesList]));
-			allRoutesParsed[tripRawData.route_id].localities = Array.from(new Set([...allRoutesParsed[tripRawData.route_id].localities, ...localitiesList]));
-			allRoutesParsed[tripRawData.route_id].municipality_ids = Array.from(new Set([...allRoutesParsed[tripRawData.route_id].municipality_ids, ...municipalityIdsList]));
+			currentRouteObject.facilities = Array.from(new Set([...currentRouteObject.facilities, ...facilitiesList]));
+
+			// Deduplicate locations by checking if the location ID or municipality_id is already present or not
+			// This is done to avoid having duplicate locations in the locations array
+
+			currentRouteObject.locations = [...currentRouteObject.locations, ...locationsList].filter((location, index, self) => {
+				return index === self.findIndex((loc) => {
+					if (location.locality_id) return loc.locality_id === location.locality_id;
+					else return loc.municipality_id === location.municipality_id;
+				});
+			});
 
 			//
 			// Create the line object if it doesn't exist yet
 
-			if (!allLinesParsed[routeRawData.line_id]) {
-				allLinesParsed[routeRawData.line_id] = {
+			let currentLineObject: Line;
+
+			if (allLinesParsed.has(routeRawData.line_id)) {
+				currentLineObject = allLinesParsed.get(routeRawData.line_id);
+			}
+			else {
+				currentLineObject = {
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
 					facilities: [],
 					line_id: routeRawData.line_id,
-					localities: [],
+					locations: [],
 					long_name: routeRawData.line_long_name,
-					municipality_ids: [],
 					pattern_ids: [],
 					route_ids: [],
 					short_name: routeRawData.line_short_name,
@@ -375,12 +407,27 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Add to the current line (new or exising) the data retrieved from the current trip
 
-			allLinesParsed[routeRawData.line_id].route_ids = Array.from(new Set([tripRawData.route_id, ...allLinesParsed[routeRawData.line_id].route_ids]));
-			allLinesParsed[routeRawData.line_id].pattern_ids = Array.from(new Set([tripRawData.pattern_id, ...allLinesParsed[routeRawData.line_id].pattern_ids]));
+			currentLineObject.route_ids = Array.from(new Set([tripRawData.route_id, ...currentLineObject.route_ids]));
+			currentLineObject.pattern_ids = Array.from(new Set([tripRawData.pattern_id, ...currentLineObject.pattern_ids]));
 
-			allLinesParsed[routeRawData.line_id].facilities = Array.from(new Set([...allLinesParsed[routeRawData.line_id].facilities, ...facilitiesList]));
-			allLinesParsed[routeRawData.line_id].localities = Array.from(new Set([...allLinesParsed[routeRawData.line_id].localities, ...localitiesList]));
-			allLinesParsed[routeRawData.line_id].municipality_ids = Array.from(new Set([...allLinesParsed[routeRawData.line_id].municipality_ids, ...municipalityIdsList]));
+			currentLineObject.facilities = Array.from(new Set([...currentLineObject.facilities, ...facilitiesList]));
+
+			// Deduplicate locations by checking if the location ID or municipality_id is already present or not
+			// This is done to avoid having duplicate locations in the locations array
+
+			currentLineObject.locations = [...currentLineObject.locations, ...locationsList].filter((location, index, self) => {
+				return index === self.findIndex((loc) => {
+					if (location.locality_id) return loc.locality_id === location.locality_id;
+					else return loc.municipality_id === location.municipality_id;
+				});
+			});
+
+			//
+			// Save the updated objects back to the maps
+
+			allLinesParsed.set(routeRawData.line_id, currentLineObject);
+			allRoutesParsed.set(routeRawData.route_id, currentRouteObject);
+			parsedPatternsForThisPatternGroup.set(currentPatternVersionHash, currentPatternObject);
 
 			//
 		}
@@ -390,51 +437,23 @@ export const syncLinesRoutesPatterns = async () => {
 		// However, a small modification is required. The pattern group contains a trips map that should be converted
 		// to an array of trips. Also, the pattern groups themselves should be an array for the current pattern ID.
 
-		const finalizedPatternGroupsData: PatternGroup = Object.values(parsedPatternGroups).map((item: Pattern) => ({ ...item, trips: Object.values(item.trip_groups) }));
+		const finalizedPatternGroupsData: PatternGroup = Array.from(parsedPatternsForThisPatternGroup.values()).map((item: Pattern) => ({ ...item, trip_groups: Object.values(item.trip_groups) }));
 
-		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${patternId}`, JSON.stringify(finalizedPatternGroupsData));
-		updatedPatternKeys.add(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${patternId}`);
+		console.log(finalizedPatternGroupsData);
+
+		await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId), JSON.stringify(finalizedPatternGroupsData));
+		updatedPatternKeys.add(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId));
 
 		//
 	}
 
-	LOGGER.info(`Updated ${updatedPatternKeys.size} Patterns`);
-
-	//
-	// Save each and all routes to the database
-
-	const finalizedAllRoutesData: Route[] = (Object.values(allRoutesParsed) as Route[]).sort((a, b) => sortCollator.compare(a.route_id, b.route_id));
-
-	for (const finalizedRouteData of finalizedAllRoutesData) {
-		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.ROUTES}:${finalizedRouteData.route_id}`, JSON.stringify(finalizedRouteData));
-		updatedRouteKeys.add(`${SERVERDB_KEYS.NETWORK.ROUTES}:${finalizedRouteData.route_id}`);
-	}
-
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALIITIES, JSON.stringify(finalizedAllRoutesData));
-	updatedRouteKeys.add(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
-
-	LOGGER.info(`Updated ${updatedRouteKeys.size} Routes`);
-
-	//
-	// Save each and all lines to the database
-
-	const finalizedAllLinesData: Line[] = (Object.values(allLinesParsed) as Line[]).sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
-
-	for (const finalizedLineData of finalizedAllLinesData) {
-		await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LINES}:${finalizedLineData.line_id}`, JSON.stringify(finalizedLineData));
-		updatedLineKeys.add(`${SERVERDB_KEYS.NETWORK.LINES}:${finalizedLineData.line_id}`);
-	}
-
-	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.LINES}:all`, JSON.stringify(finalizedAllLinesData));
-	updatedLineKeys.add(`${SERVERDB_KEYS.NETWORK.LINES}:all`);
-
-	LOGGER.info(`Updated ${updatedLineKeys.size} Lines`);
+	LOGGER.info(`Updated ${updatedPatternKeys.size} Patterns (${processPatternsTimer.get()})`);
 
 	//
 	// Delete stale patterns
 
 	const allPatternKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.PATTERNS}:*`, TYPE: 'string' })) {
+	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.PATTERNS.BASE}:*`, TYPE: 'string' })) {
 		allPatternKeysInTheDatabase.push(key);
 	}
 
@@ -446,38 +465,22 @@ export const syncLinesRoutesPatterns = async () => {
 	LOGGER.info(`Deleted ${stalePatternKeys.length} stale Patterns`);
 
 	//
-	// Delete stale routes
+	// Save all routes to the database
 
-	const allRouteKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.ROUTES}:*`, TYPE: 'string' })) {
-		allRouteKeysInTheDatabase.push(key);
-	}
+	const finalizedAllRoutesData: Route[] = (Object.values(allRoutesParsed) as Route[]).sort((a, b) => sortCollator.compare(a.route_id, b.route_id));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ROUTES, JSON.stringify(finalizedAllRoutesData));
+	LOGGER.info(`Updated ${finalizedAllRoutesData.length} Routes`);
 
-	const staleRouteKeys = allRouteKeysInTheDatabase.filter(key => !updatedRouteKeys.has(key));
-	if (staleRouteKeys.length) {
-		await SERVERDB.del(staleRouteKeys);
-	}
+	//
+	// Save all lines to the database
 
-	LOGGER.info(`Deleted ${staleRouteKeys.length} stale Routes`);
-
-	// 7.
-	// Delete stale routes
-
-	const allLineKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.LINES}:*`, TYPE: 'string' })) {
-		allLineKeysInTheDatabase.push(key);
-	}
-
-	const staleLineKeys = allLineKeysInTheDatabase.filter(key => !updatedLineKeys.has(key));
-	if (staleLineKeys.length) {
-		await SERVERDB.del(staleLineKeys);
-	}
-
-	LOGGER.info(`Deleted ${staleLineKeys.length} stale Lines`);
+	const finalizedAllLinesData: Line[] = (Object.values(allLinesParsed) as Line[]).sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.LINES, JSON.stringify(finalizedAllLinesData));
+	LOGGER.info(`Updated ${finalizedAllLinesData.length} Lines`);
 
 	//
 
-	LOGGER.success(`Done updating Lines, Routes and Patterns v2 (${globalTimer.get()})`);
+	LOGGER.success(`Done updating Lines, Routes and Patterns (${globalTimer.get()})`);
 
 	//
 };

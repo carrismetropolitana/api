@@ -3,8 +3,18 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
+import { Locality, Location, Municipality, OperationalStatus, Stop } from '@carrismetropolitana/api-types/src/api/index.js';
+import { StopsExtended } from '@carrismetropolitana/api-types/src/gtfs/gtfs.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+
+/* * */
+
+interface QueryResult extends StopsExtended {
+	line_ids: string[]
+	pattern_ids: string[]
+	route_ids: string[]
+}
 
 /* * */
 
@@ -15,9 +25,18 @@ export const syncStops = async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
+	// Fetch all Locations from SERVERDB
+
+	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
+	const allLocalitiesData = JSON.parse(allLocalitiesTxt);
+
+	const allMunicipalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES);
+	const allMunicipalitiesData = JSON.parse(allMunicipalitiesTxt);
+
+	//
 	// Fetch all Stops from NETWORKDB
 
-	const allStops = await NETWORKDB.client.query(`
+	const allStops = await NETWORKDB.client.query<QueryResult>(`
 		SELECT
 			s.*,
 			r.route_ids,
@@ -45,12 +64,27 @@ export const syncStops = async () => {
 	//
 	// For each item, update its entry in the database
 
-	const allStopsData = [];
+	const allStopsData: Stop[] = [];
 	let updatedStopsCounter = 0;
 
 	for (const stop of allStops.rows) {
+		//
+
+		//
+		// Discover which Location this stop is in.
+		// Try to match the stop's locality first, then fallback to municipality.
+
+		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === stop.locality && item.municipality_id === stop.municipality_id);
+
+		if (!matchingLocation) {
+			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === stop.municipality_id);
+		}
+
+		//
 		// Discover which facilities this stop is near to
+
 		const facilities = [];
+
 		if (stop.near_health_clinic) facilities.push('health_clinic');
 		if (stop.near_hospital) facilities.push('hospital');
 		if (stop.near_university) facilities.push('university');
@@ -68,43 +102,38 @@ export const syncStops = async () => {
 		if (stop.bike_sharing) facilities.push('bike_sharing');
 		if (stop.bike_parking) facilities.push('bike_parking');
 		if (stop.car_parking) facilities.push('car_parking');
-		// Initiate a variable to hold the parsed stop
+
+		//
+		// Build the final stop object
+
 		const parsedStop = {
-			district_id: stop.district_id,
-			district_name: stop.district_name,
 			facilities: facilities || [],
-			id: stop.stop_id,
 			lat: stop.stop_lat,
-			lines: stop.line_ids || [],
-			locality: stop.locality,
+			line_ids: stop.line_ids || [],
+			location: matchingLocation,
 			lon: stop.stop_lon,
-			municipality_id: stop.municipality_id,
-			municipality_name: stop.municipality_name,
-			name: stop.stop_name,
-			operational_status: stop.operational_status,
-			parish_id: stop.parish_id,
-			parish_name: stop.parish_name,
-			patterns: stop.pattern_ids || [],
-			region_id: stop.region_id,
-			region_name: stop.region_name,
-			routes: stop.route_ids || [],
+			operational_status: OperationalStatus[stop.operational_status],
+			pattern_ids: stop.pattern_ids || [],
+			route_ids: stop.route_ids || [],
 			short_name: stop.stop_short_name,
 			stop_id: stop.stop_id,
+			stop_name: stop.stop_name,
 			tts_name: stop.tts_stop_name,
 			wheelchair_boarding: stop.wheelchair_boarding,
 		};
-		//
+
 		allStopsData.push(parsedStop);
-		//
+
 		updatedStopsCounter++;
+
 		//
 	}
 
 	//
 	// Save to the database
 
-	allStopsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.STOPS.ALL, JSON.stringify(allStopsData));
+	allStopsData.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.STOPS, JSON.stringify(allStopsData));
 
 	LOGGER.success(`Done updating ${updatedStopsCounter} Stops (${globalTimer.get()})`);
 

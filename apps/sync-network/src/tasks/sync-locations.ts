@@ -147,10 +147,10 @@ export const syncLocations = async () => {
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(sortedMunicipalitiesData));
 
 	const sortedDistrictsData = Array.from(updatedDistrictsData.values()).sort((a, b) => collator.compare(a.district_id, b.district_id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(sortedDistrictsData));
+	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.DISTRICTS, JSON.stringify(sortedDistrictsData));
 
 	const sortedRegionsData = Array.from(updatedRegionsData.values()).sort((a, b) => collator.compare(a.region_id, b.region_id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(sortedRegionsData));
+	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.REGIONS, JSON.stringify(sortedRegionsData));
 
 	//
 

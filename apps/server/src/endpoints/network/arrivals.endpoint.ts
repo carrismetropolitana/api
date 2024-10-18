@@ -95,7 +95,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_pattern/:id', async (request, re
 
 async function getCurrentArchiveIds() {
 	const currentArchiveIds = {};
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES.ALL);
+	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {

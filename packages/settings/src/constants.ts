@@ -19,52 +19,40 @@ export const SERVERDB_KEYS = Object.freeze({
 	},
 	METRICS: {
 		DEMAND: {
-			BY_DAY: 'v2:metrics:demand:by_day',
-			BY_LINE: 'v2:metrics:demand:by_line',
-			BY_MONTH: 'v2:metrics:demand:by_month',
-			BY_OPERATOR: 'v2:metrics:demand:operator',
-			BY_STOP: 'v2:metrics:demand:by_stop',
+			BY_DAY: 'metrics:demand:by_day',
+			BY_LINE: 'metrics:demand:by_line',
+			BY_MONTH: 'metrics:demand:by_month',
+			BY_OPERATOR: 'metrics:demand:operator',
+			BY_STOP: 'metrics:demand:by_stop',
 		},
 		SERVICE: {
-			ALL: 'v2:metrics:service',
+			ALL: 'metrics:service',
 		},
 	},
 	NETWORK: {
 		ALERTS: {
-			ALL: 'v2:network:alerts:all',
-			PROTOBUF: 'v2:network:alerts:protobuf',
-			SENT_NOTIFICATIONS: 'v2:network:alerts:sent_notifications',
+			ALL: 'network:alerts:all',
+			PROTOBUF: 'network:alerts:protobuf',
+			SENT_NOTIFICATIONS: 'network:alerts:sent_notifications',
 		},
-		ARCHIVES: {
-			ALL: 'v2:network:archives:all',
-		},
-		DATES: {
-			ALL: 'v2:network:dates:all',
-		},
-		LINES: {
-			ALL: 'v2:network:lines:all',
-		},
+		ARCHIVES: 'network:archives',
+		DATES: 'network:dates',
+		LINES: 'network:lines',
 		PATTERNS: {
-			ID: id => `v2:network:patterns:${id}`,
+			BASE: 'network:patterns',
+			ID: id => `network:patterns:${id}`,
 		},
-		PERIODS: {
-			ALL: 'v2:network:periods:all',
-		},
-		ROUTES: {
-			ALL: 'v2:network:routes:all',
-		},
+		PERIODS: 'network:periods',
+		ROUTES: 'network:routes',
 		SHAPES: {
-			BASE: 'v2:network:shapes',
-			ID: id => `v2:network:shapes:${id}`,
+			BASE: 'network:shapes',
+			ID: id => `network:shapes:${id}`,
 		},
-		STOPS: {
-			ALL: 'v2:network:stops:all',
-			BASE: 'v2:network:stops',
-		},
+		STOPS: 'network:stops',
 		VEHICLES: {
-			ALL: 'v2:network:vehicles:all',
-			PROTOBUF: 'v2:network:vehicles:protobuf',
+			ALL: 'network:vehicles:all',
+			PROTOBUF: 'network:vehicles:protobuf',
 		},
 	},
-	PIP: 'v2:pip',
+	PIP: 'pip',
 });

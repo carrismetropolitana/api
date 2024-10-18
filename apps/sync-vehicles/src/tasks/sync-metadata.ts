@@ -3,7 +3,7 @@
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
 import { convertEmissionClassCode, convertPropulsionCode, VehicleMetadata } from '@carrismetropolitana/api-types/src/api';
-import { convertGTFSBoolToBoolean, VehicleExtended } from '@carrismetropolitana/api-types/src/gtfs';
+import { convertGTFSBoolToBoolean, VehiclesExtended } from '@carrismetropolitana/api-types/src/gtfs';
 import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -30,7 +30,7 @@ export const syncMetadata = async () => {
 
 	const downloadedCsvFile = await fetch(DATASET_FILE_URL);
 	const downloadedCsvText = await downloadedCsvFile.text();
-	const allItemsCsv = Papa.parse<VehicleExtended>(downloadedCsvText, { header: true });
+	const allItemsCsv = Papa.parse<VehiclesExtended>(downloadedCsvText, { header: true });
 
 	//
 	// For each item, update its entry in the database

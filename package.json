@@ -4,8 +4,8 @@
 	"scripts": {
 		"build": "turbo run build",
 		"build:packages": "turbo run build --filter=./packages/*",
-		"dev": "export NODE_ENV=development && dotenv-run -- turbo run dev --concurrency=99",
-		"dev:sync": "export NODE_ENV=development &&  dotenv-run -- turbo run dev:sync --concurrency=99",
+		"dev": "turbo run dev --concurrency=99",
+		"dev:sync": "turbo run dev:sync --concurrency=99",
 		"docker:local:down": "docker-compose -f docker/compose.local.yml down",
 		"docker:local:up": "docker-compose -f docker/compose.local.yml up -d",
 		"docker:sync:down": "docker-compose -f docker/compose.sync.yml down",
@@ -15,7 +15,7 @@
 		"start:sync": "dotenv-run -- turbo run start:sync"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20241014.1938.30",
+		"@carrismetropolitana/eslint": "20241017.1618.32",
 		"@dotenv-run/cli": "1.3.6",
 		"turbo": "2.1.3"
 	},

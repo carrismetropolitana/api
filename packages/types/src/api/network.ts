@@ -1,8 +1,9 @@
 /* * */
 
+import type { Feature, LineString } from 'geojson';
 import type { WheelchairBoardingType } from 'gtfs-types';
 
-import type { Locality } from './locations.js';
+import type { Location } from './locations.js';
 
 /* * */
 
@@ -53,36 +54,38 @@ export interface Line {
 	color: string
 	facilities: string[]
 	line_id: string
-	localities: Locality[]
+	locations: Location[]
 	long_name: string
 	pattern_ids: string[]
 	route_ids: string[]
 	short_name: string
 	text_color: string
+	tts_name: string
 }
 
 export interface Route {
 	color: string
 	facilities: string[]
 	line_id: string
-	localities: Locality[]
+	locations: Location[]
 	long_name: string
 	pattern_ids: string[]
 	route_id: string
 	short_name: string
 	text_color: string
+	tts_name: string
 }
 
 export type PatternGroup = Pattern[];
 
 export interface Pattern {
 	color: string
-	direction: string
+	direction_id: 0 | 1
 	facilities: string[]
 	headsign: string
 	line_id: string
-	localities: Locality[]
-	path: Path[]
+	locations: Location[]
+	path: Path
 	pattern_id: string
 	pattern_version_id: string
 	route_id: string
@@ -90,6 +93,7 @@ export interface Pattern {
 	short_name: string
 	text_color: string
 	trip_groups: TripGroup[]
+	tts_headsign: string
 	valid_on: string[]
 }
 
@@ -100,13 +104,15 @@ export interface Waypoint {
 	allow_pickup: boolean
 	distance: number
 	distance_delta: number
-	stop: Stop
+	// stop: Stop
+	stop_id: string
 	stop_sequence: number
 }
 
 export interface TripGroup {
 	schedule: Schedule[]
 	service_ids: string[]
+	trip_group_id: string
 	trip_ids: string[]
 	valid_on: string[]
 }
@@ -122,7 +128,7 @@ export interface Stop {
 	facilities: string[]
 	lat: number
 	line_ids: string[]
-	locality: Locality
+	location: Location
 	lon: number
 	operational_status: OperationalStatus
 	pattern_ids: string[]
@@ -138,4 +144,18 @@ export enum OperationalStatus {
 	active = 'ACTIVE',
 	seasonal = 'SEASONAL',
 	voided = 'VOIDED',
+}
+
+export interface Shape {
+	extension: number
+	geojson: Feature<LineString>
+	points: Point[]
+	shape_id: string
+}
+
+export interface Point {
+	shape_dist_traveled: number
+	shape_pt_lat: number
+	shape_pt_lon: number
+	shape_pt_sequence: number
 }

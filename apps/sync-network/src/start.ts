@@ -11,13 +11,13 @@ import fs from 'node:fs';
 
 /* * */
 
-import { syncArchives } from '@/parsers/archives.parser.js';
-import { syncDates } from '@/parsers/dates.parsers.js';
-import { syncLinesRoutesPatterns } from '@/parsers/linesRoutesPatterns.parser.js';
-import { syncLocations } from '@/parsers/locations.parser.js';
-import { syncPeriods } from '@/parsers/periods.parser.js';
-import { syncShapes } from '@/parsers/shapes.parser.js';
-import { syncStops } from '@/parsers/stops.parser.js';
+import { syncArchives } from '@/tasks/sync-archives.js';
+import { syncDates } from '@/tasks/sync-dates.js';
+import { syncLinesRoutesPatterns } from '@/tasks/sync-lines-routes-patterns.js';
+import { syncLocations } from '@/tasks/sync-locations.js';
+import { syncPeriods } from '@/tasks/sync-periods.js';
+import { syncShapes } from '@/tasks/sync-shapes.js';
+import { syncStops } from '@/tasks/sync-stops.js';
 
 /* * */
 
@@ -32,13 +32,13 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 /* * */
 
 export const ENABLED_MODULES = [
-	'gtfs_import',
-	'locations_parser',
-	'periods_parser',
-	'dates_parser',
-	'archives_parser',
-	'stops_parser',
-	'shapes_parser',
+	// 'gtfs_import',
+	// 'locations_parser',
+	// 'periods_parser',
+	// 'dates_parser',
+	// 'archives_parser',
+	// 'stops_parser',
+	// 'shapes_parser',
 	'lines_routes_patterns_parser',
 ];
 

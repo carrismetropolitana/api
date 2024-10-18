@@ -47,12 +47,9 @@ class FastifyService {
 	}
 
 	private _setupDefaultHooks(): void {
-		this.server.addHook('onSend', async (request, reply, payload) => {
-			// Check if Content-Type is already set for local override
-			if (!reply.hasHeader('Content-Type')) {
-				reply.header('Content-Type', 'application/json; charset=utf-8');
-			}
-			return payload;
+		// Add Content-Type header to all responses by default
+		this.server.addHook('onRequest', async (request, reply) => {
+			reply.header('Content-Type', 'application/json; charset=utf-8');
 		});
 	}
 

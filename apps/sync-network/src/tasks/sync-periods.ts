@@ -100,7 +100,7 @@ export const syncPeriods = async () => {
 	//
 	// Save the array to the database
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.PERIODS.ALL, JSON.stringify(allPeriodsParsed));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.PERIODS, JSON.stringify(allPeriodsParsed));
 
 	LOGGER.success(`Done updating ${allPeriodsParsed.length} Periods (${globalTimer.get()})`);
 

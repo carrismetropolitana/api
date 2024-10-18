@@ -20,3 +20,5 @@ export interface Locality extends Municipality {
 	locality_id: string
 	locality_name: string
 }
+
+export type Location = Locality & Municipality;

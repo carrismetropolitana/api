@@ -11,37 +11,37 @@ FASTIFY.server.get('/gtfs', async (_, reply) => {
 });
 
 FASTIFY.server.get('/archives', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
 
 FASTIFY.server.get('/dates', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.DATES.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.DATES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
 
 FASTIFY.server.get('/periods', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PERIODS.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PERIODS);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
 
 FASTIFY.server.get('/stops', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
 
 FASTIFY.server.get('/lines', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
 
 FASTIFY.server.get('/routes', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ROUTES.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ROUTES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });

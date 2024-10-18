@@ -57,7 +57,7 @@ export const syncPositions = async () => {
 
 	const currentArchiveIds = {};
 
-	const allArchivesTxt = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.ARCHIVES}:all`);
+	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
 	const allArchivesData = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
