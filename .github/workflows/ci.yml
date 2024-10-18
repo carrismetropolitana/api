@@ -3,11 +3,11 @@ name: Build & Publish Docker Images
 on:
   push:
     branches:
-      - beta
+      - alpha
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -31,3 +31,20 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Login to GitHub Container Registry
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: docker/build-push-action@master
+        with:
+          push: true
+          context: ./${{ env.MODULE_KEY }}
+          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm

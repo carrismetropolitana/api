@@ -5,13 +5,13 @@
 	"type": "module",
 	"main": "index.js",
 	"scripts": {
-		"build": "npm run clean && tsc && resolve-tspaths && cp -r ./src/assets ./dist/assets",
+		"build": "npm run clean && tsc && resolve-tspaths && npm run copy",
 		"clean": "rm -rf dist",
-		"dev": "tsx watch ./src/index.ts",
-		"dev:sync": "dotenv-run -- tsx watch ./src/index.ts",
+		"copy": "cp -r ./src/assets ./dist/assets",
+		"dev": "dotenv-run -f .env.development -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"start": "npm run build && node dist/index.js"
+		"start": "node dist/index.js"
 	},
 	"dependencies": {
 		"@carrismetropolitana/api-services": "*",

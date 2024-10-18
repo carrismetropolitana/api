@@ -6,11 +6,12 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsc -w"
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
-		"typescript": "^5.6.3"
+		"resolve-tspaths": "0.8.22",
+		"typescript": "5.6.3"
 	}
 }

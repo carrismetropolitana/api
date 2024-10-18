@@ -20,7 +20,7 @@ const TIME_BY_CATEGORY = {
 
 /* * */
 
-export default async () => {
+export const syncTickets = async () => {
 	//
 
 	LOGGER.init();
@@ -30,7 +30,7 @@ export default async () => {
 	// 1.
 	// Retrieve existing ENCM documents from database
 
-	const allEncmDocumentsTxt = await SERVERDB.get(`${SERVERDB_KEYS.DATASETS.FACILITIES_ENCM}:all`);
+	const allEncmDocumentsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES);
 	const allEncmDocumentsData = JSON.parse(allEncmDocumentsTxt);
 
 	// 2.

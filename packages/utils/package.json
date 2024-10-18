@@ -7,14 +7,13 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
-		"clean": "rm -rf dist",
-		"dev": "tsx watch ./src/index.ts",
-		"dev:sync": "npm run dev"
+		"clean": "rm -rf dist"
 	},
 	"dependencies": {
 		"luxon": "3.5.0"
 	},
 	"devDependencies": {
+		"resolve-tspaths": "0.8.22",
 		"typescript": "5.6.3"
 	},
 	"module": "./dist/index.mjs"

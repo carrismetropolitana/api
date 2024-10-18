@@ -79,7 +79,7 @@ export const syncLinesRoutesPatterns = async () => {
 	});
 
 	// Get all distinct Pattern IDs from trips table
-	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<{ pattern_id: string }>(`SELECT DISTINCT pattern_id FROM trips LIMIT 10`);
+	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<{ pattern_id: string }>(`SELECT DISTINCT pattern_id FROM trips`);
 	const allDistinctPatternIds = allDistinctPatternIdsRaw.rows.map(item => item.pattern_id);
 
 	LOGGER.info(`Fetched ${allDistinctPatternIdsRaw.rowCount} rows from NETWORKDB (${fetchRawDataTimer.get()})`);
@@ -438,8 +438,6 @@ export const syncLinesRoutesPatterns = async () => {
 		// to an array of trips. Also, the pattern groups themselves should be an array for the current pattern ID.
 
 		const finalizedPatternGroupsData: PatternGroup = Array.from(parsedPatternsForThisPatternGroup.values()).map((item: Pattern) => ({ ...item, trip_groups: Object.values(item.trip_groups) }));
-
-		console.log(finalizedPatternGroupsData);
 
 		await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId), JSON.stringify(finalizedPatternGroupsData));
 		updatedPatternKeys.add(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId));

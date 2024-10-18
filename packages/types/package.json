@@ -9,13 +9,12 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
-		"clean": "rm -rf dist",
-		"dev": "tsx watch ./src/index.ts",
-		"dev:sync": "npm run dev"
+		"clean": "rm -rf dist"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"gtfs-types": "^4.0.0",
+		"resolve-tspaths": "0.8.22",
 		"typescript": "5.6.3"
 	}
 }
