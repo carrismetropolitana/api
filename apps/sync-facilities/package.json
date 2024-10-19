@@ -1,5 +1,5 @@
 {
-	"name": "@carrismetropolitana/api-sync-datasets",
+	"name": "@carrismetropolitana/api-sync-facilities",
 	"version": "1.0.0",
 	"type": "module",
 	"files": ["dist"],
