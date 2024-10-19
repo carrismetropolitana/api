@@ -1,8 +1,11 @@
 /* * */
 
-import collator from '@/services/sortCollator.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { Locality, Location, Municipality } from '@carrismetropolitana/api-types/src/api';
+import { BoatStation, BoatStationsSource } from '@carrismetropolitana/api-types/src/facilities/facilities.js';
+import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
+import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 
@@ -12,84 +15,77 @@ const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/
 
 /* * */
 
-export default async () => {
+export const syncBoatStations = async () => {
 	//
 
-	// 1.
-	// Record the start time to later calculate operation duration
-
+	LOGGER.title(`Sync Boat Stations`);
 	const globalTimer = new TIMETRACKER();
 
-	// 2.
-	// Open file from cloned repository
+	//
+	// Download and parse the data file
 
-	console.log(`⤷ Downloading data file...`);
+	LOGGER.info(`Downloading data file...`);
+
 	const downloadedCsvFile = await fetch(DATASET_FILE_URL);
 	const downloadedCsvText = await downloadedCsvFile.text();
-	const allItemsCsv = Papa.parse(downloadedCsvText, { header: true });
+	const allItemsCsv = Papa.parse<BoatStationsSource>(downloadedCsvText, { header: true });
 
-	// 3.
+	//
+	// Fetch all Locations from SERVERDB
+
+	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
+	const allLocalitiesData = JSON.parse(allLocalitiesTxt);
+
+	const allMunicipalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES);
+	const allMunicipalitiesData = JSON.parse(allMunicipalitiesTxt);
+
+	//
 	// For each item, update its entry in the database
 
-	console.log(`⤷ Updating items...`);
+	LOGGER.info(`Updating items...`);
 
-	const allItemsData = [];
-	const updatedItemKeys = new Set();
+	let updatedItemsCounter = 0;
+	const allItemsData: BoatStation[] = [];
 
 	for (const itemCsv of allItemsCsv.data) {
-		// Parse item
-		const parsedItemData = {
-			district_id: itemCsv['district_id'],
-			district_name: itemCsv['district_name'],
-			id: itemCsv['id'],
+		//
+
+		//
+		// Discover which Location this store is in.
+		// Try to match the store's locality first, then fallback to municipality.
+
+		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === itemCsv.locality && item.municipality_id === itemCsv.municipality_id);
+
+		if (!matchingLocation) {
+			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === itemCsv.municipality_id);
+		}
+
+		//
+		// Build the final object
+
+		const parsedItemData: BoatStation = {
+			boat_station_id: itemCsv['id'],
 			lat: itemCsv['lat'],
-			locality: itemCsv['locality'],
+			location: matchingLocation,
 			lon: itemCsv['lon'],
-			municipality_id: itemCsv['municipality_id'],
-			municipality_name: itemCsv['municipality_name'],
 			name: itemCsv['name'],
-			parish_id: itemCsv['parish_id'],
-			parish_name: itemCsv['parish_name'],
-			region_id: itemCsv['region_id'],
-			region_name: itemCsv['region_name'],
-			stops: itemCsv['stops']?.length ? itemCsv['stops'].split('|') : [],
+			stop_ids: itemCsv['stops']?.length ? itemCsv['stops'].split('|') : [],
 		};
-		// Save to database
+
 		allItemsData.push(parsedItemData);
-		await SERVERDB.set(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_BOAT_STATIONS}:${parsedItemData.id}`, JSON.stringify(parsedItemData));
-		updatedItemKeys.add(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_BOAT_STATIONS}:${parsedItemData.id}`);
+
+		updatedItemsCounter++;
+
 		//
 	}
 
-	// 4.
-	// Log count of updated items
+	//
+	// Save items to the database
 
-	console.log(`⤷ Updated ${updatedItemKeys.size} items.`);
+	allItemsData.sort((a, b) => sortCollator.compare(a.boat_station_id, b.boat_station_id));
+	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(allItemsData));
 
-	// 5.
-	// Add the 'all' option
-
-	allItemsData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_BOAT_STATIONS}:all`, JSON.stringify(allItemsData));
-	updatedItemKeys.add(`${SERVERDB_KEYS.DATASETS.CONNECTIONS_BOAT_STATIONS}:all`);
-
-	// 6.
-	// Delete all items not present in the current update
-
-	const allSavedItemKeys = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.DATASETS.CONNECTIONS_BOAT_STATIONS}:*`, TYPE: 'string' })) {
-		allSavedItemKeys.push(key);
-	}
-	const staleItemKeys = allSavedItemKeys.filter(id => !updatedItemKeys.has(id));
-	if (staleItemKeys.length) {
-		await SERVERDB.del(staleItemKeys);
-	}
-	console.log(`⤷ Deleted ${staleItemKeys.length} stale items.`);
-
-	// 7.
-	// Log elapsed time in the current operation
-
-	console.log(`⤷ Done updating items (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.BOAT_STATIONS} (${globalTimer.get()}).`);
 
 	//
 };

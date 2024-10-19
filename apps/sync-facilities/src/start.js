@@ -14,7 +14,7 @@ import facilitiesPipParser from '@/tasks/sync-pip.js';
 import connectionsBoatStationsParser from '@/tasks/sync-boat-stations.js';
 import connectionsLightRailStationsParser from '@/tasks/sync-light-rail-stations.js';
 import connectionsSubwayStationsParser from '@/tasks/sync-subway-stations.js';
-import connectionsTrainStationsParser from '@/tasks/sync-train_stations.js';
+import connectionsTrainStationsParser from '@/tasks/sync-train-stations.js';
 
 /* * */
 

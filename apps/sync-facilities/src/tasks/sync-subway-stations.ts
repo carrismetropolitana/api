@@ -12,7 +12,7 @@ const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/
 
 /* * */
 
-export default async () => {
+export const syncSubwayStations = async () => {
 	//
 
 	// 1.

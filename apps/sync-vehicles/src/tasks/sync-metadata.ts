@@ -20,7 +20,6 @@ export const syncMetadata = async () => {
 	//
 
 	LOGGER.title(`SYNC METADATA`);
-
 	const globalTimer = new TIMETRACKER();
 
 	//
