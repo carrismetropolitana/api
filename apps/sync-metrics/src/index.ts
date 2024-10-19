@@ -1,6 +1,6 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
@@ -21,7 +21,6 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 
 	LOGGER.init();
 
-	await SERVERDB.connect();
 	await PCGIDB.connect();
 
 	const runEvery5Minutes = async () => {

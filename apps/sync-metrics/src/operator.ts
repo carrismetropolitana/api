@@ -48,7 +48,7 @@ export default async () => {
 
 		const count = result[0].totalUnique;
 		validationsByDayArray.push({ count, date: getOperationalDay() });
-		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.DEMAND_BY_OPERATOR}:${operatorId}:${getOperationalDay()}`, JSON.stringify({
+		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.DEMAND.BY_OPERATOR}:${operatorId}:${getOperationalDay()}`, JSON.stringify({
 			end_date: endDateString,
 			start_date: startDateString,
 			timestamp: new Date().toISOString(),
