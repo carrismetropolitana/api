@@ -2,7 +2,6 @@
 
 import { syncMetadata } from '@/tasks/sync-metadata.js';
 import { syncRealtime } from '@/tasks/sync-realtime.js';
-import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
@@ -13,10 +12,6 @@ const RUN_INTERVAL = 5000; // 5 seconds
 /* * */
 
 (async function init() {
-	//
-
-	await PCGIDB.connect();
-
 	//
 
 	let counter = 0;
