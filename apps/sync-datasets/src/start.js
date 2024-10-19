@@ -5,20 +5,20 @@ import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
-import facilitiesEncmParser from '@/parsers/facilities.encm.parser.js';
-import facilitiesPipParser from '@/parsers/facilities.pip.parser.js';
-import facilitiesSchoolsParser from '@/parsers/facilities.schools.parser.js';
+import facilitiesEncmParser from '@/tasks/facilities.encm.js';
+import facilitiesSchoolsParser from '@/tasks/facilities.schools.parser.js';
+import facilitiesPipParser from '@/tasks/sync-pip.js';
 
 /* * */
 
-import connectionsBoatStationsParser from '@/parsers/connections.boat_stations.parser.js';
-import connectionsLightRailStationsParser from '@/parsers/connections.light_rail_stations.parser.js';
-import connectionsSubwayStationsParser from '@/parsers/connections.subway_stations.parser.js';
-import connectionsTrainStationsParser from '@/parsers/connections.train_stations.parser.js';
+import connectionsBoatStationsParser from '@/tasks/sync-boat-stations.js';
+import connectionsLightRailStationsParser from '@/tasks/sync-light-rail-stations.js';
+import connectionsSubwayStationsParser from '@/tasks/sync-subway-stations.js';
+import connectionsTrainStationsParser from '@/tasks/sync-train_stations.js';
 
 /* * */
 
-import metricsServiceParser from '@/parsers/metrics.service.parser.js';
+import metricsServiceParser from '@/tasks/metrics.service.parser.js';
 
 /* * */
 
