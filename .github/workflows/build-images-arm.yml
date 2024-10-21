@@ -26,6 +26,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
+      - name: Checkout repository
+        run: ls -la
+
       - name: Cache turbo build setup
         uses: actions/cache@v4
         with:
@@ -54,7 +57,7 @@ jobs:
 
   api-switch:
     name: switch (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -95,7 +98,7 @@ jobs:
 
   api-sync-alerts:
     name: sync-alerts (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -136,7 +139,7 @@ jobs:
 
   api-sync-facilities:
     name: sync-facilities (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -177,7 +180,7 @@ jobs:
 
   api-sync-gtfs:
     name: sync-gtfs (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -218,7 +221,7 @@ jobs:
 
   api-sync-metrics:
     name: sync-metrics (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -259,7 +262,7 @@ jobs:
 
   api-sync-stores:
     name: sync-stores (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -300,7 +303,7 @@ jobs:
 
   api-sync-vehicles:
     name: sync-vehicles (NodeJS)
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
