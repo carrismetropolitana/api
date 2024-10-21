@@ -10,7 +10,7 @@ import Papa from 'papaparse';
 
 /* * */
 
-const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/connections/pips/pips.csv';
+const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/facilities/pips/pips.csv';
 
 /* * */
 

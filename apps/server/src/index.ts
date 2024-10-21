@@ -30,6 +30,5 @@ import '@/endpoints/network/arrivals.endpoint.js';
 
 /* * */
 
-import '@/endpoints/pip/info.endpoint.js';
 import '@/endpoints/pip/estimates.endpoint.js';
 import '@/endpoints/pip/message.endpoint.js';

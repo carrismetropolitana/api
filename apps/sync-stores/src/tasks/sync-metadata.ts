@@ -10,7 +10,7 @@ import Papa from 'papaparse';
 
 /* * */
 
-const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/connections/encm/encm.csv';
+const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/facilities/encm/encm.csv';
 
 /* * */
 
@@ -34,7 +34,6 @@ export const syncMetadata = async () => {
 
 	LOGGER.info(`Updating items...`);
 
-	let updatedItemsCounter = 0;
 	const allUpdatedItemsData: StoreMetadata[] = [];
 
 	for (const sourceItem of allSourceItems.data) {
@@ -74,8 +73,6 @@ export const syncMetadata = async () => {
 
 		allUpdatedItemsData.push(updatedItemData);
 
-		updatedItemsCounter++;
-
 		//
 	}
 
@@ -85,7 +82,7 @@ export const syncMetadata = async () => {
 	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(allUpdatedItemsData));
 
-	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.STORES} (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating ${allUpdatedItemsData.length} items to ${SERVERDB_KEYS.FACILITIES.STORES} (${globalTimer.get()}).`);
 
 	//
 };
