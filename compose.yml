@@ -8,9 +8,9 @@ volumes:
 
 secrets:
   pcgidbkey:
-    file: PCGIDB.key
+    file: ./secrets/production/PCGIDB.key
   firebasekey:
-    file: FIREBASE.json
+    file: ./secrets/production/FIREBASE.json
 
 services:
   #
@@ -57,7 +57,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - ./promtail/docker-config.yml:/etc/promtail/docker-config.yml:ro
@@ -168,7 +168,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
     secrets:
       - pcgidbkey
 
@@ -206,7 +206,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
     secrets:
       - firebasekey
 
@@ -227,7 +227,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -246,7 +246,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
     secrets:
       - pcgidbkey
 
@@ -267,7 +267,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
     environment:
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
@@ -290,7 +290,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -309,6 +309,6 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./secrets/production/.env
     secrets:
       - pcgidbkey

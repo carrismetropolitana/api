@@ -7,7 +7,7 @@ volumes:
 
 secrets:
   pcgidbkey:
-    file: PCGIDB.key
+    file: ../secrets/development/PCGIDB.key
 
 services:
   #
@@ -73,7 +73,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env.local
+      - ../secrets/development/.env.development
     environment:
       - SERVERDB_HOST=serverdb
       - NETWORKDB_HOST=networkdb

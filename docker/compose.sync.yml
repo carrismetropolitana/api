@@ -8,9 +8,9 @@ volumes:
 
 secrets:
   pcgidbkey:
-    file: ../PCGIDB.key
+    file: ../secrets/development/PCGIDB.key
   firebasekey:
-    file: ../FIREBASE.json
+    file: ../secrets/development/FIREBASE.json
 
 services:
   #
@@ -80,7 +80,7 @@ services:
 
   sync-alerts:
     image: carrismetropolitana/api-sync-alerts
-    build: 
+    build:
       context: ../
       dockerfile: ./apps/sync-alerts/Dockerfile
     deploy:
@@ -104,7 +104,7 @@ services:
 
   sync-datasets:
     image: carrismetropolitana/api-sync-datasets
-    build: 
+    build:
       context: ../
       dockerfile: ./apps/sync-datasets/Dockerfile
     deploy:
@@ -126,7 +126,7 @@ services:
 
   sync-metrics:
     image: carrismetropolitana/api-sync-metrics
-    build: 
+    build:
       context: ../
       dockerfile: ./apps/sync-metrics/Dockerfile
     deploy:
@@ -150,7 +150,7 @@ services:
 
   sync-network:
     image: carrismetropolitana/api-sync-network
-    build: 
+    build:
       context: ../
       dockerfile: ./apps/sync-network/Dockerfile
     deploy:
@@ -176,7 +176,7 @@ services:
 
   sync-stores:
     image: carrismetropolitana/api-sync-stores
-    build: 
+    build:
       context: ../
       dockerfile: ./apps/sync-stores/Dockerfile
     deploy:
@@ -198,7 +198,7 @@ services:
 
   sync-vehicles:
     image: carrismetropolitana/api-sync-vehicles
-    build: 
+    build:
       context: ../
       dockerfile: ./apps/sync-vehicles/Dockerfile
     deploy:

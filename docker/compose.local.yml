@@ -7,7 +7,7 @@ volumes:
 
 secrets:
   pcgidbkey:
-    file: PCGIDB.key
+    file: ../secrets/development/PCGIDB.key
 
 services:
   #
