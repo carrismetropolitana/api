@@ -2,7 +2,7 @@
 
 import { IXAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { CurrentStatus, Store } from '@carrismetropolitana/api-types/src/api/stores.js';
+import { CurrentStoreStatus, Store } from '@carrismetropolitana/api-types/src/api/facilities.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -54,13 +54,13 @@ export const syncRealtime = async () => {
 		//
 		// Filter all waiting tickets by the current ENCM id
 
-		const ticketsWaiting = allTicketsWaiting?.content?.ticket?.filter(item => item.siteEID === foundDocument.store_id);
+		const ticketsWaiting = allTicketsWaiting?.content?.ticket?.filter(item => item.siteEID === foundDocument.id);
 
 		//
 		// Filter active counters for the current ENCM id, and deduplicate them
 
 		const activeCounters = allCounters?.content?.siteReport?.filter((item) => {
-			const siteEidMatchesEncmId = item.siteEID === foundDocument.store_id;
+			const siteEidMatchesEncmId = item.siteEID === foundDocument.id;
 			const counterStatusMatches = item.counterStatus === 'A' || item.counterStatus === 'P' || item.counterStatus === 'O' || item.counterStatus === 'S';
 			return siteEidMatchesEncmId && counterStatusMatches;
 		});
@@ -84,18 +84,18 @@ export const syncRealtime = async () => {
 		//
 		// Calculate the store current status
 
-		let currentStatus: CurrentStatus;
+		let currentStatus: CurrentStoreStatus;
 
 		const activeCountersToPeopleWaitingRatio = activeCountersUnique.length / (ticketsWaiting?.length || 1);
 
 		if (activeCountersUnique.length > 0 && activeCountersToPeopleWaitingRatio > BUSY_RATIO) {
-			currentStatus = CurrentStatus.open;
+			currentStatus = CurrentStoreStatus.open;
 		}
 		else if (activeCountersUnique.length > 0) {
-			currentStatus = CurrentStatus.busy;
+			currentStatus = CurrentStoreStatus.busy;
 		}
 		else {
-			currentStatus = CurrentStatus.closed;
+			currentStatus = CurrentStoreStatus.closed;
 		}
 
 		//
@@ -116,7 +116,7 @@ export const syncRealtime = async () => {
 
 		updatedStoresData.push(updatedDocument);
 
-		LOGGER.info(`id: ${foundDocument.store_id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | estimated_wait_seconds: ${updatedDocument.estimated_wait_seconds} | short_name: ${foundDocument.short_name}`);
+		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | estimated_wait_seconds: ${updatedDocument.estimated_wait_seconds} | short_name: ${foundDocument.short_name}`);
 
 		//
 	}
@@ -125,7 +125,7 @@ export const syncRealtime = async () => {
 	// Save all documents
 
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-	allStoresData.sort((a, b) => collator.compare(a.store_id, b.store_id));
+	allStoresData.sort((a, b) => collator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(allStoresData));
 
 	LOGGER.terminate(`Updated ${allStoresData.length} Stores (${globalTimer.get()})`);

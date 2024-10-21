@@ -2,7 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { StoreMetadata, StoresSource } from '@carrismetropolitana/api-types/src/api/stores.js';
+import { StoreMetadata, StoresSource } from '@carrismetropolitana/api-types/src/api/facilities.js';
 import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -42,6 +42,8 @@ export const syncMetadata = async () => {
 
 		const updatedItemData: StoreMetadata = {
 			address: sourceItem.address,
+			district_id: sourceItem.district_id,
+			district_name: sourceItem.district_name,
 			email: sourceItem.email,
 			google_place_id: sourceItem.google_place_id,
 			hours_friday: sourceItem.hours_friday?.length ? sourceItem.hours_friday.split('|') : [],
@@ -52,8 +54,21 @@ export const syncMetadata = async () => {
 			hours_thursday: sourceItem.hours_thursday?.length ? sourceItem.hours_thursday.split('|') : [],
 			hours_tuesday: sourceItem.hours_tuesday?.length ? sourceItem.hours_tuesday.split('|') : [],
 			hours_wednesday: sourceItem.hours_wednesday?.length ? sourceItem.hours_wednesday.split('|') : [],
+			id: sourceItem.id,
+			lat: Number(sourceItem.lat),
+			locality: sourceItem.locality,
+			lon: Number(sourceItem.lon),
+			municipality_id: sourceItem.municipality_id,
+			municipality_name: sourceItem.municipality_name,
+			name: sourceItem.name,
+			parish_id: sourceItem.parish_id,
+			parish_name: sourceItem.parish_name,
 			phone: sourceItem.phone,
 			postal_code: sourceItem.postal_code,
+			region_id: sourceItem.region_id,
+			region_name: sourceItem.region_name,
+			short_name: sourceItem.short_name,
+			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
 			url: sourceItem.url,
 		};
 
