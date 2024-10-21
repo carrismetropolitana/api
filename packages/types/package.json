@@ -2,9 +2,7 @@
 	"name": "@carrismetropolitana/api-types",
 	"version": "1.0.0",
 	"type": "module",
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
@@ -14,8 +12,6 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@types/geojson": "7946.0.14",
-		"gtfs-types": "4.0.0",
-		"resolve-tspaths": "0.8.22",
-		"typescript": "5.6.3"
+		"gtfs-types": "4.0.0"
 	}
 }
