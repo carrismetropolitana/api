@@ -26,10 +26,10 @@
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20241017.1618.32",
 		"@dotenv-run/cli": "1.3.6",
-		"@types/node": "22.7.5",
+		"@types/node": "22.7.7",
 		"resolve-tspaths": "0.8.22",
 		"tsx": "4.19.1",
-		"turbo": "2.2.2",
+		"turbo": "2.2.3",
 		"typescript": "5.6.3"
 	},
 	"packageManager": "npm@10.9.0",
