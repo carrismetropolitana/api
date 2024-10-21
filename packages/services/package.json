@@ -8,14 +8,12 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
-		"build": "npm run clean && tsc",
-		"clean": "rm -rf dist",
-		"dev": "tsx watch ./src/index.ts",
-		"dev:sync": "npm run dev"
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist"
 	},
 	"dependencies": {
 		"@helperkits/logger": "20240703.1726.24",
-		"fastify": "^5.0.0",
+		"fastify": "5.0.0",
 		"jwt-decode": "4.0.0",
 		"mongodb": "6.9.0",
 		"pg": "8.13.0",
@@ -24,6 +22,7 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
+		"resolve-tspaths": "0.8.22",
 		"typescript": "5.6.3"
 	},
 	"packageManager": "npm@10.1.0"

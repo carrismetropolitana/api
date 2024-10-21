@@ -9,6 +9,7 @@
 		},
 		"dev": {
 			"cache": false,
+			"passThroughEnv": ["*"],
 			"persistent": true
 		},
 		"dev:sync": {

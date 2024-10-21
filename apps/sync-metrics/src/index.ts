@@ -1,12 +1,12 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
-import daily from './daily.js';
-import operator from './operator.js';
 import start from './start.js';
+import daily from './tasks/daily.js';
+import operator from './tasks/operator.js';
 
 /* * */
 
@@ -21,7 +21,6 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 
 	LOGGER.init();
 
-	await SERVERDB.connect();
 	await PCGIDB.connect();
 
 	const runEvery5Minutes = async () => {

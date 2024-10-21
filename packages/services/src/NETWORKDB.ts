@@ -10,6 +10,7 @@ const client = new pg.Client({
 	database: process.env.NETWORKDB_USER,
 	host: process.env.NETWORKDB_HOST,
 	password: process.env.NETWORKDB_PASSWORD,
+	port: Number(process.env.NETWORKDB_PORT),
 	user: process.env.NETWORKDB_USER,
 });
 

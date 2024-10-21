@@ -3,7 +3,7 @@
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
 import { convertEmissionClassCode, convertPropulsionCode, VehicleMetadata } from '@carrismetropolitana/api-types/src/api';
-import { convertGTFSBoolToBoolean, VehicleExtended } from '@carrismetropolitana/api-types/src/gtfs';
+import { convertGTFSBoolToBoolean, VehiclesExtended } from '@carrismetropolitana/api-types/src/gtfs';
 import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -20,7 +20,6 @@ export const syncMetadata = async () => {
 	//
 
 	LOGGER.title(`SYNC METADATA`);
-
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -30,7 +29,7 @@ export const syncMetadata = async () => {
 
 	const downloadedCsvFile = await fetch(DATASET_FILE_URL);
 	const downloadedCsvText = await downloadedCsvFile.text();
-	const allItemsCsv = Papa.parse<VehicleExtended>(downloadedCsvText, { header: true });
+	const allItemsCsv = Papa.parse<VehiclesExtended>(downloadedCsvText, { header: true });
 
 	//
 	// For each item, update its entry in the database
@@ -49,13 +48,13 @@ export const syncMetadata = async () => {
 			capacity_standing: Number(itemCsv.capacity_standing),
 			capacity_total: Number(itemCsv.capacity_seated) + Number(itemCsv.capacity_standing),
 			emission_class: convertEmissionClassCode(itemCsv.emission_class),
+			id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
 			license_plate: itemCsv.license_plate,
 			make: itemCsv.make,
 			model: itemCsv.model,
 			owner: itemCsv.owner,
 			propulsion: convertPropulsionCode(itemCsv.propulsion),
 			registration_date: itemCsv.registration_date,
-			vehicle_id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
 			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible),
 		};
 		//
@@ -68,10 +67,10 @@ export const syncMetadata = async () => {
 	//
 	// Save items to the database
 
-	allItemsData.sort((a, b) => sortCollator.compare(a.vehicle_id, b.vehicle_id));
-	await SERVERDB.set(`${SERVERDB_KEYS.NETWORK.VEHICLES}:all`, JSON.stringify(allItemsData));
+	allItemsData.sort((a, b) => sortCollator.compare(a.id, b.id));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.VEHICLES.ALL, JSON.stringify(allItemsData));
 
-	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.NETWORK.VEHICLES}:all (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.NETWORK.VEHICLES.ALL} (${globalTimer.get()}).`);
 
 	//
 };

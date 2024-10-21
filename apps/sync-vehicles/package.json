@@ -2,18 +2,16 @@
 	"name": "@carrismetropolitana/api-sync-vehicles",
 	"version": "1.0.0",
 	"type": "module",
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist",
-		"dev:sync": "dotenv-run -- tsx watch ./src/index.ts",
+		"dev": "dotenv-run -f .env.development -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"start:sync": "dotenv-run -- npm run build && node dist/index.js"
+		"start": "node dist/index.js"
 	},
 	"dependencies": {
 		"@dotenv-run/cli": "1.3.6",

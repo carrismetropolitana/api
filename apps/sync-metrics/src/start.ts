@@ -236,13 +236,13 @@ export default async () => {
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
 	validationsByDayArray.sort((a, b) => collator.compare(a.operational_day, b.operational_day));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH, JSON.stringify(validationsByDayArray));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_MONTH, JSON.stringify(validationsByDayArray));
 
 	validationsByLineArray.sort((a, b) => collator.compare(a.line_id, b.line_id));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND_BY_MONTH, JSON.stringify(validationsByLineArray));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_MONTH, JSON.stringify(validationsByLineArray));
 
 	validationsByStopArray.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND_BY_STOP, JSON.stringify(validationsByStopArray));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_STOP, JSON.stringify(validationsByStopArray));
 
 	//
 

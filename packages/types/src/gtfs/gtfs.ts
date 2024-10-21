@@ -1,6 +1,6 @@
 /* * */
 
-import { CalendarDates, GTFSBool, Route, StopTime, Trip, WheelchairBoardingType } from 'gtfs-types';
+import { CalendarDates, GTFSBool, Route, Shapes, Stop, StopTime, Trip, WheelchairBoardingType } from 'gtfs-types';
 
 /* * */
 
@@ -25,7 +25,7 @@ export interface CalendarDatesExtended extends CalendarDates {
 /**
  * Type for GTFS dates.txt file.
  */
-export interface GtfsDate {
+export interface DatesExtended {
 	date: string
 	day_type: string
 	description: string
@@ -36,7 +36,7 @@ export interface GtfsDate {
 /**
  * Type for GTFS periods.txt file.
  */
-export interface GtfsPeriod {
+export interface PeriodsExtended {
 	period_id: string
 	period_name: string
 }
@@ -52,12 +52,57 @@ export interface TripsExtended extends Trip {
 /**
  * Type for GTFS stop_times.txt file.
  */
-export type StopTimeExtended = StopTime;
+export type StopTimesExtended = StopTime;
+
+/**
+ * Type for GTFS shapes.txt file.
+ */
+export type ShapesExtended = Shapes;
+
+/**
+ * Type for GTFS stops.txt file.
+ */
+export interface StopsExtended extends Stop {
+	airport: boolean
+	bike_parking: boolean
+	bike_sharing: boolean
+	boat: boolean
+	car_parking: boolean
+	district_id: string
+	district_name: string
+	light_rail: boolean
+	locality: string
+	municipality_id: string
+	municipality_name: string
+	near_fire_station: boolean
+	near_health_clinic: boolean
+	near_historic_building: boolean
+	near_hospital: boolean
+	near_police_station: boolean
+	near_school: boolean
+	near_shopping: boolean
+	near_transit_office: boolean
+	near_university: boolean
+	operational_status: string
+	parish_id: null
+	parish_name: null
+	region_id: string
+	region_name: string
+	stop_id: string
+	stop_lat: number
+	stop_lon: number
+	stop_name: string
+	stop_short_name: string
+	subway: boolean
+	train: boolean
+	tts_stop_name: string
+	wheelchair_boarding: WheelchairBoardingType
+}
 
 /**
  * Type for GTFS vehicles.txt file.
  */
-export interface VehicleExtended {
+export interface VehiclesExtended {
 	agency_id: string
 	bikes_allowed: GTFSBool
 	capacity_seated: number
