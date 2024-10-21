@@ -1,10 +1,6 @@
 /* * */
 
-import type { Address, Contact, Location, Position } from '@/api/locations.js';
-
-/* * */
-
-export interface BoatStationsSource {
+export interface FacilitySource {
 	district_id: string
 	district_name: string
 	id: string
@@ -21,23 +17,13 @@ export interface BoatStationsSource {
 	stops: string
 }
 
-export interface BoatStation {
-	boat_station_id: string
-	location: Location
-	name: string
-	position: Position
-	stop_ids: string[]
-}
-
-/* * */
-
-export interface LightRailStationsSource {
+export interface Facility {
 	district_id: string
 	district_name: string
 	id: string
-	lat: string
+	lat: number
 	locality: string
-	lon: string
+	lon: number
 	municipality_id: string
 	municipality_name: string
 	name: string
@@ -45,133 +31,28 @@ export interface LightRailStationsSource {
 	parish_name: string
 	region_id: string
 	region_name: string
-	stops: string
-}
-
-export interface LightRailStation {
-	light_rail_station_id: string
-	location: Location
-	name: string
-	position: Position
 	stop_ids: string[]
 }
 
 /* * */
 
-export interface SubwayStationsSource {
-	district_id: string
-	district_name: string
-	id: string
-	lat: string
-	locality: string
-	lon: string
-	municipality_id: string
-	municipality_name: string
-	name: string
-	parish_id: string
-	parish_name: string
-	region_id: string
-	region_name: string
-	stops: string
-}
-
-export interface SubwayStation {
-	location: Location
-	name: string
-	position: Position
-	stop_ids: string[]
-	subway_station_id: string
-}
-
-/* * */
-
-export interface TrainStationsSource {
-	district_id: string
-	district_name: string
-	id: string
-	lat: string
-	locality: string
-	lon: string
-	municipality_id: string
-	municipality_name: string
-	name: string
-	parish_id: string
-	parish_name: string
-	region_id: string
-	region_name: string
-	stops: string
-}
-
-export interface TrainStation {
-	location: Location
-	name: string
-	position: Position
-	stop_ids: string[]
-	train_station_id: string
-}
-
-/* * */
-
-export interface PipsSource {
-	district_id: string
-	district_name: string
-	id: string
-	lat: string
-	locality: string
-	lon: string
-	municipality_id: string
-	municipality_name: string
-	name: string
-	parish_id: string
-	parish_name: string
-	region_id: string
-	region_name: string
-	stops: string
-}
-
-export interface Pip {
-	location: Location
-	name: string
-	pip_id: string
-	position: Position
-	stop_ids: string[]
-}
-
-/* * */
-
-export interface SchoolsSource {
+export interface SchoolsSource extends FacilitySource {
 	address: string
-	district_id: string
-	district_name: string
+	cicles: string
 	email: string
 	grouping: string
-	id: string
-	lat: string
-	locality: string
-	lon: string
-	municipality_id: string
-	municipality_name: string
-	name: string
 	nature: string
-	parish_id: string
-	parish_name: string
 	phone: string
 	postal_code: string
-	region_id: string
-	region_name: string
-	stops: string
 	url: string
 }
 
-export interface School {
-	address: Address
+export interface School extends Facility {
+	address: string
 	cicles: string
-	contact: Contact
+	email: string
 	grouping: string
-	location: Location
-	name: string
 	nature: string
-	position: Position
-	school_id: string
-	stop_ids: string[]
+	phone: string
+	url: string
 }

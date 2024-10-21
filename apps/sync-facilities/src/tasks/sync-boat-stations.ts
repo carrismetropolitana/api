@@ -2,8 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Locality, Location, Municipality } from '@carrismetropolitana/api-types/src/api';
-import { BoatStation, BoatStationsSource } from '@carrismetropolitana/api-types/src/facilities/facilities.js';
+import { Facility, FacilitySource } from '@carrismetropolitana/api-types/src/api/facilities.js';
 import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -28,16 +27,7 @@ export const syncBoatStations = async () => {
 
 	const downloadedSourceFile = await fetch(DATASET_FILE_URL);
 	const downloadedSourceText = await downloadedSourceFile.text();
-	const allSourceItems = Papa.parse<BoatStationsSource>(downloadedSourceText, { header: true });
-
-	//
-	// Fetch all Locations from SERVERDB
-
-	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
-	const allLocalitiesData = JSON.parse(allLocalitiesTxt);
-
-	const allMunicipalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES);
-	const allMunicipalitiesData = JSON.parse(allMunicipalitiesTxt);
+	const allSourceItems = Papa.parse<FacilitySource>(downloadedSourceText, { header: true });
 
 	//
 	// For each item, update its entry in the database
@@ -45,37 +35,25 @@ export const syncBoatStations = async () => {
 	LOGGER.info(`Updating items...`);
 
 	let updatedItemsCounter = 0;
-	const allUpdatedItemsData: BoatStation[] = [];
+	const allUpdatedItemsData: Facility[] = [];
 
 	for (const sourceItem of allSourceItems.data) {
 		//
 
-		//
-		// Discover which Location this store is in.
-		// Try to match the store's locality first, then fallback to municipality.
-
-		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === sourceItem.locality && item.municipality_id === sourceItem.municipality_id);
-
-		if (!matchingLocation) {
-			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === sourceItem.municipality_id);
-		}
-
-		//
-		// Format position
-
-		const formatedPosition = {
-			latitude: parseFloat(sourceItem.lat),
-			longitude: parseFloat(sourceItem.lon),
-		};
-
-		//
-		// Build the final object
-
-		const updatedItemData: BoatStation = {
-			boat_station_id: sourceItem.id,
-			location: matchingLocation,
+		const updatedItemData: Facility = {
+			district_id: sourceItem.district_id,
+			district_name: sourceItem.district_name,
+			id: sourceItem.id,
+			lat: Number(sourceItem.lat),
+			locality: sourceItem.locality,
+			lon: Number(sourceItem.lon),
+			municipality_id: sourceItem.municipality_id,
+			municipality_name: sourceItem.municipality_name,
 			name: sourceItem.name,
-			position: formatedPosition,
+			parish_id: sourceItem.parish_id,
+			parish_name: sourceItem.parish_name,
+			region_id: sourceItem.region_id,
+			region_name: sourceItem.region_name,
 			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
 		};
 
@@ -89,7 +67,7 @@ export const syncBoatStations = async () => {
 	//
 	// Save items to the database
 
-	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.boat_station_id, b.boat_station_id));
+	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.BOAT_STATIONS, JSON.stringify(allUpdatedItemsData));
 
 	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.BOAT_STATIONS} (${globalTimer.get()}).`);

@@ -2,8 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Locality, Location, Municipality } from '@carrismetropolitana/api-types/src/api';
-import { School, SchoolsSource } from '@carrismetropolitana/api-types/src/facilities/facilities.js';
+import { School, SchoolsSource } from '@carrismetropolitana/api-types/src/api/facilities.js';
 import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -11,14 +10,14 @@ import Papa from 'papaparse';
 
 /* * */
 
-const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/facilities/schools/schools.csv';
+const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/connections/schools/schools.csv';
 
 /* * */
 
 export const syncSchools = async () => {
 	//
 
-	LOGGER.title(`Sync Schools`);
+	LOGGER.title(`Sync Train Stations`);
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -31,15 +30,6 @@ export const syncSchools = async () => {
 	const allSourceItems = Papa.parse<SchoolsSource>(downloadedSourceText, { header: true });
 
 	//
-	// Fetch all Locations from SERVERDB
-
-	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
-	const allLocalitiesData = JSON.parse(allLocalitiesTxt);
-
-	const allMunicipalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES);
-	const allMunicipalitiesData = JSON.parse(allMunicipalitiesTxt);
-
-	//
 	// For each item, update its entry in the database
 
 	LOGGER.info(`Updating items...`);
@@ -50,32 +40,26 @@ export const syncSchools = async () => {
 	for (const sourceItem of allSourceItems.data) {
 		//
 
-		//
-		// Discover which Location this store is in.
-		// Try to match the store's locality first, then fallback to municipality.
-
-		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === sourceItem.locality && item.municipality_id === sourceItem.municipality_id);
-
-		if (!matchingLocation) {
-			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === sourceItem.municipality_id);
-		}
-
-		//
-		// Build the final object
-
 		const updatedItemData: School = {
 			address: sourceItem.address,
-			cicles: sourceItem.grouping,
+			cicles: sourceItem.cicles,
+			district_id: sourceItem.district_id,
+			district_name: sourceItem.district_name,
 			email: sourceItem.email,
 			grouping: sourceItem.grouping,
-			lat: sourceItem.lat,
-			location: matchingLocation,
-			lon: sourceItem.lon,
+			id: sourceItem.id,
+			lat: Number(sourceItem.lat),
+			locality: sourceItem.locality,
+			lon: Number(sourceItem.lon),
+			municipality_id: sourceItem.municipality_id,
+			municipality_name: sourceItem.municipality_name,
 			name: sourceItem.name,
 			nature: sourceItem.nature,
+			parish_id: sourceItem.parish_id,
+			parish_name: sourceItem.parish_name,
 			phone: sourceItem.phone,
-			postal_code: sourceItem.postal_code,
-			school_id: sourceItem.id,
+			region_id: sourceItem.region_id,
+			region_name: sourceItem.region_name,
 			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
 			url: sourceItem.url,
 		};
@@ -90,7 +74,7 @@ export const syncSchools = async () => {
 	//
 	// Save items to the database
 
-	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.school_id, b.school_id));
+	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.SCHOOLS, JSON.stringify(allUpdatedItemsData));
 
 	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.SCHOOLS} (${globalTimer.get()}).`);
