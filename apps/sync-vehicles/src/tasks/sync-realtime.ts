@@ -82,7 +82,7 @@ export const syncRealtime = async () => {
 	const existingVehicleData: Vehicle[] = JSON.parse(existingVehicleTxt);
 
 	const allVehiclesMap = new Map<string, Vehicle>();
-	existingVehicleData.forEach(vehicle => allVehiclesMap.set(vehicle.vehicle_id, vehicle));
+	existingVehicleData.forEach(vehicle => allVehiclesMap.set(vehicle.id, vehicle));
 
 	LOGGER.info(`Fetched ${allVehiclesMap.size} Vehicles from SERVERDB (${fetchServerdbTimer.get()})`);
 
