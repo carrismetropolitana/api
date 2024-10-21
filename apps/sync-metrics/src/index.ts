@@ -4,9 +4,9 @@ import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
-import daily from './daily.js';
-import operator from './operator.js';
 import start from './start.js';
+import daily from './tasks/daily.js';
+import operator from './tasks/operator.js';
 
 /* * */
 

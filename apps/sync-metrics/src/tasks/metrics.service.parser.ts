@@ -1,8 +1,8 @@
 /* * */
 
-import collator from '@/services/sortCollator.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
 
@@ -98,7 +98,7 @@ export default async () => {
 	// 5.
 	// Add the 'all' option
 
-	allItemsData.sort((a, b) => collator.compare(a.lineId, b.lineId));
+	allItemsData.sort((a, b) => sortCollator.compare(a.lineId, b.lineId));
 	await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:all`, JSON.stringify(allItemsData));
 	updatedItemKeys.add(`${SERVERDB_KEYS.METRICS.SERVICE}:all`);
 
