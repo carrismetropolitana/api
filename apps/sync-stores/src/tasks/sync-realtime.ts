@@ -24,7 +24,7 @@ const TIME_BY_CATEGORY = {
 export const syncRealtime = async () => {
 	//
 
-	LOGGER.init();
+	LOGGER.title('Sync Stores Realtime');
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -105,8 +105,8 @@ export const syncRealtime = async () => {
 			active_counters: activeCountersUnique.length,
 			current_ratio: activeCountersToPeopleWaitingRatio,
 			current_status: currentStatus,
-			currently_waiting: ticketsWaiting?.length || -1,
-			estimated_wait_seconds: totalWaitTime || -1,
+			currently_waiting: ticketsWaiting?.length || 0,
+			estimated_wait_seconds: totalWaitTime || 0,
 			is_open: activeCountersUnique.length > 0 ? true : false,
 		};
 
@@ -127,9 +127,7 @@ export const syncRealtime = async () => {
 	allStoresData.sort((a, b) => collator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(allStoresData));
 
-	LOGGER.terminate(`Updated ${allStoresData.length} Stores (${globalTimer.get()})`);
-
-	LOGGER.divider();
+	LOGGER.success(`Updated ${allStoresData.length} Stores (${globalTimer.get()})`);
 
 	//
 };
