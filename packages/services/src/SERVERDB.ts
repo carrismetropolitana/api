@@ -10,4 +10,4 @@ import { RedisService } from './redis.service.js';
 
 /* * */
 
-export const SERVERDB = new RedisService({ socket: { host: process.env.SERVERDB_HOST, port: Number(process.env.SERVERDB_PORT) } });
+export const SERVERDB = RedisService.getInstance({ socket: { host: process.env.SERVERDB_HOST, port: Number(process.env.SERVERDB_PORT) } });
