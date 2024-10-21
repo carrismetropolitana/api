@@ -67,20 +67,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -88,7 +83,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
@@ -102,8 +96,8 @@ jobs:
   api-sync-alerts:
     name: sync-alerts (NodeJS)
     runs-on: self-hosted
-
-    permissions:      contents: read
+    permissions:
+      contents: read
       packages: write
 
     steps:
@@ -114,20 +108,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -135,7 +124,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
@@ -149,9 +137,9 @@ jobs:
   api-sync-facilities:
     name: sync-facilities (NodeJS)
     runs-on: self-hosted
-
     permissions:
-      contents: read      packages: write
+      contents: read
+      packages: write
 
     steps:
       - name: Set module key
@@ -161,20 +149,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -182,7 +165,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
@@ -196,10 +178,10 @@ jobs:
   api-sync-gtfs:
     name: sync-gtfs (NodeJS)
     runs-on: self-hosted
-
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Set module key
         run: |
@@ -208,20 +190,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -229,7 +206,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
@@ -243,10 +219,10 @@ jobs:
   api-sync-metrics:
     name: sync-metrics (NodeJS)
     runs-on: self-hosted
-
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Set module key
         run: |
@@ -255,20 +231,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -276,7 +247,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
@@ -290,32 +260,27 @@ jobs:
   api-sync-stores:
     name: sync-stores (NodeJS)
     runs-on: self-hosted
-
     permissions:
       contents: read
       packages: write
 
-    steps:      - name: Set module key
+    steps:
+      - name: Set module key
         run: |
           echo "MODULE_KEY=sync-stores" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -323,7 +288,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
@@ -337,32 +301,27 @@ jobs:
   api-sync-vehicles:
     name: sync-vehicles (NodeJS)
     runs-on: self-hosted
-
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key        run: |
+      - name: Set module key
+        run: |
           echo "MODULE_KEY=sync-vehicles" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}-arm
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -370,7 +329,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
