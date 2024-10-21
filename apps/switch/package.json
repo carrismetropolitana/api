@@ -16,9 +16,17 @@
 	"dependencies": {
 		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-settings": "*",
+		"@carrismetropolitana/api-tsconfig": "*",
+		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
+		"@carrismetropolitana/eslint": "20241017.1618.32",
+		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"fastify": "5.0.0"
+		"@types/node": "22.7.7",
+		"fastify": "5.0.0",
+		"resolve-tspaths": "0.8.22",
+		"tsx": "4.19.1",
+		"typescript": "5.6.3"
 	}
 }

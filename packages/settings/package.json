@@ -10,6 +10,11 @@
 		"clean": "rm -rf dist"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*"
+		"@carrismetropolitana/api-tsconfig": "*",
+		"@carrismetropolitana/api-types": "*",
+		"@carrismetropolitana/eslint": "20241017.1618.32",
+		"@types/node": "22.7.7",
+		"resolve-tspaths": "0.8.22",
+		"typescript": "5.6.3"
 	}
 }
