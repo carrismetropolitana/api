@@ -25,10 +25,9 @@ export const syncRealtime = async () => {
 	//
 
 	LOGGER.init();
-
 	const globalTimer = new TIMETRACKER();
 
-	// 1.
+	//
 	// Retrieve existing ENCM documents from database
 
 	const allStoresTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES);

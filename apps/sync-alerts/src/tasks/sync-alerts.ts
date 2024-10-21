@@ -1,6 +1,6 @@
 /* * */
 
-import type { Alert } from '@carrismetropolitana/api-types/src/gtfs';
+import type { Alert } from '@carrismetropolitana/api-types/src/api/alerts.js';
 import type { TopicMessage } from 'firebase-admin/messaging';
 
 import parseAlertV2 from '@/services/parseAlertV2.js';
@@ -11,11 +11,10 @@ import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
-export default async () => {
+export const syncAlerts = async () => {
 	//
 
 	LOGGER.init();
-
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -30,10 +29,11 @@ export default async () => {
 
 	//
 	// Prepare the alerts data in Protobuf format
+	// (currently no transformation is needed, as the data is already in the "correct" format)
 
 	const protobufTimer = new TIMETRACKER();
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS_PROTOBUF, JSON.stringify(alertsFeedData));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(alertsFeedData));
 
 	LOGGER.info(`Saved Protobuf Alerts to ServerDB (${protobufTimer.get()})`);
 
@@ -44,7 +44,7 @@ export default async () => {
 
 	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS_JSON, JSON.stringify(allAlertsParsedV2));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(allAlertsParsedV2));
 
 	LOGGER.info(`Saved ${allAlertsParsedV2.length} JSON Alerts to ServerDB (${jsonTimer.get()})`);
 
@@ -53,7 +53,7 @@ export default async () => {
 
 	const notificationsTimer = new TIMETRACKER();
 
-	const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS_SENT_NOTIFICATIONS);
+	const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS);
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
 	const allSentNotificationsSet = new Set(allSentNotifications);
 
@@ -111,7 +111,7 @@ export default async () => {
 		}
 	}
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS_SENT_NOTIFICATIONS, JSON.stringify(Array.from(allSentNotificationsSet)));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS, JSON.stringify(Array.from(allSentNotificationsSet)));
 
 	LOGGER.info(`Sent ${sentNotificationCounter} Notifications (${notificationsTimer.get()})`);
 
