@@ -30,7 +30,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -53,8 +53,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -79,7 +79,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -102,8 +102,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -128,7 +128,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -151,8 +151,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -177,7 +177,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -200,8 +200,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -226,7 +226,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -249,8 +249,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -275,7 +275,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -298,8 +298,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -324,7 +324,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -347,8 +347,8 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -373,7 +373,7 @@ jobs:
 
       - name: Calculate module SHA256 hash
         run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
+          find "./apps/${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
           echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
 
       - name: Fetch hash cache
@@ -396,6 +396,6 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
+          context: ./apps/${{ env.MODULE_KEY }}
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
