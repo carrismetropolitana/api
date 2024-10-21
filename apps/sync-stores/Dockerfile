@@ -1,5 +1,5 @@
 ###########################
-# Define the base image 
+# Define the base image
 ###########################
 FROM node:20.16-alpine AS base
 
