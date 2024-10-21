@@ -26,9 +26,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Checkout repository
-        run: ls -la
-
       - name: Cache turbo build setup
         uses: actions/cache@v4
         with:
@@ -51,6 +48,9 @@ jobs:
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+
+      - name: List directory
+        run: ls -la
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
