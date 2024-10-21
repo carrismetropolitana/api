@@ -19,7 +19,8 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"luxon": "3.5.0"
+		"luxon": "3.5.0",
+		"papaparse": "5.4.1"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
@@ -27,6 +28,7 @@
 		"@carrismetropolitana/eslint": "20241017.1618.32",
 		"@dotenv-run/cli": "1.3.6",
 		"@types/node": "22.7.5",
+		"@types/papaparse": "5.3.14",
 		"resolve-tspaths": "0.8.22",
 		"tsx": "4.19.1",
 		"typescript": "5.6.3"
