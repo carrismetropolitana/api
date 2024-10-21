@@ -63,3 +63,9 @@ FASTIFY.server.get('/facilities/train_stations', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
+
+FASTIFY.server.get('/facilities/pips', async (_, reply) => {
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.PIPS);
+	if (!allItemsTxt) return reply.code(404).send([]);
+	return reply.code(200).send(allItemsTxt);
+});

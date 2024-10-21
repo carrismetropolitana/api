@@ -1,14 +1,11 @@
 /* * */
 
-import type { Location } from '@/api/locations.js';
+import { Facility, FacilitySource } from '@/api/facilities.js';
 
 /* * */
 
-export interface StoresSource {
+export interface StoresSource extends FacilitySource {
 	address: string
-	brand_name: string
-	district_id: string
-	district_name: string
 	email: string
 	google_place_id: string
 	hours_friday: string
@@ -19,29 +16,15 @@ export interface StoresSource {
 	hours_thursday: string
 	hours_tuesday: string
 	hours_wednesday: string
-	id: string
-	lat: string
-	locality: string
-	lon: string
-	municipality_id: string
-	municipality_name: string
-	name: string
-	parish_id: string
-	parish_name: string
 	phone: string
 	postal_code: string
-	region_id: string
-	region_name: string
-	short_name: string
-	stops: string
 	url: string
 }
 
 /* * */
 
-export interface StoreMetadata {
+export interface StoreMetadata extends Facility {
 	address: string
-	brand_name: string
 	email: string
 	google_place_id: string
 	hours_friday: string[]
@@ -52,15 +35,8 @@ export interface StoreMetadata {
 	hours_thursday: string[]
 	hours_tuesday: string[]
 	hours_wednesday: string[]
-	lat: number
-	location: Location
-	lon: number
-	name: string
 	phone: string
 	postal_code: string
-	short_name: string
-	stop_ids: string[]
-	store_id: string
 	url: string
 }
 

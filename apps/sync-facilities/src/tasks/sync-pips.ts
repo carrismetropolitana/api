@@ -14,10 +14,10 @@ const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/
 
 /* * */
 
-export const syncPipStations = async () => {
+export const syncPips = async () => {
 	//
 
-	LOGGER.title(`Sync PIP Stations`);
+	LOGGER.title(`Sync PIPs`);
 	const globalTimer = new TIMETRACKER();
 
 	//
