@@ -9,9 +9,11 @@
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist"
 	},
-	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*",
+	"dependencies": {
 		"@types/geojson": "7946.0.14",
 		"gtfs-types": "4.0.0"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/api-tsconfig": "*"
 	}
 }

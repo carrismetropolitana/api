@@ -14,6 +14,11 @@
 		"start:none": "npm run build && node dist/index.js"
 	},
 	"dependencies": {
+		"@carrismetropolitana/api-services": "*",
+		"@carrismetropolitana/api-settings": "*",
+		"@carrismetropolitana/api-utils": "*",
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
 		"fastify": "5.0.0"
 	}
 }

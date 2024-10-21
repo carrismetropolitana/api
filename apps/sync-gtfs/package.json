@@ -14,7 +14,12 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
+		"@carrismetropolitana/api-services": "*",
+		"@carrismetropolitana/api-settings": "*",
+		"@carrismetropolitana/api-utils": "*",
 		"@carrismetropolitana/tts": "20240923.2019.13",
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20241010.1355.31",
 		"@turf/turf": "7.1.0",
 		"adm-zip": "0.5.16",

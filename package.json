@@ -14,13 +14,6 @@
 		"start": "dotenv-run -- turbo run start",
 		"start:sync": "dotenv-run -- turbo run start:sync"
 	},
-	"dependencies": {
-		"@carrismetropolitana/api-services": "*",
-		"@carrismetropolitana/api-settings": "*",
-		"@carrismetropolitana/api-utils": "*",
-		"@helperkits/logger": "20240703.1726.24",
-		"@helperkits/timer": "20240627.34.23"
-	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",

@@ -14,6 +14,11 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
+		"@carrismetropolitana/api-services": "*",
+		"@carrismetropolitana/api-settings": "*",
+		"@carrismetropolitana/api-utils": "*",
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
 		"luxon": "3.5.0",
 		"papaparse": "5.4.1"
 	}
