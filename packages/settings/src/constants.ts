@@ -5,6 +5,7 @@ export const SERVERDB_KEYS = Object.freeze({
 		BOAT_STATIONS: 'facilities:boat_stations',
 		HELPDESKS: 'facilities:helpdesks',
 		LIGHT_RAIL_STATIONS: 'facilities:light_rail_stations',
+		PIPS: 'facilities:pips',
 		SCHOOLS: 'facilities:schools',
 		STORES: 'facilities:stores',
 		SUBWAY_STATIONS: 'facilities:subway_stations',
@@ -54,5 +55,4 @@ export const SERVERDB_KEYS = Object.freeze({
 			PROTOBUF: 'network:vehicles:protobuf',
 		},
 	},
-	PIP: 'pip',
 });

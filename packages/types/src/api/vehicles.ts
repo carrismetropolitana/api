@@ -9,13 +9,13 @@ export interface VehicleMetadata {
 	capacity_standing?: number
 	capacity_total?: number
 	emission_class: EmissionClass
+	id: string
 	license_plate?: string
 	make?: string
 	model?: string
 	owner?: string
 	propulsion: Propulsion
 	registration_date?: string
-	vehicle_id: string
 	wheelchair_accessible: boolean
 }
 
@@ -118,7 +118,6 @@ export interface VehiclePosition extends VehicleMetadata {
 	stop_id: string
 	timestamp: number
 	trip_id: string
-	vehicle_id: string
 }
 
 export type Vehicle = VehicleMetadata & VehiclePosition;

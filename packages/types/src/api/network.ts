@@ -7,8 +7,6 @@ import type { Location } from './locations.js';
 
 /* * */
 
-/* * */
-
 export interface Date {
 	date: string
 	day_type: DayType

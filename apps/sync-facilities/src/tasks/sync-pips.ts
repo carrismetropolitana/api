@@ -3,7 +3,7 @@
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Locality, Location, Municipality } from '@carrismetropolitana/api-types/src/api';
-import { School, SchoolsSource } from '@carrismetropolitana/api-types/src/facilities/facilities.js';
+import { Pip, PipsSource } from '@carrismetropolitana/api-types/src/facilities/facilities.js';
 import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -11,14 +11,14 @@ import Papa from 'papaparse';
 
 /* * */
 
-const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/facilities/schools/schools.csv';
+const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/facilities/pip/pip.csv';
 
 /* * */
 
-export const syncSchools = async () => {
+export const syncPips = async () => {
 	//
 
-	LOGGER.title(`Sync Schools`);
+	LOGGER.title(`Sync PIPs`);
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -28,7 +28,7 @@ export const syncSchools = async () => {
 
 	const downloadedSourceFile = await fetch(DATASET_FILE_URL);
 	const downloadedSourceText = await downloadedSourceFile.text();
-	const allSourceItems = Papa.parse<SchoolsSource>(downloadedSourceText, { header: true });
+	const allSourceItems = Papa.parse<PipsSource>(downloadedSourceText, { header: true });
 
 	//
 	// Fetch all Locations from SERVERDB
@@ -45,7 +45,7 @@ export const syncSchools = async () => {
 	LOGGER.info(`Updating items...`);
 
 	let updatedItemsCounter = 0;
-	const allUpdatedItemsData: School[] = [];
+	const allUpdatedItemsData: Pip[] = [];
 
 	for (const sourceItem of allSourceItems.data) {
 		//
@@ -63,21 +63,13 @@ export const syncSchools = async () => {
 		//
 		// Build the final object
 
-		const updatedItemData: School = {
-			address: sourceItem.address,
-			cicles: sourceItem.grouping,
-			email: sourceItem.email,
-			grouping: sourceItem.grouping,
+		const updatedItemData: Pip = {
 			lat: sourceItem.lat,
 			location: matchingLocation,
 			lon: sourceItem.lon,
 			name: sourceItem.name,
-			nature: sourceItem.nature,
-			phone: sourceItem.phone,
-			postal_code: sourceItem.postal_code,
-			school_id: sourceItem.id,
+			pip_id: sourceItem.id,
 			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
-			url: sourceItem.url,
 		};
 
 		allUpdatedItemsData.push(updatedItemData);
@@ -90,10 +82,10 @@ export const syncSchools = async () => {
 	//
 	// Save items to the database
 
-	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.school_id, b.school_id));
-	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.SCHOOLS, JSON.stringify(allUpdatedItemsData));
+	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.pip_id, b.pip_id));
+	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.PIPS, JSON.stringify(allUpdatedItemsData));
 
-	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.SCHOOLS} (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.PIPS} (${globalTimer.get()}).`);
 
 	//
 };

@@ -2,7 +2,7 @@
 
 import { syncBoatStations } from '@/tasks/sync-boat-stations.js';
 import { syncLightRailStations } from '@/tasks/sync-light-rail-stations.js';
-import { syncPip } from '@/tasks/sync-pip.js';
+import { syncPips } from '@/tasks/sync-pips.js';
 import { syncSchools } from '@/tasks/sync-schools.js';
 import { syncSubwayStations } from '@/tasks/sync-subway-stations.js';
 import { syncTrainStations } from '@/tasks/sync-train-stations.js';
@@ -23,7 +23,7 @@ const RUN_INTERVAL = 5000; // 5 seconds
 
 		await syncSchools();
 
-		await syncPip();
+		await syncPips();
 
 		await syncBoatStations();
 		await syncLightRailStations();

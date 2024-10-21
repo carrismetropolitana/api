@@ -26,9 +26,9 @@ export const syncBoatStations = async () => {
 
 	LOGGER.info(`Downloading data file...`);
 
-	const downloadedCsvFile = await fetch(DATASET_FILE_URL);
-	const downloadedCsvText = await downloadedCsvFile.text();
-	const allItemsCsv = Papa.parse<BoatStationsSource>(downloadedCsvText, { header: true });
+	const downloadedSourceFile = await fetch(DATASET_FILE_URL);
+	const downloadedSourceText = await downloadedSourceFile.text();
+	const allSourceItems = Papa.parse<BoatStationsSource>(downloadedSourceText, { header: true });
 
 	//
 	// Fetch all Locations from SERVERDB
@@ -45,34 +45,41 @@ export const syncBoatStations = async () => {
 	LOGGER.info(`Updating items...`);
 
 	let updatedItemsCounter = 0;
-	const allItemsData: BoatStation[] = [];
+	const allUpdatedItemsData: BoatStation[] = [];
 
-	for (const itemCsv of allItemsCsv.data) {
+	for (const sourceItem of allSourceItems.data) {
 		//
 
 		//
 		// Discover which Location this store is in.
 		// Try to match the store's locality first, then fallback to municipality.
 
-		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === itemCsv.locality && item.municipality_id === itemCsv.municipality_id);
+		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === sourceItem.locality && item.municipality_id === sourceItem.municipality_id);
 
 		if (!matchingLocation) {
-			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === itemCsv.municipality_id);
+			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === sourceItem.municipality_id);
 		}
+
+		//
+		// Format position
+
+		const formatedPosition = {
+			latitude: parseFloat(sourceItem.lat),
+			longitude: parseFloat(sourceItem.lon),
+		};
 
 		//
 		// Build the final object
 
-		const parsedItemData: BoatStation = {
-			boat_station_id: itemCsv['id'],
-			lat: itemCsv['lat'],
+		const updatedItemData: BoatStation = {
+			boat_station_id: sourceItem.id,
 			location: matchingLocation,
-			lon: itemCsv['lon'],
-			name: itemCsv['name'],
-			stop_ids: itemCsv['stops']?.length ? itemCsv['stops'].split('|') : [],
+			name: sourceItem.name,
+			position: formatedPosition,
+			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
 		};
 
-		allItemsData.push(parsedItemData);
+		allUpdatedItemsData.push(updatedItemData);
 
 		updatedItemsCounter++;
 
@@ -82,8 +89,8 @@ export const syncBoatStations = async () => {
 	//
 	// Save items to the database
 
-	allItemsData.sort((a, b) => sortCollator.compare(a.boat_station_id, b.boat_station_id));
-	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(allItemsData));
+	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.boat_station_id, b.boat_station_id));
+	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.BOAT_STATIONS, JSON.stringify(allUpdatedItemsData));
 
 	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.FACILITIES.BOAT_STATIONS} (${globalTimer.get()}).`);
 

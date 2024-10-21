@@ -22,3 +22,19 @@ export interface Locality extends Municipality {
 }
 
 export type Location = Locality & Municipality;
+
+export interface Address {
+	postal_code: string
+	street: string
+}
+
+export interface Contact {
+	email: string
+	phone: string
+	website: string
+}
+
+export interface Position {
+	latitude: number
+	longitude: number
+}
