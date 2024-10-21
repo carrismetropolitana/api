@@ -53,7 +53,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -102,7 +102,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -151,7 +151,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -200,7 +200,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -249,7 +249,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -298,7 +298,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -347,7 +347,7 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
@@ -396,6 +396,6 @@ jobs:
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./apps/${{ env.MODULE_KEY }}
+          context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
           tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
