@@ -1,9 +1,9 @@
-name: Build & Publish Docker Images
+name: Build & Publish Docker Images (ARM)
 
 on:
   push:
     branches:
-      - beta
+      - alpha
 
 jobs:
   #
@@ -13,9 +13,7 @@ jobs:
 
   api-server:
     name: server (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -28,20 +26,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -49,22 +42,22 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+
+      - name: List directory
+        run: ls -la
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-switch:
     name: switch (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -77,20 +70,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -98,22 +86,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-alerts:
     name: sync-alerts (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -126,20 +111,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -147,22 +127,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-datasets:
-    name: sync-datasets (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+  api-sync-facilities:
+    name: sync-facilities (NodeJS)
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -170,25 +147,20 @@ jobs:
     steps:
       - name: Set module key
         run: |
-          echo "MODULE_KEY=sync-datasets" >> $GITHUB_ENV
+          echo "MODULE_KEY=sync-facilities" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -196,22 +168,60 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  api-sync-gtfs:
+    name: sync-gtfs (NodeJS)
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Set module key
+        run: |
+          echo "MODULE_KEY=sync-gtfs" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@master
+        with:
+          push: true
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-metrics:
     name: sync-metrics (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -224,20 +234,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -245,71 +250,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  api-sync-network:
-    name: sync-network (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-network" >> $GITHUB_ENV
-
-      - name: Checkout repository
-        uses: actions/checkout@main
-
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
-        uses: actions/cache@v4
-        id: cache
-        with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
-
-      - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
-        uses: docker/build-push-action@master
-        with:
-          push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-stores:
     name: sync-stores (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -322,20 +275,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -343,22 +291,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
   api-sync-vehicles:
     name: sync-vehicles (NodeJS)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
+    runs-on: self-hosted
     permissions:
       contents: read
       packages: write
@@ -371,20 +316,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@main
 
-      - name: Calculate module SHA256 hash
-        run: |
-          find "./${{ env.MODULE_KEY }}" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > ${{ env.MODULE_KEY }}.hash
-          echo "SHA256_HASH=$(cat ${{ env.MODULE_KEY }}.hash)" >> $GITHUB_ENV
-
-      - name: Fetch hash cache
+      - name: Cache turbo build setup
         uses: actions/cache@v4
-        id: cache
         with:
-          path: ${{ env.MODULE_KEY }}.hash
-          key: ${{ github.ref_name }}-${{ env.MODULE_KEY }}-${{ env.SHA256_HASH }}
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Login to GitHub Container Registry
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/login-action@master
         with:
           registry: ghcr.io
@@ -392,10 +332,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Push Docker Image
-        if: steps.cache.outputs.cache-hit != 'true'
         uses: docker/build-push-action@master
         with:
           push: true
-          context: ./${{ env.MODULE_KEY }}
-          file: ./${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          context: .
+          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
