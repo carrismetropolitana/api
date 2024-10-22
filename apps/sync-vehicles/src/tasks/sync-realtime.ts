@@ -2,8 +2,8 @@
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/src/api';
-import { TripScheduleRelationship, VehicleEvent } from '@carrismetropolitana/api-types/src/gtfs';
+import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/api';
+import { TripScheduleRelationship, VehicleEvent } from '@carrismetropolitana/api-types/gtfs';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

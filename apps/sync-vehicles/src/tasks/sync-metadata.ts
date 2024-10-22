@@ -2,9 +2,9 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { convertEmissionClassCode, convertPropulsionCode, VehicleMetadata } from '@carrismetropolitana/api-types/src/api';
-import { convertGTFSBoolToBoolean, VehiclesExtended } from '@carrismetropolitana/api-types/src/gtfs';
-import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
+import { convertEmissionClassCode, convertPropulsionCode, VehicleMetadata } from '@carrismetropolitana/api-types/api';
+import { convertGTFSBoolToBoolean, VehiclesExtended } from '@carrismetropolitana/api-types/gtfs';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';

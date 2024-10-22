@@ -2,9 +2,25 @@
 	"name": "@carrismetropolitana/api-types",
 	"version": "1.0.0",
 	"type": "module",
-	"files": ["dist"],
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./api": {
+			"import": "./dist/api/index.js",
+			"require": "./dist/api/index.js",
+			"types": "./dist/api/index.d.ts"
+		},
+		"./gtfs": {
+			"import": "./dist/gtfs/index.js",
+			"require": "./dist/gtfs/index.js",
+			"types": "./dist/gtfs/index.d.ts"
+		}
+	},
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist"

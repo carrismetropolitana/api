@@ -3,8 +3,8 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Shape } from '@carrismetropolitana/api-types/src/api/network.js';
-import { ShapesExtended } from '@carrismetropolitana/api-types/src/gtfs/index.js';
+import { Shape } from '@carrismetropolitana/api-types/api';
+import { ShapesExtended } from '@carrismetropolitana/api-types/gtfs';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import * as turf from '@turf/turf';

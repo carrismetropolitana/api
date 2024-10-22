@@ -1,12 +1,12 @@
 /* * */
 
-import type { Line, Location, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/src/api/index.js';
+import type { Line, Location, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/api';
 
 import sortCollator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Alight, CalendarDatesExtended, RouteExtended, StopTimesExtended, TripsExtended } from '@carrismetropolitana/api-types/src/gtfs/index.js';
+import { Alight, CalendarDatesExtended, RouteExtended, StopTimesExtended, TripsExtended } from '@carrismetropolitana/api-types/gtfs';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';

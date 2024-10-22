@@ -3,7 +3,7 @@
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/src/api';
+import { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/api';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { createHash } from 'node:crypto';

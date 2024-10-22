@@ -1,6 +1,6 @@
 /* * */
 
-import type { Alert } from '@carrismetropolitana/api-types/src/api/alerts.js';
+import type { Alert } from '@carrismetropolitana/api-types/api';
 import type { TopicMessage } from 'firebase-admin/messaging';
 
 import parseAlertV2 from '@/services/parseAlertV2.js';

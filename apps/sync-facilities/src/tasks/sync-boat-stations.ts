@@ -2,8 +2,8 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Facility, FacilitySource } from '@carrismetropolitana/api-types/src/api/facilities.js';
-import { sortCollator } from '@carrismetropolitana/api-utils/src/sortCollator.js';
+import { Facility, FacilitySource } from '@carrismetropolitana/api-types/api';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
