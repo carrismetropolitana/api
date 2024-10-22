@@ -2,7 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { StoreMetadata, StoresSource } from '@carrismetropolitana/api-types/api';
+import { StoreMetadata, StoresSource } from '@carrismetropolitana/api-types/facilities';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';

@@ -1,8 +1,8 @@
 /* * */
 
-import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -33,7 +33,7 @@ export const syncPeriods = async () => {
 		const datesForThisPeriod = allDates.rows
 			.filter(date => date.period === period.period_id)
 			.map(date => date.date)
-			.sort((a, b) => collator.compare(a, b));
+			.sort((a, b) => sortCollator.compare(a, b));
 
 		//
 		// Initiate a variable to hold the active blocks for this period
@@ -95,7 +95,7 @@ export const syncPeriods = async () => {
 	//
 	// Sort each period in the array
 
-	allPeriodsParsed.sort((a, b) => collator.compare(a.id, b.id));
+	allPeriodsParsed.sort((a, b) => sortCollator.compare(a.id, b.id));
 
 	//
 	// Save the array to the database

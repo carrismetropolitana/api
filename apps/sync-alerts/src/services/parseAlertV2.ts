@@ -1,6 +1,6 @@
 /* * */
 
-import type { Alert } from '@carrismetropolitana/api-types/gtfs';
+import type { Alert } from '@carrismetropolitana/api-types/gtfs-core';
 
 /* * */
 

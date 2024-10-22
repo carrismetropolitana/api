@@ -1,17 +1,18 @@
 /* * */
 
-import type { Line, Location, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/api';
+import type { Location } from '@carrismetropolitana/api-types/locations';
+import type { Line, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/network';
 
-import sortCollator from '@/modules/sortCollator.js';
 import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Alight, CalendarDatesExtended, RouteExtended, StopTimesExtended, TripsExtended } from '@carrismetropolitana/api-types/gtfs';
+import { Alight } from '@carrismetropolitana/api-types/gtfs-core';
+import { CalendarDate, StopTime, Trip } from '@carrismetropolitana/api-types/gtfs-extended';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import crypto from 'node:crypto';
-
 /* * */
 
 export const syncLinesRoutesPatterns = async () => {
@@ -60,14 +61,14 @@ export const syncLinesRoutesPatterns = async () => {
 	// For Stops
 	const allStopsParsedTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
 	const allStopsParsedJson: Stop[] = JSON.parse(allStopsParsedTxt);
-	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.stop_id, item]));
+	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.id, item]));
 
 	// For Routes
-	const allRoutesRaw = await NETWORKDB.client.query<RouteExtended>('SELECT * FROM routes');
-	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [item.route_id, item]));
+	const allRoutesRaw = await NETWORKDB.client.query<Route>('SELECT * FROM routes');
+	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [item.id, item]));
 
 	// For Calendar Dates
-	const allCalendarDatesRaw = await NETWORKDB.client.query<CalendarDatesExtended>(`SELECT * FROM calendar_dates`);
+	const allCalendarDatesRaw = await NETWORKDB.client.query<CalendarDate>(`SELECT * FROM calendar_dates`);
 	const allCalendarDatesRawMap = new Map();
 	allCalendarDatesRaw.rows.forEach((item) => {
 		if (allCalendarDatesRawMap.has(item.service_id)) {
@@ -79,7 +80,7 @@ export const syncLinesRoutesPatterns = async () => {
 	});
 
 	// Get all distinct Pattern IDs from trips table
-	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<{ pattern_id: string }>(`SELECT DISTINCT pattern_id FROM trips`);
+	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<Trip>(`SELECT DISTINCT pattern_id FROM trips`);
 	const allDistinctPatternIds = allDistinctPatternIdsRaw.rows.map(item => item.pattern_id);
 
 	LOGGER.info(`Fetched ${allDistinctPatternIdsRaw.rowCount} rows from NETWORKDB (${fetchRawDataTimer.get()})`);
@@ -102,7 +103,7 @@ export const syncLinesRoutesPatterns = async () => {
 		//
 		// Get all trips that match the current pattern ID
 
-		const allTripsForThisPatternRaw = await NETWORKDB.client.query<TripsExtended>(`SELECT * FROM trips WHERE pattern_id = $1`, [patternId]);
+		const allTripsForThisPatternRaw = await NETWORKDB.client.query<Trip>(`SELECT * FROM trips WHERE pattern_id = $1`, [patternId]);
 
 		//
 		// Setup a variable to hold the parsed pattern groups
@@ -120,7 +121,7 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Get the stop_times data associated with the current trip
 
-			const stopTimesRaw = await NETWORKDB.client.query<StopTimesExtended>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRawData.trip_id]);
+			const stopTimesRaw = await NETWORKDB.client.query<StopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRawData.trip_id]);
 
 			//
 			// With the same set of data (stop_times sequence of stops) we can find out different information.
@@ -137,7 +138,7 @@ export const syncLinesRoutesPatterns = async () => {
 			// arrival times need to be the same for all stops in the path. Finally, each stop in the path has an associated set of facilities served,
 			// a locality and a municipality ID. Instead of running these loops multiple times, we run it once and save all the necessary information immediately.
 
-			const stopTimesAsSimplifiedPath: { stop_id: string, stop_sequence: number }[] = [];
+			const stopTimesAsSimplifiedPath: { id: string, stop_sequence: number }[] = [];
 			const stopTimesAsCompletePath: Path = [];
 
 			const stopTimesAsSimplifiedSchedule: { arrival_time: string, stop_id: string, stop_sequence: number }[] = [];
@@ -152,7 +153,7 @@ export const syncLinesRoutesPatterns = async () => {
 				//
 				// Get the stop data associated with the current stop_time
 
-				const stopParsedData = allStopsParsedMap.get(stopTimeRawData.stop_id);
+				const stopParsedData: Stop = allStopsParsedMap.get(stopTimeRawData.stop_id);
 				if (!stopParsedData) continue;
 
 				//
@@ -160,7 +161,7 @@ export const syncLinesRoutesPatterns = async () => {
 				// This will be used to dictacte if this trip belongs to an existing or a new pattern group.
 
 				stopTimesAsSimplifiedPath.push({
-					stop_id: stopTimeRawData.stop_id,
+					id: stopTimeRawData.stop_id,
 					stop_sequence: stopTimeRawData.stop_sequence,
 				});
 
@@ -224,16 +225,16 @@ export const syncLinesRoutesPatterns = async () => {
 			// and a different set of dates will be associated with it.
 
 			const currentPatternGroup = {
-				color: routeRawData.route_color,
+				color: routeRawData.color,
 				direction: tripRawData.direction_id,
 				headsign: tripRawData.trip_headsign,
 				line_id: routeRawData.line_id,
 				pattern_id: tripRawData.pattern_id,
-				route_id: routeRawData.route_id,
+				route_id: routeRawData.id,
 				shape_id: tripRawData.shape_id,
-				short_name: routeRawData.route_short_name,
+				short_name: routeRawData.short_name,
 				simplified_path: stopTimesAsSimplifiedPath,
-				text_color: routeRawData.route_text_color,
+				text_color: routeRawData.text_color,
 			};
 
 			//
@@ -252,19 +253,19 @@ export const syncLinesRoutesPatterns = async () => {
 			}
 			else {
 				currentPatternObject =	{
-					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
+					color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
 					direction_id: tripRawData.direction_id,
 					facilities: [],
 					headsign: tripRawData.trip_headsign,
+					id: tripRawData.pattern_id,
 					line_id: routeRawData.line_id,
 					locations: [],
 					path: stopTimesAsCompletePath,
-					pattern_id: tripRawData.pattern_id,
 					pattern_version_id: currentPatternVersionHash,
-					route_id: routeRawData.route_id,
+					route_id: routeRawData.id,
 					shape_id: tripRawData.shape_id,
-					short_name: routeRawData.route_short_name,
-					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
+					short_name: routeRawData.short_name,
+					text_color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
 					trip_groups: [],
 					tts_headsign: tts.makePattern(routeRawData.line_id, tripRawData.trip_headsign),
 					valid_on: [],
@@ -351,16 +352,16 @@ export const syncLinesRoutesPatterns = async () => {
 			}
 			else {
 				currentRouteObject = {
-					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
+					color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
 					facilities: [],
+					id: routeRawData.id,
 					line_id: routeRawData.line_id,
 					locations: [],
-					long_name: routeRawData.route_long_name,
+					long_name: routeRawData.long_name,
 					pattern_ids: [],
-					route_id: routeRawData.route_id,
-					short_name: routeRawData.route_short_name,
-					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
-					tts_name: tts.makeRoute(routeRawData.line_id, routeRawData.route_long_name),
+					short_name: routeRawData.short_name,
+					text_color: routeRawData.text_color ? `#${routeRawData.text_color}` : '#FFFFFF',
+					tts_name: tts.makeRoute(routeRawData.line_id, routeRawData.long_name),
 				};
 			}
 
@@ -391,16 +392,16 @@ export const syncLinesRoutesPatterns = async () => {
 			}
 			else {
 				currentLineObject = {
-					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
+					color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
 					facilities: [],
-					line_id: routeRawData.line_id,
+					id: routeRawData.id,
 					locations: [],
-					long_name: routeRawData.line_long_name,
+					long_name: routeRawData.long_name,
 					pattern_ids: [],
 					route_ids: [],
-					short_name: routeRawData.line_short_name,
-					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
-					tts_name: tts.makeLine(routeRawData.line_id, routeRawData.line_long_name),
+					short_name: routeRawData.short_name,
+					text_color: routeRawData.text_color ? `#${routeRawData.text_color}` : '#FFFFFF',
+					tts_name: tts.makeLine(routeRawData.id, routeRawData.long_name),
 				};
 			}
 
@@ -425,8 +426,8 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Save the updated objects back to the maps
 
-			allLinesParsed.set(routeRawData.line_id, currentLineObject);
-			allRoutesParsed.set(routeRawData.route_id, currentRouteObject);
+			allLinesParsed.set(routeRawData.id, currentLineObject);
+			allRoutesParsed.set(routeRawData.id, currentRouteObject);
 			parsedPatternsForThisPatternGroup.set(currentPatternVersionHash, currentPatternObject);
 
 			//
@@ -465,14 +466,14 @@ export const syncLinesRoutesPatterns = async () => {
 	//
 	// Save all routes to the database
 
-	const finalizedAllRoutesData: Route[] = (Object.values(allRoutesParsed) as Route[]).sort((a, b) => sortCollator.compare(a.route_id, b.route_id));
+	const finalizedAllRoutesData: Route[] = (Object.values(allRoutesParsed) as Route[]).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ROUTES, JSON.stringify(finalizedAllRoutesData));
 	LOGGER.info(`Updated ${finalizedAllRoutesData.length} Routes`);
 
 	//
 	// Save all lines to the database
 
-	const finalizedAllLinesData: Line[] = (Object.values(allLinesParsed) as Line[]).sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
+	const finalizedAllLinesData: Line[] = (Object.values(allLinesParsed) as Line[]).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.LINES, JSON.stringify(finalizedAllLinesData));
 	LOGGER.info(`Updated ${finalizedAllLinesData.length} Lines`);
 

@@ -2,7 +2,7 @@
 
 import { IXAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { CurrentStoreStatus, Store } from '@carrismetropolitana/api-types/api';
+import { CurrentStoreStatus, Store } from '@carrismetropolitana/api-types/facilities';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

@@ -1,8 +1,7 @@
-/* * */
-
-import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+/* * */
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -44,7 +43,7 @@ export const syncArchives = async () => {
 	//
 	// Save to the database
 
-	allArchivesData.sort((a, b) => collator.compare(a.start_date, b.start_date));
+	allArchivesData.sort((a, b) => sortCollator.compare(a.start_date, b.start_date));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ARCHIVES, JSON.stringify(allArchivesData));
 
 	LOGGER.success(`Done updating ${updatedArchivesCounter} Archives (${globalTimer.get()})`);

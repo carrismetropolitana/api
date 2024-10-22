@@ -1,10 +1,11 @@
 /* * */
 
-import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Locality, Location, Municipality, OperationalStatus, Stop } from '@carrismetropolitana/api-types/api';
-import { StopsExtended } from '@carrismetropolitana/api-types/gtfs';
+import { Stop as StopsExtended } from '@carrismetropolitana/api-types/gtfs-extended';
+import { Locality, Location, Municipality } from '@carrismetropolitana/api-types/locations';
+import { OperationalStatus, Stop } from '@carrismetropolitana/api-types/network';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -106,8 +107,9 @@ export const syncStops = async () => {
 		//
 		// Build the final stop object
 
-		const parsedStop = {
+		const parsedStop: Stop = {
 			facilities: facilities || [],
+			id: stop.stop_id,
 			lat: stop.stop_lat,
 			line_ids: stop.line_ids || [],
 			location: matchingLocation,
@@ -116,7 +118,6 @@ export const syncStops = async () => {
 			pattern_ids: stop.pattern_ids || [],
 			route_ids: stop.route_ids || [],
 			short_name: stop.stop_short_name,
-			stop_id: stop.stop_id,
 			stop_name: stop.stop_name,
 			tts_name: stop.tts_stop_name,
 			wheelchair_boarding: stop.wheelchair_boarding,
@@ -132,7 +133,7 @@ export const syncStops = async () => {
 	//
 	// Save to the database
 
-	allStopsData.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
+	allStopsData.sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.STOPS, JSON.stringify(allStopsData));
 
 	LOGGER.success(`Done updating ${updatedStopsCounter} Stops (${globalTimer.get()})`);

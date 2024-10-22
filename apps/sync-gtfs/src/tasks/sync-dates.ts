@@ -1,8 +1,8 @@
 /* * */
 
-import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
@@ -44,7 +44,7 @@ export const syncDates = async () => {
 	//
 	// Save to the database
 
-	allDatesData.sort((a, b) => collator.compare(a.date, b.date));
+	allDatesData.sort((a, b) => sortCollator.compare(a.date, b.date));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.DATES, JSON.stringify(allDatesData));
 
 	LOGGER.success(`Done updating ${updatedDatesCounter} Dates (${globalTimer.get()})`);
