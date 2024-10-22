@@ -7,7 +7,7 @@ import { NETWORKDB } from '@carrismetropolitana/api-services';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Alight } from '@carrismetropolitana/api-types/gtfs-core';
-import { CalendarDate, StopTime, Trip } from '@carrismetropolitana/api-types/gtfs-extended';
+import { CalendarDate, Route as GtfsRoute, StopTime, Trip } from '@carrismetropolitana/api-types/gtfs-extended';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
@@ -64,8 +64,8 @@ export const syncLinesRoutesPatterns = async () => {
 	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.id, item]));
 
 	// For Routes
-	const allRoutesRaw = await NETWORKDB.client.query<Route>('SELECT * FROM routes');
-	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [item.id, item]));
+	const allRoutesRaw = await NETWORKDB.client.query<GtfsRoute>('SELECT * FROM routes');
+	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [item.route_id, item]));
 
 	// For Calendar Dates
 	const allCalendarDatesRaw = await NETWORKDB.client.query<CalendarDate>(`SELECT * FROM calendar_dates`);
@@ -224,17 +224,16 @@ export const syncLinesRoutesPatterns = async () => {
 			// This means that everytime any of these fields differs, a new pattern version will be created,
 			// and a different set of dates will be associated with it.
 
-			const currentPatternGroup = {
-				color: routeRawData.color,
-				direction: tripRawData.direction_id,
+			const currentPatternGroup: Partial<Pattern> = {
+				color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
+				direction_id: tripRawData.direction_id,
 				headsign: tripRawData.trip_headsign,
+				id: tripRawData.pattern_id,
 				line_id: routeRawData.line_id,
-				pattern_id: tripRawData.pattern_id,
-				route_id: routeRawData.id,
+				route_id: routeRawData.route_id,
 				shape_id: tripRawData.shape_id,
-				short_name: routeRawData.short_name,
-				simplified_path: stopTimesAsSimplifiedPath,
-				text_color: routeRawData.text_color,
+				short_name: routeRawData.route_short_name,
+				text_color: routeRawData.route_text_color,
 			};
 
 			//
@@ -253,7 +252,7 @@ export const syncLinesRoutesPatterns = async () => {
 			}
 			else {
 				currentPatternObject =	{
-					color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
+					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
 					direction_id: tripRawData.direction_id,
 					facilities: [],
 					headsign: tripRawData.trip_headsign,
@@ -262,10 +261,10 @@ export const syncLinesRoutesPatterns = async () => {
 					locations: [],
 					path: stopTimesAsCompletePath,
 					pattern_version_id: currentPatternVersionHash,
-					route_id: routeRawData.id,
+					route_id: routeRawData.route_id,
 					shape_id: tripRawData.shape_id,
-					short_name: routeRawData.short_name,
-					text_color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
+					short_name: routeRawData.route_short_name,
+					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
 					trip_groups: [],
 					tts_headsign: tts.makePattern(routeRawData.line_id, tripRawData.trip_headsign),
 					valid_on: [],
@@ -352,16 +351,16 @@ export const syncLinesRoutesPatterns = async () => {
 			}
 			else {
 				currentRouteObject = {
-					color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
+					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
 					facilities: [],
-					id: routeRawData.id,
+					id: routeRawData.route_id,
 					line_id: routeRawData.line_id,
 					locations: [],
-					long_name: routeRawData.long_name,
+					long_name: routeRawData.route_long_name,
 					pattern_ids: [],
-					short_name: routeRawData.short_name,
-					text_color: routeRawData.text_color ? `#${routeRawData.text_color}` : '#FFFFFF',
-					tts_name: tts.makeRoute(routeRawData.line_id, routeRawData.long_name),
+					short_name: routeRawData.route_short_name,
+					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
+					tts_name: tts.makeRoute(routeRawData.line_id, routeRawData.route_long_name),
 				};
 			}
 
@@ -392,16 +391,16 @@ export const syncLinesRoutesPatterns = async () => {
 			}
 			else {
 				currentLineObject = {
-					color: routeRawData.color ? `#${routeRawData.color}` : '#000000',
+					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
 					facilities: [],
-					id: routeRawData.id,
+					id: routeRawData.line_id,
 					locations: [],
-					long_name: routeRawData.long_name,
+					long_name: routeRawData.route_long_name,
 					pattern_ids: [],
 					route_ids: [],
-					short_name: routeRawData.short_name,
-					text_color: routeRawData.text_color ? `#${routeRawData.text_color}` : '#FFFFFF',
-					tts_name: tts.makeLine(routeRawData.id, routeRawData.long_name),
+					short_name: routeRawData.route_short_name,
+					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
+					tts_name: tts.makeLine(routeRawData.line_id, routeRawData.route_long_name),
 				};
 			}
 
@@ -426,8 +425,8 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Save the updated objects back to the maps
 
-			allLinesParsed.set(routeRawData.id, currentLineObject);
-			allRoutesParsed.set(routeRawData.id, currentRouteObject);
+			allLinesParsed.set(routeRawData.line_id, currentLineObject);
+			allRoutesParsed.set(routeRawData.route_id, currentRouteObject);
 			parsedPatternsForThisPatternGroup.set(currentPatternVersionHash, currentPatternObject);
 
 			//

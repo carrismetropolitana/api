@@ -32,13 +32,13 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 /* * */
 
 export const ENABLED_MODULES = [
-	// 'gtfs_import',
-	// 'locations_parser',
-	// 'periods_parser',
-	// 'dates_parser',
-	// 'archives_parser',
-	// 'stops_parser',
-	// 'shapes_parser',
+	'gtfs_import',
+	'locations_parser',
+	'periods_parser',
+	'dates_parser',
+	'archives_parser',
+	'stops_parser',
+	'shapes_parser',
 	'lines_routes_patterns_parser',
 ];
 

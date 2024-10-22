@@ -85,12 +85,12 @@ class PCGIDBClass {
 		}
 	}
 
-	get validationEntityCollection(): Collection | undefined {
-		return this.validationsManagementDatabase?.collection('validationEntity') ?? undefined;
+	get validationEntityCollection(): Collection {
+		return this.validationsManagementDatabase.collection('validationEntity');
 	}
 
-	get vehicleEventsCollection(): Collection<VehicleEvent> | undefined {
-		return this.coreManagementDatabase?.collection<VehicleEvent>('VehicleEvents') ?? undefined;
+	get vehicleEventsCollection(): Collection<VehicleEvent> {
+		return this.coreManagementDatabase.collection<VehicleEvent>('VehicleEvents');
 	}
 }
 
