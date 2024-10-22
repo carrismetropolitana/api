@@ -155,7 +155,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   server:
-    image: ghcr.io/carrismetropolitana/api-server:beta-arm
+    image: ghcr.io/carrismetropolitana/api-server:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -176,7 +176,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   switch:
-    image: ghcr.io/carrismetropolitana/api-switch:beta-arm
+    image: ghcr.io/carrismetropolitana/api-switch:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -193,7 +193,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-alerts:
-    image: ghcr.io/carrismetropolitana/api-sync-alerts:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-alerts:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -213,8 +213,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-datasets:
-    image: ghcr.io/carrismetropolitana/api-sync-datasets:beta-arm
+  sync-facilities:
+    image: ghcr.io/carrismetropolitana/api-sync-facilities:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -232,29 +232,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-metrics:
-    image: ghcr.io/carrismetropolitana/api-sync-metrics:beta-arm
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 1gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./secrets/production/.env
-    secrets:
-      - pcgidbkey
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  sync-network:
-    image: ghcr.io/carrismetropolitana/api-sync-network:beta-arm
+  sync-gtfs:
+    image: ghcr.io/carrismetropolitana/api-sync-gtfs:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -276,8 +255,29 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
+  sync-metrics:
+    image: ghcr.io/carrismetropolitana/api-sync-metrics:alpha-arm
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/production/.env
+    secrets:
+      - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   sync-stores:
-    image: ghcr.io/carrismetropolitana/api-sync-stores:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-stores:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -296,7 +296,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-vehicles:
-    image: ghcr.io/carrismetropolitana/api-sync-vehicles:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-vehicles:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure

@@ -1,9 +1,9 @@
 ###########################
-# Define the base image 
+# Define the base image
 ###########################
 FROM node:20.16-alpine AS base
 
-ENV PROJECT=sync-datasets
+ENV PROJECT=sync-facilities
 
 RUN npm install -g turbo@^2
 
@@ -44,4 +44,4 @@ WORKDIR /app
 
 COPY --from=builder /app .
 
-CMD node apps/$PROJECT/dist/index.js
+CMD ["node", "apps/$PROJECT/dist/index.js"]

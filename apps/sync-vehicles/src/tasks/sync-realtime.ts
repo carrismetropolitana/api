@@ -1,9 +1,10 @@
 /* * */
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
-import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
-import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/src/api';
-import { TripScheduleRelationship, VehicleEvent } from '@carrismetropolitana/api-types/src/gtfs';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { TripScheduleRelationship } from '@carrismetropolitana/api-types/gtfs-core';
+import { VehicleEvent } from '@carrismetropolitana/api-types/gtfs-extended';
+import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/vehicles';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';

@@ -1,9 +1,9 @@
 /* * */
 
-import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
-import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
-import { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/src/api';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/locations';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { createHash } from 'node:crypto';
@@ -140,16 +140,16 @@ export const syncLocations = async () => {
 	//
 	// Save data to the database
 
-	const sortedLocalitiesData = Array.from(updatedLocalitiesData.values()).sort((a, b) => collator.compare(a.locality_id, b.locality_id));
+	const sortedLocalitiesData = Array.from(updatedLocalitiesData.values()).sort((a, b) => sortCollator.compare(a.locality_id, b.locality_id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALIITIES, JSON.stringify(sortedLocalitiesData));
 
-	const sortedMunicipalitiesData = Array.from(updatedMunicipalitiesData.values()).sort((a, b) => collator.compare(a.municipality_id, b.municipality_id));
+	const sortedMunicipalitiesData = Array.from(updatedMunicipalitiesData.values()).sort((a, b) => sortCollator.compare(a.municipality_id, b.municipality_id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(sortedMunicipalitiesData));
 
-	const sortedDistrictsData = Array.from(updatedDistrictsData.values()).sort((a, b) => collator.compare(a.district_id, b.district_id));
+	const sortedDistrictsData = Array.from(updatedDistrictsData.values()).sort((a, b) => sortCollator.compare(a.district_id, b.district_id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.DISTRICTS, JSON.stringify(sortedDistrictsData));
 
-	const sortedRegionsData = Array.from(updatedRegionsData.values()).sort((a, b) => collator.compare(a.region_id, b.region_id));
+	const sortedRegionsData = Array.from(updatedRegionsData.values()).sort((a, b) => sortCollator.compare(a.region_id, b.region_id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.REGIONS, JSON.stringify(sortedRegionsData));
 
 	//

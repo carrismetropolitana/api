@@ -1,14 +1,15 @@
 {
 	"name": "@carrismetropolitana/api-server",
 	"version": "1.0.0",
-	"private": true,
 	"type": "module",
-	"main": "index.js",
+	"files": ["dist"],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths && npm run copy",
 		"clean": "rm -rf dist",
 		"copy": "cp -r ./src/assets ./dist/assets",
-		"dev": "dotenv-run -f .env.development -- tsx watch ./src/index.ts",
+		"dev": "dotenv-run -f ./secrets/development/.env.development -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
 		"start": "node dist/index.js"
@@ -16,18 +17,22 @@
 	"dependencies": {
 		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-settings": "*",
-		"@dotenv-run/cli": "1.3.6",
+		"@carrismetropolitana/api-utils": "*",
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
 		"fastify": "5.0.0",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.5.0",
 		"pino-pretty": "^11.3.0",
-		"protobufjs": "7.4.0",
-		"redis": "4.7.0"
+		"protobufjs": "7.4.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20241014.1938.30",
+		"@carrismetropolitana/api-tsconfig": "*",
+		"@carrismetropolitana/api-types": "*",
+		"@carrismetropolitana/eslint": "20241017.1618.32",
+		"@dotenv-run/cli": "1.3.6",
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.7.5",
+		"@types/node": "22.7.7",
 		"resolve-tspaths": "0.8.22",
 		"tsx": "4.19.1",
 		"typescript": "5.6.3"

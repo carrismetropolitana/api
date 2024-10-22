@@ -1,6 +1,6 @@
 /* * */
 
-import type { Alert } from '@carrismetropolitana/api-types/src/api/alerts.js';
+import type { Alert } from '@carrismetropolitana/api-types/alerts';
 import type { TopicMessage } from 'firebase-admin/messaging';
 
 import parseAlertV2 from '@/services/parseAlertV2.js';
@@ -62,9 +62,9 @@ export const syncAlerts = async () => {
 	let sentNotificationCounter = 0;
 
 	for (const alertItem of allAlertsParsedV2) {
-		if (!allSentNotificationsSet.has(alertItem.alert_id)) {
+		if (!allSentNotificationsSet.has(alertItem.id)) {
 			try {
-				for (const entity of alertItem.informedEntity) {
+				for (const entity of alertItem.informed_entity) {
 					// Setup notification message
 					const notificationMessage: TopicMessage = {
 						data: {
@@ -78,20 +78,20 @@ export const syncAlerts = async () => {
 						topic: '',
 					};
 					// Include alert id
-					notificationMessage.data.alertId = alertItem.alert_id;
+					notificationMessage.data.alertId = alertItem.id;
 					// Include title
-					notificationMessage.notification.title = alertItem.headerText?.translation[0]?.text || '';
+					notificationMessage.notification.title = alertItem.header_text?.translation[0]?.text || '';
 					// Include description
-					const messageDescription = alertItem.descriptionText?.translation[0]?.text || '';
+					const messageDescription = alertItem.description_text?.translation[0]?.text || '';
 					notificationMessage.notification.body = messageDescription.length > 200 ? messageDescription.substring(0, 200) + '...' : messageDescription;
 					// Include image
-					notificationMessage.notification.imageUrl = alertItem.image?.localizedImage[0]?.url || undefined;
+					notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
 					// Include topics
-					if (entity.routeId) {
-						notificationMessage.topic = `cm.realtime.alerts.line.${entity.lineId}`;
+					if (entity.route_id) {
+						notificationMessage.topic = `cm.realtime.alerts.line.${entity.route_id}`;
 					}
-					else if (entity.stopId) {
-						notificationMessage.topic = `cm.realtime.alerts.stop.${entity.stopId}`;
+					else if (entity.stop_id) {
+						notificationMessage.topic = `cm.realtime.alerts.stop.${entity.stop_id}`;
 					}
 					else {
 						// Do the 'all' topic
@@ -100,11 +100,11 @@ export const syncAlerts = async () => {
 					// await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
-				allSentNotificationsSet.add(alertItem.alert_id);
-				LOGGER.success(`Sent notification for alert: ${alertItem.alert_id}`);
+				allSentNotificationsSet.add(alertItem.id);
+				LOGGER.success(`Sent notification for alert: ${alertItem.id}`);
 			}
 			catch (error) {
-				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert_id}`);
+				LOGGER.error(`Failed to send notification for alert: ${alertItem.id}`);
 				LOGGER.error(error);
 				continue;
 			}

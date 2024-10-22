@@ -1,10 +1,10 @@
 /* * */
 
-import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
-import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
-import { Shape } from '@carrismetropolitana/api-types/src/api/network.js';
-import { ShapesExtended } from '@carrismetropolitana/api-types/src/gtfs/index.js';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { Shape as ShapesExtended } from '@carrismetropolitana/api-types/gtfs-extended';
+import { Shape } from '@carrismetropolitana/api-types/network';
+import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import * as turf from '@turf/turf';
@@ -87,7 +87,7 @@ export const syncShapes = async () => {
 		//
 		// Sort points to match sequence
 
-		shapeData.points.sort((a, b) => collator.compare(String(a.shape_pt_sequence), String(b.shape_pt_sequence)));
+		shapeData.points.sort((a, b) => sortCollator.compare(String(a.shape_pt_sequence), String(b.shape_pt_sequence)));
 
 		//
 		// Create geojson feature using turf

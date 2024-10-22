@@ -1,5 +1,5 @@
 ###########################
-# Define the base image 
+# Define the base image
 ###########################
 FROM node:20.16-alpine AS base
 
@@ -44,4 +44,4 @@ WORKDIR /app
 
 COPY --from=builder /app .
 
-CMD node apps/$PROJECT/dist/index.js
+CMD ["node", "apps/$PROJECT/dist/index.js"]
