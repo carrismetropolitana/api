@@ -42,8 +42,8 @@ export interface Period {
 }
 
 export interface Archive {
-	archive_id: string
 	end_date: string
+	id: string
 	operator_id: string
 	start_date: string
 }
@@ -51,7 +51,7 @@ export interface Archive {
 export interface Line {
 	color: string
 	facilities: string[]
-	line_id: string
+	id: string
 	locations: Location[]
 	long_name: string
 	pattern_ids: string[]
@@ -64,11 +64,11 @@ export interface Line {
 export interface Route {
 	color: string
 	facilities: string[]
+	id: string
 	line_id: string
 	locations: Location[]
 	long_name: string
 	pattern_ids: string[]
-	route_id: string
 	short_name: string
 	text_color: string
 	tts_name: string
@@ -81,10 +81,10 @@ export interface Pattern {
 	direction_id: 0 | 1
 	facilities: string[]
 	headsign: string
+	id: string
 	line_id: string
 	locations: Location[]
 	path: Path
-	pattern_id: string
 	pattern_version_id: string
 	route_id: string
 	shape_id: string
@@ -124,6 +124,7 @@ export interface Schedule {
 
 export interface Stop {
 	facilities: string[]
+	id: string
 	lat: number
 	line_ids: string[]
 	location: Location
@@ -132,7 +133,6 @@ export interface Stop {
 	pattern_ids: string[]
 	route_ids: string[]
 	short_name: string
-	stop_id: string
 	stop_name: string
 	tts_name: string
 	wheelchair_boarding: WheelchairBoardingType

@@ -1,36 +1,29 @@
 /* * */
 
-import { EntitySelector, TimeRange, TranslatedImage, TranslatedString } from '../gtfsrt.types.js';
+import { Cause, Effect, EntitySelector, TimeRange, TranslatedString } from 'gtfs-types';
 
 /* * */
 
-export enum AlertCause {
-	ACCIDENT = 'ACCIDENT',
-	CONSTRUCTION = 'CONSTRUCTION',
-	DEMONSTRATION = 'DEMONSTRATION',
-	HOLIDAY = 'HOLIDAY',
-	MAINTENANCE = 'MAINTENANCE',
-	MEDICAL_EMERGENCY = 'MEDICAL_EMERGENCY',
-	OTHER_CAUSE = 'OTHER_CAUSE',
-	POLICE_ACTIVITY = 'POLICE_ACTIVITY',
-	STRIKE = 'STRIKE',
-	TECHNICAL_PROBLEM = 'TECHNICAL_PROBLEM',
-	UNKNOWN_CAUSE = 'UNKNOWN_CAUSE',
-	WEATHER = 'WEATHER',
+export interface TranslatedImage {
+	localized_image: LocalizedImage[]
 }
 
-export enum AlertEffect {
-	ACCESSIBILITY_ISSUE = 'ACCESSIBILITY_ISSUE',
-	ADDITIONAL_SERVICE = 'ADDITIONAL_SERVICE',
-	DETOUR = 'DETOUR',
-	MODIFIED_SERVICE = 'MODIFIED_SERVICE',
-	NO_EFFECT = 'NO_EFFECT',
-	NO_SERVICE = 'NO_SERVICE',
-	OTHER_EFFECT = 'OTHER_EFFECT',
-	REDUCED_SERVICE = 'REDUCED_SERVICE',
-	SIGNIFICANT_DELAYS = 'SIGNIFICANT_DELAYS',
-	STOP_MOVED = 'STOP_MOVED',
-	UNKNOWN_EFFECT = 'UNKNOWN_EFFECT',
+/**
+ * A localized image. At least one translation must be provided.
+ * The image type must be a valid MIME type. The URL must be a valid URL.
+ * The language field must be a valid BCP 47 language tag.
+ *
+ * More info: https://gtfs.org/realtime/reference/#message-localizedimage
+ *
+ * @param language - The language of the image. Must be a valid BCP 47 language tag.
+ * @param mediaType - The MIME type of the image.
+ * @param url - The URL of the image.
+ *
+ */
+interface LocalizedImage {
+	language: string
+	media_type: string
+	url: string
 }
 
 /* * */
@@ -40,14 +33,14 @@ export enum AlertEffect {
  * Please use a SimplifiedAlert as many convenience operations are already correctly applied.
  */
 export interface Alert {
-	activePeriod: TimeRange[]
-	alert_id: string
-	cause: AlertCause
-	descriptionText: TranslatedString
-	effect: AlertEffect
-	headerText: TranslatedString
+	active_period: TimeRange[]
+	cause: Cause
+	description_text: TranslatedString
+	effect: Effect
+	header_text: TranslatedString
+	id: string
 	image: TranslatedImage
-	informedEntity: EntitySelector[]
+	informed_entity: EntitySelector[]
 	url: TranslatedString
 }
 
@@ -62,11 +55,11 @@ export interface Alert {
  * - All fields with translatable content are returned in the current app locale
  */
 export interface SimplifiedAlert {
-	alert_id: string
-	cause: AlertCause
+	cause: Cause
 	description: string
-	effect: AlertEffect
+	effect: Effect
 	end_date: Date
+	id: string
 	image_url: null | string
 	informed_entity: EntitySelector[]
 	locale: string

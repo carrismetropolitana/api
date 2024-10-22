@@ -5,20 +5,40 @@
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"exports": {
-		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+		"./alerts": {
+			"import": "./dist/api/alerts.js",
+			"require": "./dist/api/alerts.js",
+			"types": "./dist/api/alerts.d.ts"
 		},
-		"./api": {
-			"import": "./dist/api/index.js",
-			"require": "./dist/api/index.js",
-			"types": "./dist/api/index.d.ts"
+		"./facilities": {
+			"import": "./dist/api/facilities.js",
+			"require": "./dist/api/facilities.js",
+			"types": "./dist/api/facilities.d.ts"
 		},
-		"./gtfs": {
-			"import": "./dist/gtfs/index.js",
-			"require": "./dist/gtfs/index.js",
-			"types": "./dist/gtfs/index.d.ts"
+		"./gtfs-core": {
+			"import": "./dist/gtfs/core.js",
+			"require": "./dist/gtfs/core.js",
+			"types": "./dist/gtfs/core.d.ts"
+		},
+		"./gtfs-extended": {
+			"import": "./dist/gtfs/extended.js",
+			"require": "./dist/gtfs/extended.js",
+			"types": "./dist/gtfs/extended.d.ts"
+		},
+		"./locations": {
+			"import": "./dist/api/locations.js",
+			"require": "./dist/api/locations.js",
+			"types": "./dist/api/locations.d.ts"
+		},
+		"./network": {
+			"import": "./dist/api/network.js",
+			"require": "./dist/api/network.js",
+			"types": "./dist/api/network.d.ts"
+		},
+		"./vehicles": {
+			"import": "./dist/api/vehicles.js",
+			"require": "./dist/api/vehicles.js",
+			"types": "./dist/api/vehicles.d.ts"
 		}
 	},
 	"scripts": {
