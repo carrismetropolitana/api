@@ -2,7 +2,7 @@
 
 import collator from '@/modules/sortCollator.js';
 import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
-import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings/src/constants.js';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Shape } from '@carrismetropolitana/api-types/src/api/network.js';
 import { ShapesExtended } from '@carrismetropolitana/api-types/src/gtfs/index.js';
 import LOGGER from '@helperkits/logger';

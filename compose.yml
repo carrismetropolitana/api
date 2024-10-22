@@ -213,8 +213,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-datasets:
-    image: ghcr.io/carrismetropolitana/api-sync-datasets:alpha-arm
+  sync-facilities:
+    image: ghcr.io/carrismetropolitana/api-sync-facilities:alpha-arm
     deploy:
       restart_policy:
         condition: on-failure
@@ -228,6 +228,29 @@ services:
         max-file: '1'
     env_file:
       - ./secrets/production/.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-gtfs:
+    image: ghcr.io/carrismetropolitana/api-sync-gtfs:alpha-arm
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/production/.env
+    environment:
+      - NETWORKDB_HOST=networkdb
+      - NETWORKDB_USER=networkdbuser
+      - NETWORKDB_PASSWORD=networkdbpassword
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -249,29 +272,6 @@ services:
       - ./secrets/production/.env
     secrets:
       - pcgidbkey
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  sync-network:
-    image: ghcr.io/carrismetropolitana/api-sync-network:alpha-arm
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 2gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./secrets/production/.env
-    environment:
-      - NETWORKDB_HOST=networkdb
-      - NETWORKDB_USER=networkdbuser
-      - NETWORKDB_PASSWORD=networkdbpassword
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
