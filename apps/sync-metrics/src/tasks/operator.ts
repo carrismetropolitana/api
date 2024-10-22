@@ -37,7 +37,7 @@ export default async () => {
 			'transaction.validationStatus': { $in: apexValidationStatuses },
 		};
 
-		const result = await PCGIDB.ValidationEntity.aggregate(
+		const result = await PCGIDB.validationEntityCollection.aggregate(
 			[
 				{ $match: validationsQuery },
 				{ $group: { _id: '$_id', count: { $sum: 1 } } },

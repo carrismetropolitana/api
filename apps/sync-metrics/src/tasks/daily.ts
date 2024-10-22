@@ -52,7 +52,7 @@ export default async () => {
 		LOGGER.info('Streaming validations from PCGIDB...');
 		LOGGER.info(`Operator IDs: [${operatorIds.join(', ')}] | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: [${apexValidationStatuses.join(', ')}]`);
 
-		const promise = PCGIDB.ValidationEntity.countDocuments(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
+		const promise = PCGIDB.validationEntityCollection.countDocuments(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
 			.then((count) => {
 				by_month.push({ count, month: i, year: currentDate.year });
 			});

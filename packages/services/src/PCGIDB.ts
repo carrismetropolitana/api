@@ -1,7 +1,7 @@
 /* * */
 
+import { VehicleEvent } from '@carrismetropolitana/api-types/gtfs-extended';
 import { readFileSync } from 'fs';
-import { DateTime } from 'luxon';
 import { Collection, Db } from 'mongodb';
 
 import { MongoDbService } from './mongo.service.js';
@@ -89,8 +89,8 @@ class PCGIDBClass {
 		return this.validationsManagementDatabase?.collection('validationEntity') ?? undefined;
 	}
 
-	get vehicleEventsCollection(): Collection {
-		return this.coreManagementDatabase?.collection('VehicleEvents') ?? undefined;
+	get vehicleEventsCollection(): Collection<VehicleEvent> | undefined {
+		return this.coreManagementDatabase?.collection<VehicleEvent>('VehicleEvents') ?? undefined;
 	}
 }
 

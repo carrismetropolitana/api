@@ -3,7 +3,6 @@
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { TripScheduleRelationship } from '@carrismetropolitana/api-types/gtfs-core';
-import { VehicleEvent } from '@carrismetropolitana/api-types/gtfs-extended';
 import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/vehicles';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -92,7 +91,7 @@ export const syncRealtime = async () => {
 
 	const pcgidbTimer = new TIMETRACKER();
 
-	const allPcgiVehicleEvents: VehicleEvent[] = await PCGIDB.VehicleEvents.find({ millis: { $gte: DateTime.now().minus({ minutes: 5 }).toMillis() } }).toArray();
+	const allPcgiVehicleEvents = await PCGIDB.vehicleEventsCollection.find({ millis: { $gte: DateTime.now().minus({ minutes: 5 }).toMillis() } }).toArray();
 
 	const allPcgiVehicleEventsSorted = allPcgiVehicleEvents.sort((a, b) => a.content.entity[0].vehicle.timestamp - b.content.entity[0].vehicle.timestamp);
 

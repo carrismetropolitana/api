@@ -54,7 +54,7 @@ export default async () => {
 	LOGGER.info('Streaming validations from PCGIDB...');
 	LOGGER.info(`Operator IDs: [${operatorIds.join(', ')}] | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: [${apexValidationStatuses.join(', ')}]`);
 
-	const validationsStream = await PCGIDB.ValidationEntity
+	const validationsStream = await PCGIDB.validationEntityCollection
 		.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
 		.project({ '_id': 1, 'transaction.lineLongID': 1, 'transaction.stopLongID': 1, 'transaction.transactionDate': 1 })
 		.stream();
