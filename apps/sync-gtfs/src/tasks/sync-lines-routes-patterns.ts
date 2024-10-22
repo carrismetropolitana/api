@@ -3,8 +3,8 @@
 import type { Location } from '@carrismetropolitana/api-types/locations';
 import type { Line, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/network';
 
-import { NETWORKDB } from '@carrismetropolitana/api-services';
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Alight } from '@carrismetropolitana/api-types/gtfs-core';
 import { CalendarDate, Route as GtfsRoute, StopTime, Trip } from '@carrismetropolitana/api-types/gtfs-extended';

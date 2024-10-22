@@ -2,9 +2,32 @@
 	"name": "@carrismetropolitana/api-services",
 	"version": "1.0.0",
 	"type": "module",
-	"files": ["dist"],
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./IXAPI": {
+			"import": "./dist/IXAPI.js",
+			"require": "./dist/IXAPI.js"
+		},
+		"./NETWORKDB": {
+			"import": "./dist/NETWORKDB.js",
+			"require": "./dist/NETWORKDB.js",
+			"types": "./dist/NETWORKDB.d.ts"
+		},
+		"./PCGIDB": {
+			"import": "./dist/PCGIDB.js",
+			"require": "./dist/PCGIDB.js",
+			"types": "./dist/PCGIDB.d.ts"
+		},
+		"./SERVERDB": {
+			"import": "./dist/SERVERDB.js",
+			"require": "./dist/SERVERDB.js",
+			"types": "./dist/SERVERDB.d.ts"
+		}
+	},
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist"

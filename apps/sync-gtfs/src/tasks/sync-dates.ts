@@ -1,6 +1,7 @@
 /* * */
 
-import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';

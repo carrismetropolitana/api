@@ -1,6 +1,6 @@
 /* * */
 
-import { PCGIDB } from '@carrismetropolitana/api-services';
+import { PCGIDB } from '@carrismetropolitana/api-services/PCGIDB';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 

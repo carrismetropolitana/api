@@ -4,7 +4,7 @@ import type { Alert } from '@carrismetropolitana/api-types/alerts';
 import type { TopicMessage } from 'firebase-admin/messaging';
 
 import parseAlertV2 from '@/services/parseAlertV2.js';
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';

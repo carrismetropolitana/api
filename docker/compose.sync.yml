@@ -102,11 +102,11 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-datasets:
-    image: carrismetropolitana/api-sync-datasets
+  sync-facilities:
+    image: carrismetropolitana/api-sync-facilities
     build:
       context: ../
-      dockerfile: ./apps/sync-datasets/Dockerfile
+      dockerfile: ./apps/sync-facilities/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure
@@ -148,11 +148,11 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-network:
-    image: carrismetropolitana/api-sync-network
+  sync-gtfs:
+    image: carrismetropolitana/api-xd
     build:
       context: ../
-      dockerfile: ./apps/sync-network/Dockerfile
+      dockerfile: ./apps/sync-gtfs/Dockerfile
     deploy:
       restart_policy:
         condition: on-failure

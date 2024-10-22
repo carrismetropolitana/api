@@ -1,6 +1,7 @@
 /* * */
 
-import { IXAPI, SERVERDB } from '@carrismetropolitana/api-services';
+import { IXAPI } from '@carrismetropolitana/api-services/IXAPI';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { CurrentStoreStatus, Store } from '@carrismetropolitana/api-types/facilities';
 import LOGGER from '@helperkits/logger';

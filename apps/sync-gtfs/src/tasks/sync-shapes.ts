@@ -1,6 +1,7 @@
 /* * */
 
-import { NETWORKDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Shape as ShapesExtended } from '@carrismetropolitana/api-types/gtfs-extended';
 import { Shape } from '@carrismetropolitana/api-types/network';

@@ -65,8 +65,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-network:
-    build: ./sync-network
+  sync-gtfs:
+    build: ./sync-gtfs
     restart: unless-stopped
     logging:
       options:

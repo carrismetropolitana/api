@@ -1,7 +1,7 @@
 /* * */
 
 import { GtfsFile } from '@/config/files.js';
-import { NETWORKDB } from '@carrismetropolitana/api-services';
+import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { CsvWriter } from '@helperkits/writer';

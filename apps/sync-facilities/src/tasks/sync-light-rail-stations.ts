@@ -1,6 +1,6 @@
 /* * */
 
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Facility, FacilitySource } from '@carrismetropolitana/api-types/facilities';
 import { sortCollator } from '@carrismetropolitana/api-utils';
