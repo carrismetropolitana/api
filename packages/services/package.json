@@ -31,6 +31,11 @@
 			"import": "./dist/TRINODB.js",
 			"require": "./dist/TRINODB.js",
 			"types": "./dist/TRINODB.d.ts"
+		},
+		"./fastify.service": {
+			"import": "./dist/fastify.service.js",
+			"require": "./dist/fastify.service.js",
+			"types": "./dist/fastify.service.d.ts"
 		}
 	},
 	"scripts": {
