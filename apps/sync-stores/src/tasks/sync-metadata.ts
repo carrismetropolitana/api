@@ -41,6 +41,7 @@ export const syncMetadata = async () => {
 
 		const updatedItemData: StoreMetadata = {
 			address: sourceItem.address,
+			brand_name: sourceItem.brand_name,
 			district_id: sourceItem.district_id,
 			district_name: sourceItem.district_name,
 			email: sourceItem.email,

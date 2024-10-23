@@ -107,7 +107,7 @@ export const syncRealtime = async () => {
 			current_ratio: activeCountersToPeopleWaitingRatio,
 			current_status: currentStatus,
 			currently_waiting: ticketsWaiting?.length || 0,
-			estimated_wait_seconds: totalWaitTime || 0,
+			expected_wait_time: totalWaitTime || 0,
 			is_open: activeCountersUnique.length > 0 ? true : false,
 		};
 
@@ -116,7 +116,7 @@ export const syncRealtime = async () => {
 
 		updatedStoresData.push(updatedDocument);
 
-		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | estimated_wait_seconds: ${updatedDocument.estimated_wait_seconds} | short_name: ${foundDocument.short_name}`);
+		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | estimated_wait_seconds: ${updatedDocument.expected_wait_time} | short_name: ${foundDocument.short_name}`);
 
 		//
 	}
