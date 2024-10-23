@@ -39,6 +39,11 @@
 			"import": "./dist/api/vehicles.js",
 			"require": "./dist/api/vehicles.js",
 			"types": "./dist/api/vehicles.d.ts"
+		},
+		"./trino": {
+			"import": "./dist/trino/index.js",
+			"require": "./dist/trino/index.js",
+			"types": "./dist/trino/index.d.ts"
 		}
 	},
 	"scripts": {

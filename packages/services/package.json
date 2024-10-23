@@ -26,6 +26,11 @@
 			"import": "./dist/SERVERDB.js",
 			"require": "./dist/SERVERDB.js",
 			"types": "./dist/SERVERDB.d.ts"
+		},
+		"./TRINODB": {
+			"import": "./dist/TRINODB.js",
+			"require": "./dist/TRINODB.js",
+			"types": "./dist/TRINODB.d.ts"
 		}
 	},
 	"scripts": {
