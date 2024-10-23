@@ -125,10 +125,10 @@ export const syncRealtime = async () => {
 	// Save all documents
 
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-	allStoresData.sort((a, b) => collator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(allStoresData));
+	updatedStoresData.sort((a, b) => collator.compare(a.id, b.id));
+	await SERVERDB.set(SERVERDB_KEYS.FACILITIES.STORES, JSON.stringify(updatedStoresData));
 
-	LOGGER.success(`Updated ${allStoresData.length} Stores (${globalTimer.get()})`);
+	LOGGER.success(`Updated ${updatedStoresData.length} Stores (${globalTimer.get()})`);
 
 	//
 };
