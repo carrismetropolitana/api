@@ -1,4 +1,4 @@
-name: Build & Publish Docker Images (ARM)
+name: Build & Publish Docker Images
 
 on:
   push:
@@ -47,7 +47,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
       - name: List directory
         run: ls -la
@@ -91,7 +91,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -132,7 +132,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -173,7 +173,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -214,7 +214,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -255,7 +255,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -296,7 +296,7 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -337,4 +337,4 @@ jobs:
           push: true
           context: .
           file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}-arm
+          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
