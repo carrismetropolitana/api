@@ -26,6 +26,11 @@
 			"import": "./dist/SERVERDB.js",
 			"require": "./dist/SERVERDB.js",
 			"types": "./dist/SERVERDB.d.ts"
+		},
+		"./fastify.service": {
+			"import": "./dist/fastify.service.js",
+			"require": "./dist/fastify.service.js",
+			"types": "./dist/fastify.service.d.ts"
 		}
 	},
 	"scripts": {

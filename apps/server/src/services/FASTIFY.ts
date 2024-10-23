@@ -1,6 +1,6 @@
 /* * */
 
-import FastifyService from '@carrismetropolitana/api-services/dist/fastify.service.js';
+import FastifyService from '@carrismetropolitana/api-services/fastify.service';
 import { FastifyServerOptions } from 'fastify';
 
 /* * */
