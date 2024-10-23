@@ -16,7 +16,6 @@ import { finished } from 'node:stream/promises';
 import archivesParser from '@/parsers/archives.parser.js';
 import datesParser from '@/parsers/dates.parsers.js';
 import linesRoutesPatternsParserV1 from '@/parsers/linesRoutesPatternsV1.parser.js';
-import linesRoutesPatternsParserV2 from '@/parsers/linesRoutesPatternsV2.parser.js';
 import localitiesParser from '@/parsers/localities.parser.js';
 import municipalitiesParser from '@/parsers/municipalities.parser.js';
 import periodsParser from '@/parsers/periods.parser.js';
@@ -45,7 +44,6 @@ export const ENABLED_MODULES = [
 	'stops_parser',
 	'shapes_parser',
 	'lines_routes_patterns_parser_v1',
-	'lines_routes_patterns_parser_v2',
 ];
 
 /* * */
@@ -199,14 +197,6 @@ export default async () => {
 			LOGGER.spacer(1);
 			LOGGER.title('3.8.1. Parse Lines, Routes and Patterns (v1)');
 			await linesRoutesPatternsParserV1();
-		}
-
-		/* * */
-
-		if (ENABLED_MODULES.includes('lines_routes_patterns_parser_v2')) {
-			LOGGER.spacer(1);
-			LOGGER.title('3.8.2. Parse Lines, Routes and Patterns (v2)');
-			await linesRoutesPatternsParserV2();
 		}
 
 		//
