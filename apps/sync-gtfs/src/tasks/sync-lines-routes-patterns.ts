@@ -469,14 +469,14 @@ export const syncLinesRoutesPatterns = async () => {
 	//
 	// Save all routes to the database
 
-	const finalizedAllRoutesData: Route[] = (Object.values(allRoutesParsed) as Route[]).sort((a, b) => sortCollator.compare(a.id, b.id));
+	const finalizedAllRoutesData: Route[] = Array.from(allRoutesParsed.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ROUTES, JSON.stringify(finalizedAllRoutesData));
 	LOGGER.info(`Updated ${finalizedAllRoutesData.length} Routes`);
 
 	//
 	// Save all lines to the database
 
-	const finalizedAllLinesData: Line[] = (Object.values(allLinesParsed) as Line[]).sort((a, b) => sortCollator.compare(a.id, b.id));
+	const finalizedAllLinesData: Line[] = Array.from(allLinesParsed.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.LINES, JSON.stringify(finalizedAllLinesData));
 	LOGGER.info(`Updated ${finalizedAllLinesData.length} Lines`);
 
