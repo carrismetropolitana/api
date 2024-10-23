@@ -155,7 +155,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   server:
-    image: ghcr.io/carrismetropolitana/api-server:beta-arm
+    image: ghcr.io/carrismetropolitana/api-server:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -176,7 +176,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   switch:
-    image: ghcr.io/carrismetropolitana/api-switch:beta-arm
+    image: ghcr.io/carrismetropolitana/api-switch:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -193,7 +193,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-alerts:
-    image: ghcr.io/carrismetropolitana/api-sync-alerts:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-alerts:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -214,7 +214,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-datasets:
-    image: ghcr.io/carrismetropolitana/api-sync-datasets:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-datasets:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -233,7 +233,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-metrics:
-    image: ghcr.io/carrismetropolitana/api-sync-metrics:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-metrics:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -254,7 +254,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-network:
-    image: ghcr.io/carrismetropolitana/api-sync-network:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-network:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -277,7 +277,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-stores:
-    image: ghcr.io/carrismetropolitana/api-sync-stores:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-stores:beta
     deploy:
       restart_policy:
         condition: on-failure
@@ -296,7 +296,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   sync-vehicles:
-    image: ghcr.io/carrismetropolitana/api-sync-vehicles:beta-arm
+    image: ghcr.io/carrismetropolitana/api-sync-vehicles:beta
     deploy:
       restart_policy:
         condition: on-failure
