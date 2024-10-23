@@ -100,6 +100,8 @@ export const syncLinesRoutesPatterns = async () => {
 	for (const patternId of allDistinctPatternIds) {
 		//
 
+		const intraPatternTimer = new TIMETRACKER();
+
 		//
 		// Get all trips that match the current pattern ID
 
@@ -441,6 +443,8 @@ export const syncLinesRoutesPatterns = async () => {
 
 		await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId), JSON.stringify(finalizedPatternGroupsData));
 		updatedPatternKeys.add(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId));
+
+		LOGGER.info(`Updated pattern_id "${patternId}" (${intraPatternTimer.get()})`);
 
 		//
 	}
