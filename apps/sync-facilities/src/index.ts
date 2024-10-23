@@ -11,7 +11,7 @@ import 'dotenv/config';
 
 /* * */
 
-const RUN_INTERVAL = 5000; // 5 seconds
+const RUN_INTERVAL = 3600000; // 1 hour
 
 /* * */
 

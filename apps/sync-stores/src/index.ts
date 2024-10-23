@@ -7,7 +7,7 @@ import 'dotenv/config';
 
 /* * */
 
-const RUN_INTERVAL = 5000; // 5 seconds
+const RUN_INTERVAL = 20000; // 20 seconds
 
 /* * */
 

@@ -5,7 +5,7 @@ import firebase from 'firebase-admin';
 
 /* * */
 
-const RUN_INTERVAL = 30000; // 30 seconds
+const RUN_INTERVAL = 20000; // 20 seconds
 
 /* * */
 
