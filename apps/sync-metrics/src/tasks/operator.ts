@@ -40,23 +40,25 @@ export default async () => {
 			timeUnit: 'day',
 			options: { 
 				where: { 
-					operator: operatorId,
+					operator: { $in: [ operatorId ] },
 					transactionDate: { $gte: startDateString, $lte: endDateString }, 
 					validationStatus: { $in: apexValidationStatuses } 
 				},
 			},
-		});
+		})
 
 		LOGGER.info(`Adding operator ${operatorId} to the promises array...`);
 		validationFetchPromises.push(result);
 	}));
 
 	const validations : CountValidationsResult[] = await Promise.all(validationFetchPromises);
-
+	
 	validations.forEach((validation, index) => {
-		validationsByDayArray.push({ count: validation.count_result, date: validation.transaction_time, operator: operatorIds[index] });
-		LOGGER.info(`Operator ${operatorIds[index]} | Validations: ${validation.count_result}`);
+		validationsByDayArray.push({ count: validation[0].count_result, date: DateTime.fromFormat(validation[0].transaction_time, 'yyyy-LL-dd').toFormat('yyyyLLdd'), operator: operatorIds[index] });
+		LOGGER.info(`Operator ${operatorIds[index]} | Validations: ${validation[0].count_result}`);
 	});
+
+	console.log(validationsByDayArray);
 
 	await Promise.all(validationsByDayArray.map(async (item) => {
 		SERVERDB.set(`${SERVERDB_KEYS.METRICS.DEMAND.BY_OPERATOR}:${item.operator}:${item.date}`, JSON.stringify({
