@@ -81,6 +81,24 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
 				},
+				{
+					estimatedArrivalTime: '23:59:59',
+					estimatedDepartureTime: '23:59:59',
+					estimatedTimeString: 'A chegar',
+					estimatedTimeUnixSeconds: 0,
+					journeyId: '0000_0_0|teste',
+					lineId: '0000',
+					observedArrivalTime: null,
+					observedDepartureTime: null,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: '0000',
+					operatorId: '', // Deprecated
+					patternId: '0000_0_0',
+					stopHeadsign: 'Olá :)',
+					stopId: '', // Deprecated
+					timetabledArrivalTime: '23:59:59',
+					timetabledDepartureTime: '23:59:59',
+				},
 			];
 			return reply.code(200).send(response);
 		}
@@ -129,38 +147,98 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			const hasScheduledTime = (estimate.stopScheduledArrivalTime !== null && estimate.stopScheduledArrivalTime !== undefined) || (estimate.stopScheduledDepartuteTime !== null && estimate.stopScheduledDepartuteTime !== undefined);
 			const hasEstimatedTime = (estimate.stopArrivalEta !== null && estimate.stopArrivalEta !== undefined) || (estimate.stopDepartureEta !== null && estimate.stopDepartureEta !== undefined);
 			const hasObservedTime = (estimate.stopObservedArrivalTime !== null && estimate.stopObservedArrivalTime !== undefined) || (estimate.stopObservedDepartureTime !== null && estimate.stopObservedDepartureTime !== undefined);
+			// Check if the scheduled time for this estimate is in the past
+			const compensatedScheduledArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopScheduledArrivalTime) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopScheduledDepartuteTime);
+			const scheduledTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedScheduledArrival);
+			const isThisScheduleInThePast = scheduledTimeInUnixSeconds < DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
 			// Check if the estimated time for this estimate is in the past
 			const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
 			const estimatedTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedEstimatedArrival);
 			const isThisEstimateInThePast = estimatedTimeInUnixSeconds < DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
-			// Return true only if estimate has scheduled time, estimated time and no observed time, and if the estimated time is in not the past
-			return hasScheduledTime && hasEstimatedTime && !hasObservedTime && !isThisEstimateInThePast;
+			// Skip this estimate if it has no scheduled or estimated time, or if it has an observed time
+			if (!hasScheduledTime || !hasEstimatedTime || hasObservedTime) return false;
+			// Include this estimate if it has an estimated time in the future
+			if (hasEstimatedTime && !isThisEstimateInThePast) return true;
+			// Include this estimate if it has a scheduled time in the future
+			if (hasScheduledTime && !isThisScheduleInThePast) return true;
+			//
 		})
 		.map((estimate): PipArrival => {
-			// Check if the estimated time for this estimate is in the past
+			// Transform scheduled time into unix and string formats
+			const hasScheduledTime = (estimate.stopScheduledArrivalTime !== null && estimate.stopScheduledArrivalTime !== undefined) || (estimate.stopScheduledDepartuteTime !== null && estimate.stopScheduledDepartuteTime !== undefined);
+			const compensatedScheduledArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopScheduledArrivalTime) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopScheduledDepartuteTime);
+			const scheduledTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedScheduledArrival);
+			const scheduledTimeInSeconds = scheduledTimeInUnixSeconds - DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
+			const scheduledTimeInMinutes = Math.floor(scheduledTimeInSeconds / 60);
+			// Transform estimated time into unix and string formats
+			const hasEstimatedTime = (estimate.stopArrivalEta !== null && estimate.stopArrivalEta !== undefined) || (estimate.stopDepartureEta !== null && estimate.stopDepartureEta !== undefined);
 			const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
 			const estimatedTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedEstimatedArrival);
 			const estimatedTimeInSeconds = estimatedTimeInUnixSeconds - DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
 			const estimatedTimeInMinutes = Math.floor(estimatedTimeInSeconds / 60);
 			//
-			return {
-				estimatedArrivalTime: compensatedEstimatedArrival,
-				estimatedDepartureTime: compensatedEstimatedArrival,
-				estimatedTimeString: `• ${estimatedTimeInMinutes} min`,
-				estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
-				journeyId: estimate.tripId,
-				lineId: estimate.lineId,
-				observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
-				observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
-				observedDriverId: '', // Deprecated
-				observedVehicleId: estimate.observedVehicleId,
-				operatorId: '', // Deprecated
-				patternId: estimate.patternId,
-				stopHeadsign: estimate.tripHeadsign,
-				stopId: '', // Deprecated
-				timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
-				timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
-			};
+			if (hasEstimatedTime && estimatedTimeInMinutes < 1) {
+				return {
+					estimatedArrivalTime: compensatedEstimatedArrival,
+					estimatedDepartureTime: compensatedEstimatedArrival,
+					estimatedTimeString: `A chegar`,
+					estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
+					journeyId: estimate.tripId,
+					lineId: estimate.lineId,
+					observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+					observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: estimate.observedVehicleId,
+					operatorId: '', // Deprecated
+					patternId: estimate.patternId,
+					stopHeadsign: estimate.tripHeadsign,
+					stopId: '', // Deprecated
+					timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+					timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+				};
+			}
+			//
+			if (hasEstimatedTime) {
+				return {
+					estimatedArrivalTime: compensatedEstimatedArrival,
+					estimatedDepartureTime: compensatedEstimatedArrival,
+					estimatedTimeString: `• ${estimatedTimeInMinutes} min`,
+					estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
+					journeyId: estimate.tripId,
+					lineId: estimate.lineId,
+					observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+					observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: estimate.observedVehicleId,
+					operatorId: '', // Deprecated
+					patternId: estimate.patternId,
+					stopHeadsign: estimate.tripHeadsign,
+					stopId: '', // Deprecated
+					timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+					timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+				};
+			}
+			//
+			if (hasScheduledTime && compensatedScheduledArrival && scheduledTimeInMinutes > 0) {
+				return {
+					estimatedArrivalTime: compensatedEstimatedArrival,
+					estimatedDepartureTime: compensatedEstimatedArrival,
+					estimatedTimeString: compensatedScheduledArrival.substring(0, 5),
+					estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
+					journeyId: estimate.tripId,
+					lineId: estimate.lineId,
+					observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+					observedDepartureTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: estimate.observedVehicleId,
+					operatorId: '', // Deprecated
+					patternId: estimate.patternId,
+					stopHeadsign: estimate.tripHeadsign,
+					stopId: '', // Deprecated
+					timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+					timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+				};
+			}
 		})
 		.sort((a: PipArrival, b: PipArrival) => {
 			return a.estimatedTimeUnixSeconds - b.estimatedTimeUnixSeconds;
