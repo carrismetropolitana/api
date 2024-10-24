@@ -146,7 +146,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			return {
 				estimatedArrivalTime: compensatedEstimatedArrival,
 				estimatedDepartureTime: compensatedEstimatedArrival,
-				estimatedTimeString: `${estimatedTimeInMinutes} min`,
+				estimatedTimeString: `⦿ ${estimatedTimeInMinutes} min`,
 				estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
 				journeyId: estimate.tripId,
 				lineId: estimate.lineId,
