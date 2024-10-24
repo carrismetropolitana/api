@@ -444,7 +444,7 @@ export const syncLinesRoutesPatterns = async () => {
 		await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId), JSON.stringify(finalizedPatternGroupsData));
 		updatedPatternKeys.add(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId));
 
-		LOGGER.info(`Updated pattern_id "${patternId}" (${intraPatternTimer.get()})`);
+		// LOGGER.info(`Updated pattern_id "${patternId}" (${intraPatternTimer.get()})`);
 
 		//
 	}
