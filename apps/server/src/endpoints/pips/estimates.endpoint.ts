@@ -155,12 +155,14 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
 			const estimatedTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedEstimatedArrival);
 			const isThisEstimateInThePast = estimatedTimeInUnixSeconds < DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
-			// Skip this estimate if it has no scheduled or estimated time, or if it has an observed time
-			if (!hasScheduledTime || !hasEstimatedTime || hasObservedTime) return false;
-			// Include this estimate if it has an estimated time in the future
-			if (hasEstimatedTime && !isThisEstimateInThePast) return true;
-			// Include this estimate if it has a scheduled time in the future
-			if (hasScheduledTime && !isThisScheduleInThePast) return true;
+			// Skip this estimate if it has no scheduled time or if it has an observed time
+			if (!hasScheduledTime || hasObservedTime) return false;
+			// Skip this estimate if it has an estimated time in the past
+			if (hasEstimatedTime && isThisEstimateInThePast) return false;
+			// Skip this estimate if it has a scheduled time in the past
+			if (hasScheduledTime && isThisScheduleInThePast) return false;
+			// Include this estimate othewise
+			return true;
 			//
 		})
 		.map((estimate): PipArrival => {
@@ -221,10 +223,10 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			//
 			if (hasScheduledTime && compensatedScheduledArrival && scheduledTimeInMinutes > 0) {
 				return {
-					estimatedArrivalTime: compensatedEstimatedArrival,
-					estimatedDepartureTime: compensatedEstimatedArrival,
+					estimatedArrivalTime: compensatedScheduledArrival,
+					estimatedDepartureTime: compensatedScheduledArrival,
 					estimatedTimeString: compensatedScheduledArrival.substring(0, 5),
-					estimatedTimeUnixSeconds: estimatedTimeInUnixSeconds,
+					estimatedTimeUnixSeconds: scheduledTimeInUnixSeconds,
 					journeyId: estimate.tripId,
 					lineId: estimate.lineId,
 					observedArrivalTime: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
@@ -235,14 +237,14 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					patternId: estimate.patternId,
 					stopHeadsign: estimate.tripHeadsign,
 					stopId: '', // Deprecated
-					timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
-					timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
+					timetabledArrivalTime: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartuteTime,
+					timetabledDepartureTime: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartuteTime,
 				};
 			}
 		})
 		.sort((a: PipArrival, b: PipArrival) => {
 			return a.estimatedTimeUnixSeconds - b.estimatedTimeUnixSeconds;
-		});
+		}).slice(0, 4);
 
 	//
 	// Handle the case where the result is an empty array (there are no estimates right now).
