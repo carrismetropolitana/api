@@ -159,8 +159,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			if (!hasScheduledTime || hasObservedTime) return false;
 			// Skip this estimate if it has an estimated time in the past
 			if (hasEstimatedTime && isThisEstimateInThePast) return false;
-			// Skip this estimate if it has a scheduled time in the past
-			if (hasScheduledTime && isThisScheduleInThePast) return false;
+			// Skip this estimate if it does not have estimatedTime and has a scheduled time in the past
+			if (!hasEstimatedTime && hasScheduledTime && isThisScheduleInThePast) return false;
 			// Include this estimate othewise
 			return true;
 			//
