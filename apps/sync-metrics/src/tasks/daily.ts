@@ -1,6 +1,7 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -43,19 +44,22 @@ export default async () => {
 		const startDateString = DateTime.now().setZone('Europe/Lisbon').set({ day: 1, hour: 4, minute: 0, month: i, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 		const endDateString = DateTime.now().setZone('Europe/Lisbon').set({ day: 1, hour: 4, minute: 0, month: i + 1, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 
-		const validationsQuery = {
-			'transaction.operatorLongID': { $in: operatorIds },
-			'transaction.transactionDate': { $gte: startDateString, $lte: endDateString },
-			'transaction.validationStatus': { $in: apexValidationStatuses },
-		};
+		LOGGER.info(`Added month ${Info.months('long')[i - 1]}/${currentDate.year} to the promises array...`);
 
-		LOGGER.info('Streaming validations from PCGIDB...');
-		LOGGER.info(`Operator IDs: [${operatorIds.join(', ')}] | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: [${apexValidationStatuses.join(', ')}]`);
+		const promise = TRINODB.countValidations({
+			timeUnit: 'month',
+			options: {
+				where: {
+					operatorLongID: { $in: operatorIds },
+					transactionDate: { $gte: startDateString, $lte: endDateString },
+					validationStatus: { $in: apexValidationStatuses },
+				},
+			},
+		});
 
-		const promise = PCGIDB.validationEntityCollection.countDocuments(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
-			.then((count) => {
-				by_month.push({ count, month: i, year: currentDate.year });
-			});
+		promise.then((count) => {
+			by_month.push({ count: count[0].count_result, month: i, year: currentDate.year });
+		});
 
 		promises.push(promise);
 	}

@@ -1,4 +1,4 @@
-import { BasicAuth, QueryIterator, QueryResult, Trino } from 'trino-client';
+import { BasicAuth, QueryResult, Trino } from 'trino-client';
 
 export interface TrinoOptions {
   host: string;
@@ -12,6 +12,7 @@ export interface QueryOptions {
   where?: Record<string, any>;
   limit?: number;
   orderBy?: { field: string; direction: 'asc' | 'desc' };
+  unique?: boolean;
 }
 
 export class TrinoService {
@@ -32,12 +33,107 @@ export class TrinoService {
   /**
    * Constructs a WHERE clause from the given filter object, escaping values to prevent SQL injection.
    */
-  private buildWhereClause(where?: Record<string, any>): string {
+  buildWhereClause(where?: Record<string, any>): string {
     if (!where) return '';
-    const conditions = Object.entries(where)
-      .map(([key, value]) => `${key} = ${typeof value === 'string' ? `'${value.replace(/'/g, "''")}'` : value}`)
-      .join(' AND ');
-    return `WHERE ${conditions}`;
+  
+    const conditions = Object.entries(where).map(([key, value]) => {
+      if (key === '$and' && Array.isArray(value)) {
+        const andConditions = value.map((condition) => {
+          // Handle each condition without adding 'WHERE'
+          const conditionKey = Object.keys(condition)[0];
+          const conditionValue = condition[conditionKey];
+          return `${conditionKey} = ${this.formatValue(conditionValue)}`;
+        }).join(' AND ');
+        return `(${andConditions})`;
+      }
+  
+      if (key === '$or' && Array.isArray(value)) {
+        const orConditions = value.map((condition) => {
+          // Handle each condition without adding 'WHERE'
+          const conditionKey = Object.keys(condition)[0];
+          const conditionValue = condition[conditionKey];
+          return `${conditionKey} = ${this.formatValue(conditionValue)}`;
+        }).join(' OR ');
+        return `(${orConditions})`;
+      }
+  
+      if (key === '$not' && Array.isArray(value)) {
+        const notConditions = value.map((condition) => {
+          // Handle each condition without adding 'WHERE'
+          const conditionKey = Object.keys(condition)[0];
+          const conditionValue = condition[conditionKey];
+          return `${conditionKey} = ${this.formatValue(conditionValue)}`;
+        }).join(' AND ');
+        return `NOT (${notConditions})`;
+      }
+  
+      if (key === '$nor' && Array.isArray(value)) {
+        const norConditions = value.map((condition) => {
+          // Handle each condition without adding 'WHERE'
+          const conditionKey = Object.keys(condition)[0];
+          const conditionValue = condition[conditionKey];
+          return `${conditionKey} = ${this.formatValue(conditionValue)}`;
+        }).join(' OR ');
+        return `NOT (${norConditions})`;
+      }
+  
+      // Handle field-specific conditions
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        // Handle special field operators
+        const subConditions = Object.entries(value).map(([operator, val]) => {
+          switch (operator) {
+            case '$eq':
+              return `${key} = ${this.formatValue(val)}`;
+            case '$gt':
+              return `${key} > ${this.formatValue(val)}`;
+            case '$gte':
+              return `${key} >= ${this.formatValue(val)}`;
+            case '$lt':
+              return `${key} < ${this.formatValue(val)}`;
+            case '$lte':
+              return `${key} <= ${this.formatValue(val)}`;
+            case '$ne':
+              return `${key} != ${this.formatValue(val)}`;
+            case '$in':
+              const inValues = Array.isArray(val) ? val.map(v => this.formatValue(v)).join(', ') : this.formatValue(val);
+              return `${key} IN (${inValues})`;
+            case '$nin':
+              const ninValues = Array.isArray(val) ? val.map(v => this.formatValue(v)).join(', ') : this.formatValue(val);
+              return `${key} NOT IN (${ninValues})`;
+            default:
+              throw new Error(`Unsupported query operator: ${operator}`);
+          }
+        });
+        return subConditions.join(' AND ');
+      } else {
+        // Handle standard equality
+        return `${key} = ${this.formatValue(value)}`;
+      }
+    });
+  
+    return `WHERE ${conditions.join(' AND ')}`;
+  }
+  
+  
+  /**
+   * Utility method to format values for SQL.
+   */
+  private formatValue(value: any): string {
+    if (typeof value === 'string') {
+      return `'${value.replace(/'/g, "''")}'`; // Escape single quotes in strings
+    } else if (value instanceof Date) {
+      return `'${value.toISOString()}'`; // Format date as ISO string
+    } else {
+      return value; // Assume number or boolean
+    }
+  }
+
+  /**
+   * Constructs an ORDER BY clause from the given options.
+   */
+  buildOrderByClause(orderBy?: { field: string; direction: 'asc' | 'desc' }): string {
+    if (!orderBy) return '';
+    return `ORDER BY ${orderBy.field} ${orderBy.direction}`;
   }
 
   /**
@@ -46,7 +142,7 @@ export class TrinoService {
   private async getColumnHeaders(table: string): Promise<string[]> {
     const sqlHeaders = `DESCRIBE ${table}`;
     const headersIterator = await this.executeQuery(sqlHeaders);
-    
+
     const columnHeaders: string[] = [];
     for (let result = await headersIterator.next(); !result.done; result = await headersIterator.next()) {
       result.value?.data?.forEach((value) => columnHeaders.push(value[0]));
@@ -58,9 +154,9 @@ export class TrinoService {
   /**
    * Converts query result iterators to an array of objects using column headers.
    */
-  private async convertIteratorToObject(headers: string[], resultsIterator: AsyncIterator<QueryResult>): Promise<Record<string, any>[]> {
+  async convertIteratorToObject(headers: string[], resultsIterator: AsyncIterator<QueryResult>): Promise<Record<string, any>[]> {
     const results: any[] = [];
-    
+
     for (let result = await resultsIterator.next(); !result.done; result = await resultsIterator.next()) {
       result.value?.data?.forEach((row) => {
         const rowObj = headers.reduce((acc, header, index) => {
@@ -105,7 +201,8 @@ export class TrinoService {
    */
   async findUnique<T>(table: string, options: QueryOptions): Promise<T | null> {
     const whereClause = this.buildWhereClause(options.where);
-    const sql = `SELECT * FROM ${table} ${whereClause} LIMIT 1`;
+    const orderByClause = this.buildOrderByClause(options.orderBy);
+    const sql = `SELECT * FROM ${table} ${whereClause} ${orderByClause} LIMIT 1`;
 
     const results = await this.fetchResults<T>(sql, table);
 
@@ -118,7 +215,8 @@ export class TrinoService {
    */
   async findFirst<T>(table: string, options: QueryOptions): Promise<T | null> {
     const whereClause = this.buildWhereClause(options.where);
-    const sql = `SELECT * FROM ${table} ${whereClause} LIMIT 1`;
+    const orderByClause = this.buildOrderByClause(options.orderBy);
+    const sql = `SELECT * FROM ${table} ${whereClause} ${orderByClause} LIMIT 1`;
 
     const results = await this.fetchResults<T>(sql, table);
     return results[0] || null;
@@ -129,9 +227,21 @@ export class TrinoService {
    */
   async findMany<T>(table: string, options?: QueryOptions): Promise<T[]> {
     const whereClause = this.buildWhereClause(options?.where);
-    const limit = options?.limit || 200;
-    const sql = `SELECT * FROM ${table} ${whereClause} LIMIT ${limit}`;
+    const orderByClause = this.buildOrderByClause(options?.orderBy);
+    const sql = `SELECT ${options?.unique ? 'DISTINCT' : 'ALL'} * FROM ${table} ${whereClause} ${orderByClause} ${options?.limit ? `LIMIT ${options.limit}` : ''}`;
 
     return await this.fetchResults<T>(sql, table);
+  }
+
+  /**
+   * Counts the number of rows matching the conditions.
+   */
+  async count(table: string, options?: QueryOptions): Promise<number | undefined> {
+    const whereClause = this.buildWhereClause(options?.where);
+    const sql = `SELECT COUNT(*) FROM ${table} ${whereClause}`;
+
+    const results = await this.executeQuery(sql);
+    
+    return (await results.next()).value?.data[0][0] || undefined;
   }
 }

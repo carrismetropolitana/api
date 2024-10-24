@@ -1,6 +1,8 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { CountValidationsResult, TRINODB } from '@carrismetropolitana/api-services/TRINODB';
+
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
@@ -17,7 +19,9 @@ export default async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Setup PCGIDB validations stream
+	// Setup TRINODB validations
+
+	LOGGER.title('Processing validations by operator...');
 
 	const operatorIds = ['41', '42', '43', '44'];
 
@@ -27,32 +31,39 @@ export default async () => {
 
 	const apexValidationStatuses = [0, 8];
 
+	const validationFetchPromises = [];
 	const validationsByDayArray = [];
 
 	// For each operator, get the validations
 	await Promise.all(operatorIds.map(async (operatorId) => {
-		const validationsQuery = {
-			'transaction.operatorLongID': { $in: [operatorId] },
-			'transaction.transactionDate': { $gte: startDateString, $lte: endDateString },
-			'transaction.validationStatus': { $in: apexValidationStatuses },
-		};
+		const result = TRINODB.countValidations({ 
+			timeUnit: 'day',
+			options: { 
+				where: { 
+					operator: operatorId,
+					transactionDate: { $gte: startDateString, $lte: endDateString }, 
+					validationStatus: { $in: apexValidationStatuses } 
+				},
+			},
+		});
 
-		const result = await PCGIDB.validationEntityCollection.aggregate(
-			[
-				{ $match: validationsQuery },
-				{ $group: { _id: '$_id', count: { $sum: 1 } } },
-				{ $count: 'totalUnique' },
-			],
-			{ allowDiskUse: true, maxTimeMS: 180000 },
-		).toArray();
+		LOGGER.info(`Adding operator ${operatorId} to the promises array...`);
+		validationFetchPromises.push(result);
+	}));
 
-		const count = result[0].totalUnique;
-		validationsByDayArray.push({ count, date: getOperationalDay() });
-		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.DEMAND.BY_OPERATOR}:${operatorId}:${getOperationalDay()}`, JSON.stringify({
+	const validations : CountValidationsResult[] = await Promise.all(validationFetchPromises);
+
+	validations.forEach((validation, index) => {
+		validationsByDayArray.push({ count: validation.count_result, date: validation.transaction_time, operator: operatorIds[index] });
+		LOGGER.info(`Operator ${operatorIds[index]} | Validations: ${validation.count_result}`);
+	});
+
+	await Promise.all(validationsByDayArray.map(async (item) => {
+		SERVERDB.set(`${SERVERDB_KEYS.METRICS.DEMAND.BY_OPERATOR}:${item.operator}:${item.date}`, JSON.stringify({
 			end_date: endDateString,
 			start_date: startDateString,
 			timestamp: new Date().toISOString(),
-			value: count,
+			value: item.count,
 		}));
 	}));
 

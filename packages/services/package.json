@@ -40,7 +40,8 @@
 	},
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
-		"clean": "rm -rf dist"
+		"clean": "rm -rf dist",
+		"dev": "tsc --watch"
 	},
 	"dependencies": {
 		"@carrismetropolitana/api-settings": "*",

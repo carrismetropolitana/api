@@ -1,6 +1,6 @@
 /* * */
 
-import { SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import TIMETRACKER from '@helperkits/timer';

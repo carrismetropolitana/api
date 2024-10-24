@@ -1,8 +1,9 @@
 /* * */
 
-import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB } from '@carrismetropolitana/api-services';
+import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { getOperationalDay } from '@carrismetropolitana/api-utils';
+import { DemandMetrics } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -19,6 +20,7 @@ export default async () => {
 	//
 	// Retrieve all Lines and Stops from database
 
+	// Lines
 	const allLinesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES);
 
 	if (!allLinesTxt) {
@@ -26,209 +28,142 @@ export default async () => {
 	}
 
 	const allLinesData: any[] = JSON.parse(allLinesTxt);
-	const allLinesSet = new Set(allLinesData.map(item => item.line_id));
+	const allLinesSet = new Set(allLinesData.map(item => item.id));
 
+	// Stops
 	const allStopsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
 	if (!allStopsTxt) {
 		throw new Error('No stops found in SERVERDB');
 	}
 	const allStopsData: any[] = JSON.parse(allStopsTxt);
-	const allStopsSet = new Set(allStopsData.map(item => item.stop_id));
+	const allStopsSet = new Set(allStopsData.map(item => item.id));
 
 	//
-	// Setup PCGIDB validations stream
+	// Filters
 
+	const daysToRetrieve = 15;
 	const operatorIds = ['41', '42', '43', '44'];
-
-	const startDateString = DateTime.now().setZone('Europe/Lisbon').minus({ days: 15 }).set({ hour: 4, minute: 0, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
-	const endDateString = DateTime.now().setZone('Europe/Lisbon').toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
-
+	const startDateString = DateTime.now().setZone('Europe/Lisbon').minus({ days: daysToRetrieve }).set({ hour: 4, minute: 0, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
+	const endDateString = DateTime.now().setZone('Europe/Lisbon').toFormat('yyyy-LL-dd');
+	const startDateStringISO = DateTime.now().setZone('Europe/Lisbon').minus({ days: daysToRetrieve }).set({ hour: 4, minute: 0, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const apexValidationStatuses = [0];
-
-	const validationsQuery = {
-		'transaction.operatorLongID': { $in: operatorIds },
-		'transaction.transactionDate': { $gte: startDateString, $lte: endDateString },
-		'transaction.validationStatus': { $in: apexValidationStatuses },
-	};
-
-	LOGGER.info('Streaming validations from PCGIDB...');
-	LOGGER.info(`Operator IDs: [${operatorIds.join(', ')}] | Start Date: ${startDateString} | End Date: ${endDateString} | Validation Statuses: [${apexValidationStatuses.join(', ')}]`);
-
-	const validationsStream = await PCGIDB.validationEntityCollection
-		.find(validationsQuery, { allowDiskUse: true, maxTimeMS: 999000 })
-		.project({ '_id': 1, 'transaction.lineLongID': 1, 'transaction.stopLongID': 1, 'transaction.transactionDate': 1 })
-		.stream();
 
 	//
 	// Parse data
+	const options = {
+		where: {
+			transactiondate: {
+				$gte: startDateString,
+				$lte: endDateString,
+			},
+			rawloaddateiso: {
+				$gte: startDateStringISO,
+			},
+			operator: {
+				$in: operatorIds,
+			},
+			validationstatus: {
+				$in: apexValidationStatuses,
+			},
+		},
+	};
 
 	const parseTimer = new TIMETRACKER();
 
-	const validationsByDayMap = new Map();
-	const validationsByLineMap = new Map();
-	const validationsByStopMap = new Map();
-	const validationsByLineAndHourMap = new Map();
-	const validationsByLineAndDayMap = new Map();
-	const validationsByStopAndHourMap = new Map();
-	const validationsByStopAndDayMap = new Map();
 
-	let totalCounter = 0;
-	let validCounter = 0;
-
-	for await (const doc of validationsStream) {
-		//
-
-		totalCounter++;
-
-		//
-		// Check if this validation is for a known line and known stop
-
-		if (!allLinesSet.has(doc.transaction.lineLongID)) continue;
-		if (!allStopsSet.has(doc.transaction.stopLongID)) continue;
-
-		validCounter++;
-
-		if (validCounter % 100000 === 0) {
-			LOGGER.info(`Parsed ${validCounter} transactions | ${totalCounter} total | ${totalCounter - validCounter} skipped (${parseTimer.get()})`);
-			parseTimer.reset();
-		}
-
-		//
-		// Extract timestamp components from transaction
-
-		const transactionDate = DateTime.fromFormat(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss').setZone('Europe/Lisbon');
-
-		const hourComponent = transactionDate.get('hour');
-
-		const operationalDay = getOperationalDay(doc.transaction.transactionDate, 'yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
-
-		//
-		// Increment the day count
-
-		if (validationsByDayMap.has(operationalDay)) {
-			validationsByDayMap.set(operationalDay, validationsByDayMap.get(operationalDay) + 1);
-		}
-		else {
-			validationsByDayMap.set(operationalDay, 1);
-		}
-
-		//
-		// Increment the line count
-
-		if (validationsByLineMap.has(doc.transaction.lineLongID)) {
-			validationsByLineMap.set(doc.transaction.lineLongID, validationsByLineMap.get(doc.transaction.lineLongID) + 1);
-		}
-		else {
-			validationsByLineMap.set(doc.transaction.lineLongID, 1);
-		}
-
-		//
-		// Increment the stop count
-
-		if (validationsByStopMap.has(doc.transaction.stopLongID)) {
-			validationsByStopMap.set(doc.transaction.stopLongID, validationsByStopMap.get(doc.transaction.stopLongID) + 1);
-		}
-		else {
-			validationsByStopMap.set(doc.transaction.stopLongID, 1);
-		}
-
-		//
-		// Increment the line-hour count
-
-		if (!validationsByLineAndHourMap.has(doc.transaction.lineLongID)) {
-			validationsByLineAndHourMap.set(doc.transaction.lineLongID, new Map());
-		}
-
-		const lineHourMap = validationsByLineAndHourMap.get(doc.transaction.lineLongID);
-
-		if (lineHourMap.has(hourComponent)) {
-			lineHourMap.set(hourComponent, lineHourMap.get(hourComponent) + 1);
-		}
-		else {
-			lineHourMap.set(hourComponent, 1);
-		}
-
-		//
-		// Increment the stop-hour count
-
-		if (!validationsByStopAndHourMap.has(doc.transaction.stopLongID)) {
-			validationsByStopAndHourMap.set(doc.transaction.stopLongID, new Map());
-		}
-
-		const stopHourMap = validationsByStopAndHourMap.get(doc.transaction.stopLongID);
-
-		if (stopHourMap.has(hourComponent)) {
-			stopHourMap.set(hourComponent, stopHourMap.get(hourComponent) + 1);
-		}
-		else {
-			stopHourMap.set(hourComponent, 1);
-		}
-
-		//
-		// Increment the line-day count
-
-		if (!validationsByLineAndDayMap.has(doc.transaction.lineLongID)) {
-			validationsByLineAndDayMap.set(doc.transaction.lineLongID, new Map());
-		}
-
-		const lineDayMap = validationsByLineAndDayMap.get(doc.transaction.lineLongID);
-
-		if (lineDayMap.has(operationalDay)) {
-			lineDayMap.set(operationalDay, lineDayMap.get(operationalDay) + 1);
-		}
-		else {
-			lineDayMap.set(operationalDay, 1);
-		}
-
-		//
-		// Increment the stop-day count
-
-		if (!validationsByStopAndDayMap.has(doc.transaction.stopLongID)) {
-			validationsByStopAndDayMap.set(doc.transaction.stopLongID, new Map());
-		}
-
-		const stopDayMap = validationsByStopAndDayMap.get(doc.transaction.stopLongID);
-
-		if (stopDayMap.has(operationalDay)) {
-			stopDayMap.set(operationalDay, stopDayMap.get(operationalDay) + 1);
-		}
-	}
+	const validationsByLinesMap = new Map<string, DemandMetrics>();
+	const validationsByStopsMap = new Map<string, DemandMetrics>();
 
 	//
-	// Parse maps into arrays
+	// Parsing validations by day
 
-	const validationsByDayArray = Array.from(validationsByDayMap).map(([operationalDay, totalQty]) => {
-		return {
-			operational_day: operationalDay,
-			total_qty: totalQty,
-		};
-	});
+	LOGGER.info("Parsing validations by day");
+	const validationsByDayArray = (await TRINODB.countValidations({ timeUnit: 'day', options })).map((item) => ({
+		operational_day: item.transaction_time,
+		total_qty: item.count_result,
+	}));
 
-	const validationsByLineArray = Array.from(validationsByLineMap).map(([lineId, totalQty]) => {
-		const dailyDistribution = validationsByLineAndDayMap.get(lineId);
-		const hourlyDistribution = validationsByLineAndHourMap.get(lineId);
-		return {
-			by_day: dailyDistribution ? Array.from(dailyDistribution).map(([day, dailyQty]) => ({ day: day, qty: dailyQty })) : [],
-			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
-			end_date: endDateString,
-			line_id: lineId,
+	LOGGER.info(`Parsed ${validationsByDayArray.length} days (${parseTimer.get()})`);
+
+	//
+	// Parsing validations by line
+	LOGGER.info("Parsing validations by line");
+	for (const lineId of allLinesSet) {
+		validationsByLinesMap.set(lineId, {
+			item_id: lineId,
 			start_date: startDateString,
-			total_qty: totalQty,
-		};
+			end_date: endDateString,
+			total_qty: 0,
+			by_day: []
+		});
+	}
+
+	const linesHourlyMap = new Map();
+	(await TRINODB.countValidations({ timeUnit: 'hour', type: 'line', options })).map((item) => {
+		const key = `${item.item_id}:${item.transaction_time.split(' ')[0]}`;
+		linesHourlyMap.set(key, linesHourlyMap.get(key) || []);
+		linesHourlyMap.get(key).push({
+			hour: DateTime.fromFormat(item.transaction_time, 'yyyy-LL-dd HH:mm:ss.SSS').hour,
+			qty: item.count_result
+		});
 	});
 
-	const validationsByStopArray = Array.from(validationsByStopMap).map(([stopId, totalQty]) => {
-		const dailyDistribution = validationsByStopAndDayMap.get(stopId);
-		const hourlyDistribution = validationsByStopAndHourMap.get(stopId);
-		return {
-			by_day: dailyDistribution ? Array.from(dailyDistribution).map(([day, dailyQty]) => ({ day: day, qty: dailyQty })) : [],
-			by_hour: hourlyDistribution ? Array.from(hourlyDistribution).map(([hour, hourlyQty]) => ({ hour: hour, qty: hourlyQty })) : [],
-			end_date: endDateString,
-			start_date: startDateString,
-			stop_id: stopId,
-			total_qty: totalQty,
-		};
+	(await TRINODB.countValidations({ timeUnit: 'day', type: 'line', options })).map(async (item) => {
+		if (!validationsByLinesMap.has(item.item_id)) return;
+
+		validationsByLinesMap.set(item.item_id, {
+			...validationsByLinesMap.get(item.item_id),
+			total_qty: validationsByLinesMap.get(item.item_id).total_qty + item.count_result,
+			by_day: [...validationsByLinesMap.get(item.item_id).by_day, {
+				day: item.transaction_time,
+				qty: item.count_result,
+				by_hour: linesHourlyMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || []
+			}]
+		});
 	});
+
+	LOGGER.info(`Parsed ${validationsByLinesMap.size} lines (${parseTimer.get()})`);
+
+
+	//
+	// Parsing validations by stop
+
+	LOGGER.info("Parsing validations by stop");
+	for (const stopId of allStopsSet) {
+		validationsByStopsMap.set(stopId, {
+			item_id: stopId,
+			start_date: startDateString,
+			end_date: endDateString,
+			total_qty: 0,
+			by_day: []
+		});
+	}
+
+	const stopsHourlyMap = new Map();
+	(await TRINODB.countValidations({ timeUnit: 'hour', type: 'stop', options })).map((item) => {
+		const key = `${item.item_id}:${item.transaction_time.split(' ')[0]}`;
+		stopsHourlyMap.set(key, stopsHourlyMap.get(key) || []);
+		stopsHourlyMap.get(key).push({
+			hour: DateTime.fromFormat(item.transaction_time, 'yyyy-LL-dd HH:mm:ss.SSS').hour,
+			qty: item.count_result
+		});
+	});
+
+	(await TRINODB.countValidations({ timeUnit: 'day', type: 'stop', options })).map(async (item) => {
+		if (!validationsByStopsMap.has(item.item_id)) return;
+
+		validationsByStopsMap.set(item.item_id, {
+			...validationsByStopsMap.get(item.item_id),
+			total_qty: validationsByStopsMap.get(item.item_id).total_qty + item.count_result,
+			by_day: [...validationsByStopsMap.get(item.item_id).by_day, {
+				day: item.transaction_time,
+				qty: item.count_result,
+				by_hour: stopsHourlyMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || []
+			}]
+		});
+	});
+
+	LOGGER.info(`Parsed ${validationsByStopsMap.size} stops (${parseTimer.get()})`);
 
 	//
 	// Save all documents
@@ -236,18 +171,19 @@ export default async () => {
 	const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 
 	validationsByDayArray.sort((a, b) => collator.compare(a.operational_day, b.operational_day));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_MONTH, JSON.stringify(validationsByDayArray));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_DAY, JSON.stringify(validationsByDayArray));
 
-	validationsByLineArray.sort((a, b) => collator.compare(a.line_id, b.line_id));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_MONTH, JSON.stringify(validationsByLineArray));
+	const validationsByLinesArray = Array.from(validationsByLinesMap.values());
+	validationsByLinesArray.sort((a, b) => collator.compare(a.item_id, b.item_id));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_LINE, JSON.stringify(validationsByLinesArray));
 
-	validationsByStopArray.sort((a, b) => collator.compare(a.stop_id, b.stop_id));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_STOP, JSON.stringify(validationsByStopArray));
+	const validationsByStopsArray = Array.from(validationsByStopsMap.values());
+	validationsByStopsArray.sort((a, b) => collator.compare(a.item_id, b.item_id));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_STOP, JSON.stringify(validationsByStopsArray));
 
 	//
 
-	LOGGER.terminate(`Parsed ${validCounter} validations, skipped ${totalCounter - validCounter} validations and updated ${validationsByDayArray.length} Days, ${validationsByLineArray.length} Lines and ${validationsByStopArray.length} Stops (${globalTimer.get()})`);
-
+	LOGGER.terminate(`Parsed ${validationsByLinesArray.length + validationsByStopsArray.length} validations, updated ${validationsByDayArray.length} Days, ${validationsByLinesArray.length} Lines and ${validationsByStopsArray.length} Stops (${globalTimer.get()})`);
 	LOGGER.divider();
 
 	//

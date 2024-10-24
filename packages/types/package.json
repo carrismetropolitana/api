@@ -44,6 +44,11 @@
 			"import": "./dist/trino/index.js",
 			"require": "./dist/trino/index.js",
 			"types": "./dist/trino/index.d.ts"
+		},
+		"./metrics": {
+			"import": "./dist/api/metrics.js",
+			"require": "./dist/api/metrics.js",
+			"types": "./dist/api/metrics.d.ts"
 		}
 	},
 	"scripts": {
