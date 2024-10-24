@@ -190,10 +190,10 @@ export const syncRealtime = async () => {
 			estimatedOccupancyOutgoing += counting.outgoing;
 		});
 
-		updateVehicleObject.occupancy_estimated = updateVehicleObject.occupancy_estimated + estimatedOccupancyIncoming - estimatedOccupancyOutgoing;
+		updateVehicleObject.occupancy_estimated = (updateVehicleObject.occupancy_estimated ?? 0) + estimatedOccupancyIncoming - estimatedOccupancyOutgoing;
 
-		if (updateVehicleObject.occupancy_estimated < 0) {
-			updateVehicleObject.occupancy_estimated = 0;
+		if (updateVehicleObject.occupancy_estimated <= 0) {
+			updateVehicleObject.occupancy_estimated = null;
 			updateVehicleObject.occupancy_status = OccupancyStatus.unknown;
 		}
 		else if (updateVehicleObject.occupancy_estimated < updateVehicleObject.capacity_seated) {

@@ -59,6 +59,7 @@ export interface School extends Facility {
 
 export interface StoresSource extends FacilitySource {
 	address: string
+	brand_name: string
 	email: string
 	google_place_id: string
 	hours_friday: string
@@ -79,6 +80,7 @@ export interface StoresSource extends FacilitySource {
 
 export interface StoreMetadata extends Facility {
 	address: string
+	brand_name: string
 	email: string
 	google_place_id: string
 	hours_friday: string[]
@@ -100,7 +102,7 @@ export interface StoreRealtime {
 	current_ratio: number
 	current_status: CurrentStoreStatus
 	currently_waiting: number
-	estimated_wait_seconds: number
+	expected_wait_time: number
 	is_open: boolean
 }
 

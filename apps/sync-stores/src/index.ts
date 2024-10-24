@@ -21,7 +21,7 @@ const RUN_INTERVAL = 20000; // 20 seconds
 
 		LOGGER.terminate(`Sync iteration #${counter}`);
 
-		if (counter % 10 === 0) {
+		if (counter % 100 === 0) {
 			// Run on every 100th iteration
 			await syncMetadata();
 		}
