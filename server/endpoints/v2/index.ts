@@ -22,9 +22,8 @@ import '@/endpoints/v2/network/vehicles.endpoint.js';
 
 /* * */
 
-import '@/endpoints/v2/pip/info.endpoint.js';
-import '@/endpoints/v2/pip/estimates.endpoint.js';
-import '@/endpoints/v2/pip/message.endpoint.js';
+// import '@/endpoints/v2/pip/info.endpoint.js';
+// import '@/endpoints/v2/pip/message.endpoint.js';
 
 /* * */
 
