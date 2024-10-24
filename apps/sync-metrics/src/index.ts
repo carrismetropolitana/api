@@ -1,13 +1,14 @@
 /* * */
 
-import { PCGIDB } from '@carrismetropolitana/api-services/PCGIDB';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
 import start from './start.js';
 import daily from './tasks/daily.js';
 import operator from './tasks/operator.js';
-
+	
 /* * */
 
 const HOUR_INTERVAL = 3600000; // 1 hour
@@ -21,7 +22,8 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 
 	LOGGER.init();
 
-	await PCGIDB.connect();
+	await SERVERDB.connect();
+	await TRINODB.connect();
 
 	const runEvery5Minutes = async () => {
 		operator().catch((error) => {
@@ -51,6 +53,7 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 		setTimeout(runEveryDay, DAY_INTERVAL);
 	};
 
+	
 	runEvery5Minutes();
 	runEveryHour();
 	runEveryDay();
