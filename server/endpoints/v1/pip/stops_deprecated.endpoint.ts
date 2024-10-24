@@ -159,7 +159,7 @@ import FASTIFY from '@/services/FASTIFY.js';
 /* * */
 
 const redirectToNewEstimatesEndpoint = async (request, reply) => {
-	reply.code(302).redirect('https://api.cmet.pt/pips/estimates');
+	reply.code(307).redirect('https://api.cmet.pt/pips/estimates');
 };
 
 FASTIFY.server.post('/stops/pip', redirectToNewEstimatesEndpoint);
@@ -169,7 +169,7 @@ FASTIFY.server.post('/v2/stops/pip', redirectToNewEstimatesEndpoint);
 /* * */
 
 const redirectToNewMessagesEndpoint = async (request, reply) => {
-	reply.code(302).redirect(`https://api.cmet.pt/pips/${request.params.pip_id}/message`);
+	reply.code(307).redirect(`https://api.cmet.pt/pips/${request.params.pip_id}/message`);
 };
 
 FASTIFY.server.get('/v2/pip/:pip_id/message', redirectToNewMessagesEndpoint);
