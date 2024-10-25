@@ -10,7 +10,7 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-function convertToProtobuf(allEvents) {
+function convertToProtobuf(allEvents: Vehicle[]) {
 	return {
 		entity: allEvents.map(event => ({
 			id: event.event_id,
@@ -18,8 +18,8 @@ function convertToProtobuf(allEvents) {
 				currentStatus: event.current_status,
 				position: {
 					bearing: event.bearing,
-					latitude: event.latitude,
-					longitude: event.longitude,
+					latitude: event.lat,
+					longitude: event.lon,
 					speed: event.speed,
 				},
 				stopId: event.stop_id,
@@ -31,7 +31,7 @@ function convertToProtobuf(allEvents) {
 					tripId: event.trip_id,
 				},
 				vehicle: {
-					id: event.vehicle_id,
+					id: event.id,
 				},
 			},
 		})),
@@ -147,13 +147,14 @@ export const syncRealtime = async () => {
 		//
 		// Prepare the updated vehicle object
 
-		const updateVehicleObject = {
+		const updateVehicleObject: Vehicle = {
 			...existingVehicle,
 			bearing: vehicleBearing,
 			block_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.blockId,
 			current_status: pcgiVehicleEvent.content.entity[0].vehicle.currentStatus, // Current status can be 'IN_TRANSIT_TO', 'INCOMMING_AT' or 'STOPPED_AT' at the current stop_id
 			direction_id: undefined, // patternDataJson.direction,
 			event_id: `${currentArchiveIds[operatorId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
+			id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
 			lat: pcgiVehicleEvent.content.entity[0].vehicle.position.latitude,
 			line_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.lineId,
 			lon: pcgiVehicleEvent.content.entity[0].vehicle.position.longitude,
@@ -165,7 +166,6 @@ export const syncRealtime = async () => {
 			stop_id: pcgiVehicleEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
 			timestamp: vehicleTimestamp, // Timestamp is in UTC
 			trip_id: `${vehicleTripId}_${currentArchiveIds[operatorId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
-			vehicle_id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
 		};
 
 		//
