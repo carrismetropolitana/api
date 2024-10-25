@@ -244,7 +244,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 		})
 		.sort((a: PipArrival, b: PipArrival) => {
 			return a.estimatedTimeUnixSeconds - b.estimatedTimeUnixSeconds;
-		}).slice(0, 4);
+		}).slice(0, 8);
 
 	//
 	// Handle the case where the result is an empty array (there are no estimates right now).
