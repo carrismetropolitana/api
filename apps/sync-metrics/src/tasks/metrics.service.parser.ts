@@ -69,26 +69,26 @@ export default async () => {
 		// Save to database
 		allItemsData.push(parsedItemData);
 
-		// Save by line:operational_day
-		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:${parsedItemData.lineId}:${parsedItemData.operationalDay}`, JSON.stringify(parsedItemData));
+		// // Save by line:operational_day
+		// await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:${parsedItemData.lineId}:${parsedItemData.operationalDay}`, JSON.stringify(parsedItemData));
 
-		// Save by Line
-		const savedLineData = lines.get(parsedItemData.lineId) || [];
-		savedLineData.push(parsedItemData);
-		lines.set(parsedItemData.lineId, savedLineData);
+		// // Save by Line
+		// const savedLineData = lines.get(parsedItemData.lineId) || [];
+		// savedLineData.push(parsedItemData);
+		// lines.set(parsedItemData.lineId, savedLineData);
 
-		updatedItemKeys.add(`${SERVERDB_KEYS.METRICS.SERVICE}:${parsedItemData.lineId}:${parsedItemData.operationalDay}`);
+		// updatedItemKeys.add(`${SERVERDB_KEYS.METRICS.SERVICE}:${parsedItemData.lineId}:${parsedItemData.operationalDay}`);
 		//
 	}
 
 	//
 	// Save all lines
 
-	console.log(`⤷ Saving lines...`);
+	// console.log(`⤷ Saving lines...`);
 
-	for (const [lineId, lineData] of lines) {
-		await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:${lineId}:all`, JSON.stringify(lineData));
-	}
+	// for (const [lineId, lineData] of lines) {
+	// 	await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:${lineId}:all`, JSON.stringify(lineData));
+	// }
 
 	// 4.
 	// Log count of updated items
@@ -99,8 +99,8 @@ export default async () => {
 	// Add the 'all' option
 
 	allItemsData.sort((a, b) => sortCollator.compare(a.lineId, b.lineId));
-	await SERVERDB.set(`${SERVERDB_KEYS.METRICS.SERVICE}:all`, JSON.stringify(allItemsData));
-	updatedItemKeys.add(`${SERVERDB_KEYS.METRICS.SERVICE}:all`);
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.SERVICE.ALL, JSON.stringify(allItemsData));
+	updatedItemKeys.add(SERVERDB_KEYS.METRICS.SERVICE.ALL);
 
 	// 6.
 	// Delete all items not present in the current update

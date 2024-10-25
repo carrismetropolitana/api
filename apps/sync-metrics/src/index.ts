@@ -7,8 +7,9 @@ import 'dotenv/config';
 
 import start from './start.js';
 import daily from './tasks/daily.js';
+import service from './tasks/metrics.service.parser.js';
 import operator from './tasks/operator.js';
-	
+
 /* * */
 
 const HOUR_INTERVAL = 3600000; // 1 hour
@@ -35,6 +36,12 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 	};
 
 	const runEveryHour = async () => {
+		service().catch((error) => {
+			LOGGER.divider();
+			LOGGER.error(error.stack);
+			LOGGER.divider();
+		});
+
 		start().catch((error) => {
 			LOGGER.divider();
 			LOGGER.error(error.stack);
@@ -53,7 +60,6 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 		setTimeout(runEveryDay, DAY_INTERVAL);
 	};
 
-	
 	runEvery5Minutes();
 	runEveryHour();
 	runEveryDay();
