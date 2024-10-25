@@ -44,7 +44,7 @@ export default async () => {
 	const daysToRetrieve = 15;
 	const operatorIds = ['41', '42', '43', '44'];
 	const startDateString = DateTime.now().setZone('Europe/Lisbon').minus({ days: daysToRetrieve }).set({ hour: 4, minute: 0, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
-	const endDateString = DateTime.now().setZone('Europe/Lisbon').toFormat('yyyy-LL-dd');
+	const endDateString = DateTime.now().setZone('Europe/Lisbon').toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const startDateStringISO = DateTime.now().setZone('Europe/Lisbon').minus({ days: daysToRetrieve }).set({ hour: 4, minute: 0, second: 0 }).toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const apexValidationStatuses = [0];
 
