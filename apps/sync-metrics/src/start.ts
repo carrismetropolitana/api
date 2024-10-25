@@ -52,15 +52,15 @@ export default async () => {
 	// Parse data
 	const options = {
 		where: {
-			transactiondate: {
-				$gte: startDateString,
-				$lte: endDateString,
+			operator: {
+				$in: operatorIds,
 			},
 			rawloaddateiso: {
 				$gte: startDateStringISO,
 			},
-			operator: {
-				$in: operatorIds,
+			transactiondate: {
+				$gte: startDateString,
+				$lte: endDateString,
 			},
 			validationstatus: {
 				$in: apexValidationStatuses,
@@ -70,15 +70,14 @@ export default async () => {
 
 	const parseTimer = new TIMETRACKER();
 
-
 	const validationsByLinesMap = new Map<string, DemandMetrics>();
 	const validationsByStopsMap = new Map<string, DemandMetrics>();
 
 	//
 	// Parsing validations by day
 
-	LOGGER.info("Parsing validations by day");
-	const validationsByDayArray = (await TRINODB.countValidations({ timeUnit: 'day', options })).map((item) => ({
+	LOGGER.info('Parsing validations by day');
+	const validationsByDayArray = (await TRINODB.countValidations({ options, timeUnit: 'day' })).map(item => ({
 		operational_day: item.transaction_time,
 		total_qty: item.count_result,
 	}));
@@ -87,79 +86,78 @@ export default async () => {
 
 	//
 	// Parsing validations by line
-	LOGGER.info("Parsing validations by line");
+	LOGGER.info('Parsing validations by line');
 	for (const lineId of allLinesSet) {
 		validationsByLinesMap.set(lineId, {
+			by_day: [],
+			end_date: endDateString,
 			item_id: lineId,
 			start_date: startDateString,
-			end_date: endDateString,
 			total_qty: 0,
-			by_day: []
 		});
 	}
 
 	const linesHourlyMap = new Map();
-	(await TRINODB.countValidations({ timeUnit: 'hour', type: 'line', options })).map((item) => {
+	(await TRINODB.countValidations({ options, timeUnit: 'hour', type: 'line' })).map((item) => {
 		const key = `${item.item_id}:${item.transaction_time.split(' ')[0]}`;
 		linesHourlyMap.set(key, linesHourlyMap.get(key) || []);
 		linesHourlyMap.get(key).push({
 			hour: DateTime.fromFormat(item.transaction_time, 'yyyy-LL-dd HH:mm:ss.SSS').hour,
-			qty: item.count_result
+			qty: item.count_result,
 		});
 	});
 
-	(await TRINODB.countValidations({ timeUnit: 'day', type: 'line', options })).map(async (item) => {
+	(await TRINODB.countValidations({ options, timeUnit: 'day', type: 'line' })).map(async (item) => {
 		if (!validationsByLinesMap.has(item.item_id)) return;
 
 		validationsByLinesMap.set(item.item_id, {
 			...validationsByLinesMap.get(item.item_id),
-			total_qty: validationsByLinesMap.get(item.item_id).total_qty + item.count_result,
 			by_day: [...validationsByLinesMap.get(item.item_id).by_day, {
+				by_hour: linesHourlyMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || [],
 				day: item.transaction_time,
 				qty: item.count_result,
-				by_hour: linesHourlyMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || []
-			}]
+			}],
+			total_qty: validationsByLinesMap.get(item.item_id).total_qty + item.count_result,
 		});
 	});
 
 	LOGGER.info(`Parsed ${validationsByLinesMap.size} lines (${parseTimer.get()})`);
 
-
 	//
 	// Parsing validations by stop
 
-	LOGGER.info("Parsing validations by stop");
+	LOGGER.info('Parsing validations by stop');
 	for (const stopId of allStopsSet) {
 		validationsByStopsMap.set(stopId, {
+			by_day: [],
+			end_date: endDateString,
 			item_id: stopId,
 			start_date: startDateString,
-			end_date: endDateString,
 			total_qty: 0,
-			by_day: []
 		});
 	}
 
 	const stopsHourlyMap = new Map();
-	(await TRINODB.countValidations({ timeUnit: 'hour', type: 'stop', options })).map((item) => {
+	(await TRINODB.countValidations({ options, timeUnit: 'hour', type: 'stop' })).map((item) => {
 		const key = `${item.item_id}:${item.transaction_time.split(' ')[0]}`;
 		stopsHourlyMap.set(key, stopsHourlyMap.get(key) || []);
 		stopsHourlyMap.get(key).push({
 			hour: DateTime.fromFormat(item.transaction_time, 'yyyy-LL-dd HH:mm:ss.SSS').hour,
-			qty: item.count_result
+			qty: item.count_result,
 		});
 	});
 
-	(await TRINODB.countValidations({ timeUnit: 'day', type: 'stop', options })).map(async (item) => {
+	(await TRINODB.countValidations({ options, timeUnit: 'day', type: 'stop' })).map(async (item) => {
 		if (!validationsByStopsMap.has(item.item_id)) return;
 
 		validationsByStopsMap.set(item.item_id, {
 			...validationsByStopsMap.get(item.item_id),
-			total_qty: validationsByStopsMap.get(item.item_id).total_qty + item.count_result,
 			by_day: [...validationsByStopsMap.get(item.item_id).by_day, {
+				by_hour: stopsHourlyMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || [],
 				day: item.transaction_time,
 				qty: item.count_result,
-				by_hour: stopsHourlyMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || []
-			}]
+			}],
+			total_qty: validationsByStopsMap.get(item.item_id).total_qty + item.count_result,
 		});
 	});
 
