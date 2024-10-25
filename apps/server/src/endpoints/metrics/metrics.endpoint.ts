@@ -30,6 +30,48 @@ FASTIFY.server.get('/metrics/demand/by_stop', async (_, reply) => {
 	return reply.code(200).send(allItemsTxt);
 });
 
+FASTIFY.server.get('/metrics/demand/by_operator/:operatorId/:day', async (request, reply) => {
+	const { day, operatorId } = request.params as { day: string, operatorId: string };
+
+	let metric = [];
+	if (operatorId === 'cm') {
+		const operators = ['41', '42', '43', '44'];
+		metric = [];
+
+		for (const operator of operators) {
+			const operation = await SERVERDB.get(`${SERVERDB_KEYS.METRICS.DEMAND.BY_OPERATOR}:${operator}:${day}`);
+
+			if (!operation) {
+				continue;
+			}
+
+			metric.push({
+				...JSON.parse(operation),
+				operator_id: operator,
+			});
+		}
+	}
+	else {
+		const operation = await SERVERDB.get(`${SERVERDB_KEYS.METRICS.DEMAND.BY_OPERATOR}:${operatorId}:${day}`);
+		metric = {
+			...JSON.parse(operation),
+			operator_id: operatorId,
+		};
+	}
+
+	if (!metric) {
+		return reply
+			.code(404)
+			.header('Content-Type', 'application/json; charset=utf-8')
+			.send({ message: 'Not found' });
+	}
+
+	return reply
+		.code(200)
+		.header('Content-Type', 'application/json; charset=utf-8')
+		.send(metric);
+});
+
 /* * */
 
 FASTIFY.server.get('/metrics/service/all', async (_, reply) => {
