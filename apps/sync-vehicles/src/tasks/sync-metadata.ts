@@ -49,9 +49,7 @@ export const syncMetadata = async () => {
 			capacity_total: Number(itemCsv.capacity_seated) + Number(itemCsv.capacity_standing),
 			emission_class: convertEmissionClassCode(itemCsv.emission_class),
 			id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
-			license_plate: (!itemCsv.license_plate.includes('-') && itemCsv.license_plate.length == 6)
-				? itemCsv.license_plate.replace(/(.{2})(.{2})(.{2})/, "$1-$2-$3")
-				: itemCsv.license_plate,
+			license_plate: itemCsv.license_plate?.replace(/^(\w{2})(\w{2})(\w{2})$/, '$1-$2-$3'),
 			make: itemCsv.make,
 			model: itemCsv.model,
 			owner: itemCsv.owner,
