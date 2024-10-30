@@ -1,9 +1,11 @@
 /* * */
 
+import type { VehicleMetadataSource } from '@/types/sources.js';
+
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { convertGTFSBoolToBoolean, Vehicle } from '@carrismetropolitana/api-types/gtfs-extended';
-import { convertEmissionClassCode, convertPropulsionCode, VehicleMetadata } from '@carrismetropolitana/api-types/vehicles';
+import { convertGTFSBoolToBoolean } from '@carrismetropolitana/api-types/gtfs-extended';
+import { convertVehicleEmissionClassCode, convertVehiclePropulsionCode, Vehicle } from '@carrismetropolitana/api-types/vehicles';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -28,7 +30,7 @@ export const syncMetadata = async () => {
 
 	const downloadedCsvFile = await fetch(DATASET_FILE_URL);
 	const downloadedCsvText = await downloadedCsvFile.text();
-	const allItemsCsv = Papa.parse<Vehicle>(downloadedCsvText, { header: true });
+	const allItemsCsv = Papa.parse<VehicleMetadataSource>(downloadedCsvText, { header: true });
 
 	//
 	// For each item, update its entry in the database
@@ -36,23 +38,25 @@ export const syncMetadata = async () => {
 	LOGGER.info(`Updating items...`);
 
 	let updatedItemsCounter = 0;
-	const allItemsData: VehicleMetadata[] = [];
+	const allItemsData: Vehicle[] = [];
 
 	for (const itemCsv of allItemsCsv.data) {
 		//
-		const parsedItemData: VehicleMetadata = {
+		const parsedItemData: Vehicle = {
 			agency_id: itemCsv.agency_id,
 			bikes_allowed: convertGTFSBoolToBoolean(itemCsv.bikes_allowed),
 			capacity_seated: Number(itemCsv.capacity_seated),
 			capacity_standing: Number(itemCsv.capacity_standing),
 			capacity_total: Number(itemCsv.capacity_seated) + Number(itemCsv.capacity_standing),
-			emission_class: convertEmissionClassCode(itemCsv.emission_class),
+			emission_class: convertVehicleEmissionClassCode(itemCsv.emission_class),
 			id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
 			license_plate: itemCsv.license_plate?.replace(/^(\w{2})(\w{2})(\w{2})$/, '$1-$2-$3'),
+			line_id: undefined,
 			make: itemCsv.make,
 			model: itemCsv.model,
 			owner: itemCsv.owner,
-			propulsion: convertPropulsionCode(itemCsv.propulsion),
+			pattern_id: undefined,
+			propulsion: convertVehiclePropulsionCode(itemCsv.propulsion),
 			registration_date: itemCsv.registration_date,
 			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible),
 		};

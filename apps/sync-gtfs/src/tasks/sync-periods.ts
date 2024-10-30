@@ -1,5 +1,7 @@
 /* * */
 
+import type { DateRange, Period } from '@carrismetropolitana/api-types/network';
+
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
@@ -25,7 +27,7 @@ export const syncPeriods = async () => {
 	//
 	// Build periods hashmap
 
-	const allPeriodsParsed = allPeriods.rows.map((period) => {
+	const allPeriodsParsed: Period[] = allPeriods.rows.map((period) => {
 		//
 
 		//
@@ -39,19 +41,13 @@ export const syncPeriods = async () => {
 		//
 		// Initiate a variable to hold the active blocks for this period
 
-		const validFromUntil: {
-			from: string
-			until?: string
-		}[] = [];
+		const validRanges: DateRange[] = [];
 
 		//
 		// Start the block with the first date for this period
 
-		let currentBlock: {
-			from: string
-			until?: string
-		} = {
-			from: datesForThisPeriod[0],
+		let currentBlock: DateRange = {
+			start: datesForThisPeriod[0],
 		};
 
 		//
@@ -66,10 +62,10 @@ export const syncPeriods = async () => {
 			const nextDate = DateTime.fromFormat(nextDateString, 'yyyyMMdd');
 			// Add a new block if the next date is not sequential to the previous date
 			if (prevDate.toFormat('yyyyMMdd') !== nextDate.minus({ days: 1 }).toFormat('yyyyMMdd')) {
-				currentBlock.until = prevDateString;
-				validFromUntil.push(currentBlock);
+				currentBlock.end = prevDateString;
+				validRanges.push(currentBlock);
 				currentBlock = {
-					from: nextDateString,
+					start: nextDateString,
 				};
 			}
 		}
@@ -77,17 +73,17 @@ export const syncPeriods = async () => {
 		//
 		// Add the last block
 
-		currentBlock.until = datesForThisPeriod[datesForThisPeriod.length - 1];
-		validFromUntil.push(currentBlock);
+		currentBlock.end = datesForThisPeriod[datesForThisPeriod.length - 1];
+		validRanges.push(currentBlock);
 
 		//
 		// Return the parsed period
 
 		return {
-			dates: datesForThisPeriod,
 			id: period.period_id,
 			name: period.period_name,
-			valid: validFromUntil,
+			valid_on: datesForThisPeriod,
+			valid_ranges: validRanges,
 		};
 
 		//

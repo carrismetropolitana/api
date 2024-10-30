@@ -44,6 +44,7 @@ export interface Route {
 
 export interface Pattern {
 	color: string
+	direction_id: 0 | 1
 	district_ids: string[]
 	facilities: string[]
 	headsign: string
@@ -54,7 +55,7 @@ export interface Pattern {
 	municipality_ids: string[]
 	path: Waypoint[]
 	region_ids: string[]
-	route_id: string[]
+	route_id: string
 	shape_id: string
 	short_name: string
 	text_color: string
@@ -76,7 +77,6 @@ export interface Waypoint {
 export interface Trip {
 	schedule: Arrival[]
 	service_ids: string[]
-	trip_group_id: string
 	trip_ids: string[]
 	valid_on: string[]
 	version_id: string
@@ -151,7 +151,6 @@ export enum DateDayType {
 /* * */
 
 export interface Period {
-	dates: string[]
 	id: string
 	name: string
 	valid_on: string[]

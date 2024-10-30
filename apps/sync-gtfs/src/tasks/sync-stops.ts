@@ -1,17 +1,19 @@
 /* * */
 
+import type { Stop as GtfsStopsExtended } from '@carrismetropolitana/api-types/gtfs-extended';
+import type { Locality } from '@carrismetropolitana/api-types/locations';
+
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Stop as StopsExtended } from '@carrismetropolitana/api-types/gtfs-extended';
-import { OperationalStatus, Stop } from '@carrismetropolitana/api-types/network';
+import { Stop, StopOperationalStatus } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
-interface QueryResult extends StopsExtended {
+interface QueryResult extends GtfsStopsExtended {
 	line_ids: string[]
 	pattern_ids: string[]
 	route_ids: string[]
@@ -54,6 +56,13 @@ export const syncStops = async () => {
 	`);
 
 	//
+	// Fetch existing data from SERVERDB
+
+	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
+	const allLocalitiesData = allLocalitiesTxt ? JSON.parse(allLocalitiesTxt) : [];
+	const allLocalitiesMap = new Map<string, Locality>(allLocalitiesData.map((item: Locality) => [`${item.name}-${item.municipality_id}`, item]));
+
+	//
 	// For each item, update its entry in the database
 
 	const allStopsData: Stop[] = [];
@@ -86,28 +95,50 @@ export const syncStops = async () => {
 		if (stop.car_parking) facilities.push('car_parking');
 
 		//
+		// Convert stop operational status
+
+		let parsedStopOperationalStatus: StopOperationalStatus | undefined;
+
+		switch (stop.operational_status) {
+			case 'ACTIVE':
+				parsedStopOperationalStatus = StopOperationalStatus.active;
+				break;
+			case 'SEASONAL':
+				parsedStopOperationalStatus = StopOperationalStatus.seasonal;
+				break;
+			case 'VOIDED':
+				parsedStopOperationalStatus = StopOperationalStatus.voided;
+				break;
+			default:
+				parsedStopOperationalStatus = undefined;
+				break;
+		}
+
+		//
+		// Find the locality object
+
+		const matchedLocalityData = allLocalitiesMap.get(`${stop.locality}-${stop.municipality_id}`);
+
+		//
 		// Build the final stop object
 
 		const parsedStop: Stop = {
 			district_id: stop.district_id,
-			district_name: stop.district_name,
 			facilities: facilities || [],
 			id: stop.stop_id,
 			lat: stop.stop_lat,
 			line_ids: stop.line_ids || [],
-			locality: stop.locality,
+			locality_id: matchedLocalityData?.id,
 			lon: stop.stop_lon,
+			long_name: stop.stop_name,
 			municipality_id: stop.municipality_id,
-			municipality_name: stop.municipality_name,
-			operational_status: OperationalStatus[stop.operational_status],
+			operational_status: parsedStopOperationalStatus,
 			pattern_ids: stop.pattern_ids || [],
 			region_id: stop.region_id,
-			region_name: stop.region_name,
 			route_ids: stop.route_ids || [],
 			short_name: stop.stop_short_name,
-			stop_name: stop.stop_name,
 			tts_name: stop.tts_stop_name,
-			wheelchair_boarding: stop.wheelchair_boarding,
+			wheelchair_boarding: stop.wheelchair_boarding === 1,
 		};
 
 		allStopsData.push(parsedStop);

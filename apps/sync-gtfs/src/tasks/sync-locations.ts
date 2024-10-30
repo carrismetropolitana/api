@@ -1,9 +1,10 @@
 /* * */
 
+import type { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/locations';
+
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/locations';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -69,13 +70,10 @@ export const syncLocations = async () => {
 			const localityData: Locality = {
 				display: localityDisplayString,
 				district_id: queryResultRow.district_id,
-				district_name: queryResultRow.district_name,
-				locality_id: localityId,
-				locality_name: queryResultRow.locality,
+				id: localityId,
 				municipality_id: queryResultRow.municipality_id,
-				municipality_name: queryResultRow.municipality_name,
+				name: queryResultRow.locality,
 				region_id: queryResultRow.region_id,
-				region_name: queryResultRow.region_name,
 			};
 
 			updatedLocalitiesData.set(localityId, localityData);
@@ -92,11 +90,9 @@ export const syncLocations = async () => {
 		if (!updatedMunicipalitiesData.has(municipalityId)) {
 			const municipalityData: Municipality = {
 				district_id: queryResultRow.district_id,
-				district_name: queryResultRow.district_name,
-				municipality_id: municipalityId,
-				municipality_name: queryResultRow.municipality_name,
+				id: municipalityId,
+				name: queryResultRow.municipality_name,
 				region_id: queryResultRow.region_id,
-				region_name: queryResultRow.region_name,
 			};
 
 			updatedMunicipalitiesData.set(municipalityId, municipalityData);
@@ -110,10 +106,9 @@ export const syncLocations = async () => {
 
 		if (!updatedDistrictsData.has(districtId)) {
 			const districtData: District = {
-				district_id: districtId,
-				district_name: queryResultRow.district_name,
+				id: districtId,
+				name: queryResultRow.district_name,
 				region_id: queryResultRow.region_id,
-				region_name: queryResultRow.region_name,
 			};
 
 			updatedDistrictsData.set(districtId, districtData);
@@ -127,8 +122,8 @@ export const syncLocations = async () => {
 
 		if (!updatedRegionsData.has(regionId)) {
 			const regionData: Region = {
-				region_id: regionId,
-				region_name: queryResultRow.region_name,
+				id: regionId,
+				name: queryResultRow.region_name,
 			};
 
 			updatedRegionsData.set(regionId, regionData);
@@ -141,16 +136,16 @@ export const syncLocations = async () => {
 	//
 	// Save data to the database
 
-	const sortedLocalitiesData = Array.from(updatedLocalitiesData.values()).sort((a, b) => sortCollator.compare(a.locality_id, b.locality_id));
+	const sortedLocalitiesData = Array.from(updatedLocalitiesData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALIITIES, JSON.stringify(sortedLocalitiesData));
 
-	const sortedMunicipalitiesData = Array.from(updatedMunicipalitiesData.values()).sort((a, b) => sortCollator.compare(a.municipality_id, b.municipality_id));
+	const sortedMunicipalitiesData = Array.from(updatedMunicipalitiesData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(sortedMunicipalitiesData));
 
-	const sortedDistrictsData = Array.from(updatedDistrictsData.values()).sort((a, b) => sortCollator.compare(a.district_id, b.district_id));
+	const sortedDistrictsData = Array.from(updatedDistrictsData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.DISTRICTS, JSON.stringify(sortedDistrictsData));
 
-	const sortedRegionsData = Array.from(updatedRegionsData.values()).sort((a, b) => sortCollator.compare(a.region_id, b.region_id));
+	const sortedRegionsData = Array.from(updatedRegionsData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.REGIONS, JSON.stringify(sortedRegionsData));
 
 	//

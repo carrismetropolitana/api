@@ -2,8 +2,7 @@
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { TripScheduleRelationship } from '@carrismetropolitana/api-types/gtfs-core';
-import { OccupancyStatus, Vehicle } from '@carrismetropolitana/api-types/vehicles';
+import { convertVehicleCurrentStatusCode, convertVehicleScheduleRelationshipCode, Vehicle, VehicleOccupancyStatus } from '@carrismetropolitana/api-types/vehicles';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -151,7 +150,7 @@ export const syncRealtime = async () => {
 			...existingVehicle,
 			bearing: vehicleBearing,
 			block_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.blockId,
-			current_status: pcgiVehicleEvent.content.entity[0].vehicle.currentStatus, // Current status can be 'IN_TRANSIT_TO', 'INCOMMING_AT' or 'STOPPED_AT' at the current stop_id
+			current_status: convertVehicleCurrentStatusCode(String(pcgiVehicleEvent.content.entity[0].vehicle.currentStatus)),
 			direction_id: undefined, // patternDataJson.direction,
 			event_id: `${currentArchiveIds[operatorId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
 			id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
@@ -160,7 +159,7 @@ export const syncRealtime = async () => {
 			lon: pcgiVehicleEvent.content.entity[0].vehicle.position.longitude,
 			pattern_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.patternId,
 			route_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.routeId,
-			schedule_relationship: pcgiVehicleEvent.content.entity[0].vehicle.trip.scheduleRelationship === TripScheduleRelationship.SCHEDULED ? TripScheduleRelationship.SCHEDULED : TripScheduleRelationship.ADDED, // Schedule relationship can be SCHEDULED for archivened trips or ADDED for new trips created by the driver
+			schedule_relationship: convertVehicleScheduleRelationshipCode(String(pcgiVehicleEvent.content.entity[0].vehicle.trip.scheduleRelationship)),
 			shift_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.shiftId,
 			speed: vehicleSpeed,
 			stop_id: pcgiVehicleEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
@@ -174,7 +173,7 @@ export const syncRealtime = async () => {
 
 		if (existingVehicle?.trip_id !== pcgiVehicleEvent.content.entity[0].vehicle.trip.tripId) {
 			updateVehicleObject.occupancy_estimated = 0;
-			updateVehicleObject.occupancy_status = OccupancyStatus.empty;
+			updateVehicleObject.occupancy_status = VehicleOccupancyStatus.empty;
 		}
 
 		//
@@ -193,17 +192,17 @@ export const syncRealtime = async () => {
 		updateVehicleObject.occupancy_estimated = (updateVehicleObject.occupancy_estimated ?? 0) + estimatedOccupancyIncoming - estimatedOccupancyOutgoing;
 
 		if (updateVehicleObject.occupancy_estimated <= 0) {
-			updateVehicleObject.occupancy_estimated = null;
-			updateVehicleObject.occupancy_status = OccupancyStatus.unknown;
+			updateVehicleObject.occupancy_estimated = undefined;
+			updateVehicleObject.occupancy_status = undefined;
 		}
 		else if (updateVehicleObject.occupancy_estimated < updateVehicleObject.capacity_seated) {
-			updateVehicleObject.occupancy_status = OccupancyStatus.seats_available;
+			updateVehicleObject.occupancy_status = VehicleOccupancyStatus.seats_available;
 		}
 		else if (updateVehicleObject.occupancy_estimated >= updateVehicleObject.capacity_seated && updateVehicleObject.occupancy_estimated < updateVehicleObject.capacity_total) {
-			updateVehicleObject.occupancy_status = OccupancyStatus.standing_only;
+			updateVehicleObject.occupancy_status = VehicleOccupancyStatus.standing_only;
 		}
 		else if (updateVehicleObject.occupancy_estimated >= updateVehicleObject.capacity_total) {
-			updateVehicleObject.occupancy_status = OccupancyStatus.full;
+			updateVehicleObject.occupancy_status = VehicleOccupancyStatus.full;
 		}
 
 		//

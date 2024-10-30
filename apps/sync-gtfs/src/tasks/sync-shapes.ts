@@ -1,10 +1,11 @@
 /* * */
 
+import type { Shape as GtfsShapesExtended } from '@carrismetropolitana/api-types/gtfs-extended';
+import type { Shape, ShapePoint } from '@carrismetropolitana/api-types/network';
+
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Shape as ShapesExtended } from '@carrismetropolitana/api-types/gtfs-extended';
-import { Shape } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -22,7 +23,7 @@ export const syncShapes = async () => {
 	// Fetch all Shapes from NETWORKDB
 
 	const fetchRawDataTimer = new TIMETRACKER();
-	const queryResult = await NETWORKDB.client.query<ShapesExtended>('SELECT * FROM shapes');
+	const queryResult = await NETWORKDB.client.query<GtfsShapesExtended>('SELECT * FROM shapes');
 	LOGGER.info(`Fetched ${queryResult.rowCount} rows from NETWORKDB (${fetchRawDataTimer.get()})`);
 
 	//
@@ -60,7 +61,7 @@ export const syncShapes = async () => {
 		//
 		// Add the point to the shape
 
-		const parsedPoint = {
+		const parsedPoint: ShapePoint = {
 			shape_dist_traveled: resultRow.shape_dist_traveled,
 			shape_pt_lat: resultRow.shape_pt_lat,
 			shape_pt_lon: resultRow.shape_pt_lon,

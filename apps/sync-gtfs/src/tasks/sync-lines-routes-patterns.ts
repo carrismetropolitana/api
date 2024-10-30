@@ -1,18 +1,18 @@
 /* * */
 
-import type { Location } from '@carrismetropolitana/api-types/locations';
-import type { Line, Path, Pattern, PatternGroup, Route, Schedule, Stop, TripGroup } from '@carrismetropolitana/api-types/network';
+import type { CalendarDate, Route as GtfsRoute, StopTime as GtfsStopTime, Trip as GtfsTrip } from '@carrismetropolitana/api-types/gtfs-extended';
+import type { Arrival, Line, Pattern, Route, Stop, Trip, Waypoint } from '@carrismetropolitana/api-types/network';
 
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Alight } from '@carrismetropolitana/api-types/gtfs-core';
-import { CalendarDate, Route as GtfsRoute, StopTime, Trip } from '@carrismetropolitana/api-types/gtfs-extended';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import crypto from 'node:crypto';
+
 /* * */
 
 export const syncLinesRoutesPatterns = async () => {
@@ -80,7 +80,7 @@ export const syncLinesRoutesPatterns = async () => {
 	});
 
 	// Get all distinct Pattern IDs from trips table
-	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<Trip>(`SELECT DISTINCT pattern_id FROM trips`);
+	const allDistinctPatternIdsRaw = await NETWORKDB.client.query<GtfsTrip>(`SELECT DISTINCT pattern_id FROM trips`);
 	const allDistinctPatternIds = allDistinctPatternIdsRaw.rows.map(item => item.pattern_id);
 
 	LOGGER.info(`Fetched ${allDistinctPatternIdsRaw.rowCount} rows from NETWORKDB (${fetchRawDataTimer.get()})`);
@@ -100,12 +100,10 @@ export const syncLinesRoutesPatterns = async () => {
 	for (const patternId of allDistinctPatternIds) {
 		//
 
-		const intraPatternTimer = new TIMETRACKER();
-
 		//
 		// Get all trips that match the current pattern ID
 
-		const allTripsForThisPatternRaw = await NETWORKDB.client.query<Trip>(`SELECT * FROM trips WHERE pattern_id = $1`, [patternId]);
+		const allTripsForThisPatternRaw = await NETWORKDB.client.query<GtfsTrip>(`SELECT * FROM trips WHERE pattern_id = $1`, [patternId]);
 
 		//
 		// Setup a variable to hold the parsed pattern groups
@@ -123,7 +121,7 @@ export const syncLinesRoutesPatterns = async () => {
 			//
 			// Get the stop_times data associated with the current trip
 
-			const stopTimesRaw = await NETWORKDB.client.query<StopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRawData.trip_id]);
+			const stopTimesRaw = await NETWORKDB.client.query<GtfsStopTime>(`SELECT * FROM stop_times WHERE trip_id = $1 ORDER BY stop_sequence`, [tripRawData.trip_id]);
 
 			//
 			// With the same set of data (stop_times sequence of stops) we can find out different information.
@@ -141,13 +139,19 @@ export const syncLinesRoutesPatterns = async () => {
 			// a locality and a municipality ID. Instead of running these loops multiple times, we run it once and save all the necessary information immediately.
 
 			const stopTimesAsSimplifiedPath: { id: string, stop_sequence: number }[] = [];
-			const stopTimesAsCompletePath: Path = [];
+			const stopTimesAsCompletePath: Waypoint[] = [];
 
 			const stopTimesAsSimplifiedSchedule: { arrival_time: string, stop_id: string, stop_sequence: number }[] = [];
-			const stopTimesAsCompleteSchedule: Schedule[] = [];
+			const stopTimesAsCompleteSchedule: Arrival[] = [];
 
 			const facilitiesList = new Set<string>();
-			const locationsList: Location[] = [];
+
+			const regionIdsList = new Set<string>();
+			const districtIdsList = new Set<string>();
+			const municipalityIdsList = new Set<string>();
+			const localityIdsList = new Set<string>();
+
+			//
 
 			for (const stopTimeRawData of stopTimesRaw.rows) {
 				//
@@ -209,7 +213,10 @@ export const syncLinesRoutesPatterns = async () => {
 				//
 				// Add the current stop location to the list
 
-				locationsList.push(stopParsedData.locality_id ? { locality_id: stopParsedData.locality_id } : { municipality_id: stopParsedData.municipality_id });
+				if (stopParsedData.region_id) regionIdsList.add(stopParsedData.region_id);
+				if (stopParsedData.district_id) districtIdsList.add(stopParsedData.district_id);
+				if (stopParsedData.municipality_id) municipalityIdsList.add(stopParsedData.municipality_id);
+				if (stopParsedData.locality_id) localityIdsList.add(stopParsedData.locality_id);
 
 				//
 			}
@@ -256,20 +263,24 @@ export const syncLinesRoutesPatterns = async () => {
 				currentPatternObject =	{
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
 					direction_id: tripRawData.direction_id,
+					district_ids: [],
 					facilities: [],
 					headsign: tripRawData.trip_headsign,
 					id: tripRawData.pattern_id,
 					line_id: routeRawData.line_id,
-					locations: [],
+					locality_ids: [],
+					long_name: routeRawData.line_short_name,
+					municipality_ids: [],
 					path: stopTimesAsCompletePath,
-					pattern_version_id: currentPatternVersionHash,
+					region_ids: [],
 					route_id: routeRawData.route_id,
 					shape_id: tripRawData.shape_id,
-					short_name: routeRawData.route_short_name,
+					short_name: routeRawData.line_short_name,
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#000000',
-					trip_groups: [],
+					trips: [],
 					tts_headsign: tts.makePattern(routeRawData.line_id, tripRawData.trip_headsign),
 					valid_on: [],
+					version_id: currentPatternVersionHash,
 				};
 			}
 
@@ -279,15 +290,10 @@ export const syncLinesRoutesPatterns = async () => {
 			currentPatternObject.valid_on = Array.from(new Set([...allCalendarDatesRawMap.get(tripRawData.service_id), ...currentPatternObject.valid_on]));
 			currentPatternObject.facilities = Array.from(new Set([...currentPatternObject.facilities, ...facilitiesList]));
 
-			// Deduplicate locations by checking if the location ID or municipality_id is already present or not
-			// This is done to avoid having duplicate locations in the locations array
-
-			currentPatternObject.locations = [...currentPatternObject.locations, ...locationsList].filter((location, index, self) => {
-				return index === self.findIndex((loc) => {
-					if (location.locality_id) return loc.locality_id === location.locality_id;
-					else return loc.municipality_id === location.municipality_id;
-				});
-			});
+			currentPatternObject.region_ids = Array.from(new Set([...currentPatternObject.region_ids, ...regionIdsList]));
+			currentPatternObject.district_ids = Array.from(new Set([...currentPatternObject.district_ids, ...districtIdsList]));
+			currentPatternObject.municipality_ids = Array.from(new Set([...currentPatternObject.municipality_ids, ...municipalityIdsList]));
+			currentPatternObject.locality_ids = Array.from(new Set([...currentPatternObject.locality_ids, ...localityIdsList]));
 
 			//
 			// Create a simplified version of this trip with the goal of finding the same trip,
@@ -298,10 +304,10 @@ export const syncLinesRoutesPatterns = async () => {
 
 			const simplifiedTripGroup = {
 				direction_id: tripRawData.direction_id,
-				pattern_id: tripRawData.pattern_id,
-				pattern_version_id: currentPatternVersionHash,
+				id: tripRawData.pattern_id,
 				route_id: tripRawData.route_id,
 				simplified_schedule: stopTimesAsSimplifiedSchedule,
+				version_id: currentPatternVersionHash,
 			};
 
 			//
@@ -313,10 +319,10 @@ export const syncLinesRoutesPatterns = async () => {
 			// Check if this trip group already exists, and create if it doesn't.
 			// The created trip group will have all the complete information not used to differentiate between groups.
 
-			const allTripGroupsForThisPattern = new Map<string, TripGroup>();
-			currentPatternObject.trip_groups.forEach(item => allTripGroupsForThisPattern.set(item.trip_group_id, item));
+			const allTripGroupsForThisPattern = new Map<string, Trip>();
+			currentPatternObject.trips.forEach(item => allTripGroupsForThisPattern.set(item.version_id, item));
 
-			let currentTripGroupObject: TripGroup;
+			let currentTripGroupObject: Trip;
 
 			if (allTripGroupsForThisPattern.has(currentTripGroupHash)) {
 				currentTripGroupObject = allTripGroupsForThisPattern.get(currentTripGroupHash);
@@ -325,9 +331,9 @@ export const syncLinesRoutesPatterns = async () => {
 				currentTripGroupObject = {
 					schedule: stopTimesAsCompleteSchedule,
 					service_ids: [],
-					trip_group_id: currentTripGroupHash,
 					trip_ids: [],
 					valid_on: [],
+					version_id: currentTripGroupHash,
 				};
 			}
 
@@ -340,7 +346,7 @@ export const syncLinesRoutesPatterns = async () => {
 
 			allTripGroupsForThisPattern.set(currentTripGroupHash, currentTripGroupObject);
 
-			currentPatternObject.trip_groups = Array.from(allTripGroupsForThisPattern.values());
+			currentPatternObject.trips = Array.from(allTripGroupsForThisPattern.values());
 
 			//
 			// Create the route object if it doesn't exist yet. Notice we're not using hashes here
@@ -354,13 +360,17 @@ export const syncLinesRoutesPatterns = async () => {
 			else {
 				currentRouteObject = {
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
+					district_ids: [],
 					facilities: [],
 					id: routeRawData.route_id,
 					line_id: routeRawData.line_id,
-					locations: [],
+					locality_ids: [],
 					long_name: routeRawData.route_long_name,
+					municipality_ids: [],
 					pattern_ids: [],
+					region_ids: [],
 					short_name: routeRawData.route_short_name,
+					stop_ids: [],
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
 					tts_name: tts.makeRoute(routeRawData.line_id, routeRawData.route_long_name),
 				};
@@ -373,15 +383,10 @@ export const syncLinesRoutesPatterns = async () => {
 
 			currentRouteObject.facilities = Array.from(new Set([...currentRouteObject.facilities, ...facilitiesList]));
 
-			// Deduplicate locations by checking if the location ID or municipality_id is already present or not
-			// This is done to avoid having duplicate locations in the locations array
-
-			currentRouteObject.locations = [...currentRouteObject.locations, ...locationsList].filter((location, index, self) => {
-				return index === self.findIndex((loc) => {
-					if (location.locality_id) return loc.locality_id === location.locality_id;
-					else return loc.municipality_id === location.municipality_id;
-				});
-			});
+			currentRouteObject.region_ids = Array.from(new Set([...currentRouteObject.region_ids, ...regionIdsList]));
+			currentRouteObject.district_ids = Array.from(new Set([...currentRouteObject.district_ids, ...districtIdsList]));
+			currentRouteObject.municipality_ids = Array.from(new Set([...currentRouteObject.municipality_ids, ...municipalityIdsList]));
+			currentRouteObject.locality_ids = Array.from(new Set([...currentRouteObject.locality_ids, ...localityIdsList]));
 
 			//
 			// Create the line object if it doesn't exist yet
@@ -394,13 +399,17 @@ export const syncLinesRoutesPatterns = async () => {
 			else {
 				currentLineObject = {
 					color: routeRawData.route_color ? `#${routeRawData.route_color}` : '#000000',
+					district_ids: [],
 					facilities: [],
 					id: routeRawData.line_id,
-					locations: [],
+					locality_ids: [],
 					long_name: routeRawData.route_long_name,
+					municipality_ids: [],
 					pattern_ids: [],
+					region_ids: [],
 					route_ids: [],
 					short_name: routeRawData.route_short_name,
+					stop_ids: [],
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
 					tts_name: tts.makeLine(routeRawData.line_id, routeRawData.route_long_name),
 				};
@@ -414,15 +423,10 @@ export const syncLinesRoutesPatterns = async () => {
 
 			currentLineObject.facilities = Array.from(new Set([...currentLineObject.facilities, ...facilitiesList]));
 
-			// Deduplicate locations by checking if the location ID or municipality_id is already present or not
-			// This is done to avoid having duplicate locations in the locations array
-
-			currentLineObject.locations = [...currentLineObject.locations, ...locationsList].filter((location, index, self) => {
-				return index === self.findIndex((loc) => {
-					if (location.locality_id) return loc.locality_id === location.locality_id;
-					else return loc.municipality_id === location.municipality_id;
-				});
-			});
+			currentLineObject.region_ids = Array.from(new Set([...currentLineObject.region_ids, ...regionIdsList]));
+			currentLineObject.district_ids = Array.from(new Set([...currentLineObject.district_ids, ...districtIdsList]));
+			currentLineObject.municipality_ids = Array.from(new Set([...currentLineObject.municipality_ids, ...municipalityIdsList]));
+			currentLineObject.locality_ids = Array.from(new Set([...currentLineObject.locality_ids, ...localityIdsList]));
 
 			//
 			// Save the updated objects back to the maps
@@ -439,7 +443,7 @@ export const syncLinesRoutesPatterns = async () => {
 		// However, a small modification is required. The pattern group contains a trips map that should be converted
 		// to an array of trips. Also, the pattern groups themselves should be an array for the current pattern ID.
 
-		const finalizedPatternGroupsData: PatternGroup = Array.from(parsedPatternsForThisPatternGroup.values()).map((item: Pattern) => ({ ...item, trip_groups: Object.values(item.trip_groups) }));
+		const finalizedPatternGroupsData: Pattern[] = Array.from(parsedPatternsForThisPatternGroup.values()).map((item: Pattern) => ({ ...item, trips: Object.values(item.trips) }));
 
 		await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId), JSON.stringify(finalizedPatternGroupsData));
 		updatedPatternKeys.add(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId));

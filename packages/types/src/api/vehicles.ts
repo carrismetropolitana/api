@@ -46,8 +46,8 @@ export enum VehicleEmissionClass {
 	euro6 = 'euro_6',
 };
 
-export function convertVehicleEmissionClassCode(emissionClassCode: string): undefined | VehicleEmissionClass {
-	switch (emissionClassCode) {
+export function convertVehicleEmissionClassCode(value: string): undefined | VehicleEmissionClass {
+	switch (value) {
 		case '1':
 			return VehicleEmissionClass.euro1;
 		case '2':
@@ -78,8 +78,8 @@ export enum VehiclePropulsion {
 	natural_gas = 'natural_gas',
 }
 
-export function convertVehiclePropulsionCode(propulsionCode: string): undefined | VehiclePropulsion {
-	switch (propulsionCode) {
+export function convertVehiclePropulsionCode(value: string): undefined | VehiclePropulsion {
+	switch (value) {
 		case '1':
 			return VehiclePropulsion.gasoline;
 		case '2':
@@ -109,6 +109,19 @@ export enum VehicleCurrentStatus {
 	stopped_at = 'stopped_at',
 }
 
+export function convertVehicleCurrentStatusCode(value: string): undefined | VehicleCurrentStatus {
+	switch (value) {
+		case 'IN_TRANSIT_TO':
+			return VehicleCurrentStatus.in_transit_to;
+		case 'INCOMING_AT':
+			return VehicleCurrentStatus.incoming_at;
+		case 'STOPPED_AT':
+			return VehicleCurrentStatus.stopped_at;
+		default:
+			return undefined;
+	}
+}
+
 /* * */
 
 export enum VehicleScheduleRelationship {
@@ -116,6 +129,17 @@ export enum VehicleScheduleRelationship {
 	canceled = 'canceled',
 	scheduled = 'scheduled',
 	unscheduled = 'unscheduled',
+}
+
+export function convertVehicleScheduleRelationshipCode(value: string): undefined | VehicleScheduleRelationship {
+	switch (value) {
+		case 'ADDED':
+			return VehicleScheduleRelationship.added;
+		case 'SCHEDULED':
+			return VehicleScheduleRelationship.scheduled;
+		default:
+			return VehicleScheduleRelationship.added;
+	}
 }
 
 /* * */
