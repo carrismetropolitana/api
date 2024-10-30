@@ -1,40 +1,28 @@
 /* * */
 
 export interface Region {
+	id: string
+	name: string
+}
+
+export interface District {
+	id: string
+	name: string
 	region_id: string
-	region_name: string
 }
 
-export interface District extends Region {
+export interface Municipality {
 	district_id: string
-	district_name: string
+	id: string
+	name: string
+	region_id: string
 }
 
-export interface Municipality extends District {
-	municipality_id: string
-	municipality_name: string
-}
-
-export interface Locality extends Municipality {
+export interface Locality {
 	display: string
-	locality_id: string
-	locality_name: string
-}
-
-export type Location = Locality & Municipality;
-
-export interface Address {
-	postal_code: string
-	street: string
-}
-
-export interface Contact {
-	email: string
-	phone: string
-	website: string
-}
-
-export interface Position {
-	latitude: number
-	longitude: number
+	district_id: string
+	id: string
+	municipality_id: string
+	name: string
+	region_id: string
 }

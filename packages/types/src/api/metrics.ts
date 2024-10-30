@@ -4,15 +4,15 @@ interface ByHour {
 }
 
 interface ByDay {
+	by_hour: ByHour[]
 	day: string
 	qty: number
-	by_hour: ByHour[]
 }
 
 export interface DemandMetrics {
 	by_day: ByDay[]
 	end_date: string
+	item_id: string
 	start_date: string
 	total_qty: number
-    item_id: string
 };
