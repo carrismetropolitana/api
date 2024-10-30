@@ -2,6 +2,7 @@
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { Archive } from '@carrismetropolitana/api-types/network';
 import { convertVehicleCurrentStatusCode, convertVehicleScheduleRelationshipCode, Vehicle, VehicleOccupancyStatus } from '@carrismetropolitana/api-types/vehicles';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -57,16 +58,16 @@ export const syncRealtime = async () => {
 	const currentArchiveIds = {};
 
 	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
-	const allArchivesData = JSON.parse(allArchivesTxt);
+	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
-		const archiveStartDate = DateTime.fromFormat(archiveData.start_date, 'yyyyMMdd');
-		const archiveEndDate = DateTime.fromFormat(archiveData.end_date, 'yyyyMMdd');
+		const archiveStartDate = DateTime.fromFormat(archiveData.valid_range.start, 'yyyyMMdd');
+		const archiveEndDate = DateTime.fromFormat(archiveData.valid_range.end, 'yyyyMMdd');
 		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) {
 			continue;
 		}
 		else {
-			currentArchiveIds[archiveData.operator_id] = archiveData.id;
+			currentArchiveIds[archiveData.agency_id] = archiveData.id;
 		}
 	}
 
