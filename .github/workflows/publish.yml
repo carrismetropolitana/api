@@ -1,0 +1,42 @@
+name: Actions
+
+on:
+  push:
+    branches:
+      - alpha
+
+jobs:
+  #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  publish:
+    name: 'Publish to NPM'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Change directory
+        run: cd packages/types
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Bump package version
+        run: npx @helperkits/bumper bump
+
+      - name: Build package
+        run: npm run build
+
+      - name: Publish package to NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

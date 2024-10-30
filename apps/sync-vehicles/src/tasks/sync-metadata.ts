@@ -11,7 +11,6 @@ import Papa from 'papaparse';
 
 /* * */
 
-// const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/latest/vehicles/vehicles.csv';
 const DATASET_FILE_URL = 'https://storage.carrismetropolitana.pt/static/test/vehicles.csv';
 
 /* * */

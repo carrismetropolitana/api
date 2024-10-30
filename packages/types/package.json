@@ -1,6 +1,23 @@
 {
 	"name": "@carrismetropolitana/api-types",
 	"version": "1.0.0",
+	"license": "AGPL-3.0-or-later",
+	"homepage": "https://github.com/carrismetropolitana/api#readme",
+	"bugs": {
+		"url": "https://github.com/carrismetropolitana/api/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/carrismetropolitana/api.git"
+	},
+	"keywords": [
+		"public transit",
+		"lisboa",
+		"api"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -30,25 +47,25 @@
 			"require": "./dist/api/locations.js",
 			"types": "./dist/api/locations.d.ts"
 		},
+		"./metrics": {
+			"import": "./dist/api/metrics.js",
+			"require": "./dist/api/metrics.js",
+			"types": "./dist/api/metrics.d.ts"
+		},
 		"./network": {
 			"import": "./dist/api/network.js",
 			"require": "./dist/api/network.js",
 			"types": "./dist/api/network.d.ts"
-		},
-		"./vehicles": {
-			"import": "./dist/api/vehicles.js",
-			"require": "./dist/api/vehicles.js",
-			"types": "./dist/api/vehicles.d.ts"
 		},
 		"./trino": {
 			"import": "./dist/trino/index.js",
 			"require": "./dist/trino/index.js",
 			"types": "./dist/trino/index.d.ts"
 		},
-		"./metrics": {
-			"import": "./dist/api/metrics.js",
-			"require": "./dist/api/metrics.js",
-			"types": "./dist/api/metrics.d.ts"
+		"./vehicles": {
+			"import": "./dist/api/vehicles.js",
+			"require": "./dist/api/vehicles.js",
+			"types": "./dist/api/vehicles.d.ts"
 		}
 	},
 	"scripts": {
@@ -61,8 +78,8 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
-		"@carrismetropolitana/eslint": "20241017.1618.32",
-		"@types/node": "22.7.7",
+		"@carrismetropolitana/eslint": "20241024.1600.5",
+		"@types/node": "22.8.4",
 		"resolve-tspaths": "0.8.22",
 		"typescript": "5.6.3"
 	}

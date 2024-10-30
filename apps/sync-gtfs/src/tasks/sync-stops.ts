@@ -4,7 +4,6 @@ import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Stop as StopsExtended } from '@carrismetropolitana/api-types/gtfs-extended';
-import { Locality, Location, Municipality } from '@carrismetropolitana/api-types/locations';
 import { OperationalStatus, Stop } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
@@ -25,15 +24,6 @@ export const syncStops = async () => {
 
 	LOGGER.title(`Sync Stops`);
 	const globalTimer = new TIMETRACKER();
-
-	//
-	// Fetch all Locations from SERVERDB
-
-	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
-	const allLocalitiesData = JSON.parse(allLocalitiesTxt);
-
-	const allMunicipalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES);
-	const allMunicipalitiesData = JSON.parse(allMunicipalitiesTxt);
 
 	//
 	// Fetch all Stops from NETWORKDB
@@ -73,16 +63,6 @@ export const syncStops = async () => {
 		//
 
 		//
-		// Discover which Location this stop is in.
-		// Try to match the stop's locality first, then fallback to municipality.
-
-		let matchingLocation: Location = allLocalitiesData.find((item: Locality) => item.locality_name === stop.locality && item.municipality_id === stop.municipality_id);
-
-		if (!matchingLocation) {
-			matchingLocation = allMunicipalitiesData.find((item: Municipality) => item.municipality_id === stop.municipality_id);
-		}
-
-		//
 		// Discover which facilities this stop is near to
 
 		const facilities = [];
@@ -115,6 +95,7 @@ export const syncStops = async () => {
 			id: stop.stop_id,
 			lat: stop.stop_lat,
 			line_ids: stop.line_ids || [],
+			locality: stop.locality,
 			lon: stop.stop_lon,
 			municipality_id: stop.municipality_id,
 			municipality_name: stop.municipality_name,

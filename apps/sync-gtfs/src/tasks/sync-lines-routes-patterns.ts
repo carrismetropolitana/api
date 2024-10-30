@@ -209,7 +209,7 @@ export const syncLinesRoutesPatterns = async () => {
 				//
 				// Add the current stop location to the list
 
-				locationsList.push(stopParsedData.location);
+				locationsList.push(stopParsedData.locality_id ? { locality_id: stopParsedData.locality_id } : { municipality_id: stopParsedData.municipality_id });
 
 				//
 			}
