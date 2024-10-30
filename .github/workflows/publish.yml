@@ -1,4 +1,4 @@
-name: Actions
+name: Publish to NPM
 
 on:
   push:
@@ -29,6 +29,7 @@ jobs:
         run: npm install
 
       - name: Bump package version
+        working-directory: ./packages/types
         run: npx @helperkits/bumper bump
 
       - name: Build package
