@@ -45,7 +45,7 @@ function convertToProtobuf(allEvents: Vehicle[]) {
 
 /* * */
 
-export const syncRealtime = async () => {
+export const syncPositions = async () => {
 	//
 
 	LOGGER.title(`SYNC POSITIONS`);

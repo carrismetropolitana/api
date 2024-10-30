@@ -1,7 +1,7 @@
 /* * */
 
 import { syncMetadata } from '@/tasks/sync-metadata.js';
-import { syncRealtime } from '@/tasks/sync-realtime.js';
+import { syncPositions } from '@/tasks/sync-positions.js';
 import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
@@ -31,7 +31,7 @@ const RUN_INTERVAL = 3000; // 3 seconds
 			await syncMetadata();
 		}
 
-		await syncRealtime();
+		await syncPositions();
 
 		setTimeout(runOnInterval, RUN_INTERVAL);
 
