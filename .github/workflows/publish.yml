@@ -25,18 +25,18 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install NPM dependencies
-        context: packages/types
+        working-directory: ./packages/types
         run: npm install
 
       - name: Bump package version
         run: npx @helperkits/bumper bump
 
       - name: Build package
-        context: packages/types
+        working-directory: ./packages/types
         run: npm run build
 
       - name: Publish package to NPM
-        context: packages/types
+        working-directory: ./packages/types
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
