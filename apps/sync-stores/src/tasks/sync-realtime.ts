@@ -29,7 +29,7 @@ export const syncRealtime = async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Retrieve existing ENCM documents from database
+	// Retrieve existing store documents from database
 
 	const allStoresTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES);
 	const allStoresData: Store[] = JSON.parse(allStoresTxt);
@@ -44,7 +44,7 @@ export const syncRealtime = async () => {
 	const allCounters = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'siteReportByCounter' });
 
 	//
-	// Add realtime status to each ENCM
+	// Add realtime status to each store
 
 	const updatedStoresData: Store[] = [];
 
@@ -52,12 +52,17 @@ export const syncRealtime = async () => {
 		//
 
 		//
-		// Filter all waiting tickets by the current ENCM id
+		// Skip if no data was found for the current store
+
+		if (!allTicketsWaiting?.content?.ticket || !allCounters?.content?.siteReport) continue;
+
+		//
+		// Filter all waiting tickets by the current store id
 
 		const ticketsWaiting = allTicketsWaiting?.content?.ticket?.filter(item => item.siteEID === foundDocument.id);
 
 		//
-		// Filter active counters for the current ENCM id, and deduplicate them
+		// Filter active counters for the current store id, and deduplicate them
 
 		const activeCounters = allCounters?.content?.siteReport?.filter((item) => {
 			const siteEidMatchesEncmId = item.siteEID === foundDocument.id;
