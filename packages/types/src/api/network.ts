@@ -123,14 +123,19 @@ export interface Schedule {
 }
 
 export interface Stop {
+	district_id: string
+	district_name: string
 	facilities: string[]
 	id: string
 	lat: number
 	line_ids: string[]
-	location: Location
 	lon: number
+	municipality_id: string
+	municipality_name: string
 	operational_status: OperationalStatus
 	pattern_ids: string[]
+	region_id: string
+	region_name: string
 	route_ids: string[]
 	short_name: string
 	stop_name: string

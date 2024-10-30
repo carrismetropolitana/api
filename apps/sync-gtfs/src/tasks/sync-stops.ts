@@ -109,14 +109,19 @@ export const syncStops = async () => {
 		// Build the final stop object
 
 		const parsedStop: Stop = {
+			district_id: stop.district_id,
+			district_name: stop.district_name,
 			facilities: facilities || [],
 			id: stop.stop_id,
 			lat: stop.stop_lat,
 			line_ids: stop.line_ids || [],
-			location: matchingLocation,
 			lon: stop.stop_lon,
+			municipality_id: stop.municipality_id,
+			municipality_name: stop.municipality_name,
 			operational_status: OperationalStatus[stop.operational_status],
 			pattern_ids: stop.pattern_ids || [],
+			region_id: stop.region_id,
+			region_name: stop.region_name,
 			route_ids: stop.route_ids || [],
 			short_name: stop.stop_short_name,
 			stop_name: stop.stop_name,
