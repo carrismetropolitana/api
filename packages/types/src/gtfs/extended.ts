@@ -279,6 +279,6 @@ export interface EntitySelector {
 
 /* * */
 
-export function convertGTFSBoolToBoolean(gtfsBool: GTFSBool): boolean {
-	return gtfsBool === GTFSBool.YES ? true : false;
+export function convertGTFSBoolToBoolean(value: GTFSBool): boolean {
+	return Number(value) === GTFSBool.YES ? true : false;
 }
