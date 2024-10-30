@@ -52,11 +52,6 @@ export const syncRealtime = async () => {
 		//
 
 		//
-		// Skip if no data was found for the current store
-
-		if (!allTicketsWaiting?.content?.ticket || !allCounters?.content?.siteReport) continue;
-
-		//
 		// Filter all waiting tickets by the current store id
 
 		const ticketsWaiting = allTicketsWaiting?.content?.ticket?.filter(item => item.siteEID === foundDocument.id);
