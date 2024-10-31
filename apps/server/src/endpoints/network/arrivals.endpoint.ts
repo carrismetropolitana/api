@@ -1,5 +1,7 @@
 /* * */
 
+import type { Archive, Pattern } from '@carrismetropolitana/api-types/network';
+
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
@@ -20,7 +22,7 @@ const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 /* * */
 
-FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:_id', async (request, reply) => {
+FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply) => {
 	//
 
 	if (!regexPatternForStopId.test(request.params.id)) {
@@ -58,11 +60,18 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:_id', async (request, repl
 FASTIFY.server.get<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) => {
 	//
 
+	const todayDateString = DateTime.now().toFormat('yyyyMMdd');
 	const currentArchiveIds = await getCurrentArchiveIds();
 
-	const singleItem = await SERVERDB.get(`${SERVERDB_KEYS.NETWORK.PATTERNS}:${request.params.id}`);
-	const singleItemJson = await JSON.parse(singleItem);
-	const stopIdsForThisPattern = singleItemJson?.path?.map(item => item.stop.id).join(',');
+	const foundPatternTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(request.params.id));
+	const foundPatternData: Pattern[] = await JSON.parse(foundPatternTxt);
+	const activePatternsData = foundPatternData?.filter(pattern => pattern.valid_on.includes(todayDateString));
+
+	if (!activePatternsData) {
+		return reply.status(404).send([]);
+	}
+
+	const stopIdsForThisPattern = activePatternsData.flatMap(item => item.path.map(waypoint => waypoint.stop_id)).join(',');
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
 	const result = response
 		.filter((item) => {
@@ -96,13 +105,13 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_pattern/:id', async (request, re
 async function getCurrentArchiveIds() {
 	const currentArchiveIds = {};
 	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
-	const allArchivesData = JSON.parse(allArchivesTxt);
+	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
-		const archiveStartDate = DateTime.fromFormat(archiveData.start_date, 'yyyyMMdd');
-		const archiveEndDate = DateTime.fromFormat(archiveData.end_date, 'yyyyMMdd');
+		const archiveStartDate = DateTime.fromFormat(archiveData.valid_range.start, 'yyyyMMdd');
+		const archiveEndDate = DateTime.fromFormat(archiveData.valid_range.end, 'yyyyMMdd');
 		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) continue;
-		else currentArchiveIds[archiveData.operator_id] = archiveData.id;
+		else currentArchiveIds[archiveData.agency_id] = archiveData.id;
 	}
 
 	return currentArchiveIds;
