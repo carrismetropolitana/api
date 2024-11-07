@@ -32,6 +32,14 @@ export const syncMetadata = async () => {
 	const downloadedCsvText = await downloadedCsvFile.text();
 	const allItemsCsv = Papa.parse<VehicleMetadataSource>(downloadedCsvText, { header: true });
 
+	LOGGER.info(`Downloading existing vehicles...`);
+
+	const existingVehiclesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL);
+	const existingVehiclesData: Vehicle[] = JSON.parse(existingVehiclesTxt);
+
+	const allVehiclesMap = new Map<string, Vehicle>();
+	existingVehiclesData.forEach(vehicle => allVehiclesMap.set(vehicle.id, vehicle));
+
 	//
 	// For each item, update its entry in the database
 
@@ -42,7 +50,10 @@ export const syncMetadata = async () => {
 
 	for (const itemCsv of allItemsCsv.data) {
 		//
+		const existingItemData = allVehiclesMap.get(`${itemCsv.agency_id}|${itemCsv.vehicle_id}`);
+		//
 		const parsedItemData: Vehicle = {
+			...existingItemData,
 			agency_id: itemCsv.agency_id,
 			bikes_allowed: convertGTFSBoolToBoolean(itemCsv.bikes_allowed),
 			capacity_seated: Number(itemCsv.capacity_seated),
@@ -51,11 +62,9 @@ export const syncMetadata = async () => {
 			emission_class: convertVehicleEmissionClassCode(itemCsv.emission_class),
 			id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
 			license_plate: itemCsv.license_plate?.replace(/^(\w{2})(\w{2})(\w{2})$/, '$1-$2-$3'),
-			line_id: undefined,
 			make: itemCsv.make,
 			model: itemCsv.model,
 			owner: itemCsv.owner,
-			pattern_id: undefined,
 			propulsion: convertVehiclePropulsionCode(itemCsv.propulsion),
 			registration_date: itemCsv.registration_date,
 			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible),

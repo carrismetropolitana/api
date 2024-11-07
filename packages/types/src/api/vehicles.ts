@@ -1,5 +1,40 @@
 /* * */
 
+export interface VehicleV2 {
+	agency_id: string
+	bearing?: number
+	bikes_allowed: boolean
+	block_id?: string
+	capacity_seated?: number
+	capacity_standing?: number
+	capacity_total?: number
+	current_status?: VehicleCurrentStatus
+	direction_id?: number
+	emission_class?: VehicleEmissionClass
+	event_id?: string
+	id: string
+	lat?: number
+	license_plate?: string
+	line_id: string
+	lon?: number
+	make?: string
+	model?: string
+	occupancy_estimated?: number
+	occupancy_status?: VehicleOccupancyStatus
+	owner?: string
+	pattern_id: string
+	propulsion?: VehiclePropulsion
+	registration_date?: string
+	route_id?: string
+	schedule_relationship?: VehicleScheduleRelationship
+	shift_id?: string
+	speed?: number
+	stop_id?: string
+	timestamp?: number
+	trip_id?: string
+	wheelchair_accessible: boolean
+}
+
 export interface Vehicle {
 	agency_id: string
 	bearing?: number
