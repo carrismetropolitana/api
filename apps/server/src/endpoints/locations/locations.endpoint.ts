@@ -7,7 +7,7 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 /* * */
 
 FASTIFY.server.get('/locations/localities', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.DISTRICTS);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
