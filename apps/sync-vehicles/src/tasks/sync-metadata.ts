@@ -54,7 +54,7 @@ export const syncMetadata = async () => {
 		//
 		const parsedItemData: Vehicle = {
 			agency_id: itemCsv.agency_id ?? existingItemData.agency_id,
-			bikes_allowed: convertGTFSBoolToBoolean(itemCsv.bikes_allowed ?? existingItemData.bikes_allowed),
+			bikes_allowed: convertGTFSBoolToBoolean(itemCsv.bikes_allowed ?? Number(existingItemData.bikes_allowed)),
 			capacity_seated: Number(itemCsv.capacity_seated ?? existingItemData.capacity_seated),
 			capacity_standing: Number(itemCsv.capacity_standing ?? existingItemData.capacity_standing),
 			capacity_total: Number(itemCsv.capacity_seated ?? existingItemData.capacity_seated) + Number(itemCsv.capacity_standing ?? existingItemData.capacity_standing),
