@@ -50,14 +50,14 @@ export interface Vehicle {
 	id: string
 	lat?: number
 	license_plate?: string
-	line_id: string
+	line_id?: string
 	lon?: number
 	make?: string
 	model?: string
 	occupancy_estimated?: number
 	occupancy_status?: VehicleOccupancyStatus
 	owner?: string
-	pattern_id: string
+	pattern_id?: string
 	propulsion?: VehiclePropulsion
 	registration_date?: string
 	route_id?: string
