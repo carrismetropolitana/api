@@ -66,7 +66,7 @@ export const syncMetadata = async () => {
 			owner: itemCsv.owner ?? existingItemData.owner,
 			propulsion: convertVehiclePropulsionCode(itemCsv.propulsion ?? existingItemData.propulsion),
 			registration_date: itemCsv.registration_date ?? existingItemData.registration_date,
-			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible ?? existingItemData.wheelchair_accessible),
+			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible ?? Number(existingItemData.wheelchair_accessible)),
 		};
 		//
 		allItemsData.push(parsedItemData);
