@@ -10,6 +10,7 @@ import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import Papa from 'papaparse';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -52,22 +53,24 @@ export const syncMetadata = async () => {
 		//
 		const existingItemData = allVehiclesMap.get(`${itemCsv.agency_id}|${itemCsv.vehicle_id}`);
 		//
-		const parsedItemData: Vehicle = {
-			agency_id: itemCsv.agency_id ?? existingItemData.agency_id,
-			bikes_allowed: convertGTFSBoolToBoolean(itemCsv.bikes_allowed ?? Number(existingItemData.bikes_allowed)),
-			capacity_seated: Number(itemCsv.capacity_seated ?? existingItemData.capacity_seated),
-			capacity_standing: Number(itemCsv.capacity_standing ?? existingItemData.capacity_standing),
-			capacity_total: Number(itemCsv.capacity_seated ?? existingItemData.capacity_seated) + Number(itemCsv.capacity_standing ?? existingItemData.capacity_standing),
-			emission_class: convertVehicleEmissionClassCode(itemCsv.emission_class ?? existingItemData.emission_class),
+		const parsedItemMetadata: Vehicle = {
+			agency_id: itemCsv.agency_id,
+			bikes_allowed: convertGTFSBoolToBoolean(itemCsv.bikes_allowed),
+			capacity_seated: Number(itemCsv.capacity_seated),
+			capacity_standing: Number(itemCsv.capacity_standing),
+			capacity_total: Number(itemCsv.capacity_seated) + Number(itemCsv.capacity_standing),
+			emission_class: convertVehicleEmissionClassCode(itemCsv.emission_class),
 			id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
-			license_plate: (itemCsv.license_plate ?? existingItemData.license_plate)?.replace(/^(\w{2})(\w{2})(\w{2})$/, '$1-$2-$3'),
-			make: itemCsv.make ?? existingItemData.make,
-			model: itemCsv.model ?? existingItemData.model,
-			owner: itemCsv.owner ?? existingItemData.owner,
-			propulsion: convertVehiclePropulsionCode(itemCsv.propulsion ?? existingItemData.propulsion),
-			registration_date: itemCsv.registration_date ?? existingItemData.registration_date,
-			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible ?? Number(existingItemData.wheelchair_accessible)),
+			license_plate: itemCsv.license_plate?.replace(/^(\w{2})(\w{2})(\w{2})$/, '$1-$2-$3'),
+			make: itemCsv.make,
+			model: itemCsv.model,
+			owner: itemCsv.owner,
+			propulsion: convertVehiclePropulsionCode(itemCsv.propulsion),
+			registration_date: itemCsv.registration_date,
+			wheelchair_accessible: convertGTFSBoolToBoolean(itemCsv.wheelchair_accessible),
 		};
+		//
+		const parsedItemData = existingItemData?.timestamp ?? 0 > DateTime.now().minus({ seconds: 90 }).toUnixInteger() ? { ...existingItemData, ...parsedItemMetadata } : parsedItemMetadata;
 		//
 		allItemsData.push(parsedItemData);
 		//
