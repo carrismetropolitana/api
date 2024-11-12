@@ -14,6 +14,9 @@
 		"start": "dotenv-run -- turbo run start",
 		"start:sync": "dotenv-run -- turbo run start:sync"
 	},
+	"dependencies": {
+		"trino-client": "^0.2.3"
+	},
 	"devDependencies": {
 		"turbo": "2.2.3"
 	},
@@ -21,8 +24,5 @@
 	"workspaces": [
 		"apps/*",
 		"packages/*"
-	],
-	"dependencies": {
-		"trino-client": "^0.2.3"
-	}
+	]
 }

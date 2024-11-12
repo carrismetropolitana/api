@@ -9,8 +9,8 @@ import { convertVehicleEmissionClassCode, convertVehiclePropulsionCode, Vehicle 
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import Papa from 'papaparse';
 import { DateTime } from 'luxon';
+import Papa from 'papaparse';
 
 /* * */
 
@@ -39,7 +39,7 @@ export const syncMetadata = async () => {
 	const existingVehiclesData: Vehicle[] = JSON.parse(existingVehiclesTxt);
 
 	const allVehiclesMap = new Map<string, Vehicle>();
-	existingVehiclesData.forEach(vehicle => allVehiclesMap.set(vehicle.id, vehicle));
+	existingVehiclesData?.forEach(vehicle => allVehiclesMap.set(vehicle.id, vehicle));
 
 	//
 	// For each item, update its entry in the database
