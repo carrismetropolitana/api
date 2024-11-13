@@ -75,7 +75,7 @@ FASTIFY.server.get('/metrics/demand/by_operator/:operatorId/:day', async (reques
 /* * */
 
 FASTIFY.server.get('/metrics/service/all', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.SERVICE.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.SERVICE);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply.code(200).send(allItemsTxt);
 });
