@@ -1,38 +1,71 @@
 /* * */
 
+export enum APIStatus {
+	error = 'error',
+	fail = 'fail',
+	success = 'success',
+}
+
+export interface ApiResponse<T> {
+	data?: null | T
+	message?: null | string
+	status: APIStatus
+}
+
 export interface VehicleV2 {
-	agency_id: string
-	bearing?: number
-	bikes_allowed: boolean
-	block_id?: string
-	capacity_seated?: number
-	capacity_standing?: number
-	capacity_total?: number
-	current_status?: VehicleCurrentStatus
-	direction_id?: number
-	emission_class?: VehicleEmissionClass
-	event_id?: string
+
+	capacity: {
+		seated: number
+		standing: number
+		total: number
+	}
+
 	id: string
-	lat?: number
-	license_plate?: string
-	line_id: string
-	lon?: number
-	make?: string
-	model?: string
-	occupancy_estimated?: number
-	occupancy_status?: VehicleOccupancyStatus
-	owner?: string
-	pattern_id: string
-	propulsion?: VehiclePropulsion
-	registration_date?: string
-	route_id?: string
-	schedule_relationship?: VehicleScheduleRelationship
-	shift_id?: string
-	speed?: number
-	stop_id?: string
-	timestamp?: number
-	trip_id?: string
-	wheelchair_accessible: boolean
+
+	metadata: {
+		agency_id: string
+		bikes_allowed: boolean
+		emission_class: string
+		license_plate: string
+		make: string
+		model: string
+		owner: string
+		propulsion: string
+		registration_date: string
+		wheelchair_accessible: string
+	}
+
+	ocupancy: {
+		estimated: number
+		status: VehicleOccupancyStatus
+	}
+
+	position: {
+		bearing: number
+		lat: number
+		lon: number
+		speed: number
+	}
+
+	service: {
+		block_id: string
+		current_status?: VehicleCurrentStatus
+		direction_id: number
+		event_id: number
+		line_id: string
+		pattern_id: string
+		route_id: string
+		schedule_relationship: VehicleScheduleRelationship
+		shift_id: string
+		stop_id: string
+		timestamp: number
+		trip_id: string
+	}
+
+	status: {
+		s: string
+	}
+
 }
 
 export interface Vehicle {

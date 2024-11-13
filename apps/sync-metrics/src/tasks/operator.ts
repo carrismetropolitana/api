@@ -13,8 +13,7 @@ import { DateTime } from 'luxon';
 export default async () => {
 	//
 
-	LOGGER.init();
-
+	LOGGER.title(`Sync Demand Metrics by Operator`);
 	const globalTimer = new TIMETRACKER();
 
 	//
