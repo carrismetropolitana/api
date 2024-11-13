@@ -1,68 +1,53 @@
 /* * */
 
-import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { syncServiceMetrics } from '@/tasks/sync-service-metrics.js';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
-import start from './start.js';
-import daily from './tasks/daily.js';
-import service from './tasks/metrics.service.parser.js';
-import operator from './tasks/operator.js';
-
 /* * */
 
-const HOUR_INTERVAL = 3600000; // 1 hour
-const DAY_INTERVAL = 86400000; // 1 day
-const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
+const RUN_INTERVAL = 3000; // 3 seconds
 
 /* * */
 
 (async function init() {
 	//
 
-	LOGGER.init();
-
-	await SERVERDB.connect();
 	await TRINODB.connect();
 
-	const runEvery5Minutes = async () => {
-		operator().catch((error) => {
-			LOGGER.divider();
-			LOGGER.error(error.stack);
-			LOGGER.divider();
-		});
-		setTimeout(runEvery5Minutes, FIVE_MINUTE_INTERVAL);
+	//
+
+	let counter = 0;
+
+	const runOnInterval = async () => {
+		//
+
+		LOGGER.terminate(`Sync iteration #${counter}`);
+
+		// Run on every 500th iteration
+		if (counter % 500 === 0) {
+			// await syncYearValidations();
+		}
+
+		// Run on every 100th iteration
+		if (counter % 100 === 0) {
+			await syncServiceMetrics();
+		}
+
+		// Run on all iterations
+		// await syncTodayValidations();
+
+		setTimeout(runOnInterval, RUN_INTERVAL);
+
+		counter++;
+
+		LOGGER.divider();
+
+		//
 	};
 
-	const runEveryHour = async () => {
-		service().catch((error) => {
-			LOGGER.divider();
-			LOGGER.error(error.stack);
-			LOGGER.divider();
-		});
-
-		start().catch((error) => {
-			LOGGER.divider();
-			LOGGER.error(error.stack);
-			LOGGER.divider();
-		});
-		setTimeout(runEveryHour, HOUR_INTERVAL);
-	};
-
-	const runEveryDay = () => {
-		daily().catch ((error) => {
-			LOGGER.divider();
-			LOGGER.error(error.stack);
-			LOGGER.divider();
-		});
-
-		setTimeout(runEveryDay, DAY_INTERVAL);
-	};
-
-	runEvery5Minutes();
-	runEveryHour();
-	runEveryDay();
+	await runOnInterval();
 
 	//
 })();

@@ -26,9 +26,7 @@ export const SERVERDB_KEYS = Object.freeze({
 			BY_OPERATOR: 'metrics:demand:operator',
 			BY_STOP: 'metrics:demand:by_stop',
 		},
-		SERVICE: {
-			ALL: 'metrics:service',
-		},
+		SERVICE: 'metrics:service',
 	},
 	NETWORK: {
 		ALERTS: {

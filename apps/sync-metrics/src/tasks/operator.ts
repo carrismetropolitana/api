@@ -2,7 +2,6 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { CountValidationsResult, TRINODB } from '@carrismetropolitana/api-services/TRINODB';
-
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
@@ -36,23 +35,23 @@ export default async () => {
 
 	// For each operator, get the validations
 	await Promise.all(operatorIds.map(async (operatorId) => {
-		const result = TRINODB.countValidations({ 
-			timeUnit: 'day',
-			options: { 
-				where: { 
-					operator: { $in: [ operatorId ] },
-					transactionDate: { $gte: startDateString, $lte: endDateString }, 
-					validationStatus: { $in: apexValidationStatuses } 
+		const result = TRINODB.countValidations({
+			options: {
+				where: {
+					operator: { $in: [operatorId] },
+					transactionDate: { $gte: startDateString, $lte: endDateString },
+					validationStatus: { $in: apexValidationStatuses },
 				},
 			},
-		})
+			timeUnit: 'day',
+		});
 
 		LOGGER.info(`Adding operator ${operatorId} to the promises array...`);
 		validationFetchPromises.push(result);
 	}));
 
-	const validations : CountValidationsResult[] = await Promise.all(validationFetchPromises);
-	
+	const validations: CountValidationsResult[] = await Promise.all(validationFetchPromises);
+
 	validations.forEach((validation, index) => {
 		validationsByDayArray.push({ count: validation[0].count_result, date: DateTime.fromFormat(validation[0].transaction_time, 'yyyy-LL-dd').toFormat('yyyyLLdd'), operator: operatorIds[index] });
 		LOGGER.info(`Operator ${operatorIds[index]} | Validations: ${validation[0].count_result}`);
