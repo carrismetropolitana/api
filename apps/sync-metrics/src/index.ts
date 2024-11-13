@@ -27,7 +27,12 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 	await TRINODB.connect();
 
 	const runEvery5Minutes = async () => {
-		operator().catch((error) => {
+		// operator().catch((error) => {
+		// 	LOGGER.divider();
+		// 	LOGGER.error(error.stack);
+		// 	LOGGER.divider();
+		// });
+		service().catch((error) => {
 			LOGGER.divider();
 			LOGGER.error(error.stack);
 			LOGGER.divider();
@@ -42,20 +47,20 @@ const FIVE_MINUTE_INTERVAL = 300000; // 5 minutes
 			LOGGER.divider();
 		});
 
-		start().catch((error) => {
-			LOGGER.divider();
-			LOGGER.error(error.stack);
-			LOGGER.divider();
-		});
+		// start().catch((error) => {
+		// 	LOGGER.divider();
+		// 	LOGGER.error(error.stack);
+		// 	LOGGER.divider();
+		// });
 		setTimeout(runEveryHour, HOUR_INTERVAL);
 	};
 
 	const runEveryDay = () => {
-		daily().catch ((error) => {
-			LOGGER.divider();
-			LOGGER.error(error.stack);
-			LOGGER.divider();
-		});
+		// daily().catch ((error) => {
+		// 	LOGGER.divider();
+		// 	LOGGER.error(error.stack);
+		// 	LOGGER.divider();
+		// });
 
 		setTimeout(runEveryDay, DAY_INTERVAL);
 	};
