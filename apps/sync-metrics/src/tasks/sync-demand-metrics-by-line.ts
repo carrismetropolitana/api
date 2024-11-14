@@ -137,7 +137,7 @@ export const syncDemandMetricsByLine = async () => {
 
 	//
 
-	LOGGER.terminate(`Parsed ${validationsByLinesArray.length} validations, ${validationsByLinesArray.length} Lines (${globalTimer.get()})`);
+	LOGGER.terminate(`Parsed validations for ${validationsByLinesArray.length} Lines (${globalTimer.get()})`);
 
 	//
 };

@@ -137,7 +137,7 @@ export const syncDemandMetricsByStop = async () => {
 
 	//
 
-	LOGGER.terminate(`Parsed ${validationsByStopsArray.length} validations, ${validationsByStopsArray.length} Stops (${globalTimer.get()})`);
+	LOGGER.terminate(`Parsed validations for ${validationsByStopsArray.length} Stops (${globalTimer.get()})`);
 
 	//
 };
