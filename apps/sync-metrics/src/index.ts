@@ -1,13 +1,19 @@
 /* * */
 
-import { syncServiceMetrics } from '@/tasks/sync-service-metrics.js';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
 
 /* * */
 
-const RUN_INTERVAL = 3000; // 3 seconds
+import { syncDemandMetricsByDay } from '@/tasks/sync-demand-metrics-by-day.js';
+import { syncDemandMetricsByLine } from '@/tasks/sync-demand-metrics-by-line.js';
+import { syncServiceMetrics } from '@/tasks/sync-service-metrics.js';
+// import { syncDemandMetricsByStop } from '@/tasks/sync-demand-metrics-by-stop.js';
+
+/* * */
+
+const RUN_INTERVAL = 300000; // 5 minutes
 
 /* * */
 
@@ -36,7 +42,9 @@ const RUN_INTERVAL = 3000; // 3 seconds
 		}
 
 		// Run on all iterations
-		// await syncTodayValidations();
+		await syncDemandMetricsByDay();
+		await syncDemandMetricsByLine();
+		// await syncDemandMetricsByStop();
 
 		setTimeout(runOnInterval, RUN_INTERVAL);
 

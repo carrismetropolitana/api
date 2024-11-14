@@ -20,6 +20,29 @@ export interface ServiceMetrics {
 
 /* * */
 
+export interface DemandMetricsByDay {
+	operational_day: string
+	total_qty: number
+}
+
+export interface DemandMetricsByLine {
+	by_day: ByDay[]
+	end_date: string
+	line_id: string
+	start_date: string
+	total_qty: number
+}
+
+export interface DemandMetricsByStop {
+	by_day: ByDay[]
+	end_date: string
+	start_date: string
+	stop_id: string
+	total_qty: number
+}
+
+/* * */
+
 interface ByHour {
 	hour: number
 	qty: number
