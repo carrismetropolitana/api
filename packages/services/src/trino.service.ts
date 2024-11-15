@@ -81,9 +81,7 @@ export class TrinoService {
 	/**
 	 * Constructs a WHERE clause from the given filter object, escaping values to prevent SQL injection.
 	 */
-	buildWhereClause(where?: Record<string, any>): string {
-		if (!where) return '';
-
+	buildWhereClause(where: Record<string, any>): string {
 		const conditions = Object.entries(where).map(([key, value]) => {
 			if (key === '$and' && Array.isArray(value)) {
 				const andConditions = value.map((condition) => {
