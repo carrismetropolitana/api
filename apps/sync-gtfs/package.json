@@ -28,23 +28,23 @@
 		"extract-zip": "2.0.1",
 		"luxon": "3.5.0",
 		"papaparse": "5.4.1",
-		"pg": "8.13.0",
+		"pg": "8.13.1",
 		"pg-copy-streams": "6.0.6"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@carrismetropolitana/eslint": "20241017.1618.32",
+		"@carrismetropolitana/eslint": "20241024.1600.5",
 		"@dotenv-run/cli": "1.3.6",
-		"@types/adm-zip": "0.5.5",
+		"@types/adm-zip": "0.5.6",
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.7.7",
-		"@types/papaparse": "5.3.14",
+		"@types/node": "22.9.0",
+		"@types/papaparse": "5.3.15",
 		"@types/pg": "8.11.10",
 		"@types/pg-copy-streams": "1.2.5",
 		"resolve-tspaths": "0.8.22",
-		"tsx": "4.19.1",
+		"tsx": "4.19.2",
 		"typescript": "5.6.3"
 	}
 }

@@ -20,21 +20,21 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"fastify": "5.0.0",
+		"fastify": "5.1.0",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.5.0",
-		"pino-pretty": "^11.3.0",
+		"pino-pretty": "13.0.0",
 		"protobufjs": "7.4.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
-		"@carrismetropolitana/eslint": "20241017.1618.32",
+		"@carrismetropolitana/eslint": "20241024.1600.5",
 		"@dotenv-run/cli": "1.3.6",
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.7.7",
+		"@types/node": "22.9.0",
 		"resolve-tspaths": "0.8.22",
-		"tsx": "4.19.1",
+		"tsx": "4.19.2",
 		"typescript": "5.6.3"
 	}
 }
