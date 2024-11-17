@@ -25,47 +25,71 @@ FASTIFY.server.get('/facilities', async (_, reply) => {
 FASTIFY.server.get('/facilities/stores', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.header('cache-control', 'public, max-age=8').code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=30')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/helpdesks', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.HELPDESKS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/schools', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.SCHOOLS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/boat_stations', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.BOAT_STATIONS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/light_rail_stations', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.LIGHT_RAIL_STATIONS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/subway_stations', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.SUBWAY_STATIONS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/train_stations', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.TRAIN_STATIONS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/pips', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.PIPS);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
 });

@@ -21,7 +21,10 @@ const gtfsRealtime = protobufjs.loadSync(
 FASTIFY.server.get('/alerts', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.ALL);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=20')
+		.send(allItemsTxt);
 });
 
 FASTIFY.server.get('/alerts.pb', async (_, reply) => {
@@ -30,5 +33,9 @@ FASTIFY.server.get('/alerts.pb', async (_, reply) => {
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
 	const message = FeedMessage.fromObject(allItemsData);
 	const buffer = FeedMessage.encode(message).finish();
-	return reply.type('application/octet-stream').send(buffer);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=20')
+		.type('application/octet-stream')
+		.send(buffer);
 });

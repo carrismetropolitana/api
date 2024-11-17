@@ -17,5 +17,8 @@ interface RequestSchema {
 FASTIFY.server.get<RequestSchema>('/patterns/:id', async (request, reply) => {
 	const singleItemTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(request.params.id));
 	if (!singleItemTxt) return reply.code(404).send({});
-	return reply.code(200).send(singleItemTxt);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(singleItemTxt);
 });

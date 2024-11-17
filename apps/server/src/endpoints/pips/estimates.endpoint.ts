@@ -100,7 +100,10 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					timetabledDepartureTime: '23:59:59',
 				},
 			];
-			return reply.code(200).send(response);
+			return reply
+				.code(200)
+				.header('cache-control', 'public, max-age=20')
+				.send(response);
 		}
 
 		//
@@ -128,7 +131,10 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					timetabledDepartureTime: '23:59:59',
 				},
 			];
-			return reply.code(200).send(response);
+			return reply
+				.code(200)
+				.header('cache-control', 'public, max-age=20')
+				.send(response);
 		}
 	}
 
@@ -289,13 +295,19 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				timetabledDepartureTime: '23:59:59',
 			},
 		];
-		return reply.code(200).send(response);
+		return reply
+			.code(200)
+			.header('cache-control', 'public, max-age=20')
+			.send(response);
 	}
 
 	//
 	// Return the result if there are estimates
 
-	return reply.code(200).send(result);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=20')
+		.send(result);
 
 	//
 });

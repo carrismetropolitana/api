@@ -52,6 +52,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply
 	});
 	return reply
 		.code(200)
+		.header('cache-control', 'public, max-age=20')
 		.send(result || []);
 });
 
@@ -97,6 +98,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_pattern/:id', async (request, re
 		});
 	return reply
 		.code(200)
+		.header('cache-control', 'public, max-age=20')
 		.send(result || []);
 });
 
