@@ -25,7 +25,7 @@ FASTIFY.server.get('/facilities', async (_, reply) => {
 FASTIFY.server.get('/facilities/stores', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES);
 	if (!allItemsTxt) return reply.code(404).send([]);
-	return reply.code(200).send(allItemsTxt);
+	return reply.header('custom-cache-age', 123).code(200).send(allItemsTxt);
 });
 
 FASTIFY.server.get('/facilities/helpdesks', async (_, reply) => {
