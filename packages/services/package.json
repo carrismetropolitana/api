@@ -54,7 +54,7 @@
 		"mongodb": "6.10.0",
 		"pg": "8.13.1",
 		"redis": "4.7.0",
-		"trino-client": "0.2.4",
+		"trino-client": "0.2.3",
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
