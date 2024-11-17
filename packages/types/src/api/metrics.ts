@@ -38,6 +38,11 @@ export interface DemandMetricsByStop {
 
 /* * */
 
+export interface DemandMetricsByAgency {
+	agency_id: string
+	data: DemandMetricsByAgencyDay[] | DemandMetricsByAgencyMonth[] | DemandMetricsByAgencyYear[]
+}
+
 export interface DemandMetricsByAgencyDay {
 	hour_group: string
 	qty: number

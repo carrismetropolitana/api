@@ -1,10 +1,11 @@
 /* * */
 
+import type { DemandMetricsByStop } from '@carrismetropolitana/api-types/metrics';
+import type { Stop } from '@carrismetropolitana/api-types/network';
+
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { DemandMetricsByStop } from '@carrismetropolitana/api-types/metrics';
-import { Stop } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';

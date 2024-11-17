@@ -1,9 +1,10 @@
 /* * */
 
+import type { DemandMetricsByLine } from '@carrismetropolitana/api-types/metrics';
+
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { DemandMetricsByLine } from '@carrismetropolitana/api-types/metrics';
 import { Line } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';

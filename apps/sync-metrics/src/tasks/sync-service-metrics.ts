@@ -1,8 +1,9 @@
 /* * */
 
+import type { ServiceMetrics, ServiceMetricsSource } from '@carrismetropolitana/api-types/metrics';
+
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { ServiceMetrics, ServiceMetricsSource } from '@carrismetropolitana/api-types/metrics';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
