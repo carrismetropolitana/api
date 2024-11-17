@@ -1,4 +1,8 @@
+/* * */
+
 import { BasicAuth, QueryResult, Trino } from 'trino-client';
+
+/* * */
 
 export interface TrinoOptions {
 	catalog: string

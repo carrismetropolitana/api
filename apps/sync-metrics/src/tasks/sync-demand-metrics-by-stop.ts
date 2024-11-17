@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
 
 const DAYS_TO_RETRIEVE = 15;
 
-const OPERATOR_IDS = ['41', '42', '43', '44'];
+const AGENCY_IDS = ['41', '42', '43', '44'];
 
 const APEX_VALIDATION_STATUSES = [0];
 
@@ -47,7 +47,7 @@ export const syncDemandMetricsByStop = async () => {
 	const queryOptions = {
 		where: {
 			operator: {
-				$in: OPERATOR_IDS,
+				$in: AGENCY_IDS,
 			},
 			rawloaddateiso: {
 				$gte: startDateRawIso,
@@ -70,9 +70,9 @@ export const syncDemandMetricsByStop = async () => {
 		validationsByStopsMap.set(stopId, {
 			by_day: [],
 			end_date: DateTime.now().setZone('Europe/Lisbon').toFormat('yyyyLLdd'),
+			qty: 0,
 			start_date: startDateObject.toFormat('yyyyLLdd'),
 			stop_id: stopId,
-			total_qty: 0,
 		});
 	}
 
@@ -121,8 +121,8 @@ export const syncDemandMetricsByStop = async () => {
 			day: item.transaction_time,
 			qty: item.count_result,
 		});
-		// Increment the total_qty
-		mapItem.total_qty += item.count_result;
+		// Increment the qty
+		mapItem.qty += item.count_result;
 		//
 	});
 

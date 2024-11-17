@@ -20,10 +20,12 @@ export const SERVERDB_KEYS = Object.freeze({
 	},
 	METRICS: {
 		DEMAND: {
-			BY_DAY: 'metrics:demand:by_day',
+			BY_AGENCY: {
+				DAY: 'metrics:demand:agency:day',
+				MONTH: 'metrics:demand:agency:month',
+				YEAR: 'metrics:demand:agency:year',
+			},
 			BY_LINE: 'metrics:demand:by_line',
-			BY_MONTH: 'metrics:demand:by_month',
-			BY_OPERATOR: 'metrics:demand:operator',
 			BY_STOP: 'metrics:demand:by_stop',
 		},
 		SERVICE: 'metrics:service',

@@ -20,25 +20,37 @@ export interface ServiceMetrics {
 
 /* * */
 
-export interface DemandMetricsByDay {
-	operational_day: string
-	total_qty: number
-}
-
 export interface DemandMetricsByLine {
 	by_day: ByDay[]
 	end_date: string
 	line_id: string
+	qty: number
 	start_date: string
-	total_qty: number
 }
 
 export interface DemandMetricsByStop {
 	by_day: ByDay[]
 	end_date: string
+	qty: number
 	start_date: string
 	stop_id: string
-	total_qty: number
+}
+
+/* * */
+
+export interface DemandMetricsByAgencyDay {
+	hour_group: string
+	qty: number
+}
+
+export interface DemandMetricsByAgencyMonth {
+	day_group: string
+	qty: number
+}
+
+export interface DemandMetricsByAgencyYear {
+	month_group: string
+	qty: number
 }
 
 /* * */
@@ -53,11 +65,3 @@ interface ByDay {
 	day: string
 	qty: number
 }
-
-export interface DemandMetrics {
-	by_day: ByDay[]
-	end_date: string
-	item_id: string
-	start_date: string
-	total_qty: number
-};
