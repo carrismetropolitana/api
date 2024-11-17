@@ -102,7 +102,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			];
 			return reply
 				.code(200)
-				.header('cache-control', 'public, max-age=20')
+				.header('cache-control', 'public, no-cache')
 				.send(response);
 		}
 
@@ -133,7 +133,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			];
 			return reply
 				.code(200)
-				.header('cache-control', 'public, max-age=20')
+				.header('cache-control', 'public, no-cache')
 				.send(response);
 		}
 	}
@@ -306,7 +306,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=20')
+		.header('cache-control', 'public, no-cache')
 		.send(result);
 
 	//
