@@ -1,11 +1,11 @@
 /* * */
 
 import type { DemandMetricsByLine } from '@carrismetropolitana/api-types/metrics';
+import type { Line } from '@carrismetropolitana/api-types/network';
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Line } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -17,7 +17,7 @@ const DAYS_TO_RETRIEVE = 15;
 
 const AGENCY_IDS = ['41', '42', '43', '44'];
 
-const APEX_VALIDATION_STATUSES = [0];
+const APEX_VALIDATION_STATUSES = [0, 4, 5, 6];
 
 /* * */
 
