@@ -22,7 +22,7 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedResponse = await fetch('https://www.carrismetropolitana.pt/?api=alerts-v2');
+	const alertsFeedResponse = await fetch('https://backoffice.carrismetropolitana.pt/?api=alerts-v2');
 	const alertsFeedData = await alertsFeedResponse.json();
 
 	LOGGER.info(`Fetched Alerts feed from the backoffice (${backofficeTimer.get()})`);
