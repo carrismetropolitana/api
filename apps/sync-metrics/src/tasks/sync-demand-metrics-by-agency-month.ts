@@ -27,9 +27,9 @@ export const syncDemandMetricsByAgencyMonth = async () => {
 	//
 	// Setup up query date range
 
-	const currentOperationalDay = getOperationalDay(DateTime.now().setZone('Europe/Lisbon').toFormat('yyyyLLdd'), 'yyyyLLdd');
+	const currentOperationalDay = getOperationalDay();
 
-	const startDateObject = DateTime.fromFormat(currentOperationalDay, 'yyyyLLdd').minus({ month: 1 }).set({ hour: 4, minute: 0, second: 0 });
+	const startDateObject = DateTime.fromFormat(currentOperationalDay, 'yyyyLLdd').startOf('month').set({ hour: 4, minute: 0, second: 0 });
 	const startDateString = startDateObject.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const startDateRawIso = startDateObject.toFormat('yyyyLLdd');
 
