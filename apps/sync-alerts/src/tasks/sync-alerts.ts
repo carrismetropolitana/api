@@ -76,6 +76,13 @@ export const syncAlerts = async () => {
 							title: '',
 						},
 						topic: '',
+						apns: {
+							payload: {
+								aps: {
+									mutableContent: true, // to go through the NSE for badge increment
+								},
+							},
+						}
 					};
 					// Include alert id
 					notificationMessage.data.alertId = alertItem.id;
