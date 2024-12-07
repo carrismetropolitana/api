@@ -169,8 +169,6 @@ services:
         max-file: '1'
     env_file:
       - ./secrets/production/.env
-    secrets:
-      - pcgidbkey
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #

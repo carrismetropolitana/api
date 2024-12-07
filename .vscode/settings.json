@@ -1,34 +1,19 @@
 {
 
-	"editor.tabSize": 4,
-
-	"files.eol": "\n",
-
-	"eslint.workingDirectories": [
-		"./sync-datasets",
-		"./sync-network",
-		"./server",
-		"./switch",
-		"./sync-alerts",
-		"./sync-metrics",
-		"./sync-stores",
-		"./sync-vehicles"
-	],
-
-	// Enable the ESlint flat config support
-	"eslint.useFlatConfig": true,
-
-	// Disable the default formatter, use eslint instead
-	"prettier.enable": false,
-	"editor.formatOnSave": false,
-	"eslint.format.enable": true,
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"[typescript]": {
+		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
+	},
 
 	// Auto fix
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit",
 		"source.organizeImports": "never"
 	},
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.formatOnSave": false,
+	"editor.tabSize": 4,
+
+	"eslint.format.enable": true,
 
 	// Silent the stylistic rules in you IDE, but still auto fix them
 	"eslint.rules.customizations": [
@@ -43,6 +28,8 @@
 		{ "rule": "*quotes", "severity": "off" },
 		{ "rule": "*semi", "severity": "off" }
 	],
+	// Enable the ESlint flat config support
+	"eslint.useFlatConfig": true,
 
 	// Enable eslint for all supported languages
 	"eslint.validate": [
@@ -59,8 +46,19 @@
 		"toml",
 		"astro"
 	],
-	"[typescript]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	}
+	"eslint.workingDirectories": [
+		"./sync-datasets",
+		"./sync-network",
+		"./server",
+		"./switch",
+		"./sync-alerts",
+		"./sync-metrics",
+		"./sync-stores",
+		"./sync-vehicles"
+	],
+	"files.eol": "\n",
+
+	// Disable the default formatter, use eslint instead
+	"prettier.enable": false
 
 }
