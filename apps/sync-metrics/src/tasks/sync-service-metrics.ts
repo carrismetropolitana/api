@@ -7,6 +7,8 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+// import { getOperationalDate } from '@tmlmobilidade/services/utils';
+// import { DateTime } from 'luxon';
 import Papa from 'papaparse';
 
 /* * */
@@ -31,6 +33,12 @@ export const syncServiceMetrics = async () => {
 	const allSourceItems = Papa.parse<ServiceMetricsSource>(downloadedSourceText, { header: true });
 
 	//
+	// Fetch rides from 15 days ago
+
+	// const fifteenDaysAgoDateObj = DateTime.now().minus({ days: 15 });
+	// const fifteenDaysAgoOperationalDate = getOperationalDate(fifteenDaysAgoDateObj);
+
+	//
 	// For each item, update its entry in the database
 
 	LOGGER.info(`Updating items...`);
@@ -43,7 +51,7 @@ export const syncServiceMetrics = async () => {
 		const updatedItemData: ServiceMetrics = {
 			agency_id: sourceItem.agency_id,
 			line_id: sourceItem.line_id,
-			operational_day: sourceItem.operational_day,
+			operational_date: sourceItem.operational_date,
 			pass_trip_count: Number(sourceItem.pass_trip_count),
 			pass_trip_percentage: Number(sourceItem.pass_trip_percentage),
 			total_trip_count: Number(sourceItem.total_trip_count),
@@ -57,7 +65,7 @@ export const syncServiceMetrics = async () => {
 	//
 	// Save items to the database
 
-	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.operational_day, b.operational_day));
+	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.operational_date, b.operational_date));
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.SERVICE, JSON.stringify(allUpdatedItemsData));
 
 	LOGGER.success(`Done updating ${allUpdatedItemsData.length} items to ${SERVERDB_KEYS.METRICS.SERVICE} (${globalTimer.get()}).`);

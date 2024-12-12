@@ -12,7 +12,8 @@
 		"docker:sync:up": "docker compose -f docker/compose.sync.yml up -d --build --force-recreate --remove-orphans --pull=always",
 		"lint": "turbo run lint",
 		"start": "dotenv-run -- turbo run start",
-		"start:sync": "dotenv-run -- turbo run start:sync"
+		"start:sync": "dotenv-run -- turbo run start:sync",
+		"sync-metrics": "turbo dev --filter=@carrismetropolitana/api-sync-metrics"
 	},
 	"devDependencies": {
 		"turbo": "2.3.0"

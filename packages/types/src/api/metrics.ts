@@ -3,7 +3,7 @@
 export interface ServiceMetricsSource {
 	agency_id: string
 	line_id: string
-	operational_day: string
+	operational_date: string
 	pass_trip_count: string
 	pass_trip_percentage: string
 	total_trip_count: string
@@ -12,7 +12,7 @@ export interface ServiceMetricsSource {
 export interface ServiceMetrics {
 	agency_id: string
 	line_id: string
-	operational_day: string
+	operational_date: string
 	pass_trip_count: number
 	pass_trip_percentage: number
 	total_trip_count: number

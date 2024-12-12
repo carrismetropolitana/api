@@ -19,6 +19,7 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
+		"@tmlmobilidade/services": "20241211.1134.16",
 		"luxon": "3.5.0",
 		"papaparse": "5.4.1",
 		"trino-client": "0.2.4"
