@@ -117,7 +117,7 @@ export const videowallSla = async () => {
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.SLA, JSON.stringify({ data: responseResult, timestamp: DateTime.now().toMillis() }));
 
-	LOGGER.success(`Done updating videwall:validations items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS} (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.SLA} (${globalTimer.get()}).`);
 
 	//
 };

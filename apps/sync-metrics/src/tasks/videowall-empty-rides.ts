@@ -13,7 +13,7 @@ import { DateTime } from 'luxon';
 export const videowallEmptyRides = async () => {
 	//
 
-	LOGGER.title(`Videowall - Validations`);
+	LOGGER.title(`Videowall - Empty Rides`);
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -102,7 +102,7 @@ export const videowallEmptyRides = async () => {
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES, JSON.stringify({ data: responseResult, timestamp: DateTime.now().toMillis() }));
 
-	LOGGER.success(`Done updating videwall:validations items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS} (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES} (${globalTimer.get()}).`);
 
 	//
 };
