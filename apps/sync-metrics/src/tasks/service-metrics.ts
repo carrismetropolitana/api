@@ -60,7 +60,7 @@ export const serviceMetrics = async () => {
 		}
 
 		if (resultMap.get(resultMapKey).total_trip_count > 0) {
-			resultMap.get(resultMapKey).pass_trip_percentage += resultMap.get(resultMapKey).pass_trip_count / resultMap.get(resultMapKey).total_trip_count;
+			resultMap.get(resultMapKey).pass_trip_percentage = resultMap.get(resultMapKey).pass_trip_count / resultMap.get(resultMapKey).total_trip_count;
 		}
 
 		//
