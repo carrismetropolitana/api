@@ -13,8 +13,8 @@
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20241024.1600.5",
-		"@types/node": "22.9.0",
-		"resolve-tspaths": "0.8.22",
-		"typescript": "5.6.3"
+		"@types/node": "22.10.2",
+		"resolve-tspaths": "0.8.23",
+		"typescript": "5.7.2"
 	}
 }

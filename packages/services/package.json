@@ -48,21 +48,21 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"fastify": "5.1.0",
+		"fastify": "5.2.0",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.5.0",
-		"mongodb": "6.10.0",
+		"mongodb": "6.12.0",
 		"pg": "8.13.1",
 		"redis": "4.7.0",
-		"trino-client": "0.2.3",
+		"trino-client": "0.2.6",
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20241024.1600.5",
-		"@types/node": "22.9.0",
-		"resolve-tspaths": "0.8.22",
-		"typescript": "5.6.3"
+		"@types/node": "22.10.2",
+		"resolve-tspaths": "0.8.23",
+		"typescript": "5.7.2"
 	}
 }

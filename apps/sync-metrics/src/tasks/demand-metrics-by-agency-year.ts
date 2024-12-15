@@ -18,7 +18,7 @@ const APEX_VALIDATION_STATUSES = [0, 4, 5, 6];
 
 /* * */
 
-export const syncDemandMetricsByAgencyYear = async () => {
+export const demandMetricsByAgencyYear = async () => {
 	//
 
 	LOGGER.title(`Sync Demand Metrics by Agency (Year)`);

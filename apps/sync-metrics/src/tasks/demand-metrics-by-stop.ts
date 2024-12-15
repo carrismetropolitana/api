@@ -1,7 +1,7 @@
 /* * */
 
-import type { DemandMetricsByLine } from '@carrismetropolitana/api-types/metrics';
-import type { Line } from '@carrismetropolitana/api-types/network';
+import type { DemandMetricsByStop } from '@carrismetropolitana/api-types/metrics';
+import type { Stop } from '@carrismetropolitana/api-types/network';
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
@@ -21,22 +21,22 @@ const APEX_VALIDATION_STATUSES = [0, 4, 5, 6];
 
 /* * */
 
-export const syncDemandMetricsByLine = async () => {
+export const demandMetricsByStop = async () => {
 	//
 
-	LOGGER.title(`Sync Demand Metrics by Line`);
+	LOGGER.title(`Sync Demand Metrics by Stop`);
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Retrieve all Lines from SERVERDB
+	// Retrieve all Stops from SERVERDB
 
-	const allLinesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES);
-	if (!allLinesTxt) {
-		throw new Error('No Lines found in SERVERDB');
+	const allStopsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
+	if (!allStopsTxt) {
+		throw new Error('No Stops found in SERVERDB');
 	}
 
-	const allLinesData: Line[] = JSON.parse(allLinesTxt);
-	const allLineIdsSet = new Set<string>(allLinesData.map(item => item.id));
+	const allStopsData: Stop[] = JSON.parse(allStopsTxt);
+	const allStopIdsSet = new Set<string>(allStopsData.map(item => item.id));
 
 	//
 	// Setup up TRINODB query
@@ -63,32 +63,32 @@ export const syncDemandMetricsByLine = async () => {
 	};
 
 	//
-	// Setup the template structure for the demand metrics by line
+	// Setup the template structure for the demand metrics by stop
 
-	const validationsByLinesMap = new Map<string, DemandMetricsByLine>();
+	const validationsByStopsMap = new Map<string, DemandMetricsByStop>();
 
-	for (const lineId of allLineIdsSet) {
-		validationsByLinesMap.set(lineId, {
+	for (const stopId of allStopIdsSet) {
+		validationsByStopsMap.set(stopId, {
 			by_day: [],
 			end_date: DateTime.now().setZone('Europe/Lisbon').toFormat('yyyyLLdd'),
-			line_id: lineId,
 			qty: 0,
 			start_date: startDateObject.toFormat('yyyyLLdd'),
+			stop_id: stopId,
 		});
 	}
 
 	//
 	// Count validations by Hour
 
-	LOGGER.info(`Counting validations by Line per Hour since ${startDateRawIso}...`);
+	LOGGER.info(`Counting validations by Stop per Hour since ${startDateRawIso}...`);
 	const countPerHourTimer = new TIMETRACKER();
 
 	const validationsCountByHourMap = new Map();
 
-	const validationsCountByHourResult = await TRINODB.countValidations({ options: queryOptions, timeUnit: 'hour', type: 'line' });
+	const validationsCountByHourResult = await TRINODB.countValidations({ options: queryOptions, timeUnit: 'hour', type: 'stop' });
 
 	validationsCountByHourResult.forEach((item) => {
-		// Set the object key to be the line ID and the day component
+		// Set the object key to be the stop ID and the day component
 		const objectKey = `${item.item_id}:${item.transaction_time.split(' ')[0]}`;
 		// Create the array if it doesn't exist in the map
 		if (!validationsCountByHourMap.has(objectKey)) {
@@ -106,16 +106,16 @@ export const syncDemandMetricsByLine = async () => {
 	//
 	// Count validations by Day
 
-	LOGGER.info(`Counting validations by Line per Day since ${startDateRawIso}...`);
+	LOGGER.info(`Counting validations by Stop per Day since ${startDateRawIso}...`);
 	const countPerDayTimer = new TIMETRACKER();
 
-	const validationsCountByDayResult = await TRINODB.countValidations({ options: queryOptions, timeUnit: 'day', type: 'line' });
+	const validationsCountByDayResult = await TRINODB.countValidations({ options: queryOptions, timeUnit: 'day', type: 'stop' });
 
 	validationsCountByDayResult.forEach((item) => {
-		// Skip if the line ID is not in the map
-		if (!validationsByLinesMap.has(item.item_id)) return;
+		// Skip if the stop ID is not in the map
+		if (!validationsByStopsMap.has(item.item_id)) return;
 		// Add the current item to the map
-		const mapItem = validationsByLinesMap.get(item.item_id);
+		const mapItem = validationsByStopsMap.get(item.item_id);
 		// Add the current item to the map
 		mapItem.by_day.push({
 			by_hour: validationsCountByHourMap.get(`${item.item_id}:${item.transaction_time.split(' ')[0]}`) || [],
@@ -132,13 +132,13 @@ export const syncDemandMetricsByLine = async () => {
 	//
 	// Save all documents
 
-	const validationsByLinesArray = Array.from(validationsByLinesMap.values());
-	validationsByLinesArray.sort((a, b) => sortCollator.compare(a.line_id, b.line_id));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_LINE, JSON.stringify(validationsByLinesArray));
+	const validationsByStopsArray = Array.from(validationsByStopsMap.values());
+	validationsByStopsArray.sort((a, b) => sortCollator.compare(a.stop_id, b.stop_id));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_STOP, JSON.stringify(validationsByStopsArray));
 
 	//
 
-	LOGGER.terminate(`Parsed validations for ${validationsByLinesArray.length} Lines (${globalTimer.get()})`);
+	LOGGER.terminate(`Parsed validations for ${validationsByStopsArray.length} Stops (${globalTimer.get()})`);
 
 	//
 };

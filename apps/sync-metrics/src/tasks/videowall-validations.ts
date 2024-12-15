@@ -1,0 +1,142 @@
+/* * */
+
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
+import { apexT11 } from '@tmlmobilidade/services/interfaces';
+import { ALLOWED_VALIDATION_STATUSES, createOperationalDate, OPERATIONAL_DATE_FORMAT } from '@tmlmobilidade/services/types';
+import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { DateTime } from 'luxon';
+
+/* * */
+
+export const videowallValidations = async () => {
+	//
+
+	LOGGER.title(`Videowall - Validations`);
+	const globalTimer = new TIMETRACKER();
+
+	//
+	// Setup the timestamp boundary
+	// This takes in consideration the current time, as we want to compare today so far with the previous day so far, also.
+	// For example, today is monday 10h49. We want to compare the number of validations until 10h49 of today with the number of validations until 10h49 of last monday.
+
+	const todayOperationalDate = getOperationalDate();
+
+	const lastWeekOperationalDate = createOperationalDate(
+		DateTime
+			.fromFormat(todayOperationalDate, OPERATIONAL_DATE_FORMAT)
+			.minus({ days: 7 })
+			.toFormat(OPERATIONAL_DATE_FORMAT),
+	);
+
+	const lastWeekUntilNow = DateTime
+		.now()
+		.minus({ days: 7 });
+
+	//
+	// Setup the response JSON object
+
+	const responseResult = {
+
+		// For Area 1
+		_41_last_week_valid_count: -1,
+		_41_today_valid_count: -1,
+
+		// For Area 2
+		_42_last_week_valid_count: -1,
+		_42_today_valid_count: -1,
+
+		// For Area 3
+		_43_last_week_valid_count: -1,
+		_43_today_valid_count: -1,
+
+		// For Area 4
+		_44_last_week_valid_count: -1,
+		_44_today_valid_count: -1,
+
+		// For the whole CM
+		_cm_last_week_valid_count: -1,
+		_cm_today_valid_count: -1,
+
+	};
+
+	//
+	// Perform database searches
+
+	try {
+		// For Area 1
+		responseResult._41_today_valid_count = await apexT11.count({
+			agency_id: '41',
+			operational_date: todayOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		responseResult._41_last_week_valid_count = await apexT11.count({
+			agency_id: '41',
+			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			operational_date: lastWeekOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		// For Area 2
+		responseResult._42_today_valid_count = await apexT11.count({
+			agency_id: '42',
+			operational_date: todayOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		responseResult._42_last_week_valid_count = await apexT11.count({
+			agency_id: '42',
+			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			operational_date: lastWeekOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		// For Area 3
+		responseResult._43_today_valid_count = await apexT11.count({
+			agency_id: '43',
+			operational_date: todayOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		responseResult._43_last_week_valid_count = await apexT11.count({
+			agency_id: '43',
+			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			operational_date: lastWeekOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		// For Area 4
+		responseResult._44_today_valid_count = await apexT11.count({
+			agency_id: '44',
+			operational_date: todayOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		responseResult._44_last_week_valid_count = await apexT11.count({
+			agency_id: '44',
+			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			operational_date: lastWeekOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		// For the whole CM
+		responseResult._cm_today_valid_count = await apexT11.count({
+			agency_id: { $in: ['41', '42', '43', '44'] },
+			operational_date: todayOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+		responseResult._cm_last_week_valid_count = await apexT11.count({
+			agency_id: { $in: ['41', '42', '43', '44'] },
+			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			operational_date: lastWeekOperationalDate,
+			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
+		});
+	}
+	catch (err) {
+		console.log(err);
+	}
+
+	//
+	// Save items to the database
+
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS, JSON.stringify({ data: responseResult, timestamp: DateTime.now().toMillis() }));
+
+	LOGGER.success(`Done updating videwall:validations items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS} (${globalTimer.get()}).`);
+
+	//
+};

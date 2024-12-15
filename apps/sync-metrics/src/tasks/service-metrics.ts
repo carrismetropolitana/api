@@ -17,7 +17,7 @@ const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/
 
 /* * */
 
-export const syncServiceMetrics = async () => {
+export const serviceMetrics = async () => {
 	//
 
 	LOGGER.title(`Sync Service Metrics`);

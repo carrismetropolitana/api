@@ -1,0 +1,123 @@
+/* * */
+
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
+import { rides } from '@tmlmobilidade/services/interfaces';
+import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { DateTime } from 'luxon';
+
+/* * */
+
+export const videowallSla = async () => {
+	//
+
+	LOGGER.title(`Videowall - SLA`);
+	const globalTimer = new TIMETRACKER();
+
+	//
+	// Setup timestamp boundaries
+
+	const operationalDate = getOperationalDate();
+
+	//
+	// Setup the response JSON object
+
+	const responseResult = {
+
+		// For Area 1
+		_41_scheduled_rides_operational_day: 0,
+		_41_scheduled_rides_until_now: 0,
+		_41_simple_three_events_fail_until_now: 0,
+
+		// For Area 2
+		_42_scheduled_rides_operational_day: 0,
+		_42_scheduled_rides_until_now: 0,
+		_42_simple_three_events_fail_until_now: 0,
+
+		// For Area 3
+		_43_scheduled_rides_operational_day: 0,
+		_43_scheduled_rides_until_now: 0,
+		_43_simple_three_events_fail_until_now: 0,
+
+		// For Area 4
+		_44_scheduled_rides_operational_day: 0,
+		_44_scheduled_rides_until_now: 0,
+		_44_simple_three_events_fail_until_now: 0,
+
+		// For the whole CM
+		_cm_scheduled_rides_operational_day: 0,
+		_cm_scheduled_rides_until_now: 0,
+		_cm_simple_three_events_fail_until_now: 0,
+
+		//
+	};
+
+	//
+	// Get all rides for today
+
+	const ridesCollection = await rides.getCollection();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate }).stream();
+
+	//
+	// Iterate on all rides for today
+
+	for await (const rideData of allRidesForTodayStream) {
+		//
+
+		//
+		// Update the count variables
+
+		responseResult._cm_scheduled_rides_operational_day++;
+
+		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_operational_day++;
+		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_operational_day++;
+		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_operational_day++;
+		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_operational_day++;
+
+		//
+		// Only consider rides that have already started (schedule start before now)
+		// and have already been processed.
+
+		const rideStartedBeforeNow = DateTime.fromJSDate(rideData.start_time_scheduled).toMillis() < DateTime.now().minus({ minutes: 60 }).toMillis();
+
+		const rideHasBeenProcessed = rideData.status === 'complete' && rideData.analysis.length > 0;
+
+		if (!rideStartedBeforeNow || !rideHasBeenProcessed) continue;
+
+		//
+		// Update the count variables
+
+		responseResult._cm_scheduled_rides_until_now++;
+
+		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
+		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
+		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
+		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+
+		//
+		// Check if the ride failed the SIMPLE_THREE_VEHICLE_EVENTS validation
+
+		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
+
+		if (simpleThreeVehicleEvents?.grade === 'fail') {
+			responseResult._cm_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
+		}
+
+		//
+	}
+
+	//
+	// Save items to the database
+
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.SLA, JSON.stringify({ data: responseResult, timestamp: DateTime.now().toMillis() }));
+
+	LOGGER.success(`Done updating videwall:validations items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS} (${globalTimer.get()}).`);
+
+	//
+};

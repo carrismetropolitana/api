@@ -6,16 +6,20 @@ import 'dotenv/config';
 
 /* * */
 
-import { syncDemandMetricsByAgencyDay } from '@/tasks/sync-demand-metrics-by-agency-day.js';
-import { syncDemandMetricsByAgencyMonth } from '@/tasks/sync-demand-metrics-by-agency-month.js';
-import { syncDemandMetricsByAgencyYear } from '@/tasks/sync-demand-metrics-by-agency-year.js';
-import { syncDemandMetricsByLine } from '@/tasks/sync-demand-metrics-by-line.js';
-// import { syncDemandMetricsByStop } from '@/tasks/sync-demand-metrics-by-stop.js';
-import { syncServiceMetrics } from '@/tasks/sync-service-metrics.js';
+import { demandMetricsByAgencyDay } from '@/tasks/demand-metrics-by-agency-day.js';
+import { demandMetricsByAgencyMonth } from '@/tasks/demand-metrics-by-agency-month.js';
+import { demandMetricsByAgencyYear } from '@/tasks/demand-metrics-by-agency-year.js';
+import { demandMetricsByLine } from '@/tasks/demand-metrics-by-line.js';
+import { serviceMetrics } from '@/tasks/service-metrics.js';
+import { videowallValidations } from '@/tasks/videowall-validations.js';
+
+import { videowallDelays } from './tasks/videowall-delays.js';
+import { videowallEmptyRides } from './tasks/videowall-empty-rides.js';
+import { videowallSla } from './tasks/videowall-sla.js';
 
 /* * */
 
-const RUN_INTERVAL = 300000; // 5 minutes
+const RUN_INTERVAL = 60000; // 1 minute
 
 /* * */
 
@@ -23,8 +27,6 @@ const RUN_INTERVAL = 300000; // 5 minutes
 	//
 
 	await TRINODB.connect();
-
-	// return;
 
 	//
 
@@ -35,21 +37,38 @@ const RUN_INTERVAL = 300000; // 5 minutes
 
 		LOGGER.terminate(`Sync iteration #${counter}`);
 
+		//
 		// Run on all iterations
-		await syncDemandMetricsByLine();
-		// await syncDemandMetricsByStop();
-		await syncDemandMetricsByAgencyDay();
 
-		// Run on every 100th iteration
+		await videowallDelays();
+		await videowallEmptyRides();
+		await videowallSla();
+		await videowallValidations();
+
+		//
+		// Run on every 5th iteration (~ 5 minutes)
+
+		if (counter % 5 === 0) {
+			await demandMetricsByAgencyDay();
+			await demandMetricsByLine();
+		}
+
+		//
+		// Run on every 500th iteration (~ 8 hours)
+
 		if (counter % 100 === 0) {
-			await syncServiceMetrics();
-			await syncDemandMetricsByAgencyMonth();
+			await demandMetricsByAgencyMonth();
+			await serviceMetrics();
 		}
 
-		// Run on every 500th iteration
-		if (counter % 500 === 0) {
-			await syncDemandMetricsByAgencyYear();
+		//
+		// Run on every 1000th iteration (~ 16 hours)
+
+		if (counter % 1000 === 0) {
+			await demandMetricsByAgencyYear();
 		}
+
+		//
 
 		setTimeout(runOnInterval, RUN_INTERVAL);
 

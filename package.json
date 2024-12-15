@@ -16,9 +16,9 @@
 		"sync-metrics": "turbo dev --filter=@carrismetropolitana/api-sync-metrics"
 	},
 	"devDependencies": {
-		"turbo": "2.3.0"
+		"turbo": "2.3.3"
 	},
-	"packageManager": "npm@10.9.0",
+	"packageManager": "npm@10.9.2",
 	"workspaces": [
 		"apps/*",
 		"packages/*"

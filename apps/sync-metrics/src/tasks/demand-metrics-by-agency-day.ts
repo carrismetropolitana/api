@@ -1,6 +1,6 @@
 /* * */
 
-import type { DemandMetricsByAgency, DemandMetricsByAgencyMonth } from '@carrismetropolitana/api-types/metrics';
+import type { DemandMetricsByAgency, DemandMetricsByAgencyDay } from '@carrismetropolitana/api-types/metrics';
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
@@ -18,10 +18,10 @@ const APEX_VALIDATION_STATUSES = [0, 4, 5, 6];
 
 /* * */
 
-export const syncDemandMetricsByAgencyMonth = async () => {
+export const demandMetricsByAgencyDay = async () => {
 	//
 
-	LOGGER.title(`Sync Demand Metrics by Agency (Month)`);
+	LOGGER.title(`Sync Demand Metrics by Agency (Day)`);
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -29,7 +29,7 @@ export const syncDemandMetricsByAgencyMonth = async () => {
 
 	const currentOperationalDay = getOperationalDay();
 
-	const startDateObject = DateTime.fromFormat(currentOperationalDay, 'yyyyLLdd').startOf('month').set({ hour: 4, minute: 0, second: 0 });
+	const startDateObject = DateTime.fromFormat(currentOperationalDay, 'yyyyLLdd').startOf('day').set({ hour: 4, minute: 0, second: 0 });
 	const startDateString = startDateObject.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const startDateRawIso = startDateObject.toFormat('yyyyLLdd');
 
@@ -64,16 +64,16 @@ export const syncDemandMetricsByAgencyMonth = async () => {
 			},
 		};
 
-		const validationsByDayCount = await TRINODB.countValidations({ options: queryOptions, timeUnit: 'day' });
-		const validationsByDayArray: DemandMetricsByAgencyMonth[] = validationsByDayCount
+		const validationsByDayCount = await TRINODB.countValidations({ options: queryOptions, timeUnit: 'hour' });
+		const validationsByDayArray: DemandMetricsByAgencyDay[] = validationsByDayCount
 			.map((item) => {
 				return {
-					day_group: item.transaction_time,
+					hour_group: DateTime.fromFormat(item.transaction_time, 'yyyy-LL-dd HH:mm:ss.SSS').toISO(),
 					qty: item.count_result,
 				};
 			})
 			.sort((a, b) => {
-				return sortCollator.compare(a.day_group, b.day_group);
+				return sortCollator.compare(a.hour_group, b.hour_group);
 			});
 
 		result.push({
@@ -87,9 +87,9 @@ export const syncDemandMetricsByAgencyMonth = async () => {
 	//
 	// Save to SERVERDB
 
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_AGENCY.MONTH, JSON.stringify(result));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.DEMAND.BY_AGENCY.DAY, JSON.stringify(result));
 
-	LOGGER.terminate(`Sync Demand Metrics by Agency (Month) complete (${globalTimer.get()})`);
+	LOGGER.terminate(`Sync Demand Metrics by Agency (Day) complete (${globalTimer.get()})`);
 
 	//
 };
