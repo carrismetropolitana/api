@@ -55,7 +55,7 @@ export const serviceMetrics = async () => {
 		const simpleOneValidationTransactionTest = rideData.analysis.find(item => item._id === 'SIMPLE_ONE_VALIDATION_TRANSACTION');
 		const simpleThreeVehicleEventsTest = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
 
-		if ((simpleOneValidationTransactionTest && simpleOneValidationTransactionTest.grade === 'pass') || (simpleThreeVehicleEventsTest && simpleThreeVehicleEventsTest.grade === 'pass')) {
+		if (simpleOneValidationTransactionTest?.grade === 'pass' || simpleThreeVehicleEventsTest?.grade === 'pass') {
 			resultMap.get(resultMapKey).pass_trip_count += 1;
 		}
 
