@@ -27,6 +27,11 @@
 			"require": "./dist/api/alerts.js",
 			"types": "./dist/api/alerts.d.ts"
 		},
+		"./common": {
+			"import": "./dist/api/common.js",
+			"require": "./dist/api/common.js",
+			"types": "./dist/api/common.d.ts"
+		},
 		"./facilities": {
 			"import": "./dist/api/facilities.js",
 			"require": "./dist/api/facilities.js",

@@ -2,6 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/services/interfaces';
@@ -100,7 +101,12 @@ export const videowallEmptyRides = async () => {
 	//
 	// Save items to the database
 
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES, JSON.stringify({ data: responseResult, timestamp: DateTime.now().toMillis() }));
+	const chacheableResource: CachedResource<typeof responseResult> = {
+		data: responseResult,
+		timestamp_resource: DateTime.now().toMillis(),
+	};
+
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES, JSON.stringify(chacheableResource));
 
 	LOGGER.success(`Done updating items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES} (${globalTimer.get()}).`);
 

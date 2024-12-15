@@ -1,19 +1,16 @@
 /* * */
 
-import type { ServiceMetrics, ServiceMetricsSource } from '@carrismetropolitana/api-types/metrics';
+import type { CachedResource } from '@carrismetropolitana/api-types/common';
+import type { ServiceMetrics } from '@carrismetropolitana/api-types/metrics';
 
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-// import { getOperationalDate } from '@tmlmobilidade/services/utils';
-// import { DateTime } from 'luxon';
-import Papa from 'papaparse';
-
-/* * */
-
-const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/datasets/refs/heads/latest/sla/sla.csv';
+import { rides } from '@tmlmobilidade/services/interfaces';
+import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -24,40 +21,47 @@ export const serviceMetrics = async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Download and parse the data file
-
-	LOGGER.info(`Downloading data file...`);
-
-	const downloadedSourceFile = await fetch(DATASET_FILE_URL);
-	const downloadedSourceText = await downloadedSourceFile.text();
-	const allSourceItems = Papa.parse<ServiceMetricsSource>(downloadedSourceText, { header: true });
-
-	//
 	// Fetch rides from 15 days ago
 
-	// const fifteenDaysAgoDateObj = DateTime.now().minus({ days: 15 });
-	// const fifteenDaysAgoOperationalDate = getOperationalDate(fifteenDaysAgoDateObj);
+	const fifteenDaysAgoDateObj = DateTime.now().minus({ days: 15 });
+	const fifteenDaysAgoOperationalDate = getOperationalDate(fifteenDaysAgoDateObj);
+
+	const ridesCollection = await rides.getCollection();
+	const ridesStream = ridesCollection.find({ operational_date: { $gte: fifteenDaysAgoOperationalDate } }).stream();
 
 	//
-	// For each item, update its entry in the database
+	// Group rides by operational_date and line_id
 
-	LOGGER.info(`Updating items...`);
+	const resultMap = new Map<string, ServiceMetrics>();
 
-	const allUpdatedItemsData: ServiceMetrics[] = [];
-
-	for (const sourceItem of allSourceItems.data) {
+	for await (const rideData of ridesStream) {
 		//
 
-		const updatedItemData: ServiceMetrics = {
-			agency_id: sourceItem.agency_id,
-			line_id: sourceItem.line_id,
-			operational_date: sourceItem.operational_date,
-			pass_trip_count: Number(sourceItem.pass_trip_count),
-			pass_trip_percentage: Number(sourceItem.pass_trip_percentage),
-			total_trip_count: Number(sourceItem.total_trip_count),
-		};
+		const resultMapKey = `${rideData.operational_date}-${rideData.line_id}`;
 
-		allUpdatedItemsData.push(updatedItemData);
+		if (!resultMap.has(resultMapKey)) {
+			resultMap.set(resultMapKey, {
+				agency_id: rideData.agency_id,
+				line_id: rideData.line_id,
+				operational_date: rideData.operational_date,
+				pass_trip_count: 0,
+				pass_trip_percentage: 0,
+				total_trip_count: 0,
+			});
+		}
+
+		resultMap.get(resultMapKey).total_trip_count += 1;
+
+		const simpleOneValidationTransactionTest = rideData.analysis.find(item => item._id === 'SIMPLE_ONE_VALIDATION_TRANSACTION');
+		const simpleThreeVehicleEventsTest = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
+
+		if ((simpleOneValidationTransactionTest && simpleOneValidationTransactionTest.grade === 'pass') || (simpleThreeVehicleEventsTest && simpleThreeVehicleEventsTest.grade === 'pass')) {
+			resultMap.get(resultMapKey).pass_trip_count += 1;
+		}
+
+		if (resultMap.get(resultMapKey).total_trip_count > 0) {
+			resultMap.get(resultMapKey).pass_trip_percentage += resultMap.get(resultMapKey).pass_trip_count / resultMap.get(resultMapKey).total_trip_count;
+		}
 
 		//
 	}
@@ -65,10 +69,15 @@ export const serviceMetrics = async () => {
 	//
 	// Save items to the database
 
-	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.operational_date, b.operational_date));
-	await SERVERDB.set(SERVERDB_KEYS.METRICS.SERVICE, JSON.stringify(allUpdatedItemsData));
+	const chacheableResource: CachedResource<ServiceMetrics[]> = {
+		data: Array.from(resultMap.values()),
+		timestamp_resource: DateTime.now().toMillis(),
+	};
 
-	LOGGER.success(`Done updating ${allUpdatedItemsData.length} items to ${SERVERDB_KEYS.METRICS.SERVICE} (${globalTimer.get()}).`);
+	chacheableResource.data.sort((a, b) => sortCollator.compare(a.operational_date, b.operational_date));
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.SERVICE, JSON.stringify(chacheableResource));
+
+	LOGGER.success(`Done updating ${chacheableResource.data.length} items to ${SERVERDB_KEYS.METRICS.SERVICE} (${globalTimer.get()}).`);
 
 	//
 };
