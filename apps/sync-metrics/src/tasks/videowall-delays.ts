@@ -93,7 +93,7 @@ export const videowallDelays = async () => {
 			if (rideData.agency_id === '44') responseResult._44_delayed_for_more_than_five_minutes_count++;
 		}
 
-		if (relevantTest.value) {
+		if (relevantTest.value >= 0) {
 			responseResult._cm_average_delay_minutes += relevantTest.value;
 			responseResult._cm_total_until_now_count++;
 			if (rideData.agency_id === '41') {
