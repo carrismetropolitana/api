@@ -30,22 +30,27 @@ export const videowallDelays = async () => {
 		// For Area 1
 		_41_average_delay_minutes: 0,
 		_41_delayed_for_more_than_five_minutes_count: 0,
+		_41_total_until_now_count: 0,
 
 		// For Area 2
 		_42_average_delay_minutes: 0,
 		_42_delayed_for_more_than_five_minutes_count: 0,
+		_42_total_until_now_count: 0,
 
 		// For Area 3
 		_43_average_delay_minutes: 0,
 		_43_delayed_for_more_than_five_minutes_count: 0,
+		_43_total_until_now_count: 0,
 
 		// For Area 4
 		_44_average_delay_minutes: 0,
 		_44_delayed_for_more_than_five_minutes_count: 0,
+		_44_total_until_now_count: 0,
 
 		// For the whole CM
 		_cm_average_delay_minutes: 0,
 		_cm_delayed_for_more_than_five_minutes_count: 0,
+		_cm_total_until_now_count: 0,
 
 		//
 	};
@@ -90,10 +95,23 @@ export const videowallDelays = async () => {
 
 		if (relevantTest.value) {
 			responseResult._cm_average_delay_minutes += relevantTest.value;
-			if (rideData.agency_id === '41') responseResult._41_average_delay_minutes += relevantTest.value;
-			if (rideData.agency_id === '42') responseResult._42_average_delay_minutes += relevantTest.value;
-			if (rideData.agency_id === '43') responseResult._43_average_delay_minutes += relevantTest.value;
-			if (rideData.agency_id === '44') responseResult._44_average_delay_minutes += relevantTest.value;
+			responseResult._cm_total_until_now_count++;
+			if (rideData.agency_id === '41') {
+				responseResult._41_average_delay_minutes += relevantTest.value;
+				responseResult._41_total_until_now_count++;
+			}
+			if (rideData.agency_id === '42') {
+				responseResult._42_average_delay_minutes += relevantTest.value;
+				responseResult._42_total_until_now_count++;
+			}
+			if (rideData.agency_id === '43') {
+				responseResult._43_average_delay_minutes += relevantTest.value;
+				responseResult._43_total_until_now_count++;
+			}
+			if (rideData.agency_id === '44') {
+				responseResult._44_average_delay_minutes += relevantTest.value;
+				responseResult._44_total_until_now_count++;
+			}
 		}
 
 		//
@@ -103,11 +121,11 @@ export const videowallDelays = async () => {
 	// Calculate the average delay for each area and for the whole CM
 	// by dividing the total delay by the number of delayed rides
 
-	if (responseResult._cm_delayed_for_more_than_five_minutes_count > 0) responseResult._cm_average_delay_minutes = responseResult._cm_average_delay_minutes / responseResult._cm_delayed_for_more_than_five_minutes_count;
-	if (responseResult._41_delayed_for_more_than_five_minutes_count > 0) responseResult._41_average_delay_minutes = responseResult._41_average_delay_minutes / responseResult._41_delayed_for_more_than_five_minutes_count;
-	if (responseResult._42_delayed_for_more_than_five_minutes_count > 0) responseResult._42_average_delay_minutes = responseResult._42_average_delay_minutes / responseResult._42_delayed_for_more_than_five_minutes_count;
-	if (responseResult._43_delayed_for_more_than_five_minutes_count > 0) responseResult._43_average_delay_minutes = responseResult._43_average_delay_minutes / responseResult._43_delayed_for_more_than_five_minutes_count;
-	if (responseResult._44_delayed_for_more_than_five_minutes_count > 0) responseResult._44_average_delay_minutes = responseResult._44_average_delay_minutes / responseResult._44_delayed_for_more_than_five_minutes_count;
+	if (responseResult._cm_total_until_now_count > 0) responseResult._cm_average_delay_minutes = responseResult._cm_average_delay_minutes / responseResult._cm_total_until_now_count;
+	if (responseResult._41_total_until_now_count > 0) responseResult._41_average_delay_minutes = responseResult._41_average_delay_minutes / responseResult._41_total_until_now_count;
+	if (responseResult._42_total_until_now_count > 0) responseResult._42_average_delay_minutes = responseResult._42_average_delay_minutes / responseResult._42_total_until_now_count;
+	if (responseResult._43_total_until_now_count > 0) responseResult._43_average_delay_minutes = responseResult._43_average_delay_minutes / responseResult._43_total_until_now_count;
+	if (responseResult._44_total_until_now_count > 0) responseResult._44_average_delay_minutes = responseResult._44_average_delay_minutes / responseResult._44_total_until_now_count;
 
 	//
 	// Save items to the database
