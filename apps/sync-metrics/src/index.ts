@@ -6,10 +6,10 @@ import 'dotenv/config';
 
 /* * */
 
-// import { demandMetricsByAgencyDay } from '@/tasks/demand-metrics-by-agency-day.js';
-// import { demandMetricsByAgencyMonth } from '@/tasks/demand-metrics-by-agency-month.js';
-// import { demandMetricsByAgencyYear } from '@/tasks/demand-metrics-by-agency-year.js';
-// import { demandMetricsByLine } from '@/tasks/demand-metrics-by-line.js';
+import { demandMetricsByAgencyDay } from '@/tasks/demand-metrics-by-agency-day.js';
+import { demandMetricsByAgencyMonth } from '@/tasks/demand-metrics-by-agency-month.js';
+import { demandMetricsByAgencyYear } from '@/tasks/demand-metrics-by-agency-year.js';
+import { demandMetricsByLine } from '@/tasks/demand-metrics-by-line.js';
 import { serviceMetrics } from '@/tasks/service-metrics.js';
 import { videowallValidations } from '@/tasks/videowall-validations.js';
 
@@ -49,15 +49,15 @@ const RUN_INTERVAL = 60000; // 1 minute
 		// Run on every 5th iteration (~ 5 minutes)
 
 		if (counter % 5 === 0) {
-			// await demandMetricsByAgencyDay();
-			// await demandMetricsByLine();
+			await demandMetricsByAgencyDay();
+			await demandMetricsByLine();
 		}
 
 		//
 		// Run on every 500th iteration (~ 8 hours)
 
 		if (counter % 100 === 0) {
-			// await demandMetricsByAgencyMonth();
+			await demandMetricsByAgencyMonth();
 			await serviceMetrics();
 		}
 
@@ -65,7 +65,7 @@ const RUN_INTERVAL = 60000; // 1 minute
 		// Run on every 1000th iteration (~ 16 hours)
 
 		if (counter % 1000 === 0) {
-			// await demandMetricsByAgencyYear();
+			await demandMetricsByAgencyYear();
 		}
 
 		//
