@@ -17,7 +17,7 @@ import { DateTime } from 'luxon';
 export const serviceMetrics = async () => {
 	//
 
-	LOGGER.title(`Sync Service Metrics`);
+	LOGGER.title(`Service Metrics`);
 	const globalTimer = new TIMETRACKER();
 
 	//

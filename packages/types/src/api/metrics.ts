@@ -11,6 +11,19 @@ export interface ServiceMetrics {
 
 /* * */
 
+interface ByHour {
+	hour: number
+	qty: number
+}
+
+interface ByDay {
+	by_hour: ByHour[]
+	day: string
+	qty: number
+}
+
+/* * */
+
 export interface DemandMetricsByLine {
 	by_day: ByDay[]
 	end_date: string
@@ -46,18 +59,5 @@ export interface DemandMetricsByAgencyMonth {
 
 export interface DemandMetricsByAgencyYear {
 	month_group: string
-	qty: number
-}
-
-/* * */
-
-interface ByHour {
-	hour: number
-	qty: number
-}
-
-interface ByDay {
-	by_hour: ByHour[]
-	day: string
 	qty: number
 }
