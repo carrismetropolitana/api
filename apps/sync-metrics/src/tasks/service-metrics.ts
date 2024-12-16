@@ -23,11 +23,14 @@ export const serviceMetrics = async () => {
 	//
 	// Fetch rides from 15 days ago
 
-	const fifteenDaysAgoDateObj = DateTime.now().minus({ days: 15 });
+	const yesterdayDateObj = DateTime.now().minus({ days: 1 });
+	const yesterdayOperationalDate = getOperationalDate(yesterdayDateObj);
+
+	const fifteenDaysAgoDateObj = yesterdayDateObj.minus({ days: 15 });
 	const fifteenDaysAgoOperationalDate = getOperationalDate(fifteenDaysAgoDateObj);
 
 	const ridesCollection = await rides.getCollection();
-	const ridesStream = ridesCollection.find({ operational_date: { $gte: fifteenDaysAgoOperationalDate } }).stream();
+	const ridesStream = ridesCollection.find({ operational_date: { $gte: fifteenDaysAgoOperationalDate, $lte: yesterdayOperationalDate } }).stream();
 
 	//
 	// Group rides by operational_date and line_id
