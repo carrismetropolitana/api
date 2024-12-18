@@ -59,7 +59,7 @@ export const videowallSla = async () => {
 	// Get all rides for today
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, status: 'complete' }).stream();
 
 	//
 	// Iterate on all rides for today
@@ -79,13 +79,9 @@ export const videowallSla = async () => {
 
 		//
 		// Only consider rides that have already started (schedule start before now)
-		// and have already been processed.
 
-		const rideStartedBeforeNow = DateTime.fromJSDate(rideData.start_time_scheduled).toMillis() < DateTime.now().minus({ minutes: 60 }).toMillis();
-
-		const rideHasBeenProcessed = rideData.status === 'complete' && rideData.analysis.length > 0;
-
-		if (!rideStartedBeforeNow || !rideHasBeenProcessed) continue;
+		const rideStartedBeforeNow = DateTime.fromJSDate(rideData.start_time_scheduled).toMillis() < DateTime.now().minus({ minutes: 30 }).toMillis();
+		if (!rideStartedBeforeNow) continue;
 
 		//
 		// Update the count variables
