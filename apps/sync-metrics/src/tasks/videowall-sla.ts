@@ -63,27 +63,23 @@ export const videowallSla = async () => {
 		//
 
 		//
-		// If a ride should have already started, but we still
-		// do not have any data about it, we should count it as FAIL.
+		// Skip rides that should not have started yet (scheduled for the future)
 
 		const rideShouldHaveStarted = DateTime.fromJSDate(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
 
-		if (rideShouldHaveStarted) {
-			responseResult._cm_scheduled_rides_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
-			continue;
-		}
+		if (!rideShouldHaveStarted) continue;
 
-		console.log('----------------------------------------------');
-		console.log('rideData._id', rideData.seen_first_at);
-		console.log('rideShouldHaveStarted', rideShouldHaveStarted);
-		console.log('!rideData.seen_first_at', !rideData.seen_first_at);
-		console.log('----------------------------------------------');
+		//
+		// If a ride should have already started, but we still
+		// do not have any data about it, we should count it as FAIL.
 
-		if (rideShouldHaveStarted && !rideData.seen_first_at) {
+		responseResult._cm_scheduled_rides_until_now++;
+		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
+		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
+		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
+		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+
+		if (!rideData.seen_first_at) {
 			responseResult._cm_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
@@ -99,7 +95,7 @@ export const videowallSla = async () => {
 		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromJSDate(rideData.seen_last_at).diffNow('minutes').minutes < -2;
 		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
 
-		if (rideShouldHaveStarted && rideHasAlreadyEnded && (!simpleThreeVehicleEvents || simpleThreeVehicleEvents.grade !== 'pass')) {
+		if (rideHasAlreadyEnded && (!simpleThreeVehicleEvents || simpleThreeVehicleEvents.grade !== 'pass')) {
 			responseResult._cm_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
