@@ -66,7 +66,7 @@ export const videowallSla = async () => {
 		// If a ride should have already started, but we still
 		// do not have any data about it, we should count it as FAIL.
 
-		const rideShouldHaveStarted = DateTime.fromJSDate(rideData.start_time_scheduled).diffNow('minutes').minutes > 5;
+		const rideShouldHaveStarted = DateTime.fromJSDate(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
 
 		if (rideShouldHaveStarted && rideData.seen_first_at) {
 			responseResult._cm_scheduled_rides_until_now++;
@@ -81,7 +81,7 @@ export const videowallSla = async () => {
 		// If a ride should have already started and has already ended,
 		// and failed the SIMPLE_THREE_VEHICLE_EVENTS test, then we should count it as FAIL.
 
-		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromJSDate(rideData.seen_last_at).diffNow('minutes').minutes > 2;
+		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromJSDate(rideData.seen_last_at).diffNow('minutes').minutes < -2;
 		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
 
 		if (rideShouldHaveStarted && rideHasAlreadyEnded && (!simpleThreeVehicleEvents || simpleThreeVehicleEvents.grade !== 'pass')) {
