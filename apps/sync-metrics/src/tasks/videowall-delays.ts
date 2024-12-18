@@ -56,10 +56,11 @@ export const videowallDelays = async () => {
 	};
 
 	//
-	// Get all rides for today
+	// Get all rides for today. Only consider rides that have already started
+	// (start_time_observed !== null) and that have already been processed.
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, start_time_observed: { $ne: null }, status: 'complete' }).stream();
 
 	//
 	// Iterate on all rides for today
@@ -68,24 +69,13 @@ export const videowallDelays = async () => {
 		//
 
 		//
-		// Only consider rides that have already started (schedule start before now)
-		// or have already been processed.
-
-		const rideStartedBeforeNow = DateTime.fromJSDate(rideData.start_time_scheduled).toMillis() < DateTime.now().minus({ minutes: 60 }).toMillis();
-
-		const rideHasBeenProcessed = rideData.status === 'complete' && rideData.analysis.length > 0;
-
-		if (!rideStartedBeforeNow || !rideHasBeenProcessed) continue;
-
-		//
 		// Check if the ride is delayed for more than five minutes
 		// and store the total delay for each area and for the whole CM
 
-		const relevantTest = rideData.analysis.find(item => item._id === 'GEO_DELAYED_START_LAST_IN');
-
+		const relevantTest = rideData.analysis.find(item => item._id === 'ONTIME_START');
 		if (!relevantTest) continue;
 
-		if (relevantTest.grade === 'fail') {
+		if (relevantTest.reason === 'RIDE_STARTED_MORE_THAN_FIVE_MINUTES_LATE') {
 			responseResult._cm_delayed_for_more_than_five_minutes_count++;
 			if (rideData.agency_id === '41') responseResult._41_delayed_for_more_than_five_minutes_count++;
 			if (rideData.agency_id === '42') responseResult._42_delayed_for_more_than_five_minutes_count++;
