@@ -68,12 +68,21 @@ export const videowallSla = async () => {
 
 		const rideShouldHaveStarted = DateTime.fromJSDate(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
 
-		if (rideShouldHaveStarted && !rideData.seen_first_at) {
+		if (rideShouldHaveStarted) {
 			responseResult._cm_scheduled_rides_until_now++;
 			if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
 			if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
 			if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
 			if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+			continue;
+		}
+
+		if (rideShouldHaveStarted && !rideData.seen_first_at) {
+			responseResult._cm_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
 			continue;
 		}
 
@@ -85,11 +94,11 @@ export const videowallSla = async () => {
 		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
 
 		if (rideShouldHaveStarted && rideHasAlreadyEnded && (!simpleThreeVehicleEvents || simpleThreeVehicleEvents.grade !== 'pass')) {
-			responseResult._cm_scheduled_rides_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+			responseResult._cm_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
 			continue;
 		}
 
