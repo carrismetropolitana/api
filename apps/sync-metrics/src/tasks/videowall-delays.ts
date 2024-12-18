@@ -60,13 +60,18 @@ export const videowallDelays = async () => {
 	// (start_time_observed !== null) and that have already been processed.
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, start_time_observed: { $ne: null }, status: 'complete' }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, status: 'complete' }).stream();
 
 	//
 	// Iterate on all rides for today
 
 	for await (const rideData of allRidesForTodayStream) {
 		//
+
+		//
+		// Skip this ride if it has no start_time_observed
+
+		if (!rideData.start_time_observed) continue;
 
 		//
 		// Check if the ride is delayed for more than five minutes
