@@ -54,7 +54,7 @@ export const videowallEmptyRides = async () => {
 	// Get all rides for today
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, status: 'complete' }).stream();
 
 	//
 	// Iterate on all rides for today
@@ -63,24 +63,16 @@ export const videowallEmptyRides = async () => {
 		//
 
 		//
-		// Only consider rides that have already started (schedule start before now)
-		// or have already been processed.
+		// Only consider rides that have already ended (seen_last_at is more than two minutes ago)
 
-		const rideStartedBeforeNow = DateTime.fromJSDate(rideData.start_time_scheduled).toMillis() < DateTime.now().minus({ minutes: 60 }).toMillis();
+		if (!rideData.seen_last_at) continue;
 
-		const rideHasBeenProcessed = rideData.status === 'complete' && rideData.analysis.length > 0;
-
-		if (!rideStartedBeforeNow || !rideHasBeenProcessed) continue;
+		if (DateTime.fromJSDate(rideData.seen_last_at).diffNow('minutes').minutes > 2) continue;
 
 		//
-		// Check if the ride is delayed for more than five minutes
-		// and store the total delay for each area and for the whole CM
+		// Check if the ride had any valid validation transactions
 
-		const relevantTest = rideData.analysis.find(item => item._id === 'SIMPLE_ONE_VALIDATION_TRANSACTION');
-
-		if (!relevantTest) continue;
-
-		if (relevantTest.grade === 'fail') {
+		if (rideData.validations_count > 0) {
 			//
 			responseResult._cm_empty_rides_count++;
 			if (rideData.agency_id === '41') responseResult._41_empty_rides_count++;

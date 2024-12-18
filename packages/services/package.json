@@ -55,7 +55,7 @@
 		"pg": "8.13.1",
 		"redis": "4.7.0",
 		"trino-client": "0.2.6",
-		"tunnel-ssh": "5.1.2"
+		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
