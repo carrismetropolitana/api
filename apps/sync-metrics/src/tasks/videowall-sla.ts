@@ -28,27 +28,22 @@ export const videowallSla = async () => {
 	const responseResult = {
 
 		// For Area 1
-		_41_scheduled_rides_operational_day: 0,
 		_41_scheduled_rides_until_now: 0,
 		_41_simple_three_events_fail_until_now: 0,
 
 		// For Area 2
-		_42_scheduled_rides_operational_day: 0,
 		_42_scheduled_rides_until_now: 0,
 		_42_simple_three_events_fail_until_now: 0,
 
 		// For Area 3
-		_43_scheduled_rides_operational_day: 0,
 		_43_scheduled_rides_until_now: 0,
 		_43_simple_three_events_fail_until_now: 0,
 
 		// For Area 4
-		_44_scheduled_rides_operational_day: 0,
 		_44_scheduled_rides_until_now: 0,
 		_44_simple_three_events_fail_until_now: 0,
 
 		// For the whole CM
-		_cm_scheduled_rides_operational_day: 0,
 		_cm_scheduled_rides_until_now: 0,
 		_cm_simple_three_events_fail_until_now: 0,
 
@@ -68,42 +63,35 @@ export const videowallSla = async () => {
 		//
 
 		//
-		// Update the count variables
+		// If a ride should have already started, but we still
+		// do not have any data about it, we should count it as FAIL.
 
-		responseResult._cm_scheduled_rides_operational_day++;
+		const rideShouldHaveStarted = DateTime.fromJSDate(rideData.start_time_scheduled).diffNow('minutes').minutes > 5;
+		const rideHasAlreadyStarted = !!rideData.seen_first_at;
 
-		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_operational_day++;
-		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_operational_day++;
-		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_operational_day++;
-		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_operational_day++;
-
-		//
-		// Only consider rides that have already started (schedule start before now)
-
-		const rideStartedBeforeNow = DateTime.fromJSDate(rideData.start_time_scheduled).toMillis() < DateTime.now().minus({ minutes: 30 }).toMillis();
-		if (!rideStartedBeforeNow) continue;
-
-		//
-		// Update the count variables
-
-		responseResult._cm_scheduled_rides_until_now++;
-
-		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
-		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
-		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
-		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+		if (rideShouldHaveStarted && !rideHasAlreadyStarted) {
+			responseResult._cm_scheduled_rides_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+			continue;
+		}
 
 		//
-		// Check if the ride failed the SIMPLE_THREE_VEHICLE_EVENTS validation
+		// If a ride should have already started and has already ended,
+		// and failed the SIMPLE_THREE_VEHICLE_EVENTS test, then we should count it as FAIL.
 
+		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromJSDate(rideData.seen_last_at).diffNow('minutes').minutes > 2;
 		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
 
-		if (simpleThreeVehicleEvents?.grade === 'fail') {
-			responseResult._cm_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
+		if (rideShouldHaveStarted && rideHasAlreadyEnded && (!simpleThreeVehicleEvents || simpleThreeVehicleEvents.grade !== 'pass')) {
+			responseResult._cm_scheduled_rides_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+			continue;
 		}
 
 		//
