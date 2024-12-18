@@ -29,6 +29,7 @@ const sshConfig: SshConfig = {
 	},
 	tunnelOptions: {
 		autoClose: false,
+		reconnectOnError: true,
 	},
 };
 
