@@ -77,6 +77,12 @@ export const videowallSla = async () => {
 			continue;
 		}
 
+		console.log('----------------------------------------------');
+		console.log('rideData._id', rideData.seen_first_at);
+		console.log('rideShouldHaveStarted', rideShouldHaveStarted);
+		console.log('!rideData.seen_first_at', !rideData.seen_first_at);
+		console.log('----------------------------------------------');
+
 		if (rideShouldHaveStarted && !rideData.seen_first_at) {
 			responseResult._cm_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
