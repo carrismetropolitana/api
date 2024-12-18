@@ -68,7 +68,7 @@ export const videowallSla = async () => {
 
 		const rideShouldHaveStarted = DateTime.fromJSDate(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
 
-		if (rideShouldHaveStarted && rideData.seen_first_at) {
+		if (rideShouldHaveStarted && !rideData.seen_first_at) {
 			responseResult._cm_scheduled_rides_until_now++;
 			if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
 			if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
