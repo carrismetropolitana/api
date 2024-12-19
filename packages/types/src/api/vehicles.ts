@@ -215,6 +215,7 @@ export function convertVehicleScheduleRelationshipCode(value: string): undefined
 export enum VehicleOccupancyStatus {
 	empty = 'EMPTY',
 	full = 'FULL',
+	no_data_available = 'NO_DATA_AVAILABLE',
 	seats_available = 'SEATS_AVAILABLE',
 	standing_only = 'STANDING_ONLY',
 }

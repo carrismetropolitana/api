@@ -179,7 +179,7 @@ export const syncPositions = async () => {
 
 		if (existingVehicle?.trip_id !== pcgiVehicleEvent.content.entity[0].vehicle.trip.tripId) {
 			updateVehicleObject.occupancy_estimated = 0;
-			updateVehicleObject.occupancy_status = VehicleOccupancyStatus.empty;
+			updateVehicleObject.occupancy_status = VehicleOccupancyStatus.no_data_available;
 		}
 
 		//
