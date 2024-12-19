@@ -172,9 +172,9 @@ export function convertVehiclePropulsionCode(value: string): undefined | Vehicle
 /* * */
 
 export enum VehicleCurrentStatus {
-	in_transit_to = 'in_transit_to',
-	incoming_at = 'incoming_at',
-	stopped_at = 'stopped_at',
+	in_transit_to = 'IN_TRANSIT_TO',
+	incoming_at = 'INCOMING_AT',
+	stopped_at = 'STOPPED_AT',
 }
 
 export function convertVehicleCurrentStatusCode(value: string): undefined | VehicleCurrentStatus {
@@ -193,10 +193,10 @@ export function convertVehicleCurrentStatusCode(value: string): undefined | Vehi
 /* * */
 
 export enum VehicleScheduleRelationship {
-	added = 'added',
-	canceled = 'canceled',
-	scheduled = 'scheduled',
-	unscheduled = 'unscheduled',
+	added = 'ADDED',
+	canceled = 'CANCELED',
+	scheduled = 'SCHEDULED',
+	unscheduled = 'UNSCHEDULED',
 }
 
 export function convertVehicleScheduleRelationshipCode(value: string): undefined | VehicleScheduleRelationship {
@@ -213,8 +213,8 @@ export function convertVehicleScheduleRelationshipCode(value: string): undefined
 /* * */
 
 export enum VehicleOccupancyStatus {
-	empty = 'empty',
-	full = 'full',
-	seats_available = 'seats_available',
-	standing_only = 'standing_only',
+	empty = 'EMPTY',
+	full = 'FULL',
+	seats_available = 'SEATS_AVAILABLE',
+	standing_only = 'STANDING_ONLY',
 }

@@ -33,7 +33,7 @@ export const syncAlerts = async () => {
 
 	const protobufTimer = new TIMETRACKER();
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(alertsFeedData));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF, JSON.stringify(alertsFeedData));
 
 	LOGGER.info(`Saved Protobuf Alerts to ServerDB (${protobufTimer.get()})`);
 
@@ -62,11 +62,18 @@ export const syncAlerts = async () => {
 	let sentNotificationCounter = 0;
 
 	for (const alertItem of allAlertsParsedV2) {
-		if (!allSentNotificationsSet.has(alertItem.id)) {
+		if (!allSentNotificationsSet.has(alertItem['_id'])) {
 			try {
-				for (const entity of alertItem.informed_entity) {
+				for (const entity of alertItem['informedEntity']) {
 					// Setup notification message
 					const notificationMessage: TopicMessage = {
+						apns: {
+							payload: {
+								aps: {
+									mutableContent: true, // to go through the NSE for badge increment
+								},
+							},
+						},
 						data: {
 							alertId: '',
 						},
@@ -76,23 +83,22 @@ export const syncAlerts = async () => {
 							title: '',
 						},
 						topic: '',
-						apns: {
-							payload: {
-								aps: {
-									mutableContent: true, // to go through the NSE for badge increment
-								},
-							},
-						}
 					};
 					// Include alert id
-					notificationMessage.data.alertId = alertItem.id;
+					notificationMessage.data.alertId = alertItem['_id'];
 					// Include title
-					notificationMessage.notification.title = alertItem.header_text?.translation[0]?.text || '';
+					if (alertItem.header_text?.translation?.length > 0) {
+						notificationMessage.notification.title = alertItem.header_text?.translation[0]?.text ?? '';
+					}
 					// Include description
-					const messageDescription = alertItem.description_text?.translation[0]?.text || '';
-					notificationMessage.notification.body = messageDescription.length > 200 ? messageDescription.substring(0, 200) + '...' : messageDescription;
+					if (alertItem.description_text?.translation?.length > 0) {
+						const messageDescription = alertItem.description_text?.translation[0]?.text ?? '';
+						notificationMessage.notification.body = messageDescription?.length > 200 ? messageDescription.substring(0, 200) + '...' : messageDescription;
+					}
 					// Include image
-					notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
+					if (alertItem.image?.localized_image?.length > 0) {
+						notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
+					}
 					// Include topics
 					if (entity.route_id) {
 						notificationMessage.topic = `cm.realtime.alerts.line.${entity.route_id}`;
@@ -107,11 +113,11 @@ export const syncAlerts = async () => {
 					// await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
-				allSentNotificationsSet.add(alertItem.id);
-				LOGGER.success(`Sent notification for alert: ${alertItem.id}`);
+				allSentNotificationsSet.add(alertItem['_id']);
+				LOGGER.success(`Sent notification for alert: ${alertItem['_id']}`);
 			}
 			catch (error) {
-				LOGGER.error(`Failed to send notification for alert: ${alertItem.id}`);
+				LOGGER.error(`Failed to send notification for alert: ${alertItem['_id']}`);
 				LOGGER.error(error);
 				continue;
 			}

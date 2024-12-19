@@ -12,29 +12,34 @@ import { DateTime } from 'luxon';
 
 function convertToProtobuf(allEvents: Vehicle[]) {
 	return {
-		entity: allEvents.map(event => ({
-			id: event.event_id,
-			vehicle: {
-				currentStatus: event.current_status,
-				position: {
-					bearing: event.bearing,
-					latitude: event.lat,
-					longitude: event.lon,
-					speed: event.speed,
-				},
-				stopId: event.stop_id,
-				timestamp: event.timestamp,
-				trip: {
-					directionId: event.direction_id,
-					routeId: event.route_id,
-					scheduleRelationship: event.schedule_relationship,
-					tripId: event.trip_id,
-				},
+		entity: allEvents
+			.filter(event => Boolean(event.trip_id))
+			.map(event => ({
+				id: event.event_id,
 				vehicle: {
-					id: event.id,
+					currentStatus: event.current_status,
+					occupancyStatus: event.occupancy_status,
+					position: {
+						bearing: event.bearing,
+						latitude: event.lat,
+						longitude: event.lon,
+						speed: event.speed,
+					},
+					stopId: event.stop_id,
+					timestamp: event.timestamp,
+					trip: {
+						directionId: event.direction_id,
+						routeId: event.route_id,
+						scheduleRelationship: event.schedule_relationship,
+						tripId: event.trip_id,
+					},
+					vehicle: {
+						id: event.id,
+						licensePlate: event.license_plate,
+						wheelchairAccessible: event.wheelchair_accessible ? 'WHEELCHAIR_ACCESSIBLE' : 'NO_VALUE',
+					},
 				},
-			},
-		})),
+			})),
 		header: {
 			gtfsRealtimeVersion: '2.0',
 			incrementality: 'FULL_DATASET',
