@@ -7,7 +7,8 @@
 email="carrismetropolitana@gmail.com"
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-api_domain=api.cmet.pt # The primary domain
+api_server_domain=api.cmet.pt # The primary domain
+api_docs_domain=docs.api.cmet.pt # The docs domain
 switch_qr_domain=qr.cmet.pt
 
 
@@ -23,9 +24,14 @@ curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/c
 curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "./letsencrypt/ssl-dhparams.pem"
 echo
 
-echo ">>> Creating dummy certificate for "$api_domain"..."
-mkdir -p "./letsencrypt/live/$api_domain"
-docker compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '/etc/letsencrypt/live/$api_domain/privkey.pem' -out '/etc/letsencrypt/live/$api_domain/fullchain.pem' -subj '/CN=localhost'" certbot
+echo ">>> Creating dummy certificate for "$api_server_domain"..."
+mkdir -p "./letsencrypt/live/$api_server_domain"
+docker compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '/etc/letsencrypt/live/$api_server_domain/privkey.pem' -out '/etc/letsencrypt/live/$api_server_domain/fullchain.pem' -subj '/CN=localhost'" certbot
+echo
+
+echo ">>> Creating dummy certificate for "$api_docs_domain"..."
+mkdir -p "./letsencrypt/live/$api_docs_domain"
+docker compose run --rm --entrypoint "openssl req -x509 -nodes -newkey rsa:4096 -days 1 -keyout '/etc/letsencrypt/live/$api_docs_domain/privkey.pem' -out '/etc/letsencrypt/live/$api_docs_domain/fullchain.pem' -subj '/CN=localhost'" certbot
 echo
 
 echo ">>> Creating dummy certificate for "$switch_qr_domain"..."
@@ -39,17 +45,32 @@ echo
 
 
 # # #
-# API
+# API SERVER
 
-echo ">>> Preparing for "$api_domain"..."
+echo ">>> Preparing for "$api_server_domain"..."
 
 echo ">>> Deleting dummy certificate..."
-docker compose run --rm --entrypoint "rm -Rf /etc/letsencrypt/live/$api_domain && rm -Rf /etc/letsencrypt/archive/$api_domain && rm -Rf /etc/letsencrypt/renewal/$api_domain.conf" certbot
+docker compose run --rm --entrypoint "rm -Rf /etc/letsencrypt/live/$api_server_domain && rm -Rf /etc/letsencrypt/archive/$api_server_domain && rm -Rf /etc/letsencrypt/renewal/$api_server_domain.conf" certbot
 echo
 
-echo ">>> Requesting Let's Encrypt certificate for "$api_domain"..."
+echo ">>> Requesting Let's Encrypt certificate for "$api_server_domain"..."
 if [ $staging != "0" ]; then staging_arg="--staging"; fi # Enable staging mode if needed
-docker compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot $staging_arg -d $api_domain --email $email --rsa-key-size 4096 --agree-tos --noninteractive --verbose --force-renewal" certbot
+docker compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot $staging_arg -d $api_server_domain --email $email --rsa-key-size 4096 --agree-tos --noninteractive --verbose --force-renewal" certbot
+echo
+
+
+# # #
+# API DOCS
+
+echo ">>> Preparing for "$api_docs_domain"..."
+
+echo ">>> Deleting dummy certificate..."
+docker compose run --rm --entrypoint "rm -Rf /etc/letsencrypt/live/$api_docs_domain && rm -Rf /etc/letsencrypt/archive/$api_docs_domain && rm -Rf /etc/letsencrypt/renewal/$api_docs_domain.conf" certbot
+echo
+
+echo ">>> Requesting Let's Encrypt certificate for "$api_docs_domain"..."
+if [ $staging != "0" ]; then staging_arg="--staging"; fi # Enable staging mode if needed
+docker compose run --rm --entrypoint "certbot certonly --webroot -w /var/www/certbot $staging_arg -d $api_docs_domain --email $email --rsa-key-size 4096 --agree-tos --noninteractive --verbose --force-renewal" certbot
 echo
 
 
