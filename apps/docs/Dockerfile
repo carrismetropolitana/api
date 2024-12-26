@@ -34,23 +34,9 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/full/ .
 RUN npm install --omit-dev \
 	&& npm cache clean --force
-
-# # # # # # # # #
-
-
-# PHASE 4
-# Rebuild the source code only when needed.
-
-FROM base AS builder
-
-WORKDIR /app
-
-COPY --from=dependencies /app/node_modules ./node_modules
-
-COPY --from=pruner /app/out/full/ .
 
 RUN npx @helperkits/bumper bump
 
