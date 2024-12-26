@@ -56,11 +56,13 @@ WORKDIR /app
 
 COPY --from=dependencies /app/node_modules ./node_modules
 
-RUN echo "builder/----------------------------------------"
+COPY --from=pruner /app/out/full/ .
+
+RUN npx @helperkits/bumper bump
+
+RUN echo "aftercopy/----------------------------------------"
 RUN ls -la
 
-COPY --from=pruner /app/out/full/ .
-RUN npx @helperkits/bumper bump
 RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
 
 # # # # # # # # #
