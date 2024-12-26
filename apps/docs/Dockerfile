@@ -55,7 +55,6 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
 
 RUN echo "builder/----------------------------------------"
 RUN ls -la
