@@ -42,9 +42,6 @@ RUN npx @helperkits/bumper bump
 
 RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
 
-RUN echo "aftercopy/----------------------------------------"
-RUN ls -la /app/apps/${PROJECT}
-
 # # # # # # # # #
 
 
