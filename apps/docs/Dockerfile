@@ -40,10 +40,10 @@ RUN npm install --omit-dev \
 
 RUN npx @helperkits/bumper bump
 
+RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
+
 RUN echo "aftercopy/----------------------------------------"
 RUN ls -la
-
-RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
 
 # # # # # # # # #
 
