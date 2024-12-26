@@ -26,9 +26,9 @@ RUN turbo prune --scope=@carrismetropolitana/api-${PROJECT} --docker
 
 
 # PHASE 3
-# Install the project dependencies.
+# Install the project dependencies and build the project.
 
-FROM base AS dependencies
+FROM base AS builder
 
 RUN apk add --no-cache libc6-compat
 
@@ -48,7 +48,7 @@ RUN ls -la /app/apps/${PROJECT}
 # # # # # # # # #
 
 
-# PHASE 5
+# PHASE 4
 # Setup the final Docker image with only the required files.
 
 FROM base AS runner
@@ -60,10 +60,10 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=dependencies /app/apps/${PROJECT}/public ./public
+COPY --from=builder /app/apps/${PROJECT}/public ./public
 
-COPY --from=dependencies --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone ./
-COPY --from=dependencies --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/static ./.next/static
 
 USER nextjs
 
