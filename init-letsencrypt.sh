@@ -8,7 +8,7 @@ email="carrismetropolitana@gmail.com"
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 api_domain=api.cmet.pt # The primary domain
-docs_domain=docs.api.cmet.pt # The docs domain
+docs_domain=docs.cmet.pt # The docs domain
 switch_qr_domain=qr.cmet.pt
 
 
