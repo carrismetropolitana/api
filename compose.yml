@@ -151,24 +151,6 @@ services:
       - POSTGRES_USER=networkdbuser
       - POSTGRES_PASSWORD=networkdbpassword
 
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  docs:
-    image: ghcr.io/carrismetropolitana/api-docs:alpha
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 500mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
