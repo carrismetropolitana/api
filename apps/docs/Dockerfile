@@ -70,4 +70,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-CMD node /apps/${PROJECT}/server.js
+CMD node /app/apps/${PROJECT}/server.js
