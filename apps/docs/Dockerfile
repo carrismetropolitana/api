@@ -1,12 +1,32 @@
-# # # # # # # # #
+# PHASE 1
+# Setup the base image with the required tools.
 
 FROM node:22.6-alpine3.20 AS base
 
+ENV PROJECT=docs
+
+RUN npm install -g turbo@^2
+
 # # # # # # # # #
 
 
-# PHASE 1
-# Install dependencies only when needed.
+# PHASE 2
+# Because this is a monorepo with turbopack, it is necessary
+# to prune the project to remove unnecessary files.
+
+FROM base AS pruner
+
+WORKDIR /app
+
+COPY . .
+
+RUN turbo prune --scope=@carrismetropolitana/api-${PROJECT} --docker
+
+# # # # # # # # #
+
+
+# PHASE 3
+# Install the project dependencies.
 
 FROM base AS dependencies
 
@@ -14,16 +34,14 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-COPY package.json ./
-
+COPY --from=pruner /app/out/json/ .
 RUN npm install --omit-dev --force \
-    && npm cache clean --force
-
+	&& npm cache clean --force
 
 # # # # # # # # #
 
 
-# PHASE 2
+# PHASE 4
 # Rebuild the source code only when needed.
 
 FROM base AS builder
@@ -33,15 +51,15 @@ WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
+
+COPY --from=pruner /app/out/full/ .
 RUN npx @helperkits/bumper bump
-
-RUN npm run build
-
+RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
 
 # # # # # # # # #
 
 
-# PHASE 3
+# PHASE 5
 # Setup the final Docker image with only the required files.
 
 FROM base AS runner
