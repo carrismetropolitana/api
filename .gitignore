@@ -130,3 +130,8 @@ FIREBASE.json
 
 .env
 .env.*
+
+# fumadocs generated content
+.contentlayer
+.content-collections
+.source
