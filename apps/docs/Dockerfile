@@ -62,8 +62,8 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=dependencies /app/public ./public
 
-COPY --from=dependencies --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=dependencies --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=dependencies --chown=nextjs:nodejs /app/${PROJECT}/.next/standalone ./
+COPY --from=dependencies --chown=nextjs:nodejs /app/${PROJECT}/.next/static ./.next/static
 
 USER nextjs
 
