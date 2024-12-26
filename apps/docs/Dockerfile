@@ -62,7 +62,7 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/apps/${PROJECT}/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone/apps/${PROJECT} ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone ./
 
 USER nextjs
 
@@ -70,4 +70,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["node", "server.js"]
+CMD node /apps/${PROJECT}/server.js
