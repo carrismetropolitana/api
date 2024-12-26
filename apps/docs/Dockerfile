@@ -60,10 +60,10 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=dependencies /app/public ./public
+COPY --from=dependencies /app/apps/${PROJECT}/public ./public
 
-COPY --from=dependencies --chown=nextjs:nodejs /app/${PROJECT}/.next/standalone ./
-COPY --from=dependencies --chown=nextjs:nodejs /app/${PROJECT}/.next/static ./.next/static
+COPY --from=dependencies --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/standalone ./
+COPY --from=dependencies --chown=nextjs:nodejs /app/apps/${PROJECT}/.next/static ./.next/static
 
 USER nextjs
 
