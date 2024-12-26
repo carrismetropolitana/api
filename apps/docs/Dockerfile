@@ -22,6 +22,9 @@ COPY . .
 
 RUN turbo prune --scope=@carrismetropolitana/api-${PROJECT} --docker
 
+RUN echo "pruner/----------------------------------------"
+RUN ls -la
+
 # # # # # # # # #
 
 
@@ -35,8 +38,11 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY --from=pruner /app/out/json/ .
-RUN npm install --omit-dev --force \
+RUN npm install --omit-dev \
 	&& npm cache clean --force
+
+RUN echo "dependencies/----------------------------------------"
+RUN ls -la
 
 # # # # # # # # #
 
@@ -51,6 +57,8 @@ WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
+RUN echo "builder/----------------------------------------"
+RUN ls -la
 
 COPY --from=pruner /app/out/full/ .
 RUN npx @helperkits/bumper bump
