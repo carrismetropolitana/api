@@ -22,9 +22,6 @@ COPY . .
 
 RUN turbo prune --scope=@carrismetropolitana/api-${PROJECT} --docker
 
-RUN echo "pruner/----------------------------------------"
-RUN ls -la
-
 # # # # # # # # #
 
 
@@ -40,9 +37,6 @@ WORKDIR /app
 COPY --from=pruner /app/out/json/ .
 RUN npm install --omit-dev \
 	&& npm cache clean --force
-
-RUN echo "dependencies/----------------------------------------"
-RUN ls -la
 
 # # # # # # # # #
 
