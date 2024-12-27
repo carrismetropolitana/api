@@ -5,15 +5,20 @@
 		"build": "turbo run build",
 		"build:packages": "turbo run build --filter=./packages/*",
 		"dev": "npm run build:packages && npm i && turbo run dev --concurrency=99",
-		"dev:sync": "npm run build:packages && npm i && turbo run dev:sync --concurrency=99",
+		"dev:server": "turbo dev --filter=@carrismetropolitana/api-server",
+		"dev:switch": "turbo dev --filter=@carrismetropolitana/api-switch",
+		"dev:sync-alerts": "turbo dev --filter=@carrismetropolitana/api-sync-alerts",
+		"dev:sync-facilities": "turbo dev --filter=@carrismetropolitana/api-sync-facilities",
+		"dev:sync-gtfs": "turbo dev --filter=@carrismetropolitana/api-sync-gtfs",
+		"dev:sync-metrics": "turbo dev --filter=@carrismetropolitana/api-sync-metrics",
+		"dev:sync-stores": "turbo dev --filter=@carrismetropolitana/api-sync-stores",
+		"dev:sync-vehicles": "turbo dev --filter=@carrismetropolitana/api-sync-vehicles",
 		"docker:local:down": "docker compose -f docker/compose.local.yml down",
 		"docker:local:up": "docker compose -f docker/compose.local.yml up -d --build --force-recreate --remove-orphans --pull=always",
 		"docker:sync:down": "docker compose -f docker/compose.sync.yml down",
 		"docker:sync:up": "docker compose -f docker/compose.sync.yml up -d --build --force-recreate --remove-orphans --pull=always",
 		"lint": "turbo run lint",
-		"start": "dotenv-run -- turbo run start",
-		"start:sync": "dotenv-run -- turbo run start:sync",
-		"sync-metrics": "turbo dev --filter=@carrismetropolitana/api-sync-metrics"
+		"start": "dotenv-run -- turbo run start"
 	},
 	"devDependencies": {
 		"turbo": "2.3.3"
