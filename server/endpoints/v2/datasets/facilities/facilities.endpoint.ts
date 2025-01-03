@@ -12,8 +12,14 @@ const all = async (_, reply) => {
 
 /* * */
 
-FASTIFY.server.get('/datasets/facilities', all);
+FASTIFY.registerRoutePlugin('GET', '/datasets/facilities', all);
 
-FASTIFY.server.get('/v1/datasets/facilities', all);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/facilities', all);
 
-FASTIFY.server.get('/v2/datasets/facilities', all);
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/facilities', all, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get all facilitiy types',
+		description: 'Get all facility types',
+	},
+});

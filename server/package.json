@@ -12,6 +12,8 @@
     "watch": "tsc -w"
   },
   "dependencies": {
+    "@fastify/swagger": "^9.4.0",
+    "@fastify/swagger-ui": "^5.2.0",
     "dotenv": "16.4.5",
     "fastify": "5.0.0",
     "jwt-decode": "4.0.0",

@@ -23,11 +23,32 @@ const single = async (request, reply) => {
 
 /* * */
 
-FASTIFY.server.get('/datasets/connections/light_rail_stations', all);
-FASTIFY.server.get('/datasets/connections/light_rail_stations/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/datasets/connections/light_rail_stations', all);
+FASTIFY.registerRoutePlugin('GET', '/datasets/connections/light_rail_stations/:id', single);
 
-FASTIFY.server.get('/v1/datasets/connections/light_rail_stations', all);
-FASTIFY.server.get('/v1/datasets/connections/light_rail_stations/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/connections/light_rail_stations', all);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/connections/light_rail_stations/:id', single);
 
-FASTIFY.server.get('/v2/datasets/connections/light_rail_stations', all);
-FASTIFY.server.get('/v2/datasets/connections/light_rail_stations/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/connections/light_rail_stations', all, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get all light rail stations',
+		description: 'Get all light rail stations',
+	},
+});
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/connections/light_rail_stations/:id', single, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get a single light rail station',
+		description: 'Get a single light rail station by ID',
+		params: {
+			type: 'object',
+			properties: {
+				id: {
+					type: 'string',
+					description: 'The light rail station ID',
+				},
+			},
+		},
+	},
+});

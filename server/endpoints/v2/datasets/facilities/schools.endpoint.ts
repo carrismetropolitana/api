@@ -23,11 +23,32 @@ const single = async (request, reply) => {
 
 /* * */
 
-FASTIFY.server.get('/datasets/facilities/schools', all);
-FASTIFY.server.get('/datasets/facilities/schools/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/datasets/facilities/schools', all);
+FASTIFY.registerRoutePlugin('GET', '/datasets/facilities/schools/:id', single);
 
-FASTIFY.server.get('/v1/datasets/facilities/schools', all);
-FASTIFY.server.get('/v1/datasets/facilities/schools/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/facilities/schools', all);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/facilities/schools/:id', single);
 
-FASTIFY.server.get('/v2/datasets/facilities/schools', all);
-FASTIFY.server.get('/v2/datasets/facilities/schools/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/facilities/schools', all, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get all schools',
+		description: 'Get all schools',
+	},
+});
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/facilities/schools/:id', single, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get a single school',
+		description: 'Get a single school by ID',
+		params: {
+			type: 'object',
+			properties: {
+				id: {
+					type: 'string',
+					description: 'The school ID',
+				},
+			},
+		},
+	},
+});

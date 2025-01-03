@@ -23,11 +23,32 @@ const single = async (request, reply) => {
 
 /* * */
 
-FASTIFY.server.get('/datasets/connections/boat_stations', all);
-FASTIFY.server.get('/datasets/connections/boat_stations/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/datasets/connections/boat_stations', all);
+FASTIFY.registerRoutePlugin('GET', '/datasets/connections/boat_stations/:id', single);
 
-FASTIFY.server.get('/v1/datasets/connections/boat_stations', all);
-FASTIFY.server.get('/v1/datasets/connections/boat_stations/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/connections/boat_stations', all);
+FASTIFY.registerRoutePlugin('GET', '/v1/datasets/connections/boat_stations/:id', single);
 
-FASTIFY.server.get('/v2/datasets/connections/boat_stations', all);
-FASTIFY.server.get('/v2/datasets/connections/boat_stations/:id', single);
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/connections/boat_stations', all, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get all boat stations',
+		description: 'Get all boat stations',
+	},
+});
+FASTIFY.registerRoutePlugin('GET', '/v2/datasets/connections/boat_stations/:id', single, {
+	schema: {
+		tags: ['datasets'],
+		summary: 'Get a single boat station',
+		description: 'Get a single boat station by ID',
+		params: {
+			type: 'object',
+			properties: {
+				id: {
+					type: 'string',
+					description: 'The boat station ID',
+				},
+			},
+		},
+	},
+});
