@@ -1,5 +1,9 @@
 /* * */
 
+import { z } from 'zod';
+
+/* * */
+
 export interface FacilitySource {
 	district_id: string
 	district_name: string
@@ -17,22 +21,24 @@ export interface FacilitySource {
 	stops: string
 }
 
-export interface Facility {
-	district_id: string
-	district_name: string
-	id: string
-	lat: number
-	locality: string
-	lon: number
-	municipality_id: string
-	municipality_name: string
-	name: string
-	parish_id: string
-	parish_name: string
-	region_id: string
-	region_name: string
-	stop_ids: string[]
-}
+export const FacilitySchema = z.object({
+	district_id: z.string(),
+	district_name: z.string(),
+	id: z.string(),
+	lat: z.number(),
+	locality: z.string(),
+	lon: z.number(),
+	municipality_id: z.string(),
+	municipality_name: z.string(),
+	name: z.string(),
+	parish_id: z.string(),
+	parish_name: z.string(),
+	region_id: z.string(),
+	region_name: z.string(),
+	stop_ids: z.array(z.string()),
+}).strict();
+
+export type Facility = z.infer<typeof FacilitySchema>;
 
 /* * */
 
@@ -47,15 +53,20 @@ export interface SchoolsSource extends FacilitySource {
 	url: string
 }
 
-export interface School extends Facility {
-	address: string
-	cicles: string
-	email: string
-	grouping: string
-	nature: string
-	phone: string
-	url: string
-}
+export const SchoolSchema = FacilitySchema.extend({
+	address: z.string(),
+	cicles: z.string(),
+	email: z.string(),
+	grouping: z.string(),
+	nature: z.string(),
+	phone: z.string(),
+	postal_code: z.string(),
+	url: z.string(),
+}).strict();
+
+export type School = z.infer<typeof SchoolSchema>;
+
+/* * */
 
 export interface StoresSource extends FacilitySource {
 	address: string

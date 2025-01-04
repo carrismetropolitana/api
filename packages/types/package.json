@@ -33,9 +33,9 @@
 			"types": "./dist/api/common.d.ts"
 		},
 		"./facilities": {
-			"import": "./dist/api/facilities.js",
-			"require": "./dist/api/facilities.js",
-			"types": "./dist/api/facilities.d.ts"
+			"import": "./dist/api/facilities.type.js",
+			"require": "./dist/api/facilities.type.js",
+			"types": "./dist/api/facilities.type.d.ts"
 		},
 		"./gtfs-core": {
 			"import": "./dist/gtfs/core.js",
@@ -79,7 +79,8 @@
 	},
 	"dependencies": {
 		"@types/geojson": "7946.0.15",
-		"gtfs-types": "4.0.0"
+		"gtfs-types": "4.0.0",
+		"zod": "3.24.1"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",

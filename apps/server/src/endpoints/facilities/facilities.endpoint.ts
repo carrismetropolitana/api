@@ -3,12 +3,12 @@
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { SchoolSchema } from '@carrismetropolitana/api-types/facilities';
 
 /* * */
 
-FASTIFY.GET(
-	'/facilities',
-	async (_, reply) => {
+FASTIFY.route({
+	handler: async (_, reply) => {
 		return reply.code(200).send({
 			available_facilities: [
 				'stores',
@@ -21,14 +21,17 @@ FASTIFY.GET(
 			],
 		});
 	},
-	{
-		schema: {
-			description: 'Get all ENCM facilities',
-			summary: 'Get all ENCM facilities',
-			tags: ['datasets'],
+	method: 'GET',
+	schema: {
+		description: 'Get all ENCM facilities',
+		response: {
+			200: SchoolSchema.array(),
 		},
+		summary: 'Get all ENCM facilities',
+		tags: ['datasets'],
 	},
-);
+	url: '/facilities',
+});
 
 /* * */
 

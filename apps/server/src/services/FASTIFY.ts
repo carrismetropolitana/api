@@ -1,23 +1,15 @@
 /* * */
 
-import type {
-	FastifyInstance,
-	FastifyListenOptions,
-	FastifyServerOptions,
-	RawReplyDefaultExpression,
-	RawRequestDefaultExpression,
-	RawServerBase,
-	RouteGenericInterface,
-	RouteHandlerMethod,
-	RouteShorthandOptions,
-} from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
+import { SchoolSchema } from '@carrismetropolitana/api-types/facilities';
 import fastifySwagger from '@fastify/swagger';
 import fastify from 'fastify';
+import { createJsonSchemaTransformObject, jsonSchemaTransform } from 'fastify-type-provider-zod';
 
 /* * */
 
-const defaultOptions: FastifyServerOptions = {
+const defaultOptions: fastify.FastifyServerOptions = {
 	ignoreTrailingSlash: true,
 	logger: {
 		level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
@@ -32,14 +24,14 @@ class FastifyService {
 	//
 
 	private static _instance: FastifyService;
-	public readonly server: FastifyInstance;
+	public readonly server: fastify.FastifyInstance;
 
 	/**
 	 * Create a new instance of the FastifyService.
 	 * @param options The options to use when creating the instance.
 	 */
 	private constructor() {
-		this.server = fastify(defaultOptions).withTypeProvider();
+		this.server = fastify(defaultOptions).withTypeProvider<ZodTypeProvider>();
 		this._registerOpenApiPlugin();
 		this._setupDefaultHooks();
 		this._setupDefaultRoutes();
@@ -66,8 +58,9 @@ class FastifyService {
 	 * @param path The path of the route.
 	 * @param handler The handler for the route.
 	 * @param options The options for the route.
+	 * @deprecated
 	 */
-	public GET<RouteGeneric extends RouteGenericInterface>(path: string, handler: RouteHandlerMethod<RawServerBase, RawRequestDefaultExpression, RawReplyDefaultExpression, RouteGeneric>, options: RouteShorthandOptions = {}) {
+	public GET<RouteGeneric extends fastify.RouteGenericInterface>(path: string, handler: fastify.RouteHandlerMethod<fastify.RawServerBase, fastify.RawRequestDefaultExpression, fastify.RawReplyDefaultExpression, RouteGeneric>, options: fastify.RouteShorthandOptions = {}) {
 		this.server.register(() => {
 			this.server.get(path, options, handler);
 		});
@@ -78,10 +71,21 @@ class FastifyService {
 	 * @param path The path of the route.
 	 * @param handler The handler for the route.
 	 * @param options The options for the route.
+	 * @deprecated
 	 */
-	public POST<RouteGeneric extends RouteGenericInterface>(path: string, handler: RouteHandlerMethod<RawServerBase, RawRequestDefaultExpression, RawReplyDefaultExpression, RouteGeneric>, options: RouteShorthandOptions = {}) {
+	public POST<RouteGeneric extends fastify.RouteGenericInterface>(path: string, handler: fastify.RouteHandlerMethod<fastify.RawServerBase, fastify.RawRequestDefaultExpression, fastify.RawReplyDefaultExpression, RouteGeneric>, options: fastify.RouteShorthandOptions = {}) {
 		this.server.register(() => {
 			this.server.post(path, options, handler);
+		});
+	}
+
+	/**
+	 * Register a route pre-configured with the OpenAPI plugin.
+	 * @param routeOptions The options for the route.
+	 */
+	public route(routeOptions: fastify.RouteOptions) {
+		this.server.register(() => {
+			this.server.route(routeOptions);
 		});
 	}
 
@@ -90,7 +94,7 @@ class FastifyService {
 	 * If the port is already in use, try the next one.
 	 * @param options The options to use when starting the server
 	 */
-	private async _attemptStart(options: FastifyListenOptions): Promise<void> {
+	private async _attemptStart(options: fastify.FastifyListenOptions): Promise<void> {
 		try {
 			await this.server.listen(options);
 		}
@@ -122,97 +126,6 @@ class FastifyService {
 		await this.server.register(fastifySwagger, {
 			hideUntagged: true,
 			openapi: {
-				components: {
-					schemas: {
-						ApiResponse: {
-							properties: {
-								code: {
-									format: 'int32',
-									type: 'integer',
-								},
-								message: {
-									type: 'string',
-								},
-								type: {
-									type: 'string',
-								},
-							},
-							type: 'object',
-							xml: {
-								name: '##default',
-							},
-						},
-						FacilityBoatStation: {
-							properties: {
-								district_id: {
-									example: '15',
-									type: 'string',
-								},
-								district_name: {
-									example: 'Setúbal',
-									type: 'string',
-								},
-								id: {
-									example: 'AF_1',
-									type: 'string',
-								},
-								lat: {
-									example: 38.52145,
-									format: 'float',
-									type: 'number',
-								},
-								locality: {
-									example: 'Setúbal',
-									type: 'string',
-								},
-								lon: {
-									example: -8.885385,
-									format: 'float',
-									type: 'number',
-								},
-								municipality_id: {
-									example: '1512',
-									type: 'string',
-								},
-								municipality_name: {
-									example: 'Setúbal',
-									type: 'string',
-								},
-								name: {
-									example: 'Setúbal (Doca do Comércio)',
-									type: 'string',
-								},
-								parish_id: {
-									example: '05',
-									type: 'string',
-								},
-								parish_name: {
-									example: 'Setúbal (São Sebastião)',
-									type: 'string',
-								},
-								region_id: {
-									example: 'PT170',
-									type: 'string',
-								},
-								region_name: {
-									example: 'AML',
-									type: 'string',
-								},
-								stop_ids: {
-									example: [
-										'160745',
-										'160746',
-									],
-									items: {
-										type: 'string',
-									},
-									type: 'array',
-								},
-							},
-							type: 'object',
-						},
-					},
-				},
 				externalDocs: {
 					description: 'More detailed documentation here',
 					url: 'https://docs.carrismetropolitana.pt',
@@ -237,6 +150,12 @@ class FastifyService {
 					{ description: 'System status info', name: 'status' },
 				],
 			},
+			transform: jsonSchemaTransform,
+			transformObject: createJsonSchemaTransformObject({
+				schemas: {
+					School: SchoolSchema,
+				},
+			}),
 		});
 	}
 
@@ -257,7 +176,7 @@ class FastifyService {
 		this.server.get('/', (_, reply) => {
 			reply.send('Jusi was here!');
 		});
-		this.server.get('/documentation', async () => {
+		this.server.get('/openapi.json', async () => {
 			return this.server.swagger();
 		});
 	}
