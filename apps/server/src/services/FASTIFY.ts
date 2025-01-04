@@ -58,7 +58,6 @@ class FastifyService {
 	 * @param path The path of the route.
 	 * @param handler The handler for the route.
 	 * @param options The options for the route.
-	 * @deprecated
 	 */
 	public GET<RouteGeneric extends fastify.RouteGenericInterface>(path: string, handler: fastify.RouteHandlerMethod<fastify.RawServerBase, fastify.RawRequestDefaultExpression, fastify.RawReplyDefaultExpression, RouteGeneric>, options: fastify.RouteShorthandOptions = {}) {
 		this.server.register(() => {
@@ -71,21 +70,10 @@ class FastifyService {
 	 * @param path The path of the route.
 	 * @param handler The handler for the route.
 	 * @param options The options for the route.
-	 * @deprecated
 	 */
 	public POST<RouteGeneric extends fastify.RouteGenericInterface>(path: string, handler: fastify.RouteHandlerMethod<fastify.RawServerBase, fastify.RawRequestDefaultExpression, fastify.RawReplyDefaultExpression, RouteGeneric>, options: fastify.RouteShorthandOptions = {}) {
 		this.server.register(() => {
 			this.server.post(path, options, handler);
-		});
-	}
-
-	/**
-	 * Register a route pre-configured with the OpenAPI plugin.
-	 * @param routeOptions The options for the route.
-	 */
-	public route(routeOptions: fastify.RouteOptions) {
-		this.server.register(() => {
-			this.server.route(routeOptions);
 		});
 	}
 

@@ -14,6 +14,8 @@ import '@/endpoints/locations/locations.endpoint.js';
 /* * */
 
 import '@/endpoints/facilities/facilities.endpoint.js';
+import '@/endpoints/facilities/schools.endpoint.js';
+import '@/endpoints/facilities/stores.endpoint.js';
 
 /* * */
 
