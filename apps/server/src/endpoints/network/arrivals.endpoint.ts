@@ -22,7 +22,7 @@ const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 /* * */
 
-FASTIFY.GET<RequestSchema>('/arrivals/by_stop/:id', async (request, reply) => {
+FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply) => {
 	//
 
 	if (!regexPatternForStopId.test(request.params.id)) {

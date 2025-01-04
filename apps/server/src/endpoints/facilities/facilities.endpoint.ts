@@ -39,6 +39,12 @@ FASTIFY.GET('/facilities/stores', async (_, reply) => {
 		.code(200)
 		.header('cache-control', 'public, max-age=30')
 		.send(allItemsTxt);
+}, {
+	schema: {
+		description: 'Test Type cast',
+		summary: 'Test Type cast',
+		tags: ['datasets'],
+	},
 });
 
 FASTIFY.GET('/facilities/helpdesks', async (_, reply) => {

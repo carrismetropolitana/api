@@ -1,7 +1,19 @@
 /* * */
 
+import type {
+	FastifyInstance,
+	FastifyListenOptions,
+	FastifyServerOptions,
+	RawReplyDefaultExpression,
+	RawRequestDefaultExpression,
+	RawServerBase,
+	RouteGenericInterface,
+	RouteHandlerMethod,
+	RouteShorthandOptions,
+} from 'fastify';
+
 import fastifySwagger from '@fastify/swagger';
-import fastify, { FastifyInstance, FastifyListenOptions, FastifyServerOptions, RouteHandlerMethod, RouteShorthandOptions } from 'fastify';
+import fastify from 'fastify';
 
 /* * */
 
@@ -55,7 +67,7 @@ class FastifyService {
 	 * @param handler The handler for the route.
 	 * @param options The options for the route.
 	 */
-	public GET(path: string, handler: RouteHandlerMethod, options: RouteShorthandOptions = {}) {
+	public GET<RouteGeneric extends RouteGenericInterface>(path: string, handler: RouteHandlerMethod<RawServerBase, RawRequestDefaultExpression, RawReplyDefaultExpression, RouteGeneric>, options: RouteShorthandOptions = {}) {
 		this.server.register(() => {
 			this.server.get(path, options, handler);
 		});
@@ -67,7 +79,7 @@ class FastifyService {
 	 * @param handler The handler for the route.
 	 * @param options The options for the route.
 	 */
-	public POST(path: string, handler: RouteHandlerMethod, options: RouteShorthandOptions = {}) {
+	public POST<RouteGeneric extends RouteGenericInterface>(path: string, handler: RouteHandlerMethod<RawServerBase, RawRequestDefaultExpression, RawReplyDefaultExpression, RouteGeneric>, options: RouteShorthandOptions = {}) {
 		this.server.register(() => {
 			this.server.post(path, options, handler);
 		});
@@ -110,6 +122,97 @@ class FastifyService {
 		await this.server.register(fastifySwagger, {
 			hideUntagged: true,
 			openapi: {
+				components: {
+					schemas: {
+						ApiResponse: {
+							properties: {
+								code: {
+									format: 'int32',
+									type: 'integer',
+								},
+								message: {
+									type: 'string',
+								},
+								type: {
+									type: 'string',
+								},
+							},
+							type: 'object',
+							xml: {
+								name: '##default',
+							},
+						},
+						FacilityBoatStation: {
+							properties: {
+								district_id: {
+									example: '15',
+									type: 'string',
+								},
+								district_name: {
+									example: 'Setúbal',
+									type: 'string',
+								},
+								id: {
+									example: 'AF_1',
+									type: 'string',
+								},
+								lat: {
+									example: 38.52145,
+									format: 'float',
+									type: 'number',
+								},
+								locality: {
+									example: 'Setúbal',
+									type: 'string',
+								},
+								lon: {
+									example: -8.885385,
+									format: 'float',
+									type: 'number',
+								},
+								municipality_id: {
+									example: '1512',
+									type: 'string',
+								},
+								municipality_name: {
+									example: 'Setúbal',
+									type: 'string',
+								},
+								name: {
+									example: 'Setúbal (Doca do Comércio)',
+									type: 'string',
+								},
+								parish_id: {
+									example: '05',
+									type: 'string',
+								},
+								parish_name: {
+									example: 'Setúbal (São Sebastião)',
+									type: 'string',
+								},
+								region_id: {
+									example: 'PT170',
+									type: 'string',
+								},
+								region_name: {
+									example: 'AML',
+									type: 'string',
+								},
+								stop_ids: {
+									example: [
+										'160745',
+										'160746',
+									],
+									items: {
+										type: 'string',
+									},
+									type: 'array',
+								},
+							},
+							type: 'object',
+						},
+					},
+				},
 				externalDocs: {
 					description: 'More detailed documentation here',
 					url: 'https://docs.carrismetropolitana.pt',
@@ -127,8 +230,9 @@ class FastifyService {
 					},
 				],
 				tags: [
-					{ description: 'Datasets', name: 'datasets' },
+					{ description: 'Datasets', name: 'facilities' },
 					{ description: 'Bus network operation real-time metrics', name: 'metrics' },
+					{ description: 'Bus network entities', name: 'locations' },
 					{ description: 'Bus network entities', name: 'network' },
 					{ description: 'System status info', name: 'status' },
 				],
