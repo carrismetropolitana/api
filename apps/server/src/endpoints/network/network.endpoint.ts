@@ -6,11 +6,11 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 /* * */
 
-FASTIFY.server.get('/gtfs', async (_, reply) => {
+FASTIFY.GET('/gtfs', async (_, reply) => {
 	return reply.code(302).redirect(new URL(process.env.GTFS_URL).href);
 });
 
-FASTIFY.server.get('/archives', async (_, reply) => {
+FASTIFY.GET('/archives', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
@@ -19,7 +19,7 @@ FASTIFY.server.get('/archives', async (_, reply) => {
 		.send(allItemsTxt);
 });
 
-FASTIFY.server.get('/dates', async (_, reply) => {
+FASTIFY.GET('/dates', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.DATES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
@@ -28,7 +28,7 @@ FASTIFY.server.get('/dates', async (_, reply) => {
 		.send(allItemsTxt);
 });
 
-FASTIFY.server.get('/periods', async (_, reply) => {
+FASTIFY.GET('/periods', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PERIODS);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
@@ -37,7 +37,7 @@ FASTIFY.server.get('/periods', async (_, reply) => {
 		.send(allItemsTxt);
 });
 
-FASTIFY.server.get('/stops', async (_, reply) => {
+FASTIFY.GET('/stops', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
@@ -46,7 +46,7 @@ FASTIFY.server.get('/stops', async (_, reply) => {
 		.send(allItemsTxt);
 });
 
-FASTIFY.server.get('/lines', async (_, reply) => {
+FASTIFY.GET('/lines', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
@@ -55,7 +55,7 @@ FASTIFY.server.get('/lines', async (_, reply) => {
 		.send(allItemsTxt);
 });
 
-FASTIFY.server.get('/routes', async (_, reply) => {
+FASTIFY.GET('/routes', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ROUTES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply

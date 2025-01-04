@@ -14,7 +14,7 @@ interface RequestSchema {
 
 /* * */
 
-FASTIFY.server.get<RequestSchema>('/shapes/:id', async (request, reply) => {
+FASTIFY.GET<RequestSchema>('/shapes/:id', async (request, reply) => {
 	const singleItemTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.SHAPES.ID(request.params.id));
 	if (!singleItemTxt) return reply.code(404).send({});
 	return reply

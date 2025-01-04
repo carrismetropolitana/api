@@ -48,7 +48,6 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"fastify": "5.2.0",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.5.0",
 		"mongodb": "6.12.0",
@@ -60,8 +59,8 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
-		"@carrismetropolitana/eslint": "20241024.1600.5",
-		"@types/node": "22.10.2",
+		"@carrismetropolitana/eslint": "20250103.1610.23",
+		"@types/node": "22.10.5",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.7.2"
 	}

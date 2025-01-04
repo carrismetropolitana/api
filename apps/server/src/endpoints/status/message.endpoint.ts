@@ -4,7 +4,7 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 
 /* * */
 
-FASTIFY.server.get('/status/message', async (_, reply) => {
+FASTIFY.GET('/status/message', async (_, reply) => {
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=30')

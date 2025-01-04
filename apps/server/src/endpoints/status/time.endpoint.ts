@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-FASTIFY.server.get('/status/time', async (_, reply) => {
+FASTIFY.GET('/status/time', async (_, reply) => {
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=5')

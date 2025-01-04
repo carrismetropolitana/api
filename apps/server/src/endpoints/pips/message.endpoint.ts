@@ -13,7 +13,7 @@ interface RequestSchema {
 
 /* * */
 
-FASTIFY.server.get<RequestSchema>('/pips/:pip_id/message', async (request, reply) => {
+FASTIFY.GET<RequestSchema>('/pips/:pip_id/message', async (request, reply) => {
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=20')

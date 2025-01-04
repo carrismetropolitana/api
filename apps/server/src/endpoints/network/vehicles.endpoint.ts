@@ -18,7 +18,7 @@ const gtfsRealtime = protobufjs.loadSync(
 
 /* * */
 
-FASTIFY.server.get('/vehicles', async (_, reply) => {
+FASTIFY.GET('/vehicles', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
@@ -27,7 +27,7 @@ FASTIFY.server.get('/vehicles', async (_, reply) => {
 		.send(allItemsTxt);
 });
 
-FASTIFY.server.get('/vehicles.pb', async (_, reply) => {
+FASTIFY.GET('/vehicles.pb', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.PROTOBUF);
 	const allItemsData = JSON.parse(allItemsTxt);
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');

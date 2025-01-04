@@ -22,7 +22,7 @@ const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 /* * */
 
-FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply) => {
+FASTIFY.GET<RequestSchema>('/arrivals/by_stop/:id', async (request, reply) => {
 	//
 
 	if (!regexPatternForStopId.test(request.params.id)) {
@@ -58,7 +58,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply
 
 /* * */
 
-FASTIFY.server.get<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) => {
+FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) => {
 	//
 
 	const todayDateString = DateTime.now().toFormat('yyyyMMdd');
