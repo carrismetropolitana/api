@@ -156,13 +156,6 @@ class FastifyService {
 	 */
 	private _setupDefaultHooks(): void {
 		this.server.addHook('onRequest', async (_, reply) => {
-			// Add CORS headers
-			reply.header('Access-Control-Allow-Origin', '*');
-			reply.header('Access-Control-Allow-Credentials', 'true');
-			reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-			reply.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-			reply.header('Access-Control-Max-Age', '1728000');
-			// Add Content-Type header
 			reply.header('Content-Type', 'application/json; charset=utf-8');
 			reply.header('CMET-Receive-Timestamp', Date.now());
 		});
