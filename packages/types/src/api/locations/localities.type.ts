@@ -1,8 +1,6 @@
 /* * */
 
-import 'zod-openapi/extend';
 import { z } from 'zod';
-import { createSchema } from 'zod-openapi';
 
 /* * */
 

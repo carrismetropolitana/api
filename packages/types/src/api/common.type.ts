@@ -1,6 +1,5 @@
 /* * */
 
-import 'zod-openapi/extend';
 import { z } from 'zod';
 
 /* * */
