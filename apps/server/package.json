@@ -27,7 +27,8 @@
 		"jwt-decode": "4.0.0",
 		"luxon": "3.5.0",
 		"pino-pretty": "13.0.0",
-		"protobufjs": "7.4.0"
+		"protobufjs": "7.4.0",
+		"zod-openapi": "4.2.2"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
