@@ -74,6 +74,10 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 
 	const stopIdsForThisPattern = activePatternsData.flatMap(item => item.path.map(waypoint => waypoint.stop_id)).join(',');
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
+	if (!response) {
+		return reply.status(500).send([]);
+	}
+
 	const result = response
 		.filter((item) => {
 			return item.patternId === request.params.id;

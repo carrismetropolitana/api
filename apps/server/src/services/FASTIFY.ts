@@ -15,7 +15,7 @@ const defaultOptions: fastify.FastifyServerOptions = {
 	ignoreTrailingSlash: true,
 	logger: {
 		level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-		transport: { options: { colorize: true }, target: 'pino-pretty' },
+		// transport: { options: { colorize: true }, target: 'pino-pretty' },
 	},
 	requestTimeout: 5000,
 };
