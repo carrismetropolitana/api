@@ -33,9 +33,9 @@
 			"types": "./dist/api/common.type.d.ts"
 		},
 		"./facilities": {
-			"import": "./dist/api/facilities.type.js",
-			"require": "./dist/api/facilities.type.js",
-			"types": "./dist/api/facilities.type.d.ts"
+			"import": "./dist/api/facilities/index.js",
+			"require": "./dist/api/facilities/index.js",
+			"types": "./dist/api/facilities/index.d.ts"
 		},
 		"./gtfs-core": {
 			"import": "./dist/gtfs/core.js",

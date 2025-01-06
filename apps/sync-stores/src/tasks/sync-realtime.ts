@@ -3,7 +3,7 @@
 import { IXAPI } from '@carrismetropolitana/api-services/IXAPI';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { CurrentStoreStatus, Store } from '@carrismetropolitana/api-types/facilities';
+import { Store } from '@carrismetropolitana/api-types/facilities';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -84,31 +84,42 @@ export const syncRealtime = async () => {
 		//
 		// Calculate the store current status
 
-		let currentStatus: CurrentStoreStatus;
+		let currentStatus: Store['realtime']['current_status'];
 
 		const activeCountersToPeopleWaitingRatio = activeCountersUnique.length / (ticketsWaiting?.length || 1);
 
 		if (activeCountersUnique.length > 0 && activeCountersToPeopleWaitingRatio > BUSY_RATIO) {
-			currentStatus = CurrentStoreStatus.open;
+			currentStatus = 'open';
 		}
 		else if (activeCountersUnique.length > 0) {
-			currentStatus = CurrentStoreStatus.busy;
+			currentStatus = 'busy';
 		}
 		else {
-			currentStatus = CurrentStoreStatus.closed;
+			currentStatus = 'closed';
 		}
 
 		//
 		// Format the update query with the request results
 
 		const updatedDocument: Store = {
+
+			//
+			// Original document
+
 			...foundDocument,
-			active_counters: activeCountersUnique.length,
-			current_ratio: activeCountersToPeopleWaitingRatio,
-			current_status: currentStatus,
-			currently_waiting: ticketsWaiting?.length || 0,
-			expected_wait_time: totalWaitTime || 0,
-			is_open: activeCountersUnique.length > 0 ? true : false,
+
+			//
+			// Realtime data
+
+			realtime: {
+				active_counters: activeCountersUnique.length,
+				current_ratio: activeCountersToPeopleWaitingRatio,
+				current_status: currentStatus,
+				currently_waiting: ticketsWaiting?.length || 0,
+				expected_wait_time: totalWaitTime || 0,
+				is_open: activeCountersUnique.length > 0 ? true : false,
+			},
+
 		};
 
 		//
@@ -116,7 +127,7 @@ export const syncRealtime = async () => {
 
 		updatedStoresData.push(updatedDocument);
 
-		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.current_status} | active_counters: ${updatedDocument.active_counters} | currently_waiting: ${updatedDocument.currently_waiting} | estimated_wait_seconds: ${updatedDocument.expected_wait_time} | short_name: ${foundDocument.short_name}`);
+		LOGGER.info(`id: ${foundDocument.id} | current_status: ${updatedDocument.realtime.current_status} | active_counters: ${updatedDocument.realtime.active_counters} | currently_waiting: ${updatedDocument.realtime.currently_waiting} | estimated_wait_seconds: ${updatedDocument.realtime.expected_wait_time} | short_name: ${foundDocument.short_name}`);
 
 		//
 	}

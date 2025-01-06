@@ -2,7 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { StoreMetadata, StoresSource } from '@carrismetropolitana/api-types/facilities';
+import { Store, StoresSource } from '@carrismetropolitana/api-types/facilities';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -34,26 +34,19 @@ export const syncMetadata = async () => {
 
 	LOGGER.info(`Updating items...`);
 
-	const allUpdatedItemsData: StoreMetadata[] = [];
+	const allUpdatedItemsData: Store[] = [];
 
 	for (const sourceItem of allSourceItems.data) {
 		//
 
-		const updatedItemData: StoreMetadata = {
-			address: sourceItem.address,
+		const updatedItemData: Store = {
+
+			//
+			// Metadata
+
 			brand_name: sourceItem.brand_name,
 			district_id: sourceItem.district_id,
 			district_name: sourceItem.district_name,
-			email: sourceItem.email,
-			google_place_id: sourceItem.google_place_id,
-			hours_friday: sourceItem.hours_friday?.length ? sourceItem.hours_friday.split('|') : [],
-			hours_monday: sourceItem.hours_monday?.length ? sourceItem.hours_monday.split('|') : [],
-			hours_saturday: sourceItem.hours_saturday?.length ? sourceItem.hours_saturday.split('|') : [],
-			hours_special: sourceItem.hours_special,
-			hours_sunday: sourceItem.hours_sunday?.length ? sourceItem.hours_sunday.split('|') : [],
-			hours_thursday: sourceItem.hours_thursday?.length ? sourceItem.hours_thursday.split('|') : [],
-			hours_tuesday: sourceItem.hours_tuesday?.length ? sourceItem.hours_tuesday.split('|') : [],
-			hours_wednesday: sourceItem.hours_wednesday?.length ? sourceItem.hours_wednesday.split('|') : [],
 			id: sourceItem.id,
 			lat: Number(sourceItem.lat),
 			locality: sourceItem.locality,
@@ -63,13 +56,42 @@ export const syncMetadata = async () => {
 			name: sourceItem.name,
 			parish_id: sourceItem.parish_id,
 			parish_name: sourceItem.parish_name,
-			phone: sourceItem.phone,
-			postal_code: sourceItem.postal_code,
 			region_id: sourceItem.region_id,
 			region_name: sourceItem.region_name,
 			short_name: sourceItem.short_name,
 			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
-			url: sourceItem.url,
+
+			//
+			// Contacts
+
+			contacts: {
+				address: sourceItem.address,
+				email: sourceItem.email,
+				google_place_id: sourceItem.google_place_id,
+				phone: sourceItem.phone,
+				postal_code: sourceItem.postal_code,
+				url: sourceItem.url,
+			},
+
+			//
+			// Opening hours
+
+			hours: {
+				friday: sourceItem.hours_friday?.length ? sourceItem.hours_friday.split('|') : [],
+				monday: sourceItem.hours_monday?.length ? sourceItem.hours_monday.split('|') : [],
+				saturday: sourceItem.hours_saturday?.length ? sourceItem.hours_saturday.split('|') : [],
+				special: sourceItem.hours_special,
+				sunday: sourceItem.hours_sunday?.length ? sourceItem.hours_sunday.split('|') : [],
+				thursday: sourceItem.hours_thursday?.length ? sourceItem.hours_thursday.split('|') : [],
+				tuesday: sourceItem.hours_tuesday?.length ? sourceItem.hours_tuesday.split('|') : [],
+				wednesday: sourceItem.hours_wednesday?.length ? sourceItem.hours_wednesday.split('|') : [],
+			},
+
+			//
+			// Realtime data
+
+			realtime: null,
+
 		};
 
 		allUpdatedItemsData.push(updatedItemData);

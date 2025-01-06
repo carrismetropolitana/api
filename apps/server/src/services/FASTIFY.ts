@@ -2,6 +2,7 @@
 
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
+import { ApiResponseError } from '@carrismetropolitana/api-types/common';
 import { SchoolSchema } from '@carrismetropolitana/api-types/facilities';
 import { DistrictSchema, LocalitySchema, MunicipalitySchema, ParishSchema, RegionSchema } from '@carrismetropolitana/api-types/locations';
 import fastifySwagger from '@fastify/swagger';
@@ -34,6 +35,7 @@ class FastifyService {
 		this.server = fastify(defaultOptions).withTypeProvider<ZodTypeProvider>();
 		this._registerOpenApiPlugin();
 		this._setupDefaultHooks();
+		this._setupErrorHandler();
 		this._setupDefaultRoutes();
 		this._attemptStart({
 			host: process.env.FASTIFY_HOST || '0.0.0.0',
@@ -173,6 +175,17 @@ class FastifyService {
 		});
 		this.server.get('/openapi', async () => {
 			return this.server.swagger();
+		});
+	}
+
+	/**
+	 * Setup the error handler for the server.
+	 */
+	private _setupErrorHandler(): void {
+		this.server.setErrorHandler((error, request, reply) => {
+			const errorMessage = `Server Error: "${error.message || 'Unknown Internal Server Error'}"`;
+			const response: ApiResponseError = { message: errorMessage, status: 'error', timestamp: Date.now() };
+			reply.send(response);
 		});
 	}
 

@@ -11,24 +11,10 @@ export interface CachedResource<T> {
 
 /* * */
 
-const ApiResponseBaseSchema = z.object({
-	status: z.union([z.literal('success'), z.literal('error')]),
-	timestamp: z.number(),
-}).strict();
-
-const ApiResponseSuccessSchema = <T extends z.ZodTypeAny>(dataSchema: T) => ApiResponseBaseSchema.extend({
-	data: dataSchema,
-	status: z.literal('success'),
-});
-
-const ApiResponseErrorSchema = ApiResponseBaseSchema.extend({
+export const ApiResponseErrorSchema = z.object({
 	message: z.string(),
 	status: z.literal('error'),
+	timestamp: z.number(),
 });
 
-export const ApiResponseSchema = <T extends z.ZodTypeAny>(dataSchema: T) => z.union([
-	ApiResponseSuccessSchema(dataSchema),
-	ApiResponseErrorSchema,
-]);
-
-export type ApiResponse<T extends z.ZodTypeAny> = z.infer<ReturnType<typeof ApiResponseSchema<T>>>;
+export type ApiResponseError = z.infer<typeof ApiResponseErrorSchema>;
