@@ -1,13 +1,8 @@
 /* * */
 
-import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-
 import { ApiResponseError } from '@carrismetropolitana/api-types/common';
-import { SchoolSchema } from '@carrismetropolitana/api-types/facilities';
-import { DistrictSchema, LocalitySchema, MunicipalitySchema, ParishSchema, RegionSchema } from '@carrismetropolitana/api-types/locations';
 import fastifySwagger from '@fastify/swagger';
 import fastify from 'fastify';
-import { createJsonSchemaTransformObject, jsonSchemaTransform } from 'fastify-type-provider-zod';
 
 /* * */
 
@@ -32,7 +27,7 @@ class FastifyService {
 	 * Create a new instance of the FastifyService.
 	 */
 	private constructor() {
-		this.server = fastify(defaultOptions).withTypeProvider<ZodTypeProvider>();
+		this.server = fastify(defaultOptions).withTypeProvider();
 		this._registerOpenApiPlugin();
 		this._setupDefaultHooks();
 		this._setupErrorHandler();
@@ -124,7 +119,7 @@ class FastifyService {
 					title: 'Carris Metropolitana API',
 					version: 'v2',
 				},
-				openapi: '3.0.3',
+				openapi: '3.1.1',
 				servers: [
 					{
 						description: 'Production',
@@ -139,17 +134,6 @@ class FastifyService {
 					{ description: 'System status info', name: 'status' },
 				],
 			},
-			transform: jsonSchemaTransform,
-			transformObject: createJsonSchemaTransformObject({
-				schemas: {
-					District: DistrictSchema,
-					Locality: LocalitySchema,
-					Municipality: MunicipalitySchema,
-					Parish: ParishSchema,
-					Region: RegionSchema,
-					School: SchoolSchema,
-				},
-			}),
 		});
 	}
 
@@ -184,7 +168,11 @@ class FastifyService {
 	private _setupErrorHandler(): void {
 		this.server.setErrorHandler((error, request, reply) => {
 			const errorMessage = `Server Error: "${error.message || 'Unknown Internal Server Error'}"`;
-			const response: ApiResponseError = { message: errorMessage, status: 'error', timestamp: Date.now() };
+			const response: ApiResponseError = {
+				message: errorMessage,
+				status: 'error',
+				timestamp: Date.now(),
+			};
 			reply.status(500).send(response);
 		});
 	}

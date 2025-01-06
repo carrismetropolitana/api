@@ -48,9 +48,9 @@
 			"types": "./dist/gtfs/extended.d.ts"
 		},
 		"./locations": {
-			"import": "./dist/api/locations.type.js",
-			"require": "./dist/api/locations.type.js",
-			"types": "./dist/api/locations.type.d.ts"
+			"import": "./dist/api/locations/index.js",
+			"require": "./dist/api/locations/index.js",
+			"types": "./dist/api/locations/index.d.ts"
 		},
 		"./metrics": {
 			"import": "./dist/api/metrics.js",
@@ -80,7 +80,8 @@
 	"dependencies": {
 		"@types/geojson": "7946.0.15",
 		"gtfs-types": "4.0.0",
-		"zod": "3.24.1"
+		"zod": "3.24.1",
+		"zod-openapi": "4.2.2"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
