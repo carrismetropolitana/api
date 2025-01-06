@@ -12,7 +12,7 @@ export const DistrictSchema = z
 	})
 	.strict()
 	.openapi({
-		description: 'hello world!',
+		description: 'This was updated! 22:28',
 		example: {
 			id: '1',
 			name: 'District 1',
