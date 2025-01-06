@@ -185,7 +185,7 @@ class FastifyService {
 		this.server.setErrorHandler((error, request, reply) => {
 			const errorMessage = `Server Error: "${error.message || 'Unknown Internal Server Error'}"`;
 			const response: ApiResponseError = { message: errorMessage, status: 'error', timestamp: Date.now() };
-			reply.send(response);
+			reply.status(500).send(response);
 		});
 	}
 
