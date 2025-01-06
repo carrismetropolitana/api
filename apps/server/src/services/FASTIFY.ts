@@ -3,6 +3,7 @@
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { SchoolSchema } from '@carrismetropolitana/api-types/facilities';
+import { DistrictSchema, LocalitySchema, MunicipalitySchema, ParishSchema, RegionSchema } from '@carrismetropolitana/api-types/locations';
 import fastifySwagger from '@fastify/swagger';
 import fastify from 'fastify';
 import { createJsonSchemaTransformObject, jsonSchemaTransform } from 'fastify-type-provider-zod';
@@ -28,7 +29,6 @@ class FastifyService {
 
 	/**
 	 * Create a new instance of the FastifyService.
-	 * @param options The options to use when creating the instance.
 	 */
 	private constructor() {
 		this.server = fastify(defaultOptions).withTypeProvider<ZodTypeProvider>();
@@ -43,7 +43,6 @@ class FastifyService {
 
 	/**
 	 * Get the singleton instance of the FastifyService.
-	 * @param options The options to use when creating the instance.
 	 * @returns The singleton instance of the FastifyService.
 	 */
 	public static getInstance(): FastifyService {
@@ -131,16 +130,21 @@ class FastifyService {
 					},
 				],
 				tags: [
-					{ description: 'Datasets', name: 'facilities' },
-					{ description: 'Bus network operation real-time metrics', name: 'metrics' },
-					{ description: 'Bus network entities', name: 'locations' },
-					{ description: 'Bus network entities', name: 'network' },
+					{ description: 'Facilities', name: 'facilities' },
+					{ description: 'Interesting realtime metrics', name: 'metrics' },
+					{ description: 'Administrative divisions', name: 'locations' },
+					{ description: 'Bus Network endpoints', name: 'network' },
 					{ description: 'System status info', name: 'status' },
 				],
 			},
 			transform: jsonSchemaTransform,
 			transformObject: createJsonSchemaTransformObject({
 				schemas: {
+					District: DistrictSchema,
+					Locality: LocalitySchema,
+					Municipality: MunicipalitySchema,
+					Parish: ParishSchema,
+					Region: RegionSchema,
 					School: SchoolSchema,
 				},
 			}),
@@ -151,9 +155,19 @@ class FastifyService {
 	 * Setup the default hooks for the server.
 	 */
 	private _setupDefaultHooks(): void {
-		// Add Content-Type header to all responses by default
 		this.server.addHook('onRequest', async (_, reply) => {
+			// Add CORS headers
+			reply.header('Access-Control-Allow-Origin', '*');
+			reply.header('Access-Control-Allow-Credentials', 'true');
+			reply.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+			reply.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+			reply.header('Access-Control-Max-Age', '1728000');
+			// Add Content-Type header
 			reply.header('Content-Type', 'application/json; charset=utf-8');
+			reply.header('CMET-Receive-Timestamp', Date.now());
+		});
+		this.server.addHook('onSend', async (_, reply) => {
+			reply.header('CMET-Send-Timestamp', Date.now());
 		});
 	}
 
@@ -164,7 +178,7 @@ class FastifyService {
 		this.server.get('/', (_, reply) => {
 			reply.send('Jusi was here!');
 		});
-		this.server.get('/openapi.json', async () => {
+		this.server.get('/openapi', async () => {
 			return this.server.swagger();
 		});
 	}

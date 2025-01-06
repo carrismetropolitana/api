@@ -28,9 +28,9 @@
 			"types": "./dist/api/alerts.d.ts"
 		},
 		"./common": {
-			"import": "./dist/api/common.js",
-			"require": "./dist/api/common.js",
-			"types": "./dist/api/common.d.ts"
+			"import": "./dist/api/common.type.js",
+			"require": "./dist/api/common.type.js",
+			"types": "./dist/api/common.type.d.ts"
 		},
 		"./facilities": {
 			"import": "./dist/api/facilities.type.js",
@@ -48,9 +48,9 @@
 			"types": "./dist/gtfs/extended.d.ts"
 		},
 		"./locations": {
-			"import": "./dist/api/locations.js",
-			"require": "./dist/api/locations.js",
-			"types": "./dist/api/locations.d.ts"
+			"import": "./dist/api/locations.type.js",
+			"require": "./dist/api/locations.type.js",
+			"types": "./dist/api/locations.type.d.ts"
 		},
 		"./metrics": {
 			"import": "./dist/api/metrics.js",
