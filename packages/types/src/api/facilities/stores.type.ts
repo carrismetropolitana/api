@@ -103,7 +103,8 @@ export const StoreSchema = z.object({
 			expected_wait_time: z.number(),
 			is_open: z.boolean(),
 		})
-		.strict(),
+		.strict()
+		.nullable(),
 
 }).strict();
 
