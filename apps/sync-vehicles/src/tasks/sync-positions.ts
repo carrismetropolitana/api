@@ -218,6 +218,15 @@ export const syncPositions = async () => {
 		// const patternDataJson = await JSON.parse(patternDataTxt);
 
 		//
+		// Set door status if event was triggered by a door status change
+
+		if (pcgiVehicleEvent.content.entity[0].vehicle.trigger.door === 'OPENED') {
+			updateVehicleObject.door_status = 'OPEN';
+		} else if (pcgiVehicleEvent.content.entity[0].vehicle.trigger.door === 'CLOSED') {
+			updateVehicleObject.door_status = 'CLOSED';
+		}
+
+		//
 		// Save the updated vehicle to the Map
 
 		allVehiclesMap.set(vehicleId, updateVehicleObject);

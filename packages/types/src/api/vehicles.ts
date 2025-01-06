@@ -78,6 +78,7 @@ export interface Vehicle {
 	capacity_total?: number
 	current_status?: VehicleCurrentStatus
 	direction_id?: number
+	door_status?: 'OPEN' | 'CLOSED'
 	emission_class?: VehicleEmissionClass
 	event_id?: string
 	id: string
