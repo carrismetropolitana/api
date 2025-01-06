@@ -41,11 +41,13 @@ export const syncSchools = async () => {
 		//
 
 		const updatedItemData: School = {
-			address: sourceItem.address,
+
+			//
+			// Metadata
+
 			cicles: sourceItem.cicles,
 			district_id: sourceItem.district_id,
 			district_name: sourceItem.district_name,
-			email: sourceItem.email,
 			grouping: sourceItem.grouping,
 			id: sourceItem.id,
 			lat: Number(sourceItem.lat),
@@ -57,12 +59,22 @@ export const syncSchools = async () => {
 			nature: sourceItem.nature,
 			parish_id: sourceItem.parish_id,
 			parish_name: sourceItem.parish_name,
-			phone: sourceItem.phone,
-			postal_code: sourceItem.postal_code,
 			region_id: sourceItem.region_id,
 			region_name: sourceItem.region_name,
 			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
-			url: sourceItem.url,
+
+			//
+			// Contacts
+
+			contacts: {
+				address: sourceItem.address,
+				email: sourceItem.email,
+				google_place_id: null,
+				phone: sourceItem.phone,
+				postal_code: sourceItem.postal_code,
+				url: sourceItem.url,
+			},
+
 		};
 
 		allUpdatedItemsData.push(updatedItemData);
