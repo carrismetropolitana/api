@@ -58,6 +58,7 @@ export const syncSchools = async () => {
 			parish_id: sourceItem.parish_id,
 			parish_name: sourceItem.parish_name,
 			phone: sourceItem.phone,
+			postal_code: sourceItem.postal_code,
 			region_id: sourceItem.region_id,
 			region_name: sourceItem.region_name,
 			stop_ids: sourceItem.stops?.length ? sourceItem.stops.split('|') : [],
