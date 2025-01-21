@@ -60,8 +60,8 @@
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250103.1610.23",
-		"@types/node": "22.10.5",
+		"@types/node": "22.10.7",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.7.2"
+		"typescript": "5.7.3"
 	}
 }
