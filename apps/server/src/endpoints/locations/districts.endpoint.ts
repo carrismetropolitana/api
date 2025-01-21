@@ -6,7 +6,7 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { ApiResponse, ApiResponseErrorSchema, ApiResponseSuccessSchema } from '@carrismetropolitana/api-types/common';
-import { DistrictSchema } from '@carrismetropolitana/api-types/locations';
+import { District, DistrictSchema } from '@carrismetropolitana/api-types/locations';
 import fastify from 'fastify';
 import { createSchema } from 'zod-openapi';
 
@@ -43,7 +43,7 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.DISTRICTS);
 
-	const response: ApiResponse = {
+	const response: ApiResponse<District[]> = {
 		data: JSON.parse(allItemsTxt) || [],
 		status: 'success',
 		timestamp: Date.now(),

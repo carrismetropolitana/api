@@ -30,7 +30,7 @@ export const ApiResponseSuccessSchema = <T extends z.ZodTypeAny>(dataSchema: T) 
 	});
 };
 
-interface ApiResponseSuccess {
+interface ApiResponseSuccess<T = [] | object | string> {
 
 	/**
 	 * The data to be returned.
@@ -38,7 +38,7 @@ interface ApiResponseSuccess {
 	 * The return type of the server data (from REDIS) is always a string. This avoids a useless conversion from string
 	 * to object and back to string. The OpenAPI schema will define the correct type.
 	 */
-	data: [] | object | string
+	data: T
 
 	/**
 	 * The status of the response.
@@ -52,4 +52,4 @@ interface ApiResponseSuccess {
 
 }
 
-export type ApiResponse = ApiResponseError | ApiResponseSuccess;
+export type ApiResponse<T> = ApiResponseError | ApiResponseSuccess<T>;

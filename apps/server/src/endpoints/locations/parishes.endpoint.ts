@@ -6,7 +6,7 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { ApiResponse, ApiResponseErrorSchema, ApiResponseSuccessSchema } from '@carrismetropolitana/api-types/common';
-import { ParishSchema } from '@carrismetropolitana/api-types/locations';
+import { Parish, ParishSchema } from '@carrismetropolitana/api-types/locations';
 import fastify from 'fastify';
 import { createSchema } from 'zod-openapi';
 
@@ -43,8 +43,8 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.PARISHES);
 
-	const response: ApiResponse = {
-		data: allItemsTxt || [],
+	const response: ApiResponse<Parish[]> = {
+		data: JSON.parse(allItemsTxt) || [],
 		status: 'success',
 		timestamp: Date.now(),
 	};
@@ -52,7 +52,7 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=3600')
-		.send(response);
+		.send(JSON.stringify(response));
 };
 
 /* * */
