@@ -9,7 +9,6 @@ import '@/endpoints/status/message.endpoint.js';
 
 /* * */
 
-import '@/endpoints/locations/regions.endpoint.js';
 import '@/endpoints/locations/districts.endpoint.js';
 import '@/endpoints/locations/municipalities.endpoint.js';
 import '@/endpoints/locations/parishes.endpoint.js';
