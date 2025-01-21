@@ -1,7 +1,7 @@
 /* * */
 
-import LOGGER from '@helperkits/logger';
 import 'dotenv/config';
+import LOGGER from '@helperkits/logger';
 
 /* * */
 
