@@ -1,13 +1,16 @@
 /* * */
 
+import LOGGER from '@helperkits/logger';
+import 'dotenv/config';
+
+/* * */
+
 import { syncBoatStations } from '@/tasks/sync-boat-stations.js';
 import { syncLightRailStations } from '@/tasks/sync-light-rail-stations.js';
 import { syncPips } from '@/tasks/sync-pips.js';
 import { syncSchools } from '@/tasks/sync-schools.js';
 import { syncSubwayStations } from '@/tasks/sync-subway-stations.js';
 import { syncTrainStations } from '@/tasks/sync-train-stations.js';
-import LOGGER from '@helperkits/logger';
-import 'dotenv/config';
 
 /* * */
 
