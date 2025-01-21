@@ -255,6 +255,25 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
+  sync-locations:
+    image: ghcr.io/carrismetropolitana/api-sync-locations:alpha
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/production/.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
   sync-metrics:
     image: ghcr.io/carrismetropolitana/api-sync-metrics:alpha
     deploy:
