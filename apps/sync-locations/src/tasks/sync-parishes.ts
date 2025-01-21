@@ -54,10 +54,9 @@ export const syncParishes = async () => {
 		//
 
 		const updatedItemData: Parish = {
-			district_id: sourceItem.id.substring(0, 2),
-			geometry: sourceItem.geometry,
+			district_id: sourceItem.district_id,
 			id: sourceItem.id,
-			municipality_id: sourceItem.id.substring(0, 4),
+			municipality_id: sourceItem.municipality_id,
 			name: sourceItem.properties.name,
 		};
 

@@ -54,7 +54,6 @@ export const syncDistricts = async () => {
 		//
 
 		const updatedItemData: District = {
-			geometry: sourceItem.geometry,
 			id: sourceItem.id,
 			name: sourceItem.properties.name,
 		};

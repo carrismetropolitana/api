@@ -55,7 +55,6 @@ export const syncMunicipalities = async () => {
 
 		const updatedItemData: Municipality = {
 			district_id: sourceItem.id.substring(0, 2),
-			geometry: sourceItem.geometry,
 			id: sourceItem.id,
 			name: sourceItem.properties.name,
 		};
