@@ -44,7 +44,7 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.DISTRICTS);
 
 	const response: ApiResponse = {
-		data: allItemsTxt || [],
+		data: JSON.parse(allItemsTxt) || [],
 		status: 'success',
 		timestamp: Date.now(),
 	};
@@ -52,9 +52,10 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=3600')
-		.send(response);
+		.send(JSON.stringify(response));
 };
 
 /* * */
 
+// FASTIFY.GET('/locations/districts', handler);
 FASTIFY.GET('/locations/districts', handler, { schema });
