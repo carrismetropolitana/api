@@ -32,7 +32,7 @@ const schema: fastify.RouteShorthandOptions['schema'] = {
 			description: '500 Internal Server Error',
 		},
 	},
-	summary: 'Get all ENCM facilities',
+	summary: 'Get all Districts',
 	tags: ['locations'],
 };
 
