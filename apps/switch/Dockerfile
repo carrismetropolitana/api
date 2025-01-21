@@ -33,7 +33,6 @@ RUN npm install
 COPY --from=pruner /app/out/full/ .
 RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
 
-# CMD [ "node" , "apps/sync-alerts/dist/index.js" ]
 
 # ###########################
 # # Runner stage
