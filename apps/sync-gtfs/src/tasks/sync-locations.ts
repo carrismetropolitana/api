@@ -1,6 +1,6 @@
 /* * */
 
-import type { District, Locality, Municipality, Region } from '@carrismetropolitana/api-types/locations';
+import type { Locality } from '@carrismetropolitana/api-types/locations';
 
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
@@ -39,15 +39,6 @@ export const syncLocations = async () => {
 	const updatedLocalitiesData = new Map<string, Locality>();
 	let updatedLocalitiesCounter = 0;
 
-	const updatedMunicipalitiesData = new Map<string, Municipality>();
-	let updatedMunicipalitiesCounter = 0;
-
-	const updatedDistrictsData = new Map<string, District>();
-	let updatedDistrictsCounter = 0;
-
-	const updatedRegionsData = new Map<string, Region>();
-	let updatedRegionsCounter = 0;
-
 	for (const queryResultRow of queryResult.rows) {
 		//
 
@@ -83,54 +74,6 @@ export const syncLocations = async () => {
 		}
 
 		//
-		// Municipalities are identified by their unique ID, which is the COS ID.
-
-		const municipalityId = queryResultRow.municipality_id;
-
-		if (!updatedMunicipalitiesData.has(municipalityId)) {
-			const municipalityData: Municipality = {
-				district_id: queryResultRow.district_id,
-				id: municipalityId,
-				name: queryResultRow.municipality_name,
-				region_id: queryResultRow.region_id,
-			};
-
-			updatedMunicipalitiesData.set(municipalityId, municipalityData);
-			updatedMunicipalitiesCounter++;
-		}
-
-		//
-		// Districts are identified by their unique ID, which is the COS ID.
-
-		const districtId = queryResultRow.district_id;
-
-		if (!updatedDistrictsData.has(districtId)) {
-			const districtData: District = {
-				id: districtId,
-				name: queryResultRow.district_name,
-				region_id: queryResultRow.region_id,
-			};
-
-			updatedDistrictsData.set(districtId, districtData);
-			updatedDistrictsCounter++;
-		}
-
-		//
-		// Regions are identified by their unique ID, which is the COS ID.
-
-		const regionId = queryResultRow.region_id;
-
-		if (!updatedRegionsData.has(regionId)) {
-			const regionData: Region = {
-				id: regionId,
-				name: queryResultRow.region_name,
-			};
-
-			updatedRegionsData.set(regionId, regionData);
-			updatedRegionsCounter++;
-		}
-
-		//
 	}
 
 	//
@@ -139,18 +82,9 @@ export const syncLocations = async () => {
 	const sortedLocalitiesData = Array.from(updatedLocalitiesData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
 	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALIITIES, JSON.stringify(sortedLocalitiesData));
 
-	const sortedMunicipalitiesData = Array.from(updatedMunicipalitiesData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(sortedMunicipalitiesData));
-
-	const sortedDistrictsData = Array.from(updatedDistrictsData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.DISTRICTS, JSON.stringify(sortedDistrictsData));
-
-	const sortedRegionsData = Array.from(updatedRegionsData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.REGIONS, JSON.stringify(sortedRegionsData));
-
 	//
 
-	LOGGER.success(`Updated ${updatedLocalitiesCounter} Localities, ${updatedMunicipalitiesCounter} Municipalities, ${updatedDistrictsCounter} Districts and ${updatedRegionsCounter} Regions in ${globalTimer.get()}`);
+	LOGGER.success(`Updated ${updatedLocalitiesCounter} Localities in ${globalTimer.get()}`);
 
 	//
 };

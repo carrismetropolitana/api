@@ -10,6 +10,7 @@
 		"dev:sync-alerts": "turbo dev --filter=@carrismetropolitana/api-sync-alerts",
 		"dev:sync-facilities": "turbo dev --filter=@carrismetropolitana/api-sync-facilities",
 		"dev:sync-gtfs": "turbo dev --filter=@carrismetropolitana/api-sync-gtfs",
+		"dev:sync-locations": "turbo dev --filter=@carrismetropolitana/api-sync-locations",
 		"dev:sync-metrics": "turbo dev --filter=@carrismetropolitana/api-sync-metrics",
 		"dev:sync-stores": "turbo dev --filter=@carrismetropolitana/api-sync-stores",
 		"dev:sync-vehicles": "turbo dev --filter=@carrismetropolitana/api-sync-vehicles",
