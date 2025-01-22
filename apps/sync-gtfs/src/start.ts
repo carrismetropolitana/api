@@ -14,7 +14,6 @@ import fs from 'node:fs';
 import { syncArchives } from '@/tasks/sync-archives.js';
 import { syncDates } from '@/tasks/sync-dates.js';
 import { syncLinesRoutesPatterns } from '@/tasks/sync-lines-routes-patterns.js';
-import { syncLocations } from '@/tasks/sync-locations.js';
 import { syncPeriods } from '@/tasks/sync-periods.js';
 import { syncShapes } from '@/tasks/sync-shapes.js';
 import { syncStops } from '@/tasks/sync-stops.js';
@@ -33,7 +32,6 @@ const PREPARED_DIR_PATH = `/tmp/prepared`;
 
 export const ENABLED_MODULES = [
 	'gtfs_import',
-	'locations_parser',
 	'periods_parser',
 	'dates_parser',
 	'archives_parser',
@@ -129,13 +127,6 @@ export default async () => {
 			LOGGER.success('Done preparing and importing GTFS files');
 
 			//
-		}
-
-		/* * */
-
-		if (ENABLED_MODULES.includes('locations_parser')) {
-			await syncLocations();
-			LOGGER.spacer(1);
 		}
 
 		/* * */
