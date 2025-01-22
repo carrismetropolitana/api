@@ -58,7 +58,7 @@ export const syncStops = async () => {
 	//
 	// Fetch existing data from SERVERDB
 
-	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
+	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALITIES);
 	const allLocalitiesData = allLocalitiesTxt ? JSON.parse(allLocalitiesTxt) : [];
 	const allLocalitiesMap = new Map<string, Locality>(allLocalitiesData.map((item: Locality) => [`${item.name}-${item.municipality_id}`, item]));
 

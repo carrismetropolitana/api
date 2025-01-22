@@ -13,7 +13,7 @@ export const SERVERDB_KEYS = Object.freeze({
 	},
 	LOCATIONS: {
 		DISTRICTS: 'locations:districts',
-		LOCALIITIES: 'locations:localities',
+		LOCALITIES: 'locations:localities',
 		MUNICIPALITIES: 'locations:municipalities',
 		PARISHES: 'locations:parishes',
 		REGIONS: 'locations:regions',

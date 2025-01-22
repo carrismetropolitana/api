@@ -1,6 +1,7 @@
 /* * */
 
-import type { Municipality } from '@carrismetropolitana/api-types/locations';
+import type { Locality } from '@carrismetropolitana/api-types/locations';
+import type { GeoJSON } from 'geojson';
 
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
@@ -12,19 +13,20 @@ import fs from 'fs';
 
 /* * */
 
-const DATASET_FILE_URL = 'https://github.com/carrismetropolitana/datasets/raw/refs/heads/latest/locations/municipalities.zip';
+const DATASET_FILE_URL = 'https://github.com/carrismetropolitana/datasets/raw/refs/heads/latest/locations/localities.zip';
 
 /* * */
 
-interface MunicipalitiesSource extends GeoJSON.FeatureCollection {
+interface LocalitiesSource extends GeoJSON.FeatureCollection {
 	features: {
 		geometry: GeoJSON.Geometry
 		id: string
 		properties: {
-			area_ha: string
 			district_id: string
 			id: string
+			municipality_id: string
 			name: string
+			parish_id: string
 		}
 		type: 'Feature'
 	}[]
@@ -33,10 +35,10 @@ interface MunicipalitiesSource extends GeoJSON.FeatureCollection {
 
 /* * */
 
-export const syncMunicipalities = async () => {
+export const syncLocalities = async () => {
 	//
 
-	LOGGER.title(`Sync Municipalities`);
+	LOGGER.title(`Sync Localities`);
 	const globalTimer = new TIMETRACKER();
 
 	//
@@ -44,7 +46,7 @@ export const syncMunicipalities = async () => {
 
 	LOGGER.info(`Downloading data file...`);
 
-	const rawDirPath = '/tmp/municipalities';
+	const rawDirPath = '/tmp/localities';
 	const rawDirFile = `${rawDirPath}/raw.zip`;
 
 	const downloadedSourceResponse = await fetch(DATASET_FILE_URL);
@@ -57,23 +59,26 @@ export const syncMunicipalities = async () => {
 	await extract(rawDirFile, { dir: rawDirPath });
 	normalizeDirectoryPermissions(rawDirPath);
 
-	const downloadedSourceText = fs.readFileSync(`${rawDirPath}/municipalities.json`, 'utf8');
-	const downloadedSourceJson: MunicipalitiesSource = JSON.parse(downloadedSourceText);
+	const downloadedSourceText = fs.readFileSync(`${rawDirPath}/localities.json`, 'utf8');
+	const downloadedSourceJson: LocalitiesSource = JSON.parse(downloadedSourceText);
 
 	//
 	// For each item, update its entry in the database
 
 	LOGGER.info(`Updating items...`);
 
-	const allUpdatedItemsData: Municipality[] = [];
+	const allUpdatedItemsData: Locality[] = [];
 
 	for (const sourceItem of downloadedSourceJson.features) {
 		//
 
-		const updatedItemData: Municipality = {
+		const updatedItemData: Locality = {
+			display: '',
 			district_id: sourceItem.properties.district_id,
 			id: sourceItem.properties.id,
+			municipality_id: sourceItem.properties.municipality_id,
 			name: sourceItem.properties.name,
+			parish_id: sourceItem.properties.parish_id,
 		};
 
 		allUpdatedItemsData.push(updatedItemData);
@@ -85,9 +90,9 @@ export const syncMunicipalities = async () => {
 	// Save items to the database
 
 	allUpdatedItemsData.sort((a, b) => sortCollator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES, JSON.stringify(allUpdatedItemsData));
+	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALITIES, JSON.stringify(allUpdatedItemsData));
 
-	LOGGER.success(`Done updating ${allUpdatedItemsData.length} items to ${SERVERDB_KEYS.LOCATIONS.MUNICIPALITIES} (${globalTimer.get()}).`);
+	LOGGER.success(`Done updating ${allUpdatedItemsData.length} items to ${SERVERDB_KEYS.LOCATIONS.LOCALITIES} (${globalTimer.get()}).`);
 
 	//
 };

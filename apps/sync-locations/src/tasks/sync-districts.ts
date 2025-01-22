@@ -16,6 +16,22 @@ const DATASET_FILE_URL = 'https://github.com/carrismetropolitana/datasets/raw/re
 
 /* * */
 
+interface DistrictsSource extends GeoJSON.FeatureCollection {
+	features: {
+		geometry: GeoJSON.Geometry
+		id: string
+		properties: {
+			area_ha: string
+			id: string
+			name: string
+		}
+		type: 'Feature'
+	}[]
+	type: 'FeatureCollection'
+}
+
+/* * */
+
 export const syncDistricts = async () => {
 	//
 
@@ -41,7 +57,7 @@ export const syncDistricts = async () => {
 	normalizeDirectoryPermissions(rawDirPath);
 
 	const downloadedSourceText = fs.readFileSync(`${rawDirPath}/districts.json`, 'utf8');
-	const downloadedSourceJson = JSON.parse(downloadedSourceText);
+	const downloadedSourceJson: DistrictsSource = JSON.parse(downloadedSourceText);
 
 	//
 	// For each item, update its entry in the database
@@ -54,7 +70,7 @@ export const syncDistricts = async () => {
 		//
 
 		const updatedItemData: District = {
-			id: sourceItem.id,
+			id: sourceItem.properties.id,
 			name: sourceItem.properties.name,
 		};
 

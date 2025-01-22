@@ -16,6 +16,24 @@ const DATASET_FILE_URL = 'https://github.com/carrismetropolitana/datasets/raw/re
 
 /* * */
 
+interface ParishesSource extends GeoJSON.FeatureCollection {
+	features: {
+		geometry: GeoJSON.Geometry
+		id: string
+		properties: {
+			area_ha: string
+			district_id: string
+			id: string
+			municipality_id: string
+			name: string
+		}
+		type: 'Feature'
+	}[]
+	type: 'FeatureCollection'
+}
+
+/* * */
+
 export const syncParishes = async () => {
 	//
 
@@ -41,7 +59,7 @@ export const syncParishes = async () => {
 	normalizeDirectoryPermissions(rawDirPath);
 
 	const downloadedSourceText = fs.readFileSync(`${rawDirPath}/parishes.json`, 'utf8');
-	const downloadedSourceJson = JSON.parse(downloadedSourceText);
+	const downloadedSourceJson: ParishesSource = JSON.parse(downloadedSourceText);
 
 	//
 	// For each item, update its entry in the database
@@ -54,9 +72,9 @@ export const syncParishes = async () => {
 		//
 
 		const updatedItemData: Parish = {
-			district_id: sourceItem.district_id,
-			id: sourceItem.id,
-			municipality_id: sourceItem.municipality_id,
+			district_id: sourceItem.properties.district_id,
+			id: sourceItem.properties.id,
+			municipality_id: sourceItem.properties.municipality_id,
 			name: sourceItem.properties.name,
 		};
 

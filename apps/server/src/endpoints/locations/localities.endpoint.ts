@@ -21,7 +21,7 @@ const schema = {
 /* * */
 
 const handler = async (_: FastifyRequest, reply: FastifyReply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALIITIES);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALITIES);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)

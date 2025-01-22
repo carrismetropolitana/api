@@ -80,7 +80,7 @@ export const syncLocations = async () => {
 	// Save data to the database
 
 	const sortedLocalitiesData = Array.from(updatedLocalitiesData.values()).sort((a, b) => sortCollator.compare(a.id, b.id));
-	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALIITIES, JSON.stringify(sortedLocalitiesData));
+	await SERVERDB.set(SERVERDB_KEYS.LOCATIONS.LOCALITIES, JSON.stringify(sortedLocalitiesData));
 
 	//
 
