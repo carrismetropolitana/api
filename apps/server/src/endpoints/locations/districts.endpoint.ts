@@ -57,5 +57,4 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 
 /* * */
 
-// FASTIFY.GET('/locations/districts', handler);
 FASTIFY.GET('/locations/districts', handler, { schema });

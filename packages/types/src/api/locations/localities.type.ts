@@ -21,7 +21,7 @@ export const LocalitySchema = z
 			district_id: '01',
 			id: '010101-1234',
 			municipality_id: '0101',
-			name: 'Locality 01',
+			name: 'Locality 1234',
 			parish_id: '010101',
 		},
 		title: 'Locality',
