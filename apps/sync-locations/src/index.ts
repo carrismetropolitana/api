@@ -6,9 +6,9 @@ import LOGGER from '@helperkits/logger';
 /* * */
 
 import { syncDistricts } from '@/tasks/sync-districts.js';
+import { syncLocalities } from '@/tasks/sync-localities.js';
 import { syncMunicipalities } from '@/tasks/sync-municipalities.js';
 import { syncParishes } from '@/tasks/sync-parishes.js';
-// import { syncLocalities } from '@/tasks/sync-districts.js';
 
 /* * */
 
@@ -25,7 +25,7 @@ const RUN_INTERVAL = 3600000; // 1 hour
 		await syncDistricts();
 		await syncMunicipalities();
 		await syncParishes();
-		// await syncLocalities();
+		await syncLocalities();
 
 		setTimeout(runOnInterval, RUN_INTERVAL);
 
