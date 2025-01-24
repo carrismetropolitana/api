@@ -78,15 +78,15 @@
 		"clean": "rm -rf dist"
 	},
 	"dependencies": {
-		"@types/geojson": "7946.0.15",
+		"@types/geojson": "7946.0.16",
 		"gtfs-types": "4.0.0",
 		"zod": "3.24.1",
-		"zod-openapi": "4.2.2"
+		"zod-openapi": "4.2.3"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/eslint": "20250103.1610.23",
-		"@types/node": "22.10.7",
+		"@types/node": "22.10.10",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.7.3"
 	}

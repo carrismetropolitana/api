@@ -22,7 +22,7 @@
 		"start": "dotenv-run -- turbo run start"
 	},
 	"devDependencies": {
-		"turbo": "2.3.3"
+		"turbo": "2.3.4"
 	},
 	"packageManager": "npm@11.0.0",
 	"workspaces": [
