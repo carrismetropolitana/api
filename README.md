@@ -1,16 +1,6 @@
-# Carris Metropolitana API (beta)
+# Carris Metropolitana API
 
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/tf3p.svg)](https://status.carrismetropolitana.pt)
-
-> [!IMPORTANT]
-> **A versão 1 do API será descontinuada em breve.**
-> Todos os consumidores do API são convidados a consultar a [versão Beta](https://github.com/carrismetropolitana/api), com melhorias significativas ao nível de performance, uma estrutura de informação mais adequada à operação da Carris Metropolitana, novos conjuntos de dados (como escolas e outros equipamentos) e informação em tempo real, tanto da ocupação dos Espaços navegante® Carris Metropolitana como posição de veículos, estimativas de chegada para todas as paragens e respetivos endpoints GTFS-RT.
-> Ler mais: [Documentação API Beta](https://github.com/carrismetropolitana/api)
-
-> [!IMPORTANT]
-> **The API version 1 will be discontinued soon.**
-> All API users are invited to check out the [Beta version](https://github.com/carrismetropolitana/api), which features significant performance improvements, a more suitable information structure for Carris Metropolitana's operation, new datasets (such as schools and other facilities), and real-time information for the occupancy of Espaços navegante® Carris Metropolitana as well as the position of vehicles, arrival estimates for all stops and GTFS-RT endpoints.
-> Read more: [Beta API Documentation](https://github.com/carrismetropolitana/api)
 
 Welcome to the Carris Metropolitana API, an open-source service that provides network information in JSON or Protocol Buffers format. This service reads and converts the [official Carris Metropolitana GTFS file](https://github.com/carrismetropolitana/gtfs). This API covers bus transit data for 15 of the 18 municipalities comprising the Lisbon metropolitan area. This is the same set of endpoints used by [carrismetropolitana.pt](https://www.carrismetropolitana.pt). With this API, developers can easily build applications that provide users with up-to-date bus schedules and route information.
 
@@ -22,7 +12,7 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 ---
 
-### Base URL: `https://api.cmet.pt/[endpoint]`
+### Base URL: `https://api.carrismetropolitana.pt/v2/[endpoint]`
 
 ---
 
