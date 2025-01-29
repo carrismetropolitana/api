@@ -7,7 +7,7 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { apexT11 } from '@tmlmobilidade/services/interfaces';
 import { ALLOWED_VALIDATION_STATUSES, createOperationalDate, OPERATIONAL_DATE_FORMAT } from '@tmlmobilidade/services/types';
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
+// import { getOperationalDate } from '@tmlmobilidade/services/utils';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -23,7 +23,7 @@ export const videowallValidations = async () => {
 	// This takes in consideration the current time, as we want to compare today so far with the previous day so far, also.
 	// For example, today is monday 10h49. We want to compare the number of validations until 10h49 of today with the number of validations until 10h49 of last monday.
 
-	const todayOperationalDate = getOperationalDate();
+	const todayOperationalDate = createOperationalDate('20250128'); // getOperationalDate();
 
 	const lastWeekOperationalDate = createOperationalDate(
 		DateTime
