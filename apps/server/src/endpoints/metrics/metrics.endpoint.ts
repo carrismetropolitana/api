@@ -101,3 +101,12 @@ FASTIFY.GET('/metrics/videowall/validations', async (_, reply) => {
 		.header('cache-control', 'public, max-age=60')
 		.send(allItemsTxt);
 });
+
+FASTIFY.GET('/metrics/videowall/vkm', async (_, reply) => {
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.VIDEOWALL.VKM);
+	if (!allItemsTxt) return reply.code(404).send([]);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=60')
+		.send(allItemsTxt);
+});
