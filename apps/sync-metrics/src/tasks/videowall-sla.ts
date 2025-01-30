@@ -29,23 +29,33 @@ export const videowallSla = async () => {
 
 		// For Area 1
 		_41_scheduled_rides_until_now: 0,
+		_41_simple_one_validation_transaction_fail_until_now: 0,
 		_41_simple_three_events_fail_until_now: 0,
+		_41_simple_three_events_or_simple_one_validation_transaction_fail_until_now: 0,
 
 		// For Area 2
 		_42_scheduled_rides_until_now: 0,
+		_42_simple_one_validation_transaction_fail_until_now: 0,
 		_42_simple_three_events_fail_until_now: 0,
+		_42_simple_three_events_or_simple_one_validation_transaction_fail_until_now: 0,
 
 		// For Area 3
 		_43_scheduled_rides_until_now: 0,
+		_43_simple_one_validation_transaction_fail_until_now: 0,
 		_43_simple_three_events_fail_until_now: 0,
+		_43_simple_three_events_or_simple_one_validation_transaction_fail_until_now: 0,
 
 		// For Area 4
 		_44_scheduled_rides_until_now: 0,
+		_44_simple_one_validation_transaction_fail_until_now: 0,
 		_44_simple_three_events_fail_until_now: 0,
+		_44_simple_three_events_or_simple_one_validation_transaction_fail_until_now: 0,
 
 		// For the whole CM
 		_cm_scheduled_rides_until_now: 0,
+		_cm_simple_one_validation_transaction_fail_until_now: 0,
 		_cm_simple_three_events_fail_until_now: 0,
+		_cm_simple_three_events_or_simple_one_validation_transaction_fail_until_now: 0,
 
 		//
 	};
@@ -94,14 +104,34 @@ export const videowallSla = async () => {
 
 		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromJSDate(rideData.seen_last_at).diffNow('minutes').minutes < -2;
 		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
+		const simpleOneValidationTransaction = rideData.analysis.find(item => item._id === 'SIMPLE_ONE_VALIDATION_TRANSACTION');
 
-		if (rideHasAlreadyEnded && (!simpleThreeVehicleEvents || simpleThreeVehicleEvents.grade !== 'pass')) {
+		// Skip if ride has not yet ended
+
+		if (!rideHasAlreadyEnded) continue;
+
+		if (simpleThreeVehicleEvents.grade !== 'pass') {
 			responseResult._cm_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
 			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
-			continue;
+		}
+
+		if (simpleOneValidationTransaction.grade !== 'pass') {
+			responseResult._cm_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_simple_one_validation_transaction_fail_until_now++;
+		}
+
+		if (simpleThreeVehicleEvents.grade !== 'pass' && simpleOneValidationTransaction.grade !== 'pass') {
+			responseResult._cm_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '41') responseResult._41_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '42') responseResult._42_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '43') responseResult._43_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '44') responseResult._44_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
 		}
 
 		//
