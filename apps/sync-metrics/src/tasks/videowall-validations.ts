@@ -25,16 +25,16 @@ export const videowallValidations = async () => {
 
 	const todayOperationalDate = getOperationalDate();
 
-	const yesterdayOperationalDate = createOperationalDate(
-		DateTime
-			.fromFormat(todayOperationalDate, OPERATIONAL_DATE_FORMAT)
-			.minus({ days: 1 })
-			.toFormat(OPERATIONAL_DATE_FORMAT),
-	);
+	// const yesterdayOperationalDate = createOperationalDate(
+	// 	DateTime
+	// 		.fromFormat(todayOperationalDate, OPERATIONAL_DATE_FORMAT)
+	// 		.minus({ days: 1 })
+	// 		.toFormat(OPERATIONAL_DATE_FORMAT),
+	// );
 
-	const yesterdayUntilNow = DateTime
-		.now()
-		.minus({ days: 1 });
+	// const yesterdayUntilNow = DateTime
+	// 	.now()
+	// 	.minus({ days: 1 });
 
 	const lastWeekOperationalDate = createOperationalDate(
 		DateTime
@@ -81,8 +81,8 @@ export const videowallValidations = async () => {
 		// For Area 1
 		responseResult._41_today_valid_count = await apexT11.count({
 			agency_id: '41',
-			created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: yesterdayOperationalDate,
+			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
+			operational_date: todayOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._41_last_week_valid_count = await apexT11.count({
@@ -94,8 +94,8 @@ export const videowallValidations = async () => {
 		// For Area 2
 		responseResult._42_today_valid_count = await apexT11.count({
 			agency_id: '42',
-			created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: yesterdayOperationalDate,
+			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
+			operational_date: todayOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._42_last_week_valid_count = await apexT11.count({
@@ -107,8 +107,8 @@ export const videowallValidations = async () => {
 		// For Area 3
 		responseResult._43_today_valid_count = await apexT11.count({
 			agency_id: '43',
-			created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: yesterdayOperationalDate,
+			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
+			operational_date: todayOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._43_last_week_valid_count = await apexT11.count({
@@ -120,8 +120,8 @@ export const videowallValidations = async () => {
 		// For Area 4
 		responseResult._44_today_valid_count = await apexT11.count({
 			agency_id: '44',
-			created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: yesterdayOperationalDate,
+			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
+			operational_date: todayOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._44_last_week_valid_count = await apexT11.count({
@@ -133,8 +133,8 @@ export const videowallValidations = async () => {
 		// For the whole CM
 		responseResult._cm_today_valid_count = await apexT11.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: yesterdayOperationalDate,
+			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
+			operational_date: todayOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._cm_last_week_valid_count = await apexT11.count({
