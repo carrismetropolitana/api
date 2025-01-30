@@ -11,11 +11,11 @@ import { demandMetricsByAgencyMonth } from '@/tasks/demand-metrics-by-agency-mon
 import { demandMetricsByAgencyYear } from '@/tasks/demand-metrics-by-agency-year.js';
 import { demandMetricsByLine } from '@/tasks/demand-metrics-by-line.js';
 import { serviceMetrics } from '@/tasks/service-metrics.js';
+import { videowallDelays } from '@/tasks/videowall-delays.js';
+import { videowallEmptyRides } from '@/tasks/videowall-empty-rides.js';
+import { videowallSla } from '@/tasks/videowall-sla.js';
 import { videowallValidations } from '@/tasks/videowall-validations.js';
-
-import { videowallDelays } from './tasks/videowall-delays.js';
-import { videowallEmptyRides } from './tasks/videowall-empty-rides.js';
-import { videowallSla } from './tasks/videowall-sla.js';
+import { videowallVkm } from '@/tasks/videowall-vkm.js';
 
 /* * */
 
@@ -44,6 +44,7 @@ const RUN_INTERVAL = 60000; // 1 minute
 		await videowallEmptyRides();
 		await videowallSla();
 		await videowallValidations();
+		await videowallVkm();
 
 		//
 		// Run on every 5th iteration (~ 5 minutes)

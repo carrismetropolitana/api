@@ -91,10 +91,28 @@ export const videowallSla = async () => {
 
 		if (!rideData.seen_first_at) {
 			responseResult._cm_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
+			responseResult._cm_simple_one_validation_transaction_fail_until_now++;
+			responseResult._cm_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === '41') {
+				responseResult._41_simple_three_events_fail_until_now++;
+				responseResult._41_simple_one_validation_transaction_fail_until_now++;
+				responseResult._41_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			}
+			if (rideData.agency_id === '42') {
+				responseResult._42_simple_three_events_fail_until_now++;
+				responseResult._42_simple_one_validation_transaction_fail_until_now++;
+				responseResult._42_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			}
+			if (rideData.agency_id === '43') {
+				responseResult._43_simple_three_events_fail_until_now++;
+				responseResult._43_simple_one_validation_transaction_fail_until_now++;
+				responseResult._43_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			}
+			if (rideData.agency_id === '44') {
+				responseResult._44_simple_three_events_fail_until_now++;
+				responseResult._44_simple_one_validation_transaction_fail_until_now++;
+				responseResult._44_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			}
 			continue;
 		}
 

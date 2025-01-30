@@ -34,6 +34,7 @@ export const SERVERDB_KEYS = Object.freeze({
 			EMPTY_RIDES: 'metrics:videowall:empty_rides',
 			SLA: 'metrics:videowall:sla',
 			VALIDATIONS: 'metrics:videowall:validations',
+			VKM: 'metrics:videowall:vkm',
 		},
 	},
 	NETWORK: {
