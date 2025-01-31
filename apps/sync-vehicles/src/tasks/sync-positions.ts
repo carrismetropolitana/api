@@ -4,6 +4,7 @@ import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Archive } from '@carrismetropolitana/api-types/network';
 import { convertVehicleCurrentStatusCode, convertVehicleScheduleRelationshipCode, Vehicle, VehicleOccupancyStatus } from '@carrismetropolitana/api-types/vehicles';
+import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { DateTime } from 'luxon';
@@ -60,23 +61,9 @@ export const syncPositions = async () => {
 
 	const archivesTimer = new TIMETRACKER();
 
-	const currentArchiveIds = {};
+	const currentArchiveIds = await getCurrentArchiveIds();
 
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
-	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
-
-	for (const archiveData of allArchivesData) {
-		const archiveStartDate = DateTime.fromFormat(archiveData.valid_range.start, 'yyyyMMdd');
-		const archiveEndDate = DateTime.fromFormat(archiveData.valid_range.end, 'yyyyMMdd');
-		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) {
-			continue;
-		}
-		else {
-			currentArchiveIds[archiveData.agency_id] = archiveData.id;
-		}
-	}
-
-	LOGGER.info(`Fetched ${allArchivesData.length} Archives from SERVERDB (${archivesTimer.get()})`);
+	LOGGER.info(`Fetched Archives from SERVERDB (${archivesTimer.get()})`);
 
 	//
 	// Fetch existing vehicles from SERVERDB
@@ -260,3 +247,19 @@ export const syncPositions = async () => {
 
 	//
 };
+
+/* * */
+
+async function getCurrentArchiveIds() {
+	const currentArchiveIds = {};
+	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
+	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
+
+	for (const archiveData of allArchivesData) {
+		const todayOperationDate = getOperationalDay();
+		if (archiveData.valid_range.start > todayOperationDate || archiveData.valid_range.end < todayOperationDate) continue;
+		else currentArchiveIds[archiveData.agency_id] = archiveData.id;
+	}
+
+	return currentArchiveIds;
+}
