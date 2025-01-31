@@ -138,7 +138,7 @@ export const syncPositions = async () => {
 		const vehicleTripId = pcgiVehicleEvent.content.entity[0].vehicle.trip.tripId;
 		const vehicleBearing = Math.floor(Number(pcgiVehicleEvent?.content?.entity[0]?.vehicle?.position?.bearing) || 0);
 		const vehicleSpeed = pcgiVehicleEvent?.content?.entity[0]?.vehicle?.position?.speed / 3.6 || 0; // in meters per second
-		const operatorId = pcgiVehicleEvent.content?.entity[0]?.vehicle?.agencyId;
+		const agencyId = pcgiVehicleEvent.content?.entity[0]?.vehicle?.agencyId;
 
 		//
 		// Check if there is a vehicle with the same ID and a newer timestamp
@@ -154,11 +154,12 @@ export const syncPositions = async () => {
 
 		const updateVehicleObject: Vehicle = {
 			...existingVehicle,
+			agency_id: agencyId,
 			bearing: vehicleBearing,
 			block_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.blockId,
 			current_status: convertVehicleCurrentStatusCode(String(pcgiVehicleEvent.content.entity[0].vehicle.currentStatus)),
 			direction_id: undefined, // patternDataJson.direction,
-			event_id: `${currentArchiveIds[operatorId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
+			event_id: `${currentArchiveIds[agencyId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
 			id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
 			lat: pcgiVehicleEvent.content.entity[0].vehicle.position.latitude,
 			line_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.lineId,
@@ -170,7 +171,7 @@ export const syncPositions = async () => {
 			speed: vehicleSpeed,
 			stop_id: pcgiVehicleEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
 			timestamp: vehicleTimestamp, // Timestamp is in UTC
-			trip_id: `${vehicleTripId}_${currentArchiveIds[operatorId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
+			trip_id: `${vehicleTripId}_${currentArchiveIds[agencyId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
 		};
 
 		//
@@ -222,7 +223,8 @@ export const syncPositions = async () => {
 
 		if (pcgiVehicleEvent.content.entity[0].vehicle.trigger.door === 'OPENED') {
 			updateVehicleObject.door_status = 'OPEN';
-		} else if (pcgiVehicleEvent.content.entity[0].vehicle.trigger.door === 'CLOSED') {
+		}
+		else if (pcgiVehicleEvent.content.entity[0].vehicle.trigger.door === 'CLOSED') {
 			updateVehicleObject.door_status = 'CLOSED';
 		}
 
