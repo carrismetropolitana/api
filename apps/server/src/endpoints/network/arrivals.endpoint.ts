@@ -6,6 +6,7 @@ import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -114,9 +115,8 @@ async function getCurrentArchiveIds() {
 	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
-		const archiveStartDate = DateTime.fromFormat(archiveData.valid_range.start, 'yyyyMMdd');
-		const archiveEndDate = DateTime.fromFormat(archiveData.valid_range.end, 'yyyyMMdd');
-		if (archiveStartDate > DateTime.now() || archiveEndDate < DateTime.now()) continue;
+		const todayOperationDate = getOperationalDay();
+		if (archiveData.valid_range.start > todayOperationDate || archiveData.valid_range.end < todayOperationDate) continue;
 		else currentArchiveIds[archiveData.agency_id] = archiveData.id;
 	}
 
