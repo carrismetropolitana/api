@@ -4,6 +4,7 @@
 	"scripts": {
 		"build": "turbo run build",
 		"build:packages": "turbo run build --filter=./packages/*",
+		"clean": "sh cleanup.sh",
 		"dev": "npm run build:packages && npm i && turbo run dev --concurrency=99",
 		"dev:server": "turbo dev --filter=@carrismetropolitana/api-server",
 		"dev:switch": "turbo dev --filter=@carrismetropolitana/api-switch",
@@ -22,9 +23,9 @@
 		"start": "dotenv-run -- turbo run start"
 	},
 	"devDependencies": {
-		"turbo": "2.3.4"
+		"turbo": "2.4.0"
 	},
-	"packageManager": "npm@11.0.0",
+	"packageManager": "npm@11.1.0",
 	"workspaces": [
 		"apps/*",
 		"packages/*"
