@@ -69,7 +69,7 @@ export const videowallSla = async () => {
 	// Get all rides for today
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: 'complete' }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate }).stream();
 
 	//
 	// Iterate on all rides for today
@@ -82,6 +82,11 @@ export const videowallSla = async () => {
 		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_total++;
 		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_total++;
 		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_total++;
+
+		//
+		// Skip rides that are not yet processed
+
+		if (rideData.system_status !== 'complete') continue;
 
 		//
 		// Skip rides that should not have started yet (scheduled for the future)
