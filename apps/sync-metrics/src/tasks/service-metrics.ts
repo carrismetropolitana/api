@@ -8,8 +8,8 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { rides } from '@tmlmobilidade/services/interfaces';
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { rides } from '@tmlmobilidade/core/interfaces';
+import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { DateTime } from 'luxon';
 
 /* * */
