@@ -64,7 +64,7 @@ export const videowallVkm = async () => {
 	// Get all rides for today
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, status: 'complete' }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: 'complete' }).stream();
 
 	//
 	// Iterate on all rides for today

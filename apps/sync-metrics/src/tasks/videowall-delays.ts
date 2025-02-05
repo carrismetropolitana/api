@@ -60,7 +60,7 @@ export const videowallDelays = async () => {
 	// (start_time_observed !== null) and that have already been processed.
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, status: 'complete' }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: 'complete' }).stream();
 
 	//
 	// Iterate on all rides for today
