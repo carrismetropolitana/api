@@ -6,11 +6,10 @@ import type { Alert } from '@carrismetropolitana/api-types/gtfs-core';
 
 export default function parseAlertV2(item): Alert {
 	//
-
-	const parsedInformedEntity = item.alert.informedEntity.map((entity) => {
+	const parsedInformedEntity = item.alert.informed_entity.map((entity) => {
 		if (entity.routeId) {
 			return {
-				lineId: entity.routeId.substring(0, 4),
+				line_id: entity.route_id.substring(0, 4),
 				...entity,
 			};
 		}
@@ -20,7 +19,7 @@ export default function parseAlertV2(item): Alert {
 	return {
 		...item.alert,
 		alert_id: item.id,
-		informedEntity: parsedInformedEntity,
+		informed_entity: parsedInformedEntity,
 	};
 
 	//

@@ -64,7 +64,7 @@ export const syncAlerts = async () => {
 	for (const alertItem of allAlertsParsedV2) {
 		if (!allSentNotificationsSet.has(alertItem['_id'])) {
 			try {
-				for (const entity of alertItem['informedEntity']) {
+				for (const entity of alertItem['informed_entity']) {
 					// Setup notification message
 					const notificationMessage: TopicMessage = {
 						apns: {
