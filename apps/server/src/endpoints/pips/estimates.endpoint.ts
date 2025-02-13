@@ -136,6 +136,55 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				.header('cache-control', 'public, no-cache')
 				.send(response);
 		}
+
+		//
+		// Handle the special case for testing PIP connectivity
+		// If the stop ID is '000000', return a single test estimate
+
+		if (stopId === 'no-service') {
+			const response: PipArrival[] = [
+				{
+					estimatedArrivalTime: '23:59:59',
+					estimatedDepartureTime: '23:59:59',
+					estimatedTimeString: '-',
+					estimatedTimeUnixSeconds: 0,
+					journeyId: '0000_0_0|teste',
+					lineId: '0000',
+					observedArrivalTime: null,
+					observedDepartureTime: null,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: '0000',
+					operatorId: '', // Deprecated
+					patternId: '0000_0_0',
+					stopHeadsign: 'Painel inativo, paragem desativada.',
+					stopId: '', // Deprecated
+					timetabledArrivalTime: '23:59:59',
+					timetabledDepartureTime: '23:59:59',
+				},
+				{
+					estimatedArrivalTime: '23:59:59',
+					estimatedDepartureTime: '23:59:59',
+					estimatedTimeString: '›››',
+					estimatedTimeUnixSeconds: 0,
+					journeyId: '0000_0_0|teste',
+					lineId: '0000',
+					observedArrivalTime: null,
+					observedDepartureTime: null,
+					observedDriverId: '', // Deprecated
+					observedVehicleId: '0000',
+					operatorId: '', // Deprecated
+					patternId: '0000_0_0',
+					stopHeadsign: 'Olá :)',
+					stopId: '', // Deprecated
+					timetabledArrivalTime: '23:59:59',
+					timetabledDepartureTime: '23:59:59',
+				},
+			];
+			return reply
+				.code(200)
+				.header('cache-control', 'public, no-cache')
+				.send(response);
+		}
 	}
 
 	//
