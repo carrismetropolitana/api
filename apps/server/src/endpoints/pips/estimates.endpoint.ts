@@ -140,17 +140,17 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				{
 					estimatedArrivalTime: '23:59:59',
 					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: '-',
+					estimatedTimeString: '',
 					estimatedTimeUnixSeconds: 0,
 					journeyId: '0000_0_0|teste',
-					lineId: '0000',
+					lineId: 'INFO',
 					observedArrivalTime: null,
 					observedDepartureTime: null,
 					observedDriverId: '', // Deprecated
 					observedVehicleId: '0000',
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
-					stopHeadsign: 'Painel inativo, paragem desativada.',
+					stopHeadsign: 'Paragem desativada.',
 					stopId: '', // Deprecated
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
@@ -158,17 +158,17 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				{
 					estimatedArrivalTime: '23:59:59',
 					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: '›››',
+					estimatedTimeString: '',
 					estimatedTimeUnixSeconds: 0,
 					journeyId: '0000_0_0|teste',
-					lineId: '0000',
+					lineId: 'INFO',
 					observedArrivalTime: null,
 					observedDepartureTime: null,
 					observedDriverId: '', // Deprecated
 					observedVehicleId: '0000',
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
-					stopHeadsign: 'Olá :)',
+					stopHeadsign: 'Painel inativo.',
 					stopId: '', // Deprecated
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
