@@ -45,12 +45,6 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 		return reply.code(400).send([]);
 	}
 
-	const regexPatternForStopId = /^\d{6}$/; // Match a string with exactly 6 numeric digits
-	const allStopIdsAreValid = request.body.stops.every(stopId => regexPatternForStopId.test(stopId));
-	if (!allStopIdsAreValid) {
-		return reply.code(400).send([]);
-	}
-
 	//
 	// Loop through each stop in the request to check for special cases
 
@@ -185,6 +179,12 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				.header('cache-control', 'public, no-cache')
 				.send(response);
 		}
+	}
+
+	const regexPatternForStopId = /^\d{6}$/; // Match a string with exactly 6 numeric digits
+	const allStopIdsAreValid = request.body.stops.every(stopId => regexPatternForStopId.test(stopId));
+	if (!allStopIdsAreValid) {
+		return reply.code(400).send([]);
 	}
 
 	//
