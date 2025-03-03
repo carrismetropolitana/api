@@ -5,8 +5,8 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { apexT11 } from '@tmlmobilidade/core/interfaces';
-import { ALLOWED_VALIDATION_STATUSES, createOperationalDate, OPERATIONAL_DATE_FORMAT, UnixTimestamp } from '@tmlmobilidade/core/types';
+import { rides } from '@tmlmobilidade/core/interfaces';
+import { OPERATIONAL_DATE_FORMAT, type OperationalDate, type UnixTimestamp } from '@tmlmobilidade/core/types';
 import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { DateTime } from 'luxon';
 
@@ -18,34 +18,25 @@ export const videowallValidations = async () => {
 	LOGGER.title(`Videowall - Validations`);
 	const globalTimer = new TIMETRACKER();
 
+	const ridesCollection = await rides.getCollection();
+
 	//
-	// Setup the timestamp boundary
-	// This takes in consideration the current time, as we want to compare today so far with the previous day so far, also.
-	// For example, today is monday 10h49. We want to compare the number of validations until 10h49 of today with the number of validations until 10h49 of last monday.
+	// To calculate how many validations were made today and last week, we need to first
+	// get the corresponding Rides for each operational date. Then, we can sum the number
+	// of validations for each Ride, for each agency, and for each operational date.
 
 	const todayOperationalDate = getOperationalDate();
 
-	// const yesterdayOperationalDate = createOperationalDate(
-	// 	DateTime
-	// 		.fromFormat(todayOperationalDate, OPERATIONAL_DATE_FORMAT)
-	// 		.minus({ days: 1 })
-	// 		.toFormat(OPERATIONAL_DATE_FORMAT),
-	// );
-
-	// const yesterdayUntilNow = DateTime
-	// 	.now()
-	// 	.minus({ days: 1 });
-
-	const lastWeekOperationalDate = createOperationalDate(
-		DateTime
-			.fromFormat(todayOperationalDate, OPERATIONAL_DATE_FORMAT)
-			.minus({ days: 7 })
-			.toFormat(OPERATIONAL_DATE_FORMAT),
-	);
+	const lastWeekOperationalDate = DateTime
+		.fromFormat(todayOperationalDate, OPERATIONAL_DATE_FORMAT)
+		.minus({ days: 7 })
+		.toFormat(OPERATIONAL_DATE_FORMAT) as OperationalDate;
 
 	const lastWeekUntilNow = DateTime
 		.now()
-		.minus({ days: 7 });
+		.minus({ days: 7 })
+		.plus({ hour: 1 })
+		.toMillis() as UnixTimestamp;
 
 	//
 	// Setup the response JSON object
@@ -75,77 +66,29 @@ export const videowallValidations = async () => {
 	};
 
 	//
-	// Perform database searches
+	// Fetch and process Rides for today
 
-	try {
-		// For Area 1
-		responseResult._41_today_valid_count = await apexT11.count({
-			agency_id: '41',
-			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: todayOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		responseResult._41_last_week_valid_count = await apexT11.count({
-			agency_id: '41',
-			created_at: { $lte: lastWeekUntilNow.toMillis() as UnixTimestamp },
-			operational_date: lastWeekOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		// For Area 2
-		responseResult._42_today_valid_count = await apexT11.count({
-			agency_id: '42',
-			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: todayOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		responseResult._42_last_week_valid_count = await apexT11.count({
-			agency_id: '42',
-			created_at: { $lte: lastWeekUntilNow.toMillis() as UnixTimestamp },
-			operational_date: lastWeekOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		// For Area 3
-		responseResult._43_today_valid_count = await apexT11.count({
-			agency_id: '43',
-			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: todayOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		responseResult._43_last_week_valid_count = await apexT11.count({
-			agency_id: '43',
-			created_at: { $lte: lastWeekUntilNow.toMillis() as UnixTimestamp },
-			operational_date: lastWeekOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		// For Area 4
-		responseResult._44_today_valid_count = await apexT11.count({
-			agency_id: '44',
-			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: todayOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		responseResult._44_last_week_valid_count = await apexT11.count({
-			agency_id: '44',
-			created_at: { $lte: lastWeekUntilNow.toMillis() as UnixTimestamp },
-			operational_date: lastWeekOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		// For the whole CM
-		responseResult._cm_today_valid_count = await apexT11.count({
-			agency_id: { $in: ['41', '42', '43', '44'] },
-			// created_at: { $lte: yesterdayUntilNow.toJSDate() },
-			operational_date: todayOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
-		responseResult._cm_last_week_valid_count = await apexT11.count({
-			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $lte: lastWeekUntilNow.toMillis() as UnixTimestamp },
-			operational_date: lastWeekOperationalDate,
-			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
-		});
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: todayOperationalDate }).stream();
+
+	for await (const rideData of allRidesForTodayStream) {
+		responseResult._cm_today_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '41') responseResult._41_today_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '42') responseResult._42_today_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '43') responseResult._43_today_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '44') responseResult._44_today_valid_count += rideData.validations_count;
 	}
-	catch (err) {
-		console.log(err);
+
+	//
+	// Fetch and process Rides for last week
+
+	const allRidesForLastWeekStream = ridesCollection.find({ operational_date: lastWeekOperationalDate, start_time_scheduled: { $gte: lastWeekUntilNow } }).stream();
+
+	for await (const rideData of allRidesForLastWeekStream) {
+		responseResult._cm_last_week_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '41') responseResult._41_last_week_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '42') responseResult._42_last_week_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '43') responseResult._43_last_week_valid_count += rideData.validations_count;
+		if (rideData.agency_id === '44') responseResult._44_last_week_valid_count += rideData.validations_count;
 	}
 
 	//
