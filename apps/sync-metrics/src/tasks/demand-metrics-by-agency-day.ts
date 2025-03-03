@@ -1,10 +1,9 @@
 /* * */
 
-import type { DemandMetricsByAgency, DemandMetricsByAgencyDay } from '@carrismetropolitana/api-types/metrics';
-
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type DemandMetricsByAgency, type DemandMetricsByAgencyDay } from '@carrismetropolitana/api-types/metrics';
 import { getOperationalDay, sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';

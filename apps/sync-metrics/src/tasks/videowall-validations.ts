@@ -6,7 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { apexT11 } from '@tmlmobilidade/core/interfaces';
-import { ALLOWED_VALIDATION_STATUSES, createOperationalDate, OPERATIONAL_DATE_FORMAT } from '@tmlmobilidade/core/types';
+import { ALLOWED_VALIDATION_STATUSES, createOperationalDate, OPERATIONAL_DATE_FORMAT, UnixTimestamp } from '@tmlmobilidade/core/types';
 import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { DateTime } from 'luxon';
 
@@ -87,7 +87,7 @@ export const videowallValidations = async () => {
 		});
 		responseResult._41_last_week_valid_count = await apexT11.count({
 			agency_id: '41',
-			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			created_at: { $lte: lastWeekUntilNow.toUnixInteger() as UnixTimestamp },
 			operational_date: lastWeekOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
@@ -100,7 +100,7 @@ export const videowallValidations = async () => {
 		});
 		responseResult._42_last_week_valid_count = await apexT11.count({
 			agency_id: '42',
-			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			created_at: { $lte: lastWeekUntilNow.toUnixInteger() as UnixTimestamp },
 			operational_date: lastWeekOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
@@ -113,7 +113,7 @@ export const videowallValidations = async () => {
 		});
 		responseResult._43_last_week_valid_count = await apexT11.count({
 			agency_id: '43',
-			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			created_at: { $lte: lastWeekUntilNow.toUnixInteger() as UnixTimestamp },
 			operational_date: lastWeekOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
@@ -126,7 +126,7 @@ export const videowallValidations = async () => {
 		});
 		responseResult._44_last_week_valid_count = await apexT11.count({
 			agency_id: '44',
-			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			created_at: { $lte: lastWeekUntilNow.toUnixInteger() as UnixTimestamp },
 			operational_date: lastWeekOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
@@ -139,7 +139,7 @@ export const videowallValidations = async () => {
 		});
 		responseResult._cm_last_week_valid_count = await apexT11.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $lte: lastWeekUntilNow.toJSDate() },
+			created_at: { $lte: lastWeekUntilNow.toUnixInteger() as UnixTimestamp },
 			operational_date: lastWeekOperationalDate,
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
