@@ -37,21 +37,20 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  serverdb-client:
-    image: rediscommander/redis-commander:latest
-    restart: unless-stopped
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    ports:
-      - 8081:8081
-    environment:
-      - REDIS_HOSTS=serverdb
-    depends_on:
-      serverdb:
-        condition: service_healthy
-
+  # serverdb-client:
+  #   image: rediscommander/redis-commander:latest
+  #   restart: unless-stopped
+  #   logging:
+  #     options:
+  #       max-size: '1m'
+  #       max-file: '1'
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+  #     - REDIS_HOSTS=serverdb
+  #   depends_on:
+  #     serverdb:
+  #       condition: service_healthy
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
