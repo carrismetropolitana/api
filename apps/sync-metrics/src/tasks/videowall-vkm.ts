@@ -75,7 +75,7 @@ export const videowallVkm = async () => {
 		//
 		// Skip rides that should not have started yet (scheduled for the future)
 
-		const rideShouldHaveStarted = DateTime.fromSeconds(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
+		const rideShouldHaveStarted = DateTime.fromMillis(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
 
 		if (!rideShouldHaveStarted) continue;
 
@@ -95,7 +95,7 @@ export const videowallVkm = async () => {
 		// If a ride should have already started and has already ended,
 		// and failed the SIMPLE_THREE_VEHICLE_EVENTS test, then we should count it as FAIL.
 
-		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromSeconds(rideData.seen_last_at).diffNow('minutes').minutes < -2;
+		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromMillis(rideData.seen_last_at).diffNow('minutes').minutes < -2;
 		const simpleThreeVehicleEvents = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
 		const simpleOneValidationTransaction = rideData.analysis.find(item => item._id === 'SIMPLE_ONE_VALIDATION_TRANSACTION');
 

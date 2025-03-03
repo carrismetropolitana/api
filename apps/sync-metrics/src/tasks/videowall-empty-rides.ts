@@ -67,7 +67,7 @@ export const videowallEmptyRides = async () => {
 
 		if (!rideData.seen_last_at) continue;
 
-		if (DateTime.fromSeconds(rideData.seen_last_at).diffNow('minutes').minutes < -2) continue;
+		if (DateTime.fromMillis(rideData.seen_last_at).diffNow('minutes').minutes < -2) continue;
 
 		//
 		// Check if the ride had any valid validation transactions
