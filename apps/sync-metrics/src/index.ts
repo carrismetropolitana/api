@@ -6,6 +6,7 @@ import 'dotenv/config';
 
 /* * */
 
+import { complaintsMetrics } from '@/tasks/complaints-metrics.js';
 import { demandMetricsByAgencyDay } from '@/tasks/demand-metrics-by-agency-day.js';
 import { demandMetricsByAgencyMonth } from '@/tasks/demand-metrics-by-agency-month.js';
 import { demandMetricsByAgencyYear } from '@/tasks/demand-metrics-by-agency-year.js';
@@ -39,7 +40,7 @@ const RUN_INTERVAL = 60000; // 1 minute
 
 		//
 		// Run on all iterations
-
+		await complaintsMetrics();
 		await videowallDelays();
 		await videowallEmptyRides();
 		await videowallSla();

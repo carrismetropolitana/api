@@ -19,6 +19,7 @@ export const SERVERDB_KEYS = Object.freeze({
 		REGIONS: 'locations:regions',
 	},
 	METRICS: {
+		COMPLAINTS: 'metrics:complaints',
 		DEMAND: {
 			BY_AGENCY: {
 				DAY: 'metrics:demand:agency:day',
