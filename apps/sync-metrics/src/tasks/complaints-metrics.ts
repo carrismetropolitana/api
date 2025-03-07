@@ -37,7 +37,7 @@ export const complaintsMetrics = async () => {
 	const existingComplaintsData: Complaints[] = JSON.parse(existingComplaintsTxt);
 
 	const allComplaintsMap = new Map<string, Complaints>();
-	existingComplaintsData?.forEach(complaint => allComplaintsMap.set(complaint._id.toString(), complaint));
+	existingComplaintsData?.forEach(complaint => allComplaintsMap.set(`${complaint.type + '-' + complaint.filter_value}`, complaint));
 
 	//
 	// For each item, update its entry in the database
@@ -49,10 +49,10 @@ export const complaintsMetrics = async () => {
 
 	for (const itemCsv of allItemsCsv.data) {
 		//
-		const existingItemData = allComplaintsMap.get(`${itemCsv._id}}`);
+		const existingItemData = allComplaintsMap.get(`${itemCsv.type + '-' + itemCsv.filter_value}`);
 		//
 		const parsedItemMetadata: Complaints = {
-			_id: itemCsv._id,
+			_id: itemCsv.type + '-' + itemCsv.filter_value,
 			complaints: Number(itemCsv.complaints),
 			email: Number(itemCsv.email),
 			filter_value: itemCsv.filter_value,
@@ -74,7 +74,7 @@ export const complaintsMetrics = async () => {
 	//
 	// Save items to the database
 
-	allItemsData.sort((a, b) => sortCollator.compare(a._id.toString(), b._id.toString()));
+	allItemsData.sort((a, b) => sortCollator.compare(`${a.type + '-' + a.filter_value}`, `${b.type + '-' + b.filter_value}`));
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.COMPLAINTS, JSON.stringify(allItemsData));
 
 	LOGGER.success(`Done updating ${updatedItemsCounter} items to ${SERVERDB_KEYS.METRICS.COMPLAINTS} (${globalTimer.get()}).`);
