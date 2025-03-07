@@ -61,3 +61,17 @@ interface ByDay {
 	day: string
 	qty: number
 }
+
+/* * */
+
+export interface Complaints {
+	_id: string
+	complaints: number
+	email: number
+	filter_value: string
+	info_requests: number
+	other: number
+	phone: number
+	total: number
+	type: string
+}
