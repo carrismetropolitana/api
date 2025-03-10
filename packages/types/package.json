@@ -86,7 +86,7 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/eslint": "20250303.2009.45",
-		"@types/node": "22.13.9",
+		"@types/node": "22.13.10",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.2"
 	}
