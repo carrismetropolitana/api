@@ -269,7 +269,7 @@ export const syncLinesRoutesPatterns = async () => {
 					id: tripRawData.pattern_id,
 					line_id: routeRawData.line_id,
 					locality_ids: [],
-					long_name: routeRawData.line_short_name,
+					long_name: routeRawData.line_long_name,
 					municipality_ids: [],
 					path: stopTimesAsCompletePath,
 					region_ids: [],
@@ -403,7 +403,7 @@ export const syncLinesRoutesPatterns = async () => {
 					facilities: [],
 					id: routeRawData.line_id,
 					locality_ids: [],
-					long_name: routeRawData.route_long_name,
+					long_name: routeRawData.line_long_name,
 					municipality_ids: [],
 					pattern_ids: [],
 					region_ids: [],
@@ -411,7 +411,7 @@ export const syncLinesRoutesPatterns = async () => {
 					short_name: routeRawData.route_short_name,
 					stop_ids: [],
 					text_color: routeRawData.route_text_color ? `#${routeRawData.route_text_color}` : '#FFFFFF',
-					tts_name: tts.makeLine(routeRawData.line_id, routeRawData.route_long_name),
+					tts_name: tts.makeLine(routeRawData.line_id, routeRawData.line_long_name),
 				};
 			}
 
