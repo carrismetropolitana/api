@@ -1,10 +1,9 @@
 /* * */
 
-import type { DemandMetricsByAgency, DemandMetricsByAgencyYear } from '@carrismetropolitana/api-types/metrics';
-
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type DemandMetricsByAgency, type DemandMetricsByAgencyYear } from '@carrismetropolitana/api-types/metrics';
 import { getOperationalDay, sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -31,6 +30,7 @@ export const demandMetricsByAgencyYear = async () => {
 
 	const startDateObject = DateTime.fromFormat(currentOperationalDay, 'yyyyLLdd').startOf('year').set({ hour: 4, minute: 0, second: 0 });
 	const startDateString = startDateObject.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
+	const endDateString = startDateObject.endOf('year').toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss');
 	const startDateRawIso = startDateObject.toFormat('yyyyLLdd');
 
 	//
@@ -57,6 +57,7 @@ export const demandMetricsByAgencyYear = async () => {
 				},
 				transactiondate: {
 					$gte: startDateString,
+					$lte: endDateString,
 				},
 				validationstatus: {
 					$in: APEX_VALIDATION_STATUSES,
