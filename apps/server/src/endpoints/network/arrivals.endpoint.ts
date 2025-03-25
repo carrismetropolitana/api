@@ -33,7 +33,12 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply
 	const currentArchiveIds = await getCurrentArchiveIds();
 
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
-	const result = response.map((estimate) => {
+
+	if (!response || !Array.isArray(response)) {
+		return reply.status(200).send([]);
+	}
+
+	const result = response?.map((estimate) => {
 		const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
 		return {
 			estimated_arrival: compensatedEstimatedArrival,
@@ -75,15 +80,15 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 
 	const stopIdsForThisPattern = activePatternsData.flatMap(item => item.path.map(waypoint => waypoint.stop_id)).join(',');
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${stopIdsForThisPattern}`);
-	if (!response) {
-		return reply.status(500).send([]);
+	if (!response || !Array.isArray(response)) {
+		return reply.status(200).send([]);
 	}
 
 	const result = response
-		.filter((item) => {
+		?.filter((item) => {
 			return item.patternId === request.params.id;
 		})
-		.map((item) => {
+		?.map((item) => {
 			return {
 				estimated_arrival: item.stopArrivalEta || item.stopDepartureEta,
 				estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopArrivalEta) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopDepartureEta),
@@ -101,6 +106,7 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 				vehicle_id: item.observedVehicleId,
 			};
 		});
+
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=20')
