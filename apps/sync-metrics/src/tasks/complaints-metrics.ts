@@ -54,6 +54,7 @@ export const complaintsMetrics = async () => {
 		const parsedItemMetadata: Complaints = {
 			_id: itemCsv.type + '-' + itemCsv.filter_value,
 			complaints: Number(itemCsv.complaints),
+			current_date: itemCsv.current_date,
 			email: Number(itemCsv.email),
 			filter_value: itemCsv.filter_value,
 			info_requests: Number(itemCsv.info_requests),

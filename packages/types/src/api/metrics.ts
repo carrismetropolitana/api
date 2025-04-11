@@ -67,6 +67,7 @@ interface ByDay {
 export interface Complaints {
 	_id: string
 	complaints: number
+	current_date: Date
 	email: number
 	filter_value: string
 	info_requests: number
