@@ -54,7 +54,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./.env
+      - ./.env.local
     environment:
       - SERVERDB_HOST=serverdb
     secrets:
