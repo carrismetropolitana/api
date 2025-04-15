@@ -225,6 +225,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			const hasScheduledTime = (estimate.stopScheduledArrivalTime !== null && estimate.stopScheduledArrivalTime !== undefined) || (estimate.stopScheduledDepartuteTime !== null && estimate.stopScheduledDepartuteTime !== undefined);
 			const compensatedScheduledArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopScheduledArrivalTime) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopScheduledDepartuteTime);
 			const scheduledTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedScheduledArrival);
+			const scheduledTimeInHumanDate = DateTime.fromSeconds(scheduledTimeInUnixSeconds, { zone: 'Europe/Lisbon' }).toFormat('HH:mm');
 			const scheduledTimeInSeconds = scheduledTimeInUnixSeconds - DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
 			const scheduledTimeInMinutes = Math.floor(scheduledTimeInSeconds / 60);
 			// Transform estimated time into unix and string formats
@@ -280,7 +281,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				return {
 					estimatedArrivalTime: compensatedScheduledArrival,
 					estimatedDepartureTime: compensatedScheduledArrival,
-					estimatedTimeString: compensatedScheduledArrival.substring(0, 5),
+					estimatedTimeString: scheduledTimeInHumanDate,
 					estimatedTimeUnixSeconds: scheduledTimeInUnixSeconds,
 					journeyId: estimate.tripId,
 					lineId: estimate.lineId,
