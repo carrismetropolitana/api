@@ -5,9 +5,9 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { apexT11 } from '@tmlmobilidade/core/interfaces';
-import { ALLOWED_VALIDATION_STATUSES } from '@tmlmobilidade/core/types';
-import { getOperationalDate, getUnixTimestampFromOperationalDate, validateUnixTimestamp } from '@tmlmobilidade/core/utils';
+import { apexT11 } from '@tmlmobilidade/interfaces';
+import { ALLOWED_VALIDATION_STATUSES, validateUnixTimestamp } from '@tmlmobilidade/types';
+import { getOperationalDate, getUnixTimestampFromOperationalDate } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
 /* * */

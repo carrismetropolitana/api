@@ -49,9 +49,9 @@
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"jwt-decode": "4.0.0",
-		"luxon": "3.5.0",
-		"mongodb": "6.14.2",
-		"pg": "8.13.3",
+		"luxon": "3.6.1",
+		"mongodb": "6.15.0",
+		"pg": "8.14.1",
 		"redis": "4.7.0",
 		"trino-client": "0.2.6",
 		"tunnel-ssh": "5.2.0"
@@ -59,9 +59,9 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
-		"@carrismetropolitana/eslint": "20250303.2009.45",
-		"@types/node": "22.13.10",
+		"@carrismetropolitana/eslint": "20250325.1926.5",
+		"@types/node": "22.14.1",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.8.2"
+		"typescript": "5.8.3"
 	}
 }

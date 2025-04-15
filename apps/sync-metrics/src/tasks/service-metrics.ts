@@ -1,15 +1,14 @@
 /* * */
 
-import type { CachedResource } from '@carrismetropolitana/api-types/common';
-import type { ServiceMetrics } from '@carrismetropolitana/api-types/metrics';
-
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type CachedResource } from '@carrismetropolitana/api-types/common';
+import { type ServiceMetrics } from '@carrismetropolitana/api-types/metrics';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { rides } from '@tmlmobilidade/core/interfaces';
-import { getOperationalDate } from '@tmlmobilidade/core/utils';
+import { rides } from '@tmlmobilidade/interfaces';
+import { getOperationalDate } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
 /* * */

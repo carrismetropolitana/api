@@ -20,25 +20,25 @@
 		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@fastify/swagger": "9.4.2",
+		"@fastify/swagger": "9.5.0",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"fastify": "5.2.1",
+		"fastify": "5.3.0",
 		"jwt-decode": "4.0.0",
-		"luxon": "3.5.0",
+		"luxon": "3.6.1",
 		"pino-pretty": "13.0.0",
-		"protobufjs": "7.4.0",
-		"zod-openapi": "4.2.3"
+		"protobufjs": "7.5.0",
+		"zod-openapi": "4.2.4"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
-		"@carrismetropolitana/eslint": "20250303.2009.45",
+		"@carrismetropolitana/eslint": "20250325.1926.5",
 		"@dotenv-run/cli": "1.3.6",
-		"@types/luxon": "3.4.2",
-		"@types/node": "22.13.10",
+		"@types/luxon": "3.6.2",
+		"@types/node": "22.14.1",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.19.3",
-		"typescript": "5.8.2"
+		"typescript": "5.8.3"
 	}
 }

@@ -79,15 +79,15 @@
 	},
 	"dependencies": {
 		"@types/geojson": "7946.0.16",
-		"gtfs-types": "4.0.0",
+		"gtfs-types": "5.1.0",
 		"zod": "3.24.2",
-		"zod-openapi": "4.2.3"
+		"zod-openapi": "4.2.4"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
-		"@carrismetropolitana/eslint": "20250303.2009.45",
-		"@types/node": "22.13.10",
+		"@carrismetropolitana/eslint": "20250325.1926.5",
+		"@types/node": "22.14.1",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.8.2"
+		"typescript": "5.8.3"
 	}
 }
