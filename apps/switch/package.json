@@ -24,7 +24,7 @@
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@types/node": "22.14.1",
-		"fastify": "5.3.0",
+		"fastify": "5.3.2",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.19.3",
 		"typescript": "5.8.3"
