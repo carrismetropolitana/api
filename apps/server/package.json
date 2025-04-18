@@ -23,7 +23,7 @@
 		"@fastify/swagger": "9.5.0",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"fastify": "5.3.0",
+		"fastify": "5.3.1",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.6.1",
 		"pino-pretty": "13.0.0",
