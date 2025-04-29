@@ -311,43 +311,6 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			{
 				estimatedArrivalTime: '23:59:59',
 				estimatedDepartureTime: '23:59:59',
-				estimatedTimeString: '',
-				estimatedTimeUnixSeconds: 0,
-				journeyId: '0000_0_0|teste',
-				lineId: 'INFO',
-				observedArrivalTime: null,
-				observedDepartureTime: null,
-				observedDriverId: '', // Deprecated
-				observedVehicleId: '0000',
-				operatorId: '', // Deprecated
-				patternId: '0000_0_0',
-				stopHeadsign: 'Serviços assegurados até à manhã do dia 29.',
-				stopId: '', // Deprecated
-				timetabledArrivalTime: '23:59:59',
-				timetabledDepartureTime: '23:59:59',
-			},
-			{
-				estimatedArrivalTime: '23:59:59',
-				estimatedDepartureTime: '23:59:59',
-				estimatedTimeString: '',
-				estimatedTimeUnixSeconds: 0,
-				journeyId: '0000_0_0|teste',
-				lineId: 'INFO',
-				observedArrivalTime: null,
-				observedDepartureTime: null,
-				observedDriverId: '', // Deprecated
-				observedVehicleId: '0000',
-				operatorId: '', // Deprecated
-				patternId: '0000_0_0',
-				stopHeadsign: 'Constrangimentos hoje por trânsito.',
-				stopId: '', // Deprecated
-				timetabledArrivalTime: '23:59:59',
-				timetabledDepartureTime: '23:59:59',
-			},
-
-			{
-				estimatedArrivalTime: '23:59:59',
-				estimatedDepartureTime: '23:59:59',
 				estimatedTimeString: '1 min',
 				estimatedTimeUnixSeconds: 0,
 				journeyId: '0000_0_0|teste',
@@ -394,45 +357,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 	return reply
 		.code(200)
 		.header('cache-control', 'public, no-cache')
-		.send([
-			{
-				estimatedArrivalTime: '23:59:59',
-				estimatedDepartureTime: '23:59:59',
-				estimatedTimeString: '',
-				estimatedTimeUnixSeconds: 0,
-				journeyId: '0000_0_0|teste',
-				lineId: 'INFO',
-				observedArrivalTime: null,
-				observedDepartureTime: null,
-				observedDriverId: '', // Deprecated
-				observedVehicleId: '0000',
-				operatorId: '', // Deprecated
-				patternId: '0000_0_0',
-				stopHeadsign: 'Serviços assegurados até à manhã do dia 29.',
-				stopId: '', // Deprecated
-				timetabledArrivalTime: '23:59:59',
-				timetabledDepartureTime: '23:59:59',
-			},
-			{
-				estimatedArrivalTime: '23:59:59',
-				estimatedDepartureTime: '23:59:59',
-				estimatedTimeString: '',
-				estimatedTimeUnixSeconds: 0,
-				journeyId: '0000_0_0|teste',
-				lineId: 'INFO',
-				observedArrivalTime: null,
-				observedDepartureTime: null,
-				observedDriverId: '', // Deprecated
-				observedVehicleId: '0000',
-				operatorId: '', // Deprecated
-				patternId: '0000_0_0',
-				stopHeadsign: 'Constrangimentos hoje por trânsito.',
-				stopId: '', // Deprecated
-				timetabledArrivalTime: '23:59:59',
-				timetabledDepartureTime: '23:59:59',
-			},
-			...result,
-		]);
+		.send(result);
 
 	//
 });
