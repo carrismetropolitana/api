@@ -18,5 +18,6 @@ FASTIFY.GET<RequestSchema>('/pips/:pip_id/message', async (request, reply) => {
 		.code(200)
 		.header('cache-control', 'public, max-age=20')
 		// .send({ message: `#${request.params.pip_id} | ${DateTime.local({ zone: 'Europe/Lisbon' }).toFormat('HH:mm:ss')}` });
-		.send({ message: `#${request.params.pip_id} | Serviços estão assegurados. Podem haver constragimentos devido ao trânsito.` });
+		// .send({ message: `#${request.params.pip_id} | Serviços estão assegurados. Podem haver constragimentos devido ao trânsito.` });
+		.send({ message: `#${request.params.pip_id}` });
 });
