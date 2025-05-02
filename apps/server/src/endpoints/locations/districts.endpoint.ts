@@ -1,12 +1,11 @@
 /* * */
 
-import type { FastifyReply, FastifyRequest } from 'fastify';
-
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { ApiResponse, ApiResponseErrorSchema, ApiResponseSuccessSchema } from '@carrismetropolitana/api-types/common';
 import { District, DistrictSchema } from '@carrismetropolitana/api-types/locations';
+import { type FastifyReply, type FastifyRequest } from 'fastify';
 import fastify from 'fastify';
 import { createSchema } from 'zod-openapi';
 

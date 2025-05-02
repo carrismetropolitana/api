@@ -32,10 +32,10 @@ class FastifyService {
 		this._setupDefaultHooks();
 		this._setupErrorHandler();
 		this._setupDefaultRoutes();
-		this._attemptStart({
-			host: process.env.FASTIFY_HOST || '0.0.0.0',
-			port: Number(process.env.FASTIFY_PORT) || 5050,
-		});
+		// this._attemptStart({
+		// 	host: process.env.FASTIFY_HOST || '0.0.0.0',
+		// 	port: Number(process.env.FASTIFY_PORT) || 5050,
+		// });
 	}
 
 	/**
@@ -70,6 +70,13 @@ class FastifyService {
 	public POST<RouteGeneric extends fastify.RouteGenericInterface>(path: string, handler: fastify.RouteHandlerMethod<fastify.RawServerBase, fastify.RawRequestDefaultExpression, fastify.RawReplyDefaultExpression, RouteGeneric>, options: fastify.RouteShorthandOptions = {}) {
 		this.server.register(() => {
 			this.server.post(path, options, handler);
+		});
+	}
+
+	public start() {
+		this._attemptStart({
+			host: process.env.FASTIFY_HOST || '0.0.0.0',
+			port: Number(process.env.FASTIFY_PORT) || 5050,
 		});
 	}
 

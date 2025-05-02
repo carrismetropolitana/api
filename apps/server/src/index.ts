@@ -1,6 +1,7 @@
 /* * */
 
 import 'dotenv/config';
+import { FASTIFY } from '@/services/FASTIFY.js';
 
 /* * */
 
@@ -37,3 +38,7 @@ import '@/endpoints/network/arrivals.endpoint.js';
 
 import '@/endpoints/pips/estimates.endpoint.js';
 import '@/endpoints/pips/message.endpoint.js';
+
+/* * */
+
+FASTIFY.start();
