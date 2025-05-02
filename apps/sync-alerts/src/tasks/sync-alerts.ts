@@ -1,13 +1,12 @@
 /* * */
 
-import type { Alert } from '@carrismetropolitana/api-types/alerts';
-import type { TopicMessage } from 'firebase-admin/messaging';
-
 import parseAlertV2 from '@/services/parseAlertV2.js';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type Alert } from '@carrismetropolitana/api-types/alerts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { type TopicMessage } from 'firebase-admin/messaging';
 
 /* * */
 
@@ -53,7 +52,7 @@ export const syncAlerts = async () => {
 
 	const notificationsTimer = new TIMETRACKER();
 
-	const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS);
+	const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS) as string;
 	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
 	const allSentNotificationsSet = new Set(allSentNotifications);
 

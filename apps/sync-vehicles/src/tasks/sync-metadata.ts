@@ -35,7 +35,7 @@ export const syncMetadata = async () => {
 
 	LOGGER.info(`Downloading existing vehicles...`);
 
-	const existingVehiclesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL);
+	const existingVehiclesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL) as string;
 	const existingVehiclesData: Vehicle[] = JSON.parse(existingVehiclesTxt);
 
 	const allVehiclesMap = new Map<string, Vehicle>();

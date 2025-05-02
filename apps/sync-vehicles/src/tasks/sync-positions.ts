@@ -70,7 +70,7 @@ export const syncPositions = async () => {
 
 	const fetchServerdbTimer = new TIMETRACKER();
 
-	const existingVehicleTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL);
+	const existingVehicleTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL) as string;
 	const existingVehicleData: Vehicle[] = JSON.parse(existingVehicleTxt);
 
 	const allVehiclesMap = new Map<string, Vehicle>();
@@ -252,7 +252,7 @@ export const syncPositions = async () => {
 
 async function getCurrentArchiveIds() {
 	const currentArchiveIds = {};
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
+	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES) as string;
 	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {

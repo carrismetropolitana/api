@@ -1,11 +1,10 @@
 /* * */
 
-import type { DemandMetricsByStop } from '@carrismetropolitana/api-types/metrics';
-import type { Stop } from '@carrismetropolitana/api-types/network';
-
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type DemandMetricsByStop } from '@carrismetropolitana/api-types/metrics';
+import { type Stop } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -30,10 +29,8 @@ export const demandMetricsByStop = async () => {
 	//
 	// Retrieve all Stops from SERVERDB
 
-	const allStopsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
-	if (!allStopsTxt) {
-		throw new Error('No Stops found in SERVERDB');
-	}
+	const allStopsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS) as string;
+	if (!allStopsTxt) throw new Error('No Stops found in SERVERDB');
 
 	const allStopsData: Stop[] = JSON.parse(allStopsTxt);
 	const allStopIdsSet = new Set<string>(allStopsData.map(item => item.id));

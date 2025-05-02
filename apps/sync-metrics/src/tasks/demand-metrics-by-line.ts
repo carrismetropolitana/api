@@ -1,11 +1,10 @@
 /* * */
 
-import type { DemandMetricsByLine } from '@carrismetropolitana/api-types/metrics';
-import type { Line } from '@carrismetropolitana/api-types/network';
-
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { TRINODB } from '@carrismetropolitana/api-services/TRINODB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type DemandMetricsByLine } from '@carrismetropolitana/api-types/metrics';
+import { type Line } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -30,10 +29,8 @@ export const demandMetricsByLine = async () => {
 	//
 	// Retrieve all Lines from SERVERDB
 
-	const allLinesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES);
-	if (!allLinesTxt) {
-		throw new Error('No Lines found in SERVERDB');
-	}
+	const allLinesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.LINES) as string;
+	if (!allLinesTxt) throw new Error('No Lines found in SERVERDB');
 
 	const allLinesData: Line[] = JSON.parse(allLinesTxt);
 	const allLineIdsSet = new Set<string>(allLinesData.map(item => item.id));

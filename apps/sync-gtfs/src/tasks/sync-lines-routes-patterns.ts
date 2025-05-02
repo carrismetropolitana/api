@@ -1,12 +1,11 @@
 /* * */
 
-import type { CalendarDate, Route as GtfsRoute, StopTime as GtfsStopTime, Trip as GtfsTrip } from '@carrismetropolitana/api-types/gtfs-extended';
-import type { Arrival, Line, Pattern, Route, Stop, Trip, Waypoint } from '@carrismetropolitana/api-types/network';
-
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Alight } from '@carrismetropolitana/api-types/gtfs-core';
+import { type CalendarDate, type Route as GtfsRoute, type StopTime as GtfsStopTime, type Trip as GtfsTrip } from '@carrismetropolitana/api-types/gtfs-extended';
+import { type Arrival, type Line, type Pattern, type Route, type Stop, type Trip, type Waypoint } from '@carrismetropolitana/api-types/network';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import tts from '@carrismetropolitana/tts';
 import LOGGER from '@helperkits/logger';
@@ -59,7 +58,7 @@ export const syncLinesRoutesPatterns = async () => {
 	const fetchRawDataTimer = new TIMETRACKER();
 
 	// For Stops
-	const allStopsParsedTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS);
+	const allStopsParsedTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.STOPS) as string;
 	const allStopsParsedJson: Stop[] = JSON.parse(allStopsParsedTxt);
 	const allStopsParsedMap = new Map(allStopsParsedJson.map(item => [item.id, item]));
 
@@ -459,8 +458,8 @@ export const syncLinesRoutesPatterns = async () => {
 	// Delete stale patterns
 
 	const allPatternKeysInTheDatabase: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.PATTERNS.BASE}:*`, TYPE: 'string' })) {
-		allPatternKeysInTheDatabase.push(key);
+	for await (const key of SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.PATTERNS.BASE}:*`, TYPE: 'string' })) {
+		allPatternKeysInTheDatabase.push(String(key));
 	}
 
 	const stalePatternKeys = allPatternKeysInTheDatabase.filter(key => !updatedPatternKeys.has(key));

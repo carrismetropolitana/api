@@ -18,7 +18,7 @@ const gtfsRealtime = proto.loadSync(path.resolve(__dirname, '../../assets/gtfs-r
 /* * */
 
 FASTIFY.GET('/vehicles', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.ALL) as string;
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
@@ -27,7 +27,7 @@ FASTIFY.GET('/vehicles', async (_, reply) => {
 });
 
 FASTIFY.GET('/vehicles.pb', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.PROTOBUF);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.VEHICLES.PROTOBUF) as string;
 	const allItemsData = JSON.parse(allItemsTxt);
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
 	const message = FeedMessage.fromObject(allItemsData);

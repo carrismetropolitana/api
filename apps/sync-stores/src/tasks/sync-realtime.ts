@@ -31,7 +31,7 @@ export const syncRealtime = async () => {
 	//
 	// Retrieve existing store documents from database
 
-	const allStoresTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES);
+	const allStoresTxt = await SERVERDB.get(SERVERDB_KEYS.FACILITIES.STORES) as string;
 	const allStoresData: Store[] = JSON.parse(allStoresTxt);
 
 	// 2.

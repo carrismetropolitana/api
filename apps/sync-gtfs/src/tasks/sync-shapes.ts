@@ -119,8 +119,8 @@ export const syncShapes = async () => {
 	const removeStaleShapesTimer = new TIMETRACKER();
 
 	const allExistingShapeKeys: string[] = [];
-	for await (const key of await SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.SHAPES.BASE}:*`, TYPE: 'string' })) {
-		allExistingShapeKeys.push(key);
+	for await (const key of SERVERDB.scanIterator({ MATCH: `${SERVERDB_KEYS.NETWORK.SHAPES.BASE}:*`, TYPE: 'string' })) {
+		allExistingShapeKeys.push(String(key));
 	}
 
 	const staleShapeKeys = allExistingShapeKeys.filter(id => !allShapesData.has(id));

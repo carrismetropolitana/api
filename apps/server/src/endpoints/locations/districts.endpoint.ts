@@ -41,7 +41,7 @@ const schema: fastify.RouteShorthandOptions['schema'] = {
 const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 	//
 
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.DISTRICTS);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.DISTRICTS) as string;
 
 	const response: ApiResponse<District[]> = {
 		data: JSON.parse(allItemsTxt) || [],

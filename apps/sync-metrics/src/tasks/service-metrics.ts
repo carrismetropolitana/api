@@ -8,7 +8,7 @@ import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
-import { getOperationalDate } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -22,14 +22,16 @@ export const serviceMetrics = async () => {
 	//
 	// Fetch rides from 15 days ago
 
-	const yesterdayDateObj = DateTime.now().minus({ days: 1 });
-	const yesterdayOperationalDate = getOperationalDate(yesterdayDateObj);
+	const yesterdayDate = Dates
+		.now()
+		.minus({ days: 1 });
 
-	const fifteenDaysAgoDateObj = yesterdayDateObj.minus({ days: 15 });
-	const fifteenDaysAgoOperationalDate = getOperationalDate(fifteenDaysAgoDateObj);
+	const fifteenDaysAgoDate = Dates
+		.now()
+		.minus({ days: 15 });
 
 	const ridesCollection = await rides.getCollection();
-	const ridesStream = ridesCollection.find({ operational_date: { $gte: fifteenDaysAgoOperationalDate, $lte: yesterdayOperationalDate } }).stream();
+	const ridesStream = ridesCollection.find({ operational_date: { $gte: fifteenDaysAgoDate.operational_date, $lte: yesterdayDate.operational_date } }).stream();
 
 	//
 	// Group rides by operational_date and line_id

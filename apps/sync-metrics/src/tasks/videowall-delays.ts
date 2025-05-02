@@ -6,7 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
-import { getOperationalDate } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -20,7 +20,9 @@ export const videowallDelays = async () => {
 	//
 	// Setup timestamp boundaries
 
-	const operationalDate = getOperationalDate();
+	const operationalDate = Dates
+		.now()
+		.operational_date;
 
 	//
 	// Setup the response JSON object

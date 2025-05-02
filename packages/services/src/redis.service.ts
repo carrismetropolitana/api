@@ -1,80 +1,78 @@
-import redis from 'redis';
+// /* * */
 
-export interface RedisClientOptions {
-	socket?: {
-		connectTimeout?: number
-		host?: string
-		noDelay?: boolean
-		port?: number
-		retryStrategy?: (times: number) => number
-	}
-	url?: string
-}
+// import redis from 'redis';
 
-export class RedisService {
-	private static _instance: RedisService;
-	private readonly client: redis.RedisClientType;
+// /* * */
 
-	constructor(options: RedisClientOptions) {
-		this.client = redis.createClient({
-			...options,
-		});
-		this.connect();
-		this.client.on('error', err => console.log('Redis Client Error', err));
-	}
+// export interface RedisClientOptions {
+// 	socket?: {
+// 		connectTimeout?: number
+// 		host?: string
+// 		noDelay?: boolean
+// 		port?: number
+// 		retryStrategy?: (times: number) => number
+// 	}
+// 	url?: string
+// }
 
-	public static getInstance(options?: RedisClientOptions) {
-		if (!RedisService._instance) {
-			if (!options) {
-				throw new Error('Redis Client Options are required');
-			}
+// /* * */
 
-			RedisService._instance = new RedisService(options);
-		}
+// export class RedisService {
+// 	//
 
-		return RedisService._instance;
-	}
+// 	private static _instance: RedisService;
+// 	private readonly client: redis.RedisClientType;
 
-	async connect() {
-		try {
-			if (this.client.isOpen) return;
+// 	constructor(options: RedisClientOptions) {
+// 		this.client = redis.createClient({
+// 			...options,
+// 		});
+// 		this.connect();
+// 		this.client.on('error', err => console.log('Redis Client Error', err));
+// 	}
 
-			await this.client.connect();
-			console.log(`⤷ Connected to Redis.`);
-		}
-		catch (error: any) {
-			console.error(`⤷ ERROR: Failed to connect to Redis.`, error);
-			throw new Error('Error connecting to Redis', error);
-		}
-	}
+// 	public static getInstance(options?: RedisClientOptions) {
+// 		if (!RedisService._instance) {
+// 			if (!options) {
+// 				throw new Error('Redis Client Options are required');
+// 			}
 
-	async del(key: string | string[]) {
-		return this.client.del(key);
-	}
+// 			RedisService._instance = new RedisService(options);
+// 		}
 
-	async disconnect() {
-		try {
-			await this.client.disconnect();
-			console.log(`⤷ Disconnected from Redis.`);
-		}
-		catch (err) {
-			console.log(`⤷ ERROR: Failed to disconnect from Redis.`, err);
-		}
-	}
+// 		return RedisService._instance;
+// 	}
 
-	async get(key: string) {
-		return this.client.get(key);
-	}
+// 	async connect() {
+// 		try {
+// 			if (this.client.isOpen) return;
 
-	async keys(pattern: string) {
-		return this.client.keys(pattern);
-	}
+// 			await this.client.connect();
+// 			console.log(`⤷ Connected to Redis.`);
+// 		}
+// 		catch (error: any) {
+// 			console.error(`⤷ ERROR: Failed to connect to Redis.`, error);
+// 			throw new Error('Error connecting to Redis', error);
+// 		}
+// 	}
 
-	async scanIterator(options: { MATCH: string, TYPE: string }) {
-		return this.client.scanIterator(options);
-	}
+// 	async del(key: string | string[]) {
+// 		return this.client.del(key);
+// 	}
 
-	async set(key: string, value: string) {
-		return this.client.set(key, value);
-	}
-}
+// 	async get(key: string): Promise<string> {
+// 		return await this.client.get(key);
+// 	}
+
+// 	async keys(pattern: string) {
+// 		return this.client.keys(pattern);
+// 	}
+
+// 	async scanIterator(options: { MATCH: string, TYPE: string }) {
+// 		return this.client.scanIterator(options);
+// 	}
+
+// 	async set(key: string, value: string) {
+// 		return this.client.set(key, value);
+// 	}
+// }

@@ -27,7 +27,7 @@ FASTIFY.GET('/alerts', async (_, reply) => {
 });
 
 FASTIFY.GET('/alerts.pb', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF);
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF) as string;
 	const allItemsData = JSON.parse(allItemsTxt);
 	const FeedMessage = gtfsRealtime.root.lookupType('transit_realtime.FeedMessage');
 	const message = FeedMessage.fromObject(allItemsData);

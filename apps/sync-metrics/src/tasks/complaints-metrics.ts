@@ -1,6 +1,5 @@
 /* * */
-import type { ComplaintsMetadataSource } from '@/types/sources.ts';
-
+import { type ComplaintsMetadataSource } from '@/types/sources.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Complaints } from '@carrismetropolitana/api-types/metrics';
@@ -33,7 +32,7 @@ export const complaintsMetrics = async () => {
 
 	LOGGER.info(`Downloading existing complaints...`);
 
-	const existingComplaintsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.COMPLAINTS);
+	const existingComplaintsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.COMPLAINTS) as string;
 	const existingComplaintsData: Complaints[] = JSON.parse(existingComplaintsTxt);
 
 	const allComplaintsMap = new Map<string, Complaints>();

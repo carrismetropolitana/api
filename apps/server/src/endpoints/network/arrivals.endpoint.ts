@@ -70,7 +70,7 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 	const todayDateString = DateTime.now().toFormat('yyyyMMdd');
 	const currentArchiveIds = await getCurrentArchiveIds();
 
-	const foundPatternTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(request.params.id));
+	const foundPatternTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(request.params.id)) as string;
 	const foundPatternData: Pattern[] = await JSON.parse(foundPatternTxt);
 	const activePatternsData = foundPatternData?.filter(pattern => pattern.valid_on.includes(todayDateString));
 
@@ -117,7 +117,7 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 
 async function getCurrentArchiveIds() {
 	const currentArchiveIds = {};
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
+	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES) as string;
 	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
 
 	for (const archiveData of allArchivesData) {
