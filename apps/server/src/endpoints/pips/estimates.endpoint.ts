@@ -2,7 +2,10 @@
 
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
-import { PCGIAPI } from '@carrismetropolitana/api-services';
+import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { Pattern } from '@carrismetropolitana/api-types/network';
+import { Dates } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -194,6 +197,26 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 	const pcgiApiResponse = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${requestedStopIdsList}`);
 
 	//
+	// Extract all pattern IDs from the response and fetch
+	// the pattern data from the database in parallel.
+	// Then, filter the patterns to only include those that are valid today.
+
+	const relevantPatternIds = new Set(pcgiApiResponse.map(estimate => estimate.patternId));
+
+	const relevantPatternDataPromises = Array
+		.from(relevantPatternIds)
+		.map(async (patternId) => {
+			const patternTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId)) as string;
+			return await JSON.parse(patternTxt);
+		});
+
+	const relevantPatternDataArray: Pattern[][] = await Promise.all(relevantPatternDataPromises);
+
+	const patternsValidToday = relevantPatternDataArray
+		.flatMap(patternGroup => patternGroup)
+		.filter(pattern => pattern.valid_on.includes(Dates.now().operational_date));
+
+	//
 	// Parse the result into the expected PIP style
 
 	const result = pcgiApiResponse
@@ -216,6 +239,14 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 			if (hasEstimatedTime && isThisEstimateInThePast) return false;
 			// Skip this estimate if it does not have estimatedTime and has a scheduled time in the past
 			if (!hasEstimatedTime && hasScheduledTime && isThisScheduleInThePast) return false;
+			// Check if the pattern data for this estimate is available
+			const currentPatternData = patternsValidToday.find(pattern => pattern.id === estimate.patternId);
+			if (!currentPatternData) return false;
+			// Check if the waypoint data for this estimate is available
+			const waypointDataForThisPattern = currentPatternData.path.find(waypoint => waypoint.stop_id === estimate.stopId && waypoint.stop_sequence === estimate.stopSequence);
+			if (!waypointDataForThisPattern) return false;
+			// Check if this estimate is the last stop of the pattern
+			if (currentPatternData.path.pop().stop_sequence === waypointDataForThisPattern.stop_sequence) return false;
 			// Include this estimate othewise
 			return true;
 			//
