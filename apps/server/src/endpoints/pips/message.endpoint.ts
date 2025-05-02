@@ -19,5 +19,5 @@ FASTIFY.GET<RequestSchema>('/pips/:pip_id/message', async (request, reply) => {
 		.header('cache-control', 'public, max-age=20')
 		// .send({ message: `#${request.params.pip_id} | ${DateTime.local({ zone: 'Europe/Lisbon' }).toFormat('HH:mm:ss')}` });
 		// .send({ message: `#${request.params.pip_id} | Serviços estão assegurados. Podem haver constragimentos devido ao trânsito.` });
-		.send({ message: `ID: #${request.params.pip_id} | A sua viagem faz a diferença.` });
+		.send({ message: `ID #${request.params.pip_id}` });
 });
