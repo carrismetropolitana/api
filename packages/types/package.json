@@ -23,54 +23,54 @@
 	"types": "dist/index.d.ts",
 	"exports": {
 		"./alerts": {
+			"types": "./dist/api/alerts.d.ts",
 			"import": "./dist/api/alerts.js",
-			"require": "./dist/api/alerts.js",
-			"types": "./dist/api/alerts.d.ts"
+			"require": "./dist/api/alerts.js"
 		},
 		"./common": {
+			"types": "./dist/api/common.type.d.ts",
 			"import": "./dist/api/common.type.js",
-			"require": "./dist/api/common.type.js",
-			"types": "./dist/api/common.type.d.ts"
+			"require": "./dist/api/common.type.js"
 		},
 		"./facilities": {
+			"types": "./dist/api/facilities/index.d.ts",
 			"import": "./dist/api/facilities/index.js",
-			"require": "./dist/api/facilities/index.js",
-			"types": "./dist/api/facilities/index.d.ts"
+			"require": "./dist/api/facilities/index.js"
 		},
 		"./gtfs-core": {
+			"types": "./dist/gtfs/core.d.ts",
 			"import": "./dist/gtfs/core.js",
-			"require": "./dist/gtfs/core.js",
-			"types": "./dist/gtfs/core.d.ts"
+			"require": "./dist/gtfs/core.js"
 		},
 		"./gtfs-extended": {
+			"types": "./dist/gtfs/extended.d.ts",
 			"import": "./dist/gtfs/extended.js",
-			"require": "./dist/gtfs/extended.js",
-			"types": "./dist/gtfs/extended.d.ts"
+			"require": "./dist/gtfs/extended.js"
 		},
 		"./locations": {
+			"types": "./dist/api/locations/index.d.ts",
 			"import": "./dist/api/locations/index.js",
-			"require": "./dist/api/locations/index.js",
-			"types": "./dist/api/locations/index.d.ts"
+			"require": "./dist/api/locations/index.js"
 		},
 		"./metrics": {
+			"types": "./dist/api/metrics.d.ts",
 			"import": "./dist/api/metrics.js",
-			"require": "./dist/api/metrics.js",
-			"types": "./dist/api/metrics.d.ts"
+			"require": "./dist/api/metrics.js"
 		},
 		"./network": {
+			"types": "./dist/api/network.d.ts",
 			"import": "./dist/api/network.js",
-			"require": "./dist/api/network.js",
-			"types": "./dist/api/network.d.ts"
+			"require": "./dist/api/network.js"
 		},
 		"./trino": {
+			"types": "./dist/trino/index.d.ts",
 			"import": "./dist/trino/index.js",
-			"require": "./dist/trino/index.js",
-			"types": "./dist/trino/index.d.ts"
+			"require": "./dist/trino/index.js"
 		},
 		"./vehicles": {
+			"types": "./dist/api/vehicles.d.ts",
 			"import": "./dist/api/vehicles.js",
-			"require": "./dist/api/vehicles.js",
-			"types": "./dist/api/vehicles.d.ts"
+			"require": "./dist/api/vehicles.js"
 		}
 	},
 	"scripts": {
