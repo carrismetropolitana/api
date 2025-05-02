@@ -17,7 +17,7 @@
 		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@carrismetropolitana/tts": "20240923.2019.13",
+		"@carrismetropolitana/tts": "20250418.51.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20250303.1058.31",
@@ -28,23 +28,23 @@
 		"extract-zip": "2.0.1",
 		"luxon": "3.6.1",
 		"papaparse": "5.5.2",
-		"pg": "8.14.1",
+		"pg": "8.15.6",
 		"pg-copy-streams": "6.0.6"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@carrismetropolitana/eslint": "20250325.1926.5",
+		"@carrismetropolitana/eslint": "20250418.42.41",
 		"@dotenv-run/cli": "1.3.6",
 		"@types/adm-zip": "0.5.7",
 		"@types/luxon": "3.6.2",
-		"@types/node": "22.14.1",
+		"@types/node": "22.15.3",
 		"@types/papaparse": "5.3.15",
-		"@types/pg": "8.11.13",
+		"@types/pg": "8.11.14",
 		"@types/pg-copy-streams": "1.2.5",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.19.3",
+		"tsx": "4.19.4",
 		"typescript": "5.8.3"
 	}
 }

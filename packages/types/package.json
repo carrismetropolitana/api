@@ -80,13 +80,13 @@
 	"dependencies": {
 		"@types/geojson": "7946.0.16",
 		"gtfs-types": "5.1.0",
-		"zod": "3.24.2",
+		"zod": "3.24.3",
 		"zod-openapi": "4.2.4"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-tsconfig": "*",
-		"@carrismetropolitana/eslint": "20250325.1926.5",
-		"@types/node": "22.14.1",
+		"@carrismetropolitana/eslint": "20250418.42.41",
+		"@types/node": "22.15.3",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.3"
 	}

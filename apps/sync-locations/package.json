@@ -25,12 +25,12 @@
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@carrismetropolitana/eslint": "20250325.1926.5",
+		"@carrismetropolitana/eslint": "20250418.42.41",
 		"@dotenv-run/cli": "1.3.6",
 		"@types/geojson": "7946.0.16",
-		"@types/node": "22.14.1",
+		"@types/node": "22.15.3",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.19.3",
+		"tsx": "4.19.4",
 		"typescript": "5.8.3"
 	}
 }
