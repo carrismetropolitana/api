@@ -24,12 +24,11 @@ export const videowallValidations = async () => {
 	// For example, today is monday 10h49. We want to compare the number of validations until 10h49 of today with the number of validations until 10h49 of last monday.
 
 	const todayUnixTimestamp = Dates
-		.now()
+		.fromOperationalDate(Dates.now().operational_date)
 		.unix_timestamp;
 
 	const lastWeekUnixTimestamp = Dates
-		.now()
-		.minus({ days: 7 })
+		.fromOperationalDate(Dates.now().minus({ days: 7 }).operational_date)
 		.unix_timestamp;
 
 	const lastWeekUntilNowUnixTimestamp = Dates
