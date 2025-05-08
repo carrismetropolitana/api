@@ -192,23 +192,23 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-alerts:
-    image: ghcr.io/carrismetropolitana/api-sync-alerts:v1
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 2gb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./.env
-    secrets:
-      - firebasekey
+  # sync-alerts:
+  #   image: ghcr.io/carrismetropolitana/api-sync-alerts:v1
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #       delay: 30s
+  #     resources:
+  #       limits:
+  #         memory: 2gb
+  #   logging:
+  #     options:
+  #       max-size: '1m'
+  #       max-file: '1'
+  #   env_file:
+  #     - ./.env
+  #   secrets:
+  #     - firebasekey
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
