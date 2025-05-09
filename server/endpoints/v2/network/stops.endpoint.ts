@@ -43,11 +43,6 @@ const realtime = async (request, reply) => {
 	//   return reply.code(503).send([]);
 	//
 
-	return reply
-		.code(200)
-		.header('Content-Type', 'application/json; charset=utf-8')
-		.send([]);
-
 	const currentArchiveIds = {};
 
 	const allArchivesTxt = await SERVERDB.client.get('v2:network:archives:all');
