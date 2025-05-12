@@ -5,7 +5,6 @@ import '@/endpoints/v2/status/message.endpoint.js';
 
 /* * */
 
-import '@/endpoints/v2/network/alerts.endpoint.js';
 import '@/endpoints/v2/network/archives.endpoint.js';
 import '@/endpoints/v2/network/dates.endpoint.js';
 import '@/endpoints/v2/network/feed.endpoint.js';
@@ -19,11 +18,6 @@ import '@/endpoints/v2/network/shapes.endpoint.js';
 import '@/endpoints/v2/network/stops.endpoint.js';
 import '@/endpoints/v2/network/timetables.endpoint.js';
 import '@/endpoints/v2/network/vehicles.endpoint.js';
-
-/* * */
-
-// import '@/endpoints/v2/pip/info.endpoint.js';
-// import '@/endpoints/v2/pip/message.endpoint.js';
 
 /* * */
 
