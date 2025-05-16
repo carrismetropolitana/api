@@ -22,6 +22,7 @@ export const videowallDelays = async () => {
 
 	const operationalDate = Dates
 		.now()
+		.setZone('Europe/Lisbon')
 		.operational_date;
 
 	//

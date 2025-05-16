@@ -24,10 +24,12 @@ export const serviceMetrics = async () => {
 
 	const yesterdayDate = Dates
 		.now()
+		.setZone('Europe/Lisbon')
 		.minus({ days: 1 });
 
 	const fifteenDaysAgoDate = Dates
 		.now()
+		.setZone('Europe/Lisbon')
 		.minus({ days: 15 });
 
 	const ridesCollection = await rides.getCollection();
@@ -73,7 +75,7 @@ export const serviceMetrics = async () => {
 
 	const chacheableResource: CachedResource<ServiceMetrics[]> = {
 		data: Array.from(resultMap.values()),
-		timestamp_resource: DateTime.now().toMillis(),
+		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
 	};
 
 	chacheableResource.data.sort((a, b) => sortCollator.compare(a.operational_date, b.operational_date));

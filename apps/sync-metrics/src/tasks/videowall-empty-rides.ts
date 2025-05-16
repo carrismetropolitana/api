@@ -22,6 +22,7 @@ export const videowallEmptyRides = async () => {
 
 	const operationalDate = Dates
 		.now()
+		.setZone('Europe/Lisbon')
 		.operational_date;
 
 	//
@@ -97,7 +98,7 @@ export const videowallEmptyRides = async () => {
 
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: DateTime.now().toMillis(),
+		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES, JSON.stringify(chacheableResource));

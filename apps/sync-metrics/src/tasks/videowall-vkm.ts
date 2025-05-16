@@ -22,6 +22,7 @@ export const videowallVkm = async () => {
 
 	const operationalDate = Dates
 		.now()
+		.setZone('Europe/Lisbon')
 		.operational_date;
 
 	//
@@ -137,7 +138,7 @@ export const videowallVkm = async () => {
 
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: DateTime.now().toMillis(),
+		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VKM, JSON.stringify(chacheableResource));

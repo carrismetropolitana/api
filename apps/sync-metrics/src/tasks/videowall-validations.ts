@@ -24,15 +24,18 @@ export const videowallValidations = async () => {
 	// For example, today is monday 10h49. We want to compare the number of validations until 10h49 of today with the number of validations until 10h49 of last monday.
 
 	const todayUnixTimestamp = Dates
-		.fromOperationalDate(Dates.now().operational_date)
+		.fromOperationalDate(Dates.now().setZone('Europe/Lisbon').operational_date)
+		.setZone('Europe/Lisbon')
 		.unix_timestamp;
 
 	const lastWeekUnixTimestamp = Dates
-		.fromOperationalDate(Dates.now().minus({ days: 7 }).operational_date)
+		.fromOperationalDate(Dates.now().setZone('Europe/Lisbon').minus({ days: 7 }).operational_date)
+		.setZone('Europe/Lisbon')
 		.unix_timestamp;
 
 	const lastWeekUntilNowUnixTimestamp = Dates
 		.now()
+		.setZone('Europe/Lisbon')
 		.minus({ days: 7 })
 		.unix_timestamp;
 
@@ -132,7 +135,7 @@ export const videowallValidations = async () => {
 
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: DateTime.now().toMillis(),
+		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS, JSON.stringify(chacheableResource));
