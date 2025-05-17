@@ -54,7 +54,8 @@ export const syncRealtime = async () => {
 		//
 		// Filter all waiting tickets by the current store id
 
-		const ticketsWaiting = allTicketsWaiting?.content?.ticket?.filter(item => item.siteEID === foundDocument.id);
+		const allTicketsWaitingData = allTicketsWaiting?.content?.ticket;
+		const ticketsWaiting = allTicketsWaitingData?.filter(item => item.siteEID === foundDocument.id);
 
 		//
 		// Filter active counters for the current store id, and deduplicate them
