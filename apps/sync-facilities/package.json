@@ -25,10 +25,10 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@tmlmobilidade/tsconfig": "20250531.2332.25",
-		"@types/luxon": "0.0.1",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
+		"@types/luxon": "3.6.2",
 		"@types/node": "22.15.29",
-		"@types/papaparse": "0.0.1",
+		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.19.4",
 		"typescript": "5.8.3"
