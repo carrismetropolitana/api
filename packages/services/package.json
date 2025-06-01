@@ -51,8 +51,8 @@
 		"jwt-decode": "4.0.0",
 		"luxon": "3.6.1",
 		"mongodb": "6.16.0",
-		"pg": "8.15.6",
-		"redis": "5.0.0",
+		"pg": "8.16.0",
+		"redis": "5.1.1",
 		"trino-client": "0.2.7",
 		"tunnel-ssh": "5.2.0"
 	},
@@ -60,7 +60,7 @@
 		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@types/node": "22.15.3",
+		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.3"
 	}

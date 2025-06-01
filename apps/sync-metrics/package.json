@@ -19,11 +19,11 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/interfaces": "20250502.1135.51",
-		"@tmlmobilidade/types": "20250430.1422.42",
-		"@tmlmobilidade/utils": "20250502.700.32",
+		"@tmlmobilidade/interfaces": "20250601.200.19",
+		"@tmlmobilidade/types": "20250601.200.19",
+		"@tmlmobilidade/utils": "20250601.200.19",
 		"luxon": "3.6.1",
-		"papaparse": "5.5.2",
+		"papaparse": "5.5.3",
 		"trino-client": "0.2.7"
 	},
 	"devDependencies": {
@@ -32,8 +32,8 @@
 		"@carrismetropolitana/eslint": "20250418.42.41",
 		"@dotenv-run/cli": "1.3.6",
 		"@types/luxon": "3.6.2",
-		"@types/node": "22.15.3",
-		"@types/papaparse": "5.3.15",
+		"@types/node": "22.15.29",
+		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.19.4",
 		"typescript": "5.8.3"

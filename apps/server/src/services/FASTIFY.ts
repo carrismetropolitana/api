@@ -8,10 +8,7 @@ import fastify from 'fastify';
 
 const defaultOptions: fastify.FastifyServerOptions = {
 	ignoreTrailingSlash: true,
-	logger: {
-		level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-		// transport: { options: { colorize: true }, target: 'pino-pretty' },
-	},
+	logger: { level: process.env.NODE_ENV === 'development' ? 'debug' : 'info' },
 	requestTimeout: 5000,
 };
 
