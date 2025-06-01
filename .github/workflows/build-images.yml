@@ -11,18 +11,13 @@ jobs:
   # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # #
 
-  api-server:
-    name: server (NodeJS)
+  server:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=server" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -46,27 +41,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
-
-      - name: List directory
-        run: ls -la
+          file: ./apps/server/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-server:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-alerts:
-    name: sync-alerts (NodeJS)
+  sync-alerts:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-alerts" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -90,24 +77,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-alerts/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-alerts:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-facilities:
-    name: sync-facilities (NodeJS)
+  sync-facilities:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-facilities" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -131,24 +113,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-facilities/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-facilities:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-gtfs:
-    name: sync-gtfs (NodeJS)
+  sync-gtfs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-gtfs" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -172,24 +149,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-gtfs/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-gtfs:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-locations:
-    name: sync-locations (NodeJS)
+  sync-locations:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-locations" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -213,24 +185,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-locations/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-locations:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-metrics:
-    name: sync-metrics (NodeJS)
+  sync-metrics:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-metrics" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -254,24 +221,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-metrics/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-metrics:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-stores:
-    name: sync-stores (NodeJS)
+  sync-stores:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-stores" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -295,24 +257,19 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-stores/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-stores:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  api-sync-vehicles:
-    name: sync-vehicles (NodeJS)
+  sync-vehicles:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-      - name: Set module key
-        run: |
-          echo "MODULE_KEY=sync-vehicles" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@main
 
@@ -336,5 +293,5 @@ jobs:
         with:
           push: true
           context: .
-          file: ./apps/${{ env.MODULE_KEY }}/Dockerfile
-          tags: ghcr.io/carrismetropolitana/api-${{ env.MODULE_KEY }}:${{ github.ref_name }}
+          file: ./apps/sync-vehicles/Dockerfile
+          tags: ghcr.io/carrismetropolitana/api-sync-vehicles:${{ github.ref_name }}
