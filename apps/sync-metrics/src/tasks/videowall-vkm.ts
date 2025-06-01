@@ -21,8 +21,7 @@ export const videowallVkm = async () => {
 	// Setup timestamp boundaries
 
 	const operationalDate = Dates
-		.now()
-		.setZone('Europe/Lisbon')
+		.now('Europe/Lisbon')
 		.operational_date;
 
 	//

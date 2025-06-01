@@ -23,13 +23,11 @@ export const serviceMetrics = async () => {
 	// Fetch rides from 15 days ago
 
 	const yesterdayDate = Dates
-		.now()
-		.setZone('Europe/Lisbon')
+		.now('Europe/Lisbon')
 		.minus({ days: 1 });
 
 	const fifteenDaysAgoDate = Dates
-		.now()
-		.setZone('Europe/Lisbon')
+		.now('Europe/Lisbon')
 		.minus({ days: 15 });
 
 	const ridesCollection = await rides.getCollection();

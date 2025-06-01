@@ -47,6 +47,8 @@ const RUN_INTERVAL = 60000; // 1 minute
 		await videowallValidations();
 		await videowallVkm();
 
+		counter = 9;
+
 		//
 		// Run on every 5th iteration (~ 5 minutes)
 

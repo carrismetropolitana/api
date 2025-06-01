@@ -216,7 +216,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 
 	const patternsValidToday = relevantPatternDataArray
 		.flatMap(patternGroup => patternGroup)
-		.filter(pattern => pattern.valid_on.includes(Dates.now().operational_date));
+		.filter(pattern => pattern.valid_on.includes(Dates.now('Europe/Lisbon').operational_date));
 
 	//
 	// Parse the result into the expected PIP style
