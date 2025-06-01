@@ -25,7 +25,7 @@
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@tmlmobilidade/tsconfig": "20250601.200.19",
+		"@tmlmobilidade/tsconfig": "20250601.1027.0",
 		"@types/geojson": "7946.0.16",
 		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
