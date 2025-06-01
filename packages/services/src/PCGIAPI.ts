@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* * */
 
 import { jwtDecode } from 'jwt-decode';
@@ -5,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 /* * */
 
 interface PCGIAPIRequestOptions {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 	body: any
 	contentType: string
 	method: string
@@ -73,7 +75,7 @@ class PCGIAPIClass {
 			//
 			// Parse response
 
-			const responseData = await response.json();
+			const responseData: any = await response.json();
 
 			//
 			// Decode the JWT token

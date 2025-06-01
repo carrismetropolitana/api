@@ -1,6 +1,7 @@
 {
 	"extends": "@tmlmobilidade/tsconfig/lib.json",
 	"compilerOptions": {
+		"allowJs": true,
 		"baseUrl": ".",
 		"outDir": "dist",
 		"paths": {

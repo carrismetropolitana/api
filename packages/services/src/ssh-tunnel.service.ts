@@ -16,14 +16,19 @@ export interface SshTunnelServiceOptions {
 
 export class SshTunnelService {
 	private static _instance: SshTunnelService;
+	get server(): Server | undefined {
+		return this._server;
+	}
+
 	private _server: Server;
 	private config: SshConfig;
 	private options: SshTunnelServiceOptions;
+
 	private retries = 0;
 
 	constructor(config: SshConfig, options?: SshTunnelServiceOptions) {
 		this.config = config;
-		this.options = options;
+		if (options) this.options = options;
 	}
 
 	/**
@@ -75,7 +80,7 @@ export class SshTunnelService {
 		catch (error) {
 			if (error.code === 'EADDRINUSE') {
 				console.log(`⤷ ERROR: Port "${this.config.serverOptions.port}" already in use. Retrying with a different port...`);
-				this.config.serverOptions.port++;
+				if (this.config.serverOptions.port) this.config.serverOptions.port++;
 				return;
 			}
 
@@ -116,9 +121,5 @@ export class SshTunnelService {
 	async reconnect() {
 		await this.disconnect();
 		this.connect();
-	}
-
-	get server(): Server | undefined {
-		return this._server;
 	}
 }

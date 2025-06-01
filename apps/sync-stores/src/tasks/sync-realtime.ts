@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* * */
 
 import { IXAPI } from '@carrismetropolitana/api-services/IXAPI';
@@ -40,8 +42,8 @@ export const syncRealtime = async () => {
 	const currentDateString = DateTime.now().setZone('UTC').toFormat('yyyy-MM-dd HH:mm:ss');
 	const twoHoursAgoDateString = DateTime.now().setZone('UTC').minus({ hour: 2 }).toFormat('yyyy-MM-dd HH:mm:ss');
 
-	const allTicketsWaiting = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'ticket', status: 'W' });
-	const allCounters = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'siteReportByCounter' });
+	const allTicketsWaiting: any = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'ticket', status: 'W' });
+	const allCounters: any = await IXAPI.request({ finalDate: currentDateString, initialDate: twoHoursAgoDateString, reportType: 'siteReportByCounter' });
 
 	//
 	// Add realtime status to each store

@@ -75,7 +75,7 @@ export const videowallEmptyRides = async () => {
 		//
 		// Check if the ride had any valid validation transactions
 
-		if (rideData.validations_count > 0) {
+		if (rideData.apex_validations_qty > 0) {
 			//
 			responseResult._cm_empty_rides_count++;
 			if (rideData.agency_id === '41') responseResult._41_empty_rides_count++;

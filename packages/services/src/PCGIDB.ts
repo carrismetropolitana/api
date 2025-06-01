@@ -24,7 +24,7 @@ const sshConfig: SshConfig = {
 		keepaliveCountMax: 3, // Retry 3 times before closing the connection
 		keepaliveInterval: 10000, // Send keep-alive every 10 seconds
 		port: process.env.PCGIDB_SSH_PORT,
-		privateKey: readFileSync(process.env.PCGIDB_SSH_KEY_PATH),
+		privateKey: readFileSync(process.env.PCGIDB_SSH_KEY_PATH ?? ''),
 		username: process.env.PCGIDB_SSH_USERNAME,
 	},
 	tunnelOptions: {
@@ -39,9 +39,19 @@ const sshOptions: SshTunnelServiceOptions = {
 
 class PCGIDBClass {
 	private static _instance: PCGIDBClass;
+	get validationEntityCollection(): Collection {
+		return this.validationsManagementDatabase.collection('validationEntity');
+	}
+
+	get vehicleEventsCollection(): Collection<VehicleEvent> {
+		return this.coreManagementDatabase.collection<VehicleEvent>('VehicleEvents');
+	}
+
 	private coreManagementDatabase: Db;
 	private mongoDbService: MongoDbService;
+
 	private sshTunnelService: SshTunnelService;
+
 	private validationsManagementDatabase: Db;
 
 	private constructor() {
@@ -84,14 +94,6 @@ class PCGIDBClass {
 		catch (error) {
 			throw new Error('Error connecting to PCGIDB', error);
 		}
-	}
-
-	get validationEntityCollection(): Collection {
-		return this.validationsManagementDatabase.collection('validationEntity');
-	}
-
-	get vehicleEventsCollection(): Collection<VehicleEvent> {
-		return this.coreManagementDatabase.collection<VehicleEvent>('VehicleEvents');
 	}
 }
 
