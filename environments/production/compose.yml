@@ -44,7 +44,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   nginx:
-    image: nginx:alpine-slim
+    image: ghcr.io/carrismetropolitana/api-nginx:v2
     deploy:
       restart_policy:
         condition: on-failure
@@ -57,9 +57,7 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/load-balancer-tip.conf:/etc/nginx/load-balancer-tip.conf:ro
-      - ./nginx/uptime.conf:/etc/nginx/uptime.conf:ro
+      - ./secrets/uptime.conf:/etc/nginx/uptime.conf:ro
       - ./letsencrypt:/etc/letsencrypt:ro
       - certbotdata:/var/www/certbot:ro
     ports:
