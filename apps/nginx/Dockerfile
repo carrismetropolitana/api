@@ -7,7 +7,7 @@ WORKDIR /app
 # # #
 # Copy the config files
 
-COPY ./configs/. /etc/nginx/.
+COPY apps/nginx/configs/. /etc/nginx/.
 
 
 # # #
