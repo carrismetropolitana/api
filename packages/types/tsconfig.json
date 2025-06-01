@@ -1,13 +1,12 @@
 {
-	"extends": "@carrismetropolitana/api-tsconfig/base.json",
+	"extends": "@tmlmobilidade/tsconfig/lib.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"outDir": "dist",
 		"paths": {
 			"@/*": ["./src/*"]
 		},
-		"rootDir": "src",
-		"strictNullChecks": true
+		"rootDir": "src"
 	},
 	"include": ["src"],
 	"exclude": ["node_modules", "dist"]

@@ -75,18 +75,20 @@
 	},
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
-		"clean": "rm -rf dist"
+		"clean": "rm -rf dist",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
 		"@types/geojson": "7946.0.16",
 		"gtfs-types": "5.1.0",
-		"zod": "3.24.3",
+		"zod": "3.25.46",
 		"zod-openapi": "4.2.4"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@types/node": "22.15.3",
+		"@tmlmobilidade/tsconfig": "20250601.1027.0",
+		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.3"
 	}

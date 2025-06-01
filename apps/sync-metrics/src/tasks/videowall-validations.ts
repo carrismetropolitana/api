@@ -5,7 +5,7 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { apexT11 } from '@tmlmobilidade/interfaces';
+import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 import { ALLOWED_VALIDATION_STATUSES } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
@@ -71,56 +71,56 @@ export const videowallValidations = async () => {
 
 	try {
 		// For Area 1
-		responseResult._41_today_valid_count = await apexT11.count({
+		responseResult._41_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
 			created_at: { $gte: todayUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
-		responseResult._41_last_week_valid_count = await apexT11.count({
+		responseResult._41_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
 			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For Area 2
-		responseResult._42_today_valid_count = await apexT11.count({
+		responseResult._42_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
 			created_at: { $gte: todayUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
-		responseResult._42_last_week_valid_count = await apexT11.count({
+		responseResult._42_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
 			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For Area 3
-		responseResult._43_today_valid_count = await apexT11.count({
+		responseResult._43_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
 			created_at: { $gte: todayUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
-		responseResult._43_last_week_valid_count = await apexT11.count({
+		responseResult._43_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
 			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For Area 4
-		responseResult._44_today_valid_count = await apexT11.count({
+		responseResult._44_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
 			created_at: { $gte: todayUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
-		responseResult._44_last_week_valid_count = await apexT11.count({
+		responseResult._44_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
 			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For the whole CM
-		responseResult._cm_today_valid_count = await apexT11.count({
+		responseResult._cm_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
 			created_at: { $gte: todayUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
-		responseResult._cm_last_week_valid_count = await apexT11.count({
+		responseResult._cm_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
 			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },

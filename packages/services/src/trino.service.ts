@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* * */
 
 import { BasicAuth, QueryResult, Trino } from 'trino-client';
@@ -32,46 +34,6 @@ export class TrinoService {
 			auth: new BasicAuth(options.user, options.password),
 			server: options.host,
 		});
-	}
-
-	/**
-	 * Generic method for fetching query results based on options.
-	 */
-	private async fetchResults<T>(sql: string, table: string): Promise<T[]> {
-		const headers = await this.getColumnHeaders(table);
-		const resultsIterator = await this.executeQuery(sql);
-
-		return await this.convertIteratorToObject(headers, resultsIterator) as T[];
-	}
-
-	/**
-	 * Utility method to format values for SQL.
-	 */
-	private formatValue(value: any): string {
-		if (typeof value === 'string') {
-			return `'${value.replace(/'/g, '\'\'')}'`; // Escape single quotes in strings
-		}
-		else if (value instanceof Date) {
-			return `'${value.toISOString()}'`; // Format date as ISO string
-		}
-		else {
-			return value; // Assume number or boolean
-		}
-	}
-
-	/**
-	 * Fetches column headers for the given table.
-	 */
-	private async getColumnHeaders(table: string): Promise<string[]> {
-		const sqlHeaders = `DESCRIBE ${table}`;
-		const headersIterator = await this.executeQuery(sqlHeaders);
-
-		const columnHeaders: string[] = [];
-		for (let result = await headersIterator.next(); !result.done; result = await headersIterator.next()) {
-			result.value?.data?.forEach(value => columnHeaders.push(value[0]));
-		}
-
-		return columnHeaders;
 	}
 
 	/**
@@ -186,6 +148,7 @@ export class TrinoService {
 	 * Counts the number of rows matching the conditions.
 	 */
 	async count(table: string, options?: QueryOptions): Promise<number | undefined> {
+		if (!options?.where) return;
 		const whereClause = this.buildWhereClause(options?.where);
 		const sql = `SELECT COUNT(*) FROM ${table} ${whereClause}`;
 
@@ -215,6 +178,7 @@ export class TrinoService {
 	 * Finds the first row matching the conditions.
 	 */
 	async findFirst<T>(table: string, options: QueryOptions): Promise<null | T> {
+		if (!options?.where) return null;
 		const whereClause = this.buildWhereClause(options.where);
 		const orderByClause = this.buildOrderByClause(options.orderBy);
 		const sql = `SELECT * FROM ${table} ${whereClause} ${orderByClause} LIMIT 1`;
@@ -227,6 +191,7 @@ export class TrinoService {
 	 * Finds multiple rows matching the conditions.
 	 */
 	async findMany<T>(table: string, options?: QueryOptions): Promise<T[]> {
+		if (!options?.where) return [];
 		const whereClause = this.buildWhereClause(options?.where);
 		const orderByClause = this.buildOrderByClause(options?.orderBy);
 		const sql = `SELECT ${options?.unique ? 'DISTINCT' : 'ALL'} * FROM ${table} ${whereClause} ${orderByClause} ${options?.limit ? `LIMIT ${options.limit}` : ''}`;
@@ -238,6 +203,7 @@ export class TrinoService {
 	 * Finds a single unique row based on the given conditions.
 	 */
 	async findUnique<T>(table: string, options: QueryOptions): Promise<null | T> {
+		if (!options?.where) return null;
 		const whereClause = this.buildWhereClause(options.where);
 		const orderByClause = this.buildOrderByClause(options.orderBy);
 		const sql = `SELECT * FROM ${table} ${whereClause} ${orderByClause} LIMIT 1`;
@@ -246,5 +212,45 @@ export class TrinoService {
 
 		if (results.length > 1) throw new Error(`Expected 1 result, got ${results.length}`);
 		return results[0] || null;
+	}
+
+	/**
+	 * Generic method for fetching query results based on options.
+	 */
+	private async fetchResults<T>(sql: string, table: string): Promise<T[]> {
+		const headers = await this.getColumnHeaders(table);
+		const resultsIterator = await this.executeQuery(sql);
+
+		return await this.convertIteratorToObject(headers, resultsIterator) as T[];
+	}
+
+	/**
+	 * Utility method to format values for SQL.
+	 */
+	private formatValue(value: any): string {
+		if (typeof value === 'string') {
+			return `'${value.replace(/'/g, '\'\'')}'`; // Escape single quotes in strings
+		}
+		else if (value instanceof Date) {
+			return `'${value.toISOString()}'`; // Format date as ISO string
+		}
+		else {
+			return value; // Assume number or boolean
+		}
+	}
+
+	/**
+	 * Fetches column headers for the given table.
+	 */
+	private async getColumnHeaders(table: string): Promise<string[]> {
+		const sqlHeaders = `DESCRIBE ${table}`;
+		const headersIterator = await this.executeQuery(sqlHeaders);
+
+		const columnHeaders: string[] = [];
+		for (let result = await headersIterator.next(); !result.done; result = await headersIterator.next()) {
+			result.value?.data?.forEach(value => columnHeaders.push(value[0]));
+		}
+
+		return columnHeaders;
 	}
 }

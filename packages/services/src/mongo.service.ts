@@ -1,7 +1,11 @@
-import { Collection, Db, DbOptions, MongoClient, MongoClientOptions } from 'mongodb';
+import { Collection, Db, DbOptions, Document, MongoClient, MongoClientOptions } from 'mongodb';
 
 export class MongoDbService {
 	private static _instance: MongoDbService;
+	get client(): MongoClient {
+		return this._client;
+	}
+
 	private _client: MongoClient;
 
 	constructor(uri: string, options?: MongoClientOptions) {
@@ -34,7 +38,7 @@ export class MongoDbService {
      * Connect to MongoDB and return the database instance.
      */
 	async connect(): Promise<MongoClient> {
-		if (!this._client || !this._client) {
+		if (!this._client || !this._client.listenerCount('connect')) {
 			try {
 				await this._client.connect();
 				console.log('⤷ Connected to MongoDB.');
@@ -72,11 +76,7 @@ export class MongoDbService {
      * @param collectionName - The name of the collection to retrieve.
      * @returns The collection instance.
      */
-	async getCollection<T>(db: Db, collectionName: string): Promise<Collection<T>> {
+	async getCollection<T extends Document>(db: Db, collectionName: string): Promise<Collection<T>> {
 		return db.collection<T>(collectionName);
-	}
-
-	get client(): MongoClient {
-		return this._client;
 	}
 }

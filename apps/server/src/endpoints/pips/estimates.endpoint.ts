@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* * */
 
 import DATES from '@/services/DATES.js';
@@ -194,7 +196,7 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 	// Request PCGI API for the estimated arrival times for the stops in the request
 
 	const requestedStopIdsList = request.body.stops.join(',');
-	const pcgiApiResponse = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${requestedStopIdsList}`);
+	const pcgiApiResponse: any = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${requestedStopIdsList}`);
 
 	//
 	// Extract all pattern IDs from the response and fetch

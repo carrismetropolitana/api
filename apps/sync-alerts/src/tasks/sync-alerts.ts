@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* * */
 
 import parseAlertV2 from '@/services/parseAlertV2.js';
@@ -22,7 +24,7 @@ export const syncAlerts = async () => {
 	const backofficeTimer = new TIMETRACKER();
 
 	const alertsFeedResponse = await fetch('https://alerts.sae.carrismetropolitana.pt/api/alerts/gtfs');
-	const alertsFeedData = await alertsFeedResponse.json();
+	const alertsFeedData: any = await alertsFeedResponse.json();
 
 	LOGGER.info(`Fetched Alerts feed from the backoffice (${backofficeTimer.get()})`);
 

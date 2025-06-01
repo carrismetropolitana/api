@@ -90,6 +90,7 @@ class TRINODBClass {
 	}
 
 	async countValidations({ options, timeUnit, type }: CountValidationsOptions): Promise<CountValidationsResult[]> {
+		if (!options?.where) return [];
 		const typeId = type === 'line' ? 'linelongid' : 'stoplongid';
 		const whereClause = this.trinoService.buildWhereClause(options?.where);
 

@@ -8,9 +8,9 @@ volumes:
 
 secrets:
   pcgidbkey:
-    file: ./secrets/production/PCGIDB.key
+    file: ./secrets/PCGIDB.key
   firebasekey:
-    file: ./secrets/production/FIREBASE.json
+    file: ./secrets/FIREBASE.json
 
 services:
   #
@@ -43,31 +43,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  promtail:
-    image: grafana/promtail
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 100mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./secrets/production/.env
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - ./promtail/docker-config.yml:/etc/promtail/docker-config.yml:ro
-    command: -config.expand-env=true -config.file=/etc/promtail/docker-config.yml
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
   nginx:
-    image: nginx:alpine-slim
+    image: ghcr.io/carrismetropolitana/api-nginx:v2
     deploy:
       restart_policy:
         condition: on-failure
@@ -80,9 +57,7 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/load-balancer-tip.conf:/etc/nginx/load-balancer-tip.conf:ro
-      - ./nginx/uptime.conf:/etc/nginx/uptime.conf:ro
+      - ./secrets/uptime.conf:/etc/nginx/uptime.conf:ro
       - ./letsencrypt:/etc/letsencrypt:ro
       - certbotdata:/var/www/certbot:ro
     ports:
@@ -169,26 +144,9 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - pcgidbkey
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  switch:
-    image: ghcr.io/carrismetropolitana/api-switch:v2
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 100mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -207,7 +165,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - firebasekey
 
@@ -228,7 +186,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -247,7 +205,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     environment:
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
@@ -270,7 +228,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -289,7 +247,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - pcgidbkey
 
@@ -310,7 +268,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -329,6 +287,6 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - pcgidbkey

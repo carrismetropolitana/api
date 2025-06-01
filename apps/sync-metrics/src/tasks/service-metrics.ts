@@ -58,8 +58,8 @@ export const serviceMetrics = async () => {
 
 		resultMap.get(resultMapKey).total_trip_count += 1;
 
-		const simpleOneValidationTransactionTest = rideData.analysis.find(item => item._id === 'SIMPLE_ONE_VALIDATION_TRANSACTION');
-		const simpleThreeVehicleEventsTest = rideData.analysis.find(item => item._id === 'SIMPLE_THREE_VEHICLE_EVENTS');
+		const simpleOneValidationTransactionTest = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
+		const simpleThreeVehicleEventsTest = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
 
 		if (simpleOneValidationTransactionTest?.grade === 'pass' || simpleThreeVehicleEventsTest?.grade === 'pass') {
 			resultMap.get(resultMapKey).pass_trip_count += 1;
