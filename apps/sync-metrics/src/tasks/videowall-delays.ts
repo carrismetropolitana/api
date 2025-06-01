@@ -79,8 +79,6 @@ export const videowallDelays = async () => {
 		// Check if the ride is delayed for more than five minutes
 		// and store the total delay for each area and for the whole CM
 
-		console.log(rideData.analysis.ONTIME_START);
-
 		if (!rideData.analysis.ONTIME_START) continue;
 
 		if (rideData.analysis.ONTIME_START.reason === 'RIDE_STARTED_MORE_THAN_FIVE_MINUTES_LATE') {
