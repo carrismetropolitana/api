@@ -4,38 +4,38 @@
 	"type": "module",
 	"exports": {
 		".": {
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
-			"require": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"require": "./dist/index.js"
 		},
 		"./IXAPI": {
 			"import": "./dist/IXAPI.js",
 			"require": "./dist/IXAPI.js"
 		},
 		"./NETWORKDB": {
+			"types": "./dist/NETWORKDB.d.ts",
 			"import": "./dist/NETWORKDB.js",
-			"require": "./dist/NETWORKDB.js",
-			"types": "./dist/NETWORKDB.d.ts"
+			"require": "./dist/NETWORKDB.js"
 		},
 		"./PCGIDB": {
+			"types": "./dist/PCGIDB.d.ts",
 			"import": "./dist/PCGIDB.js",
-			"require": "./dist/PCGIDB.js",
-			"types": "./dist/PCGIDB.d.ts"
+			"require": "./dist/PCGIDB.js"
 		},
 		"./SERVERDB": {
+			"types": "./dist/SERVERDB.d.ts",
 			"import": "./dist/SERVERDB.js",
-			"require": "./dist/SERVERDB.js",
-			"types": "./dist/SERVERDB.d.ts"
+			"require": "./dist/SERVERDB.js"
 		},
 		"./TRINODB": {
+			"types": "./dist/TRINODB.d.ts",
 			"import": "./dist/TRINODB.js",
-			"require": "./dist/TRINODB.js",
-			"types": "./dist/TRINODB.d.ts"
+			"require": "./dist/TRINODB.js"
 		},
 		"./fastify.service": {
+			"types": "./dist/fastify.service.d.ts",
 			"import": "./dist/fastify.service.js",
-			"require": "./dist/fastify.service.js",
-			"types": "./dist/fastify.service.d.ts"
+			"require": "./dist/fastify.service.js"
 		}
 	},
 	"scripts": {
@@ -58,9 +58,9 @@
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
-		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.3"

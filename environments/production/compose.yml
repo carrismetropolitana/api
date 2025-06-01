@@ -8,9 +8,9 @@ volumes:
 
 secrets:
   pcgidbkey:
-    file: ./secrets/production/PCGIDB.key
+    file: ./secrets/PCGIDB.key
   firebasekey:
-    file: ./secrets/production/FIREBASE.json
+    file: ./secrets/FIREBASE.json
 
 services:
   #
@@ -39,29 +39,6 @@ services:
       - WATCHTOWER_INCLUDE_STOPPED=TRUE
       - WATCHTOWER_REVIVE_STOPPED=TRUE
       - WATCHTOWER_ROLLING_RESTART=TRUE
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  promtail:
-    image: grafana/promtail
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 100mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    env_file:
-      - ./secrets/production/.env
-    volumes:
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - ./promtail/docker-config.yml:/etc/promtail/docker-config.yml:ro
-    command: -config.expand-env=true -config.file=/etc/promtail/docker-config.yml
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -169,26 +146,9 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - pcgidbkey
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  switch:
-    image: ghcr.io/carrismetropolitana/api-switch:v2
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 100mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -207,7 +167,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - firebasekey
 
@@ -228,7 +188,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -247,7 +207,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     environment:
       - NETWORKDB_HOST=networkdb
       - NETWORKDB_USER=networkdbuser
@@ -270,7 +230,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -289,7 +249,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - pcgidbkey
 
@@ -310,7 +270,7 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
@@ -329,6 +289,6 @@ services:
         max-size: '1m'
         max-file: '1'
     env_file:
-      - ./secrets/production/.env
+      - ./secrets/.env
     secrets:
       - pcgidbkey

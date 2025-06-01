@@ -75,9 +75,9 @@
 	},
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
 		"lint": "eslint .",
-		"lint:fix": "eslint . --fix",
-		"clean": "rm -rf dist"
+		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
 		"@types/geojson": "7946.0.16",
@@ -86,8 +86,8 @@
 		"zod-openapi": "4.2.4"
 	},
 	"devDependencies": {
-		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@carrismetropolitana/eslint": "20250418.42.41",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.3"
