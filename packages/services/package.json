@@ -41,7 +41,8 @@
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
 		"clean": "rm -rf dist",
-		"dev": "tsc --watch"
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
 		"@carrismetropolitana/api-settings": "*",
@@ -57,7 +58,7 @@
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
 		"@types/node": "22.15.29",

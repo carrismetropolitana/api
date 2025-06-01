@@ -7,10 +7,12 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
-		"clean": "rm -rf dist"
+		"clean": "rm -rf dist",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
 		"@types/node": "22.15.29",

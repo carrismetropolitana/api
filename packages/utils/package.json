@@ -7,15 +7,18 @@
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
 		"clean": "rm -rf dist"
 	},
 	"dependencies": {
 		"luxon": "3.6.1"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
+		"@types/luxon": "0.15.29",
 		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.8.3"

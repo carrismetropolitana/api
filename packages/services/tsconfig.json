@@ -1,5 +1,5 @@
 {
-	"extends": "@carrismetropolitana/api-tsconfig/base.json",
+	"extends": "@tmlmobilidade/tsconfig/lib.json",
 	"compilerOptions": {
 		"baseUrl": ".",
 		"outDir": "dist",

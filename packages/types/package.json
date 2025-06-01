@@ -75,6 +75,8 @@
 	},
 	"scripts": {
 		"build": "npm run clean && tsc && resolve-tspaths",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
 		"clean": "rm -rf dist"
 	},
 	"dependencies": {
@@ -84,7 +86,7 @@
 		"zod-openapi": "4.2.4"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/api-tsconfig": "*",
+		"@tmlmobilidade/tsconfig": "20250601.200.19",
 		"@carrismetropolitana/eslint": "20250418.42.41",
 		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
