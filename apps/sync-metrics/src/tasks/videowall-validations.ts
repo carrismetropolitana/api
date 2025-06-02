@@ -23,18 +23,26 @@ export const videowallValidations = async () => {
 	// This takes in consideration the current time, as we want to compare today so far with the previous day so far, also.
 	// For example, today is monday 10h49. We want to compare the number of validations until 10h49 of today with the number of validations until 10h49 of last monday.
 
-	const todayUnixTimestamp = Dates
+	const currentOperationalDate = Dates
 		.now('Europe/Lisbon')
+		.operational_date;
+
+	const currentOperationalDateAsUnixTimestamp = Dates
+		.fromOperationalDate(currentOperationalDate, 'Europe/Lisbon')
 		.startOf('day')
 		.unix_timestamp;
 
-	const lastWeekUnixTimestamp = Dates
+	const previousOperationalDate = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 7 })
+		.operational_date;
+
+	const previousOperationalDateAsUnixTimestamp = Dates
+		.fromOperationalDate(previousOperationalDate, 'Europe/Lisbon')
 		.startOf('day')
 		.unix_timestamp;
 
-	const lastWeekUntilNowUnixTimestamp = Dates
+	const previousUntilNowAsUnixTimestamp = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 7 })
 		.unix_timestamp;
@@ -73,56 +81,56 @@ export const videowallValidations = async () => {
 		// For Area 1
 		responseResult._41_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
-			created_at: { $gte: todayUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._41_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
-			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
+			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For Area 2
 		responseResult._42_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
-			created_at: { $gte: todayUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._42_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
-			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
+			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For Area 3
 		responseResult._43_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
-			created_at: { $gte: todayUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._43_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
-			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
+			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For Area 4
 		responseResult._44_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
-			created_at: { $gte: todayUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._44_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
-			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
+			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		// For the whole CM
 		responseResult._cm_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $gte: todayUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._cm_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $gte: lastWeekUnixTimestamp, $lte: lastWeekUntilNowUnixTimestamp },
+			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 	}
