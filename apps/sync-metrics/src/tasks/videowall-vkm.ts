@@ -7,7 +7,6 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
 import { Dates } from '@tmlmobilidade/utils';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -77,7 +76,9 @@ export const videowallVkm = async () => {
 		//
 		// Skip rides that should not have started yet (scheduled for the future)
 
-		const rideShouldHaveStarted = DateTime.fromMillis(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
+		const rideShouldHaveStarted = Dates
+			.fromUnixTimestamp(rideData.start_time_scheduled)
+			.unix_timestamp - Dates.now('Europe/Lisbon').unix_timestamp < -300_000;
 
 		if (!rideShouldHaveStarted) continue;
 
@@ -97,7 +98,7 @@ export const videowallVkm = async () => {
 		// If a ride should have already started and has already ended,
 		// and failed the SIMPLE_THREE_VEHICLE_EVENTS test, then we should count it as FAIL.
 
-		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromMillis(rideData.seen_last_at).diffNow('minutes').minutes < -2;
+		const rideHasAlreadyEnded = rideData.seen_last_at && Dates.fromUnixTimestamp(rideData.seen_last_at).unix_timestamp - Dates.now('Europe/Lisbon').unix_timestamp < -120_000;
 		const simpleThreeVehicleEvents = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
 		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
 
@@ -137,7 +138,7 @@ export const videowallVkm = async () => {
 
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VKM, JSON.stringify(chacheableResource));

@@ -8,7 +8,6 @@ import TIMETRACKER from '@helperkits/timer';
 import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 import { ALLOWED_VALIDATION_STATUSES } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -141,9 +140,11 @@ export const videowallValidations = async () => {
 	//
 	// Save items to the database
 
+	console.log('Response Result:', responseResult);
+
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS, JSON.stringify(chacheableResource));

@@ -9,7 +9,6 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
 import { Dates } from '@tmlmobilidade/utils';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -73,7 +72,7 @@ export const serviceMetrics = async () => {
 
 	const chacheableResource: CachedResource<ServiceMetrics[]> = {
 		data: Array.from(resultMap.values()),
-		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
 	};
 
 	chacheableResource.data.sort((a, b) => sortCollator.compare(a.operational_date, b.operational_date));

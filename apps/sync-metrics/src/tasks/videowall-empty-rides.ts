@@ -97,7 +97,7 @@ export const videowallEmptyRides = async () => {
 
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: DateTime.now().setZone('Europe/Lisbon').toMillis(),
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.EMPTY_RIDES, JSON.stringify(chacheableResource));

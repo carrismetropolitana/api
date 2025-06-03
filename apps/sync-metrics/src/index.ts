@@ -40,35 +40,35 @@ const RUN_INTERVAL = 60000; // 1 minute
 
 		//
 		// Run on all iterations
-		await complaintsMetrics();
-		await videowallDelays();
-		await videowallEmptyRides();
-		await videowallSla();
+		// await complaintsMetrics();
+		// await videowallDelays();
+		// await videowallEmptyRides();
+		// await videowallSla();
 		await videowallValidations();
-		await videowallVkm();
+		// await videowallVkm();
 
 		//
 		// Run on every 5th iteration (~ 5 minutes)
 
-		if (counter % 5 === 0) {
-			await demandMetricsByAgencyDay();
-			await demandMetricsByLine();
-		}
+		// if (counter % 5 === 0) {
+		// 	await demandMetricsByAgencyDay();
+		// 	await demandMetricsByLine();
+		// }
 
-		//
-		// Run on every 500th iteration (~ 8 hours)
+		// //
+		// // Run on every 500th iteration (~ 8 hours)
 
-		if (counter % 100 === 0) {
-			await demandMetricsByAgencyMonth();
-			await serviceMetrics();
-		}
+		// if (counter % 100 === 0) {
+		// 	await demandMetricsByAgencyMonth();
+		// 	await serviceMetrics();
+		// }
 
-		//
-		// Run on every 1000th iteration (~ 16 hours)
+		// //
+		// // Run on every 1000th iteration (~ 16 hours)
 
-		if (counter % 1000 === 0) {
-			await demandMetricsByAgencyYear();
-		}
+		// if (counter % 1000 === 0) {
+		// 	await demandMetricsByAgencyYear();
+		// }
 
 		//
 

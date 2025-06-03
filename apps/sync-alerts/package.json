@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@tmlmobilidade/tsconfig": "20250601.1948.51",
+		"@tmlmobilidade/tsconfig": "20250603.1302.26",
 		"@types/node": "22.15.29",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.19.4",
