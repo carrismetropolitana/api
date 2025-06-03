@@ -35,7 +35,7 @@
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/api-utils": "*",
 		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@tmlmobilidade/tsconfig": "20250603.1302.26",
+		"@tmlmobilidade/tsconfig": "20250603.1730.0",
 		"@types/adm-zip": "0.5.7",
 		"@types/luxon": "3.6.2",
 		"@types/node": "22.15.29",
