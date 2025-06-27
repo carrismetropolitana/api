@@ -30,7 +30,7 @@ jobs:
 
       - name: Bump package version
         working-directory: ./packages/types
-        run: npx @helperkits/bumper bump
+        run: npx @helperkits/bumper package.json
 
       - name: Build package
         working-directory: ./packages/types
