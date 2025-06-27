@@ -36,6 +36,7 @@ function convertToProtobuf(allEvents: Vehicle[]) {
 					},
 					vehicle: {
 						id: event.id,
+						label: event.id.substring(3),
 						license_plate: event.license_plate,
 						wheelchair_accessible: event.wheelchair_accessible ? 'WHEELCHAIR_ACCESSIBLE' : 'NO_VALUE',
 					},
