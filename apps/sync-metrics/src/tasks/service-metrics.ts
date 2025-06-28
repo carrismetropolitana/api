@@ -55,6 +55,8 @@ export const serviceMetrics = async () => {
 
 		resultMap.get(resultMapKey).total_trip_count += 1;
 
+		if (!rideData.analysis) continue;
+
 		const simpleOneValidationTransactionTest = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
 		const simpleThreeVehicleEventsTest = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
 
