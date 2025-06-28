@@ -24,7 +24,9 @@ export const videowallEmptyRides = async () => {
 		.now('Europe/Lisbon')
 		.operational_date;
 
-	const nowInUnixTimestamp = Dates.now('Europe/Lisbon').unix_timestamp;
+	const nowInUnixTimestamp = Dates
+		.now('Europe/Lisbon')
+		.unix_timestamp - 120_000; // 2 minutes ago
 
 	//
 	// Setup the response JSON object
@@ -69,11 +71,16 @@ export const videowallEmptyRides = async () => {
 		const rideData: Ride = currentRide as Ride;
 
 		//
+		// Skip rides that are not yet processed
+
+		if (rideData.system_status !== ProcessingStatus.Complete || rideData.analysis === null) continue;
+
+		//
 		// Only consider rides that have already ended (seen_last_at is more than two minutes ago)
 
 		if (!rideData.seen_last_at) continue;
 
-		if (nowInUnixTimestamp - rideData.seen_last_at < -120_000) continue; // 2 minutes
+		if (nowInUnixTimestamp - rideData.seen_last_at < 0) continue;
 
 		//
 		// Check if the ride had any valid validation transactions

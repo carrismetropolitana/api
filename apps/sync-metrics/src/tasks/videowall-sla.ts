@@ -24,7 +24,9 @@ export const videowallSla = async () => {
 		.now('Europe/Lisbon')
 		.operational_date;
 
-	const nowInUnixTimestamp = Dates.now('Europe/Lisbon').unix_timestamp;
+	const nowInUnixTimestamp = Dates
+		.now('Europe/Lisbon')
+		.unix_timestamp - 300_000; // 5 minutes ago
 
 	//
 	// Setup the response JSON object
@@ -92,14 +94,12 @@ export const videowallSla = async () => {
 		//
 		// Skip rides that are not yet processed
 
-		if (rideData.system_status !== ProcessingStatus.Complete || !rideData.analysis) continue;
+		if (rideData.system_status !== ProcessingStatus.Complete || rideData.analysis === null) continue;
 
 		//
 		// Skip rides that should not have started yet (scheduled for the future)
 
-		const rideShouldHaveStarted = nowInUnixTimestamp - rideData.start_time_scheduled < -300_000; // 5 minutes
-
-		if (!rideShouldHaveStarted) continue;
+		if (nowInUnixTimestamp - rideData.start_time_scheduled < 0) continue;
 
 		//
 		// If a ride should have already started, but we still
