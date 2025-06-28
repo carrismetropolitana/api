@@ -6,8 +6,8 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
+import { ProcessingStatus, type Ride } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -23,6 +23,8 @@ export const videowallSla = async () => {
 	const operationalDate = Dates
 		.now('Europe/Lisbon')
 		.operational_date;
+
+	const nowInUnixTimestamp = Dates.now('Europe/Lisbon').unix_timestamp;
 
 	//
 	// Setup the response JSON object
@@ -76,8 +78,10 @@ export const videowallSla = async () => {
 	//
 	// Iterate on all rides for today
 
-	for await (const rideData of allRidesForTodayStream) {
+	for await (const currentRide of allRidesForTodayStream) {
 		//
+
+		const rideData: Ride = currentRide as Ride;
 
 		responseResult._cm_scheduled_rides_total++;
 		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_total++;
@@ -88,12 +92,12 @@ export const videowallSla = async () => {
 		//
 		// Skip rides that are not yet processed
 
-		if (rideData.system_status !== 'complete') continue;
+		if (rideData.system_status !== ProcessingStatus.Complete || !rideData.analysis) continue;
 
 		//
 		// Skip rides that should not have started yet (scheduled for the future)
 
-		const rideShouldHaveStarted = DateTime.fromMillis(rideData.start_time_scheduled).diffNow('minutes').minutes < -5;
+		const rideShouldHaveStarted = nowInUnixTimestamp - rideData.start_time_scheduled < -300_000; // 5 minutes
 
 		if (!rideShouldHaveStarted) continue;
 
@@ -138,7 +142,7 @@ export const videowallSla = async () => {
 		// If a ride should have already started and has already ended,
 		// and failed the SIMPLE_THREE_VEHICLE_EVENTS test, then we should count it as FAIL.
 
-		const rideHasAlreadyEnded = rideData.seen_last_at && DateTime.fromMillis(rideData.seen_last_at).diffNow('minutes').minutes < -2;
+		const rideHasAlreadyEnded = rideData.seen_last_at && nowInUnixTimestamp - rideData.seen_last_at < -120_000; // 2 minutes
 		const simpleThreeVehicleEvents = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
 		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
 

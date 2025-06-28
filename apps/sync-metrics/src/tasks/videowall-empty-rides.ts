@@ -6,9 +6,8 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
-import { ProcessingStatus } from '@tmlmobilidade/types';
+import { ProcessingStatus, type Ride } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -24,6 +23,8 @@ export const videowallEmptyRides = async () => {
 	const operationalDate = Dates
 		.now('Europe/Lisbon')
 		.operational_date;
+
+	const nowInUnixTimestamp = Dates.now('Europe/Lisbon').unix_timestamp;
 
 	//
 	// Setup the response JSON object
@@ -62,15 +63,17 @@ export const videowallEmptyRides = async () => {
 	//
 	// Iterate on all rides for today
 
-	for await (const rideData of allRidesForTodayStream) {
+	for await (const currentRide of allRidesForTodayStream) {
 		//
+
+		const rideData: Ride = currentRide as Ride;
 
 		//
 		// Only consider rides that have already ended (seen_last_at is more than two minutes ago)
 
 		if (!rideData.seen_last_at) continue;
 
-		if (DateTime.fromMillis(rideData.seen_last_at).diffNow('minutes').minutes < -2) continue;
+		if (nowInUnixTimestamp - rideData.seen_last_at < -120_000) continue; // 2 minutes
 
 		//
 		// Check if the ride had any valid validation transactions
