@@ -24,13 +24,13 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
-		"@carrismetropolitana/eslint": "20250418.42.41",
-		"@tmlmobilidade/tsconfig": "20250603.1730.0",
+		"@carrismetropolitana/eslint": "20250622.1204.50",
+		"@tmlmobilidade/tsconfig": "20250628.333.59",
 		"@types/luxon": "3.6.2",
-		"@types/node": "22.15.29",
+		"@types/node": "24.0.7",
 		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.19.4",
+		"tsx": "4.20.3",
 		"typescript": "5.8.3"
 	}
 }
