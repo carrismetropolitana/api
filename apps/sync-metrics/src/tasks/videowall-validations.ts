@@ -140,8 +140,6 @@ export const videowallValidations = async () => {
 	//
 	// Save items to the database
 
-	console.log('Response Result:', responseResult);
-
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
 		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
