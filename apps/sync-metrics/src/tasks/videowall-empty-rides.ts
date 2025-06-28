@@ -6,6 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
+import { ProcessingStatus } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
@@ -56,7 +57,7 @@ export const videowallEmptyRides = async () => {
 	// Get all rides for today
 
 	const ridesCollection = await rides.getCollection();
-	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: 'complete' }).stream();
+	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: ProcessingStatus.Complete }).stream();
 
 	//
 	// Iterate on all rides for today
