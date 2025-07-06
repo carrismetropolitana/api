@@ -327,6 +327,55 @@ Returns a single shape in GTFS and Geojson format. Extension is in meters.
 </code></pre>
 </details>
 
+## PIPS
+
+#### `POST /pips/estimates`
+
+Returns the estimates OR an error/custom message depending on the stop IDs provided. You should provide a list of stop IDs as an array under request.body, as such:
+```
+{ 
+    "stops": [ "121270", ... ] 
+}
+```
+Sending "000000" as a stop ID will result in a testing/placeholder response being sent.
+Sending "000001" as a stop ID will result in a response similar to the ones that'd be displayed on a PIP when there are no services.
+Sending "no-service" as a stop ID will result in a response similar to the ones that'd be displayed on a PIP when the stop it's on has been deactivated.
+
+<details>
+<summary> <b>Example Response:</b> (Click to expand)</summary>
+<pre><code>[
+    {
+        "estimatedArrivalTime": "18:39:00",
+        "estimatedDepartureTime": "18:39:00",
+        "estimatedTimeString": "18:39",
+        "estimatedTimeUnixSeconds": 1751823540,
+        "journeyId": "1607_0_2_1800_1829_0_9",
+        "lineId": "1607",
+        "observedArrivalTime": null,
+        "observedDepartureTime": null,
+        "observedDriverId": "",
+        "observedVehicleId": null,
+        "operatorId": "",
+        "patternId": "1607_0_2",
+        "stopHeadsign": "Oeiras Parque",
+        "stopId": "",
+        "timetabledArrivalTime": "18:39:00",
+        "timetabledDepartureTime": "18:39:00"
+    },
+    ...
+]
+</code></pre></details>
+
+#### `GET /pips/:pip/message`
+
+Returns the :pip that's been inputed (yes, that's it)
+<details>
+<summary> <b>Example Response:</b> (Click to expand)</summary>
+<pre><code>{
+    "message": "ID #{:pip}"
+}
+</code></pre></details>
+
 ## Metrics
 
 <details>
