@@ -2,7 +2,7 @@
 
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { School, SchoolsSource } from '@carrismetropolitana/api-types/facilities';
+import { type School, type SchoolsSource } from '@carrismetropolitana/api-types/facilities';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
@@ -17,7 +17,7 @@ const DATASET_FILE_URL = 'https://raw.githubusercontent.com/carrismetropolitana/
 export const syncSchools = async () => {
 	//
 
-	LOGGER.title(`Sync Train Stations`);
+	LOGGER.title(`Sync Schools`);
 	const globalTimer = new TIMETRACKER();
 
 	//
