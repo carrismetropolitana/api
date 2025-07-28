@@ -5,7 +5,7 @@ import FASTIFY from '@/services/FASTIFY.js';
 /* * */
 
 const main = async (_, reply) => {
-	reply.code(302).redirect(new URL(process.env.GTFS_URL).href);
+	reply.code(307).redirect(`https://api.carrismetropolitana.pt/v2/gtfs`);
 };
 
 /* * */
