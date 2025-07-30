@@ -8,6 +8,8 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type Alert } from '@carrismetropolitana/api-types/alerts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { ServiceAlertResponse } from '@tmlmobilidade/types';
+import { fetchData } from '@tmlmobilidade/utils';
 import { type TopicMessage } from 'firebase-admin/messaging';
 
 /* * */
@@ -23,8 +25,14 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedResponse = await fetch('https://alerts.sae.carrismetropolitana.pt/api/alerts/gtfs');
-	const alertsFeedData: any = await alertsFeedResponse.json();
+	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://alerts.sae.carrismetropolitana.pt/api/alerts/gtfs');
+
+	if (alertsFeedResponse.error) {
+		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedResponse.error}`);
+		return;
+	}
+
+	const alertsFeedData: any = alertsFeedResponse.data;
 
 	LOGGER.info(`Fetched Alerts feed from the backoffice (${backofficeTimer.get()})`);
 
