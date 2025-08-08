@@ -6,19 +6,14 @@ import SERVERDB from '@/services/SERVERDB.js';
 /* * */
 
 const all = async (_, reply) => {
-	const allItems = await SERVERDB.client.get('v2:datasets:facilities:schools:all');
-	return reply
-		.code(200)
-		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(allItems || []);
+	reply.code(307).redirect('https://api.carrismetropolitana.pt/v2/facilities/schools');
 };
 
 const single = async (request, reply) => {
-	const singleItem = await SERVERDB.client.get(`v2:datasets:facilities:schools:${request.params.id}`);
 	return reply
 		.code(200)
 		.header('Content-Type', 'application/json; charset=utf-8')
-		.send(singleItem || {});
+		.send({ deprecated: true, new_endpoint: "https://api.carrismetropolitana.pt/v2/facilities/schools"});
 };
 
 /* * */
