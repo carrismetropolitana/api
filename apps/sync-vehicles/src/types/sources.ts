@@ -9,6 +9,7 @@ export interface VehicleMetadataSource {
 	bikes_allowed: GTFSBool
 	capacity_seated: string
 	capacity_standing: string
+	contactless: string
 	emission_class: string
 	license_plate: string
 	make: string

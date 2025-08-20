@@ -76,9 +76,10 @@ export interface Vehicle {
 	capacity_seated?: number
 	capacity_standing?: number
 	capacity_total?: number
+	contactless: boolean
 	current_status?: VehicleCurrentStatus
 	direction_id?: number
-	door_status?: 'OPEN' | 'CLOSED'
+	door_status?: 'CLOSED' | 'OPEN'
 	emission_class?: VehicleEmissionClass
 	event_id?: string
 	id: string

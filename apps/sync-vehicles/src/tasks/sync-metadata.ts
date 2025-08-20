@@ -59,6 +59,7 @@ export const syncMetadata = async () => {
 			capacity_seated: Number(itemCsv.capacity_seated),
 			capacity_standing: Number(itemCsv.capacity_standing),
 			capacity_total: Number(itemCsv.capacity_seated) + Number(itemCsv.capacity_standing),
+			contactless: itemCsv.contactless === '1',
 			emission_class: convertVehicleEmissionClassCode(itemCsv.emission_class),
 			id: `${itemCsv.agency_id}|${itemCsv.vehicle_id}`,
 			license_plate: itemCsv.license_plate?.replace(/^(\w{2})(\w{2})(\w{2})$/, '$1-$2-$3'),
