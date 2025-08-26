@@ -17,24 +17,24 @@
 		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/interfaces": "20250628.333.59",
-		"@tmlmobilidade/utils": "20250628.333.59",
-		"luxon": "3.6.1",
+		"@tmlmobilidade/interfaces": "20250826.1336.59",
+		"@tmlmobilidade/utils": "20250826.1336.59",
+		"luxon": "3.7.1",
 		"papaparse": "5.5.3",
-		"trino-client": "0.2.7"
+		"trino-client": "0.2.8"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20250628.333.59",
-		"@tmlmobilidade/types": "20250628.333.59",
-		"@types/luxon": "3.6.2",
-		"@types/node": "24.0.7",
+		"@tmlmobilidade/tsconfig": "20250826.1316.20",
+		"@tmlmobilidade/types": "20250826.1336.59",
+		"@types/luxon": "3.7.1",
+		"@types/node": "24.3.0",
 		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.20.3",
-		"typescript": "5.8.3"
+		"tsx": "4.20.5",
+		"typescript": "5.9.2"
 	}
 }

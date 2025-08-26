@@ -3,37 +3,9 @@
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { ApiResponse, ApiResponseErrorSchema, ApiResponseSuccessSchema } from '@carrismetropolitana/api-types/common';
-import { Parish, ParishSchema } from '@carrismetropolitana/api-types/locations';
+import { ApiResponse } from '@carrismetropolitana/api-types/common';
+import { Parish } from '@carrismetropolitana/api-types/locations';
 import { type FastifyReply, type FastifyRequest } from 'fastify';
-import fastify from 'fastify';
-import { createSchema } from 'zod-openapi';
-
-/* * */
-
-const schema: fastify.RouteShorthandOptions['schema'] = {
-	description: 'Get all Parishes',
-	response: {
-		200: {
-			content: {
-				'application/json': {
-					schema: createSchema(ApiResponseSuccessSchema(ParishSchema.array())).schema,
-				},
-			},
-			description: '200 OK',
-		},
-		500: {
-			content: {
-				'application/json': {
-					schema: createSchema(ApiResponseErrorSchema).schema,
-				},
-			},
-			description: '500 Internal Server Error',
-		},
-	},
-	summary: 'Get all Parishes',
-	tags: ['locations'],
-};
 
 /* * */
 
@@ -56,4 +28,4 @@ const handler = async (_: FastifyRequest, reply: FastifyReply) => {
 
 /* * */
 
-FASTIFY.GET('/locations/parishes', handler, { schema });
+FASTIFY.GET('/locations/parishes', handler);

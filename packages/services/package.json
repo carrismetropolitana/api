@@ -47,22 +47,22 @@
 	"dependencies": {
 		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
 		"jwt-decode": "4.0.0",
-		"luxon": "3.6.1",
-		"mongodb": "6.17.0",
+		"luxon": "3.7.1",
+		"mongodb": "6.18.0",
 		"pg": "8.16.3",
-		"redis": "5.5.6",
-		"trino-client": "0.2.7",
+		"redis": "5.8.2",
+		"trino-client": "0.2.8",
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20250628.333.59",
-		"@types/node": "24.0.7",
+		"@tmlmobilidade/tsconfig": "20250826.1316.20",
+		"@types/node": "24.3.0",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.8.3"
+		"typescript": "5.9.2"
 	}
 }

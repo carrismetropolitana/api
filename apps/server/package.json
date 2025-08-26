@@ -20,25 +20,23 @@
 		"@carrismetropolitana/api-services": "*",
 		"@carrismetropolitana/api-settings": "*",
 		"@carrismetropolitana/api-utils": "*",
-		"@fastify/swagger": "9.5.1",
-		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/lib": "20250628.333.59",
-		"@tmlmobilidade/utils": "20250628.333.59",
-		"fastify": "5.4.0",
+		"@tmlmobilidade/lib": "20250826.1336.59",
+		"@tmlmobilidade/utils": "20250826.1336.59",
+		"fastify": "5.5.0",
 		"jwt-decode": "4.0.0",
-		"luxon": "3.6.1",
-		"protobufjs": "7.5.3",
-		"zod-openapi": "4.2.4"
+		"luxon": "3.7.1",
+		"protobufjs": "7.5.4"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20250628.333.59",
-		"@types/luxon": "3.6.2",
-		"@types/node": "24.0.7",
+		"@tmlmobilidade/tsconfig": "20250826.1316.20",
+		"@types/luxon": "3.7.1",
+		"@types/node": "24.3.0",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.20.3",
-		"typescript": "5.8.3"
+		"tsx": "4.20.5",
+		"typescript": "5.9.2"
 	}
 }

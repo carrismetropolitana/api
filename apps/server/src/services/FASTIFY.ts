@@ -1,7 +1,6 @@
 /* * */
 
 import { ApiResponseError } from '@carrismetropolitana/api-types/common';
-import fastifySwagger from '@fastify/swagger';
 import fastify from 'fastify';
 
 /* * */
@@ -25,7 +24,6 @@ class FastifyService {
 	 */
 	private constructor() {
 		this.server = fastify(defaultOptions).withTypeProvider();
-		this._registerOpenApiPlugin();
 		this._setupDefaultHooks();
 		this._setupErrorHandler();
 		this._setupDefaultRoutes();
@@ -107,41 +105,6 @@ class FastifyService {
 	}
 
 	/**
-	 * Register the OpenAPI plugin and setup the default routes.
-	 */
-	private async _registerOpenApiPlugin(): Promise<void> {
-		console.log('Registering OpenAPI plugin');
-		await this.server.register(fastifySwagger, {
-			hideUntagged: true,
-			openapi: {
-				externalDocs: {
-					description: 'More detailed documentation here',
-					url: 'https://docs.carrismetropolitana.pt',
-				},
-				info: {
-					description: 'Documentation for the Carris Metropolitana API',
-					title: 'Carris Metropolitana API',
-					version: 'v2',
-				},
-				openapi: '3.1.1',
-				servers: [
-					{
-						description: 'Production',
-						url: 'https://api.carrismetropolitana.pt/v2',
-					},
-				],
-				tags: [
-					{ description: 'Facilities', name: 'facilities' },
-					{ description: 'Interesting realtime metrics', name: 'metrics' },
-					{ description: 'Administrative divisions', name: 'locations' },
-					{ description: 'Bus Network endpoints', name: 'network' },
-					{ description: 'System status info', name: 'status' },
-				],
-			},
-		});
-	}
-
-	/**
 	 * Setup the default hooks for the server.
 	 */
 	private _setupDefaultHooks(): void {
@@ -160,9 +123,6 @@ class FastifyService {
 	private _setupDefaultRoutes(): void {
 		this.server.get('/', (_, reply) => {
 			reply.send('Jusi was here!');
-		});
-		this.server.get('/openapi', async () => {
-			return this.server.swagger();
 		});
 	}
 

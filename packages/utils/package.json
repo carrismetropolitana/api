@@ -12,15 +12,15 @@
 		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
-		"luxon": "3.6.1"
+		"luxon": "3.7.1"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20250628.333.59",
-		"@types/luxon": "3.6.2",
-		"@types/node": "24.0.7",
+		"@tmlmobilidade/tsconfig": "20250826.1316.20",
+		"@types/luxon": "3.7.1",
+		"@types/node": "24.3.0",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.8.3"
+		"typescript": "5.9.2"
 	}
 }
