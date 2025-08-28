@@ -21,15 +21,15 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/lib": "^20250826.1336.59",
-		"@tmlmobilidade/types": "^20250826.1336.59",
-		"@tmlmobilidade/utils": "^20250826.1336.59",
-		"firebase-admin": "13.4.0"
+		"@tmlmobilidade/lib": "^20250828.1519.39",
+		"@tmlmobilidade/types": "^20250828.1519.39",
+		"@tmlmobilidade/utils": "^20250828.1519.39",
+		"firebase-admin": "13.5.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20250826.1316.20",
+		"@tmlmobilidade/tsconfig": "20250828.1519.39",
 		"@types/node": "24.3.0",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.20.5",
