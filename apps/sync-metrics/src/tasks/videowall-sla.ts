@@ -144,7 +144,7 @@ export const videowallSla = async () => {
 
 		const rideHasAlreadyEnded = rideData.seen_last_at && nowInUnixTimestamp - rideData.seen_last_at < -120_000; // 2 minutes
 		const simpleThreeVehicleEvents = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
-		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
+		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_APEX_VALIDATION;
 
 		// Skip if ride has not yet ended
 

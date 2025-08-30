@@ -6,6 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
+import { type Ride } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
@@ -67,8 +68,10 @@ export const videowallDelays = async () => {
 	//
 	// Iterate on all rides for today
 
-	for await (const rideData of allRidesForTodayStream) {
+	for await (const currentRide of allRidesForTodayStream) {
 		//
+
+		const rideData = currentRide as Ride;
 
 		//
 		// Skip this ride if it has no start_time_observed
@@ -79,9 +82,9 @@ export const videowallDelays = async () => {
 		// Check if the ride is delayed for more than five minutes
 		// and store the total delay for each area and for the whole CM
 
-		if (!rideData.analysis.ONTIME_START) continue;
+		if (!rideData.analysis.EXPECTED_START_TIME) continue;
 
-		if (rideData.analysis.ONTIME_START.reason === 'RIDE_STARTED_MORE_THAN_FIVE_MINUTES_LATE') {
+		if (rideData.analysis.EXPECTED_START_TIME.reason === 'LATE_START') {
 			responseResult._cm_delayed_for_more_than_five_minutes_count++;
 			if (rideData.agency_id === '41') responseResult._41_delayed_for_more_than_five_minutes_count++;
 			if (rideData.agency_id === '42') responseResult._42_delayed_for_more_than_five_minutes_count++;
@@ -89,23 +92,23 @@ export const videowallDelays = async () => {
 			if (rideData.agency_id === '44') responseResult._44_delayed_for_more_than_five_minutes_count++;
 		}
 
-		if (rideData.analysis.ONTIME_START.value >= 0) {
-			responseResult._cm_average_delay_minutes += rideData.analysis.ONTIME_START.value;
+		if (rideData.analysis.EXPECTED_START_TIME.value >= 0) {
+			responseResult._cm_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 			responseResult._cm_total_until_now_count++;
 			if (rideData.agency_id === '41') {
-				responseResult._41_average_delay_minutes += rideData.analysis.ONTIME_START.value;
+				responseResult._41_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._41_total_until_now_count++;
 			}
 			if (rideData.agency_id === '42') {
-				responseResult._42_average_delay_minutes += rideData.analysis.ONTIME_START.value;
+				responseResult._42_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._42_total_until_now_count++;
 			}
 			if (rideData.agency_id === '43') {
-				responseResult._43_average_delay_minutes += rideData.analysis.ONTIME_START.value;
+				responseResult._43_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._43_total_until_now_count++;
 			}
 			if (rideData.agency_id === '44') {
-				responseResult._44_average_delay_minutes += rideData.analysis.ONTIME_START.value;
+				responseResult._44_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._44_total_until_now_count++;
 			}
 		}

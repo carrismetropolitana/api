@@ -2,7 +2,7 @@
 
 export interface ServiceMetrics {
 	agency_id: string
-	line_id: string
+	line_id: number
 	operational_date: string
 	pass_trip_count: number
 	pass_trip_percentage: number

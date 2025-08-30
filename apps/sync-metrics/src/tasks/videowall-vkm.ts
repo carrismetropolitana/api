@@ -6,6 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
+import { Ride } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
 
 /* * */
@@ -74,8 +75,10 @@ export const videowallVkm = async () => {
 	//
 	// Iterate on all rides for today
 
-	for await (const rideData of allRidesForTodayStream) {
+	for await (const currentRide of allRidesForTodayStream) {
 		//
+
+		const rideData: Ride = currentRide as Ride;
 
 		//
 		// Skip rides that are not yet processed
@@ -105,7 +108,7 @@ export const videowallVkm = async () => {
 
 		const rideHasAlreadyEnded = rideData.seen_last_at && Dates.fromUnixTimestamp(rideData.seen_last_at).unix_timestamp - Dates.now('Europe/Lisbon').unix_timestamp < -120_000;
 		const simpleThreeVehicleEvents = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
-		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
+		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_APEX_VALIDATION;
 
 		// Skip if ride has not yet ended
 

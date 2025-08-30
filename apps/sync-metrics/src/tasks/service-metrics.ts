@@ -8,6 +8,7 @@ import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
+import { type Ride } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
 
 /* * */
@@ -37,8 +38,10 @@ export const serviceMetrics = async () => {
 
 	const resultMap = new Map<string, ServiceMetrics>();
 
-	for await (const rideData of ridesStream) {
+	for await (const currentRide of ridesStream) {
 		//
+
+		const rideData = currentRide as Ride;
 
 		const resultMapKey = `${rideData.operational_date}-${rideData.line_id}`;
 
@@ -57,7 +60,7 @@ export const serviceMetrics = async () => {
 
 		if (!rideData.analysis) continue;
 
-		const simpleOneValidationTransactionTest = rideData.analysis.SIMPLE_ONE_VALIDATION_TRANSACTION;
+		const simpleOneValidationTransactionTest = rideData.analysis.SIMPLE_ONE_APEX_VALIDATION;
 		const simpleThreeVehicleEventsTest = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
 
 		if (simpleOneValidationTransactionTest?.grade === 'pass' || simpleThreeVehicleEventsTest?.grade === 'pass') {
