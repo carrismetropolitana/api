@@ -273,6 +273,7 @@ Returns information for a single pattern. Due to the size of each object, it is 
             allow_pickup: true,
             allow_drop_off: true,
             distance_delta: 0,
+            stop_sequence: 1
         },
         ...
     ],
@@ -449,3 +450,4 @@ Returns a list of schools in the Lisbon metropolitan area. [Learn more about thi
 # Contributing
 
 If you'd like to contribute new features or help fix any errors, please fork this repository and submit a pull request. We welcome contributions of all kinds, including bug fixes, documentation improvements, and new features.
+
