@@ -40,12 +40,25 @@ export const syncSchools = async () => {
 	for (const sourceItem of allSourceItems.data) {
 		//
 
+		const parsedCicles: string[] = [];
+
+		if (sourceItem.pre_school) parsedCicles.push('pre_school');
+		if (sourceItem.basic_1) parsedCicles.push('basic_1');
+		if (sourceItem.basic_2) parsedCicles.push('basic_2');
+		if (sourceItem.basic_3) parsedCicles.push('basic_3');
+		if (sourceItem.high_school) parsedCicles.push('high_school');
+		if (sourceItem.professional) parsedCicles.push('professional');
+		if (sourceItem.special) parsedCicles.push('special');
+		if (sourceItem.artistic) parsedCicles.push('artistic');
+		if (sourceItem.university) parsedCicles.push('university');
+		if (sourceItem.other) parsedCicles.push('other');
+
 		const updatedItemData: School = {
 
 			//
 			// Metadata
 
-			cicles: sourceItem.cicles,
+			cicles: parsedCicles,
 			district_id: sourceItem.district_id,
 			district_name: sourceItem.district_name,
 			grouping: sourceItem.grouping,

@@ -6,12 +6,17 @@ import { z } from 'zod';
 
 export interface SchoolsSource {
 	address: string
-	cicles: string
+	artistic: string
+	basic_1: string
+	basic_2: string
+	basic_3: string
 	district_id: string
 	district_name: string
 	email: string
 	grouping: string
+	high_school: string
 	id: string
+	is_active: string
 	lat: string
 	locality: string
 	lon: string
@@ -19,14 +24,20 @@ export interface SchoolsSource {
 	municipality_name: string
 	name: string
 	nature: string
+	other: string
 	parish_id: string
 	parish_name: string
 	phone: string
 	postal_code: string
+	pre_school: string
+	professional: string
 	region_id: string
 	region_name: string
+	special: string
 	stops: string
+	university: string
 	url: string
+	validation_date: string
 }
 
 export const SchoolSchema = z.object({
@@ -34,7 +45,7 @@ export const SchoolSchema = z.object({
 	//
 	// Metadata
 
-	cicles: z.string(),
+	cicles: z.array(z.string()),
 	district_id: z.string(),
 	district_name: z.string(),
 	grouping: z.string(),
