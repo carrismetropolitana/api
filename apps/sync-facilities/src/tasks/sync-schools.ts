@@ -42,16 +42,16 @@ export const syncSchools = async () => {
 
 		const parsedCicles: string[] = [];
 
-		if (sourceItem.pre_school) parsedCicles.push('pre_school');
-		if (sourceItem.basic_1) parsedCicles.push('basic_1');
-		if (sourceItem.basic_2) parsedCicles.push('basic_2');
-		if (sourceItem.basic_3) parsedCicles.push('basic_3');
-		if (sourceItem.high_school) parsedCicles.push('high_school');
-		if (sourceItem.professional) parsedCicles.push('professional');
-		if (sourceItem.special) parsedCicles.push('special');
-		if (sourceItem.artistic) parsedCicles.push('artistic');
-		if (sourceItem.university) parsedCicles.push('university');
-		if (sourceItem.other) parsedCicles.push('other');
+		if (sourceItem.pre_school === '1') parsedCicles.push('pre_school');
+		if (sourceItem.basic_1 === '1') parsedCicles.push('basic_1');
+		if (sourceItem.basic_2 === '1') parsedCicles.push('basic_2');
+		if (sourceItem.basic_3 === '1') parsedCicles.push('basic_3');
+		if (sourceItem.high_school === '1') parsedCicles.push('high_school');
+		if (sourceItem.professional === '1') parsedCicles.push('professional');
+		if (sourceItem.special === '1') parsedCicles.push('special');
+		if (sourceItem.artistic === '1') parsedCicles.push('artistic');
+		if (sourceItem.university === '1') parsedCicles.push('university');
+		if (sourceItem.other === '1') parsedCicles.push('other');
 
 		const updatedItemData: School = {
 
