@@ -29,6 +29,7 @@ export const videowallValidations = async () => {
 	const currentOperationalDateAsUnixTimestamp = Dates
 		.fromOperationalDate(currentOperationalDate, 'Europe/Lisbon')
 		.startOf('day')
+		.set({ hour: 4 })
 		.unix_timestamp;
 
 	const previousOperationalDate = Dates
@@ -39,6 +40,7 @@ export const videowallValidations = async () => {
 	const previousOperationalDateAsUnixTimestamp = Dates
 		.fromOperationalDate(previousOperationalDate, 'Europe/Lisbon')
 		.startOf('day')
+		.set({ hour: 4 })
 		.unix_timestamp;
 
 	const previousUntilNowAsUnixTimestamp = Dates
