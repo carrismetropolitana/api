@@ -94,8 +94,6 @@ export const syncLinesRoutesPatterns = async () => {
 
 	const allLinesParsed = new Map<string, Line>();
 	const allRoutesParsed = new Map<string, Route>();
-	const allPatternsParsed: Record<string, Pattern[]> = {};
-
 	const updatedPatternKeys = new Set<string>();
 
 	for (const patternId of allDistinctPatternIds) {
@@ -449,8 +447,6 @@ export const syncLinesRoutesPatterns = async () => {
 		await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId), JSON.stringify(finalizedPatternGroupsData));
 		updatedPatternKeys.add(SERVERDB_KEYS.NETWORK.PATTERNS.ID(patternId));
 
-		allPatternsParsed[patternId] = finalizedPatternGroupsData;
-
 		// LOGGER.info(`Updated pattern_id "${patternId}" (${intraPatternTimer.get()})`);
 
 		//
@@ -472,12 +468,6 @@ export const syncLinesRoutesPatterns = async () => {
 	}
 
 	LOGGER.info(`Deleted ${stalePatternKeys.length} stale Patterns`);
-
-	//
-	// Save all patterns to the database
-
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.PATTERNS.BASE, JSON.stringify(allPatternsParsed));
-	LOGGER.info(`Updated ${Object.keys(allPatternsParsed).length} Patterns`);
 
 	//
 	// Save all routes to the database
