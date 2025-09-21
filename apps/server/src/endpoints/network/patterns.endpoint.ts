@@ -14,6 +14,15 @@ interface RequestSchema {
 
 /* * */
 
+FASTIFY.GET('/patterns', async (_, reply) => {
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.BASE);
+	if (!allItemsTxt) return reply.code(404).send([]);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=3600')
+		.send(allItemsTxt);
+});
+
 FASTIFY.GET<RequestSchema>('/patterns/:id', async (request, reply) => {
 	const singleItemTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(request.params.id));
 	if (!singleItemTxt) return reply.code(404).send({});
