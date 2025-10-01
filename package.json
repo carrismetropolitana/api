@@ -12,6 +12,7 @@
 		"dev:sync-gtfs": "dotenv-run -f ./environments/development/secrets/.env -- turbo dev --filter=@carrismetropolitana/api-sync-gtfs",
 		"dev:sync-locations": "dotenv-run -f ./environments/development/secrets/.env -- turbo dev --filter=@carrismetropolitana/api-sync-locations",
 		"dev:sync-metrics": "dotenv-run -f ./environments/development/secrets/.env -- turbo dev --filter=@carrismetropolitana/api-sync-metrics",
+		"dev:sync-alert-metrics": "dotenv-run -f ./environments/development/secrets/.env -- turbo dev --filter=@carrismetropolitana/api-sync-alert-metrics",
 		"dev:sync-stores": "dotenv-run -f ./environments/development/secrets/.env -- turbo dev --filter=@carrismetropolitana/api-sync-stores",
 		"dev:sync-vehicles": "dotenv-run -f ./environments/development/secrets/.env -- turbo dev --filter=@carrismetropolitana/api-sync-vehicles",
 		"lint": "turbo run lint",

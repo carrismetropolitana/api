@@ -24,6 +24,7 @@ import '@/endpoints/facilities/stores.endpoint.js';
 /* * */
 
 import '@/endpoints/metrics/metrics.endpoint.js';
+import '@/endpoints/metrics/alerts.endpoint.js';
 
 /* * */
 
