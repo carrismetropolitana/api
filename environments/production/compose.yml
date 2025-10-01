@@ -290,3 +290,24 @@ services:
       - ./secrets/.env
     secrets:
       - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-alert-metrics:
+    image: ghcr.io/carrismetropolitana/api-sync-alert-metrics:v2
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 1gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/.env
+    secrets:
+      - pcgidbkey
