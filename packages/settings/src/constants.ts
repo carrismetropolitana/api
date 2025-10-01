@@ -30,6 +30,7 @@ export const SERVERDB_KEYS = Object.freeze({
 			BY_STOP: 'metrics:demand:by_stop',
 		},
 		SERVICE: 'metrics:service',
+		ALERTS: 'metrics:alerts',
 		VIDEOWALL: {
 			DELAYS: 'metrics:videowall:delays',
 			EMPTY_RIDES: 'metrics:videowall:empty_rides',
