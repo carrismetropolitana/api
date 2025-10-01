@@ -19,22 +19,22 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/interfaces": "20251001.1537.11",
-		"@tmlmobilidade/utils": "20251001.1537.11",
-		"luxon": "3.7.1",
+		"@tmlmobilidade/interfaces": "20251001.1613.56",
+		"@tmlmobilidade/utils": "20251001.1613.56",
+		"luxon": "3.7.2",
 		"papaparse": "5.5.3",
 		"trino-client": "0.2.8"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20251001.1537.11",
-		"@tmlmobilidade/types": "20251001.1537.11",
+		"@tmlmobilidade/tsconfig": "20251001.1613.56",
+		"@tmlmobilidade/types": "20251001.1613.56",
 		"@types/luxon": "3.7.1",
-		"@types/node": "24.3.0",
+		"@types/node": "24.6.1",
 		"@types/papaparse": "5.3.16",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.20.5",
-		"typescript": "5.9.2"
+		"tsx": "4.20.6",
+		"typescript": "5.9.3"
 	}
 }
