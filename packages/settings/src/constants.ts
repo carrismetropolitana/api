@@ -19,6 +19,13 @@ export const SERVERDB_KEYS = Object.freeze({
 		REGIONS: 'locations:regions',
 	},
 	METRICS: {
+		ALERTS: {
+			ALL: 'metrics:alerts:all',
+			BY_MUNICIPALITY: 'metrics:alerts:by_municipality',
+			CAUSE_EFFECT: 'metrics:alerts:cause_effect',
+			EVOLUTION: 'metrics:alerts:evolution',
+			SUMMARY: 'metrics:alerts:summary',
+		},
 		COMPLAINTS: 'metrics:complaints',
 		DEMAND: {
 			BY_AGENCY: {
@@ -30,7 +37,6 @@ export const SERVERDB_KEYS = Object.freeze({
 			BY_STOP: 'metrics:demand:by_stop',
 		},
 		SERVICE: 'metrics:service',
-		ALERTS: 'metrics:alerts',
 		VIDEOWALL: {
 			DELAYS: 'metrics:videowall:delays',
 			EMPTY_RIDES: 'metrics:videowall:empty_rides',
