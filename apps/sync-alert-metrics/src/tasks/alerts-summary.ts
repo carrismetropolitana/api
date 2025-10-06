@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /* * */
 
 import { SERVERDB } from '@carrismetropolitana/api-services';
@@ -8,7 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import { type AlertsSummary } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { alerts } from '@tmlmobilidade/interfaces';
+import { alerts, simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 import { Cause } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/utils';
 
@@ -26,19 +24,20 @@ export const alertsSummary = async () => {
 	const yesterdayDate = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 1 });
-	const fifteenDaysAgoDate = Dates
+	const startOfYear = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 15 });
+		.startOf('year');
 
 	const alertsCollection = await alerts.getCollection();
 	const filter = {
 		active_period_start_date: {
-			$gte: fifteenDaysAgoDate.unix_timestamp,
+			$gte: startOfYear.unix_timestamp,
 			$lte: yesterdayDate.unix_timestamp,
 		},
 	};
 
 	const totalAlerts = await alertsCollection.countDocuments(filter);
+	LOGGER.info(`Processing ${totalAlerts} alerts from ${startOfYear.operational_date} to ${yesterdayDate.operational_date}`);
 	const alertsStream = alertsCollection.find(filter).stream();
 
 	//
@@ -46,80 +45,100 @@ export const alertsSummary = async () => {
 
 	let externalCausesCount = 0;
 	const alertsByLineAndDate = new Map<string, Cause>();
+	const dailyStats = new Map<string, { lines: Set<string>, passengers: number }>();
+	const causeCountMap = new Map<string, number>();
 
 	for await (const alert of alertsStream) {
 		const cause = alert.cause as Cause;
-		const isExternal
-            = cause !== 'MAINTENANCE'
-              && cause !== 'STRIKE'
-              && cause !== 'TECHNICAL_PROBLEM';
 
-		if (isExternal) externalCausesCount++;
+		// Count by cause
+		causeCountMap.set(cause, (causeCountMap.get(cause) ?? 0) + 1);
+
+		// Check if external
+		if (cause !== 'MAINTENANCE' && cause !== 'STRIKE' && cause !== 'TECHNICAL_PROBLEM') {
+			externalCausesCount++;
+		}
 
 		if (Array.isArray(alert.references)) {
-			for (const ent of alert.references) {
-				if (ent.parent_id && alert.active_period_start_date) {
-					const key = `${Dates.fromUnixTimestamp(alert.active_period_start_date).operational_date}-${ent.parent_id}`;
+			for (const ref of alert.references) {
+				if (ref.parent_id && alert.active_period_start_date) {
+					const date = Dates.fromUnixTimestamp(alert.active_period_start_date).operational_date;
+
+					// Add to line-date map
+					const key = `${date}-${ref.parent_id}`;
 					alertsByLineAndDate.set(key, cause);
+
+					// Add to daily stats
+					if (!dailyStats.has(date)) {
+						dailyStats.set(date, { lines: new Set(), passengers: 0 });
+					}
+					dailyStats.get(date).lines.add(ref.parent_id);
 				}
 			}
 		}
 	}
 
+	//
+	// Calculate affected_passengers by querying each day
+
 	const externalCausesPercentage
         = totalAlerts > 0 ? Math.round((externalCausesCount / totalAlerts) * 100) : 0;
 
-	//
-	// Calculate affected_passengers from alerts evolution data (last 15 days)
+	let peopleAffected = 0;
 
-	const evolutionRaw = await SERVERDB.get(SERVERDB_KEYS.METRICS.ALERTS.EVOLUTION);
-	const evolutionString = typeof evolutionRaw === 'string' ? evolutionRaw : evolutionRaw?.toString();
-	let evolutionArray: any[] = [];
+	// Query validations day by day
+	const sortedDailyStats = Array.from(dailyStats.keys()).sort();
+	for (const date of sortedDailyStats) {
+		const stats = dailyStats.get(date);
+		const lines = Array.from(stats.lines);
+		if (lines.length > 0) {
+			const qty = await simplifiedApexValidations.count({
+				created_at: {
+					$gte: Dates.fromOperationalDate(date, 'Europe/Lisbon').startOf('day').unix_timestamp,
+					$lt: Dates.fromOperationalDate(date, 'Europe/Lisbon').endOf('day').unix_timestamp,
+				},
+				is_passenger: true,
+				line_id: { $in: lines },
+			});
+			stats.passengers = qty ?? 0;
+			peopleAffected += stats.passengers;
 
-	if (evolutionString) {
-		const parsed = JSON.parse(evolutionString);
-		evolutionArray = Array.isArray(parsed) ? parsed : Array.isArray(parsed.data) ? parsed.data : [];
+			LOGGER.info(`${date}: ${lines.length} lines affected, ${stats.passengers} passengers affected`);
+		}
 	}
 
-	const peopleAffected = evolutionArray.reduce(
-		(sum: number, entry: { people_affected: number }) => sum + (entry.people_affected ?? 0),
-		0,
-	);
+	LOGGER.info(`Total people affected: ${peopleAffected}`);
 
 	//
 	// Fetch service metrics (trips done vs not done)
+	// Maybe will be used in the future with live data
 
-	const serviceRaw = await SERVERDB.get(SERVERDB_KEYS.METRICS.SERVICE);
+	// const serviceRaw = await SERVERDB.get(SERVERDB_KEYS.METRICS.SERVICE);
 
-	const serviceString
-        = typeof serviceRaw === 'string' ? serviceRaw : serviceRaw?.toString();
-	let serviceArray: any[] = [];
+	// const serviceString
+	//     = typeof serviceRaw === 'string' ? serviceRaw : serviceRaw?.toString();
+	// let serviceArray: any[] = [];
 
-	if (serviceString) {
-		const parsed = JSON.parse(serviceString);
-		serviceArray = Array.isArray(parsed.data) ? parsed.data : [];
-	}
+	// if (serviceString) {
+	// 	const parsed = JSON.parse(serviceString);
+	// 	serviceArray = Array.isArray(parsed.data) ? parsed.data : [];
+	// }
 
-	let totalTrips = 0;
-	let totalTripsNotMade = 0;
-	const tripsByCause: Record<string, number> = {};
+	// const serviceMetrics = serviceArray.reduce((acc, metric) => {
+	// 	const tripsNotMade = metric.total_trip_count - metric.pass_trip_count;
 
-	for (const metric of serviceArray) {
-		const { line_id, operational_date, pass_trip_count, total_trip_count }
-            = metric;
-		const tripsNotMade = total_trip_count - pass_trip_count;
-		totalTrips += total_trip_count;
-
-		if (tripsNotMade > 0) {
-			totalTripsNotMade += tripsNotMade;
-
-			const key = `${operational_date}-${line_id}`;
-
-			const cause = alertsByLineAndDate.get(key);
-			if (cause)
-				tripsByCause[cause] = (tripsByCause[cause] ?? 0) + tripsNotMade;
-		}
-	}
+	// 	return {
+	// 		totalTrips: acc.totalTrips + metric.total_trip_count,
+	// 		totalTripsNotMade: acc.totalTripsNotMade + (tripsNotMade > 0 ? tripsNotMade : 0),
+	// 		tripsByCause: tripsNotMade > 0 && alertsByLineAndDate.has(`${metric.operational_date}-${metric.line_id}`)
+	// 			? {
+	// 				...acc.tripsByCause,
+	// 				[alertsByLineAndDate.get(`${metric.operational_date}-${metric.line_id}`)]:
+	//                     (acc.tripsByCause[alertsByLineAndDate.get(`${metric.operational_date}-${metric.line_id}`)] ?? 0) + tripsNotMade,
+	// 			}
+	// 			: acc.tripsByCause,
+	// 	};
+	// }, { totalTrips: 0, totalTripsNotMade: 0, tripsByCause: {} as Record<string, number> });
 
 	//
 	// Build response object
@@ -128,14 +147,14 @@ export const alertsSummary = async () => {
 		external_causes_percentage: externalCausesPercentage,
 		people_affected: peopleAffected,
 		total_alerts: totalAlerts,
-		total_trips: totalTrips,
-		trips_not_made: {
-			by_cause: Object.entries(tripsByCause).map(([cause, count]) => ({
-				cause: cause as Cause,
-				count,
-			})),
-			total: totalTripsNotMade,
-		},
+		// total_trips: serviceMetrics.totalTrips,
+		// trips_not_made: {
+		// 	by_cause: Object.entries(serviceMetrics.tripsByCause).map(([cause, count]) => ({
+		// 		cause: cause as Cause,
+		// 		count: typeof count === 'number' ? count : 0,
+		// 	})),
+		// 	total: typeof serviceMetrics.totalTripsNotMade === 'number' ? serviceMetrics.totalTripsNotMade : 0,
+		// },
 	};
 
 	//

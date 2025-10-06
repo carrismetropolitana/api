@@ -85,10 +85,6 @@ export interface AlertsSummary {
 	external_causes_percentage: number
 	people_affected: number
 	total_alerts: number
-	trips_not_made: {
-		by_cause: { cause: Cause, count: number }[]
-		total: number
-	}
 }
 
 export interface AlertsCauseEffect {

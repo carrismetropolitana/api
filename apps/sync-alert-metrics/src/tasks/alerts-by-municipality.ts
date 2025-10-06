@@ -19,18 +19,18 @@ export const alertsByMunicipality = async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Fetch alerts from 15 days ago
+	// Fetch alerts from start of the year
 
 	const yesterdayDate = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 1 });
 
-	const fifteenDaysAgoDate = Dates
+	const startOfYear = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 15 });
+		.startOf('year');
 
 	const alertsCollection = await alerts.getCollection();
-	const filter = { active_period_start_date: { $gte: fifteenDaysAgoDate.unix_timestamp, $lte: yesterdayDate.unix_timestamp } };
+	const filter = { active_period_start_date: { $gte: startOfYear.unix_timestamp, $lte: yesterdayDate.unix_timestamp } };
 	const alertsStream = alertsCollection.find(filter).stream();
 
 	//
@@ -40,6 +40,9 @@ export const alertsByMunicipality = async () => {
 
 	for await (const alert of alertsStream) {
 		const cause = alert.cause as Cause;
+
+		if (cause === 'OTHER_CAUSE' || cause === 'UNKNOWN_CAUSE') continue;
+
 		const municipalityIds = Array.isArray(alert.municipality_ids) ? alert.municipality_ids : [];
 
 		for (const municipalityId of municipalityIds) {
