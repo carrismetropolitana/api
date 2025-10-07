@@ -1,5 +1,7 @@
 /* * */
 
+import { Cause, Effect } from '@tmlmobilidade/types';
+
 export interface ServiceMetrics {
 	agency_id: string
 	line_id: number
@@ -75,4 +77,30 @@ export interface ComplaintMetrics {
 	phone: number
 	total: number
 	type: string
+}
+
+/* ALERT METRICS */
+
+export interface AlertsSummary {
+	external_causes_percentage: number
+	people_affected: number
+	total_alerts: number
+}
+
+export interface AlertsCauseEffect {
+	cause: Cause
+	effects: { type: Effect, value: number }[]
+	total: number
+}
+
+export interface AlertsEvolution {
+	day_group: string
+	lines_affected: number
+	people_affected: number
+}
+
+export interface AlertsByMunicipality {
+	causes: { type: Cause, value: number }[]
+	municipality_id: string
+	total: number
 }
