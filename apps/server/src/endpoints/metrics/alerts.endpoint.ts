@@ -11,7 +11,7 @@ FASTIFY.GET('/metrics/alerts', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=300')
+		.header('cache-control', 'public, max-age=3600')
 		.send(allItemsTxt);
 });
 
@@ -20,7 +20,7 @@ FASTIFY.GET('/metrics/alerts/summary', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=300')
+		.header('cache-control', 'public, max-age=3600')
 		.send(allItemsTxt);
 });
 
@@ -29,7 +29,7 @@ FASTIFY.GET('/metrics/alerts/cause-effect', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=300')
+		.header('cache-control', 'public, max-age=3600')
 		.send(allItemsTxt);
 });
 
@@ -38,7 +38,7 @@ FASTIFY.GET('/metrics/alerts/evolution', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=300')
+		.header('cache-control', 'public, max-age=3600')
 		.send(allItemsTxt);
 });
 
@@ -47,6 +47,6 @@ FASTIFY.GET('/metrics/alerts/by-municipality', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=300')
+		.header('cache-control', 'public, max-age=3600')
 		.send(allItemsTxt);
 });
