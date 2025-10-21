@@ -1,6 +1,7 @@
 /* * */
 
 import { ApiResponseError } from '@carrismetropolitana/api-types/common';
+import cors from '@fastify/cors';
 import fastify from 'fastify';
 
 /* * */
@@ -27,6 +28,14 @@ class FastifyService {
 		this._setupDefaultHooks();
 		this._setupErrorHandler();
 		this._setupDefaultRoutes();
+
+		// Only enable CORS in development
+		if (process.env.NODE_ENV === 'development') {
+			this.server.register(cors, {
+				origin: true,
+			});
+		}
+
 		// this._attemptStart({
 		// 	host: process.env.FASTIFY_HOST || '0.0.0.0',
 		// 	port: Number(process.env.FASTIFY_PORT) || 5050,

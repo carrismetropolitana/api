@@ -11,7 +11,7 @@ FASTIFY.GET('/metrics/demand/by_agency/day', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=300')
+		.header('cache-control', 'public, max-age=1800')
 		.send(allItemsTxt);
 });
 
@@ -20,7 +20,7 @@ FASTIFY.GET('/metrics/demand/by_agency/month', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=3600')
+		.header('cache-control', 'public, max-age=1800')
 		.send(allItemsTxt);
 });
 
@@ -29,7 +29,16 @@ FASTIFY.GET('/metrics/demand/by_agency/year', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
-		.header('cache-control', 'public, max-age=3600')
+		.header('cache-control', 'public, max-age=1800')
+		.send(allItemsTxt);
+});
+
+FASTIFY.GET('/metrics/demand/by_agency/records', async (_, reply) => {
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND.BY_AGENCY.RECORDS);
+	if (!allItemsTxt) return reply.code(404).send([]);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=1800')
 		.send(allItemsTxt);
 });
 
