@@ -22,7 +22,7 @@ export const demandMetrics = async () => {
 		{ metric: 'demand_by_agency_by_month', serverDbKey: SERVERDB_KEYS.METRICS.DEMAND.BY_AGENCY.MONTH },
 		{ metric: 'demand_by_line_by_day', serverDbKey: SERVERDB_KEYS.METRICS.DEMAND.BY_LINE },
 		{ metric: 'top_demand_by_agency', serverDbKey: SERVERDB_KEYS.METRICS.DEMAND.BY_AGENCY.RECORDS },
-	];
+	] as const;
 
 	//
 	// Get metrics collection
