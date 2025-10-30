@@ -4,6 +4,8 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
+import { getDemandByLine, getTopDemandLinesByAgency } from './metrics.controller.js';
+
 /* * */
 
 FASTIFY.GET('/metrics/demand/by_agency/day', async (_, reply) => {
@@ -44,13 +46,23 @@ FASTIFY.GET('/metrics/demand/by_agency/records', async (_, reply) => {
 
 /* * */
 
-FASTIFY.GET('/metrics/demand/by_line', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND.BY_LINE);
-	if (!allItemsTxt) return reply.code(404).send([]);
+FASTIFY.GET<{ Querystring: { line_id?: string } }>('/metrics/demand/by_line', async (request, reply) => {
+	const lineId = request.query.line_id;
+	const result = await getDemandByLine(lineId);
+	if (!result) return reply.code(404).send([]);
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=300')
-		.send(allItemsTxt);
+		.send(result);
+});
+
+FASTIFY.GET('/metrics/demand/top_lines/by_agency', async (_, reply) => {
+	const result = await getTopDemandLinesByAgency();
+	if (!result) return reply.code(404).send([]);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=300')
+		.send(result);
 });
 
 FASTIFY.GET('/metrics/demand/by_stop', async (_, reply) => {

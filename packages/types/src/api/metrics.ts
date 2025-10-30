@@ -1,6 +1,6 @@
 /* * */
 
-import { Cause, Effect } from '@tmlmobilidade/types';
+import { DemandByLineByDay, GtfsCause, GtfsEffect } from '@tmlmobilidade/types';
 
 export interface ServiceMetrics {
 	agency_id: string
@@ -88,8 +88,8 @@ export interface AlertsSummary {
 }
 
 export interface AlertsCauseEffect {
-	cause: Cause
-	effects: { type: Effect, value: number }[]
+	cause: GtfsCause
+	effects: { type: GtfsEffect, value: number }[]
 	total: number
 }
 
@@ -100,7 +100,14 @@ export interface AlertsEvolution {
 }
 
 export interface AlertsByMunicipality {
-	causes: { type: Cause, value: number }[]
+	causes: { type: GtfsCause, value: number }[]
 	municipality_id: string
 	total: number
+}
+
+/* NEW METRICS CALCULATIONS */
+
+export interface TopDemandLinesByAgency {
+	lastUpdated: Date | null
+	topLinesByAgency: Record<string, { lines: DemandByLineByDay[], totalQty?: number }>
 }
