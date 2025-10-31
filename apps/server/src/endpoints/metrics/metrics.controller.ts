@@ -3,15 +3,11 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { TopDemandLinesByAgency } from '@carrismetropolitana/api-types/metrics';
 import { DemandByLineByDay } from '@tmlmobilidade/types';
 
-export async function getDemandByLine(lineId?: string) {
+export async function getDemandByLine(lineId: string) {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND.BY_LINE) as string;
 	if (!allItemsTxt) return null;
 	const allItems = JSON.parse(allItemsTxt);
-
-	if (lineId) {
-		return allItems.filter((item: DemandByLineByDay) => item.properties.line_id === lineId);
-	}
-	return allItems;
+	return allItems.filter((item: DemandByLineByDay) => item.properties.line_id === lineId);
 }
 
 export async function getTopDemandLinesByAgency() {

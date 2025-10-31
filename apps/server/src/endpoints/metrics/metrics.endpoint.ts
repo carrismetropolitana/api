@@ -8,6 +8,10 @@ import { getDemandByLine, getTopDemandLinesByAgency } from './metrics.controller
 
 /* * */
 
+const regexPatternForLineId = /^\d{4}$/; // String with exactly 4 numeric digits
+
+/* * */
+
 FASTIFY.GET('/metrics/demand/by_agency/day', async (_, reply) => {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND.BY_AGENCY.DAY);
 	if (!allItemsTxt) return reply.code(404).send([]);
@@ -46,8 +50,22 @@ FASTIFY.GET('/metrics/demand/by_agency/records', async (_, reply) => {
 
 /* * */
 
-FASTIFY.GET<{ Querystring: { line_id?: string } }>('/metrics/demand/by_line', async (request, reply) => {
-	const lineId = request.query.line_id;
+FASTIFY.GET('/metrics/demand/by_line', async (_, reply) => {
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND.BY_LINE);
+	if (!allItemsTxt) return reply.code(404).send([]);
+	return reply
+		.code(200)
+		.header('cache-control', 'public, max-age=300')
+		.send(allItemsTxt);
+});
+
+FASTIFY.GET<{ Params: { line_id: string } }>('/metrics/demand/by_line/:line_id', async (request, reply) => {
+	const lineId = request.params.line_id;
+
+	if (!regexPatternForLineId.test(lineId)) {
+		return reply.status(400).send([]);
+	}
+
 	const result = await getDemandByLine(lineId);
 	if (!result) return reply.code(404).send([]);
 	return reply
