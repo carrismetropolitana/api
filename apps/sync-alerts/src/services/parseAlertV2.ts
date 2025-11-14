@@ -13,6 +13,12 @@ export default function parseAlertV2(item): Alert {
 				...entity,
 			};
 		}
+		if (entity.trip) {
+			return {
+				line_id: entity.trip.trip_id.substring(0, 4),
+				...entity,
+			};
+		}
 		return entity;
 	});
 
