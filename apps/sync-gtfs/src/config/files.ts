@@ -78,22 +78,22 @@ const allGtfsFiles: GtfsFile[] = [
 	},
 
 	{
-		_key: 'archives',
+		_key: 'plans',
 		extension: 'txt',
 		headers: [
-			'archive_id',
+			'plan_id',
 			'operator_id',
-			'archive_start_date',
-			'archive_end_date',
+			'plan_start_date',
+			'plan_end_date',
 		],
 		index_queries: [
-			'CREATE INDEX archives_archive_id_idx ON archives ("archive_id");',
+			'CREATE INDEX plans_plan_id_idx ON plans ("plan_id");',
 		],
-		table_query: `CREATE TABLE archives (
-			archive_id VARCHAR(10),
+		table_query: `CREATE TABLE plans (
+			plan_id VARCHAR(10),
 			operator_id VARCHAR(2),
-			archive_start_date VARCHAR(8),
-			archive_end_date VARCHAR(8)
+			plan_start_date VARCHAR(8),
+			plan_end_date VARCHAR(8)
 		);`,
 	},
 

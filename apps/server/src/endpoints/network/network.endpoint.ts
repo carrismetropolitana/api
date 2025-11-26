@@ -10,8 +10,8 @@ FASTIFY.GET('/gtfs', async (_, reply) => {
 	return reply.code(302).redirect(new URL(process.env.GTFS_URL).href);
 });
 
-FASTIFY.GET('/archives', async (_, reply) => {
-	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES);
+FASTIFY.GET('/plans', async (_, reply) => {
+	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PLANS);
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)

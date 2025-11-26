@@ -52,7 +52,6 @@ export const SERVERDB_KEYS = Object.freeze({
 			PROTOBUF: 'network:alerts:protobuf',
 			SENT_NOTIFICATIONS: 'network:alerts:sent_notifications',
 		},
-		ARCHIVES: 'network:archives',
 		DATES: 'network:dates',
 		LINES: 'network:lines',
 		PATTERNS: {
@@ -60,6 +59,7 @@ export const SERVERDB_KEYS = Object.freeze({
 			ID: id => `network:patterns:${id}`,
 		},
 		PERIODS: 'network:periods',
+		PLANS: 'network:plans',
 		ROUTES: 'network:routes',
 		SHAPES: {
 			BASE: 'network:shapes',

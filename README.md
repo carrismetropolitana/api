@@ -20,7 +20,7 @@ If you have any questions or suggestions for improving the API, please don't hes
 
 #### `GET /gtfs`
 
-Returns the zip archive for the currently live GTFS feed.
+Returns the zip plan for the currently live GTFS feed.
 
 ## Alerts
 
