@@ -11,10 +11,10 @@ import fs from 'node:fs';
 
 /* * */
 
-import { syncArchives } from '@/tasks/sync-archives.js';
 import { syncDates } from '@/tasks/sync-dates.js';
 import { syncLinesRoutesPatterns } from '@/tasks/sync-lines-routes-patterns.js';
 import { syncPeriods } from '@/tasks/sync-periods.js';
+import { syncPlans } from '@/tasks/sync-plans.js';
 import { syncShapes } from '@/tasks/sync-shapes.js';
 import { syncStops } from '@/tasks/sync-stops.js';
 
@@ -34,7 +34,7 @@ export const ENABLED_MODULES = [
 	'gtfs_import',
 	'periods_parser',
 	'dates_parser',
-	'archives_parser',
+	'plans_parser',
 	'stops_parser',
 	'shapes_parser',
 	'lines_routes_patterns_parser',
@@ -102,13 +102,13 @@ export default async () => {
 			LOGGER.title('2. Unzip, prepare and import each GTFS file...');
 
 			//
-			// Extract GTFS archive into prepared directory
+			// Extract GTFS plan into prepared directory
 			// and normalize directory permissions
 
 			await extract(RAW_FILE_PATH, { dir: RAW_DIR_PATH });
 			normalizeDirectoryPermissions(RAW_DIR_PATH);
 
-			LOGGER.success('Done extracting GTFS archive and normalizing directory permissions');
+			LOGGER.success('Done extracting GTFS plan and normalizing directory permissions');
 
 			//
 			// For each file, eliminate unwanted columns and normalize their positions.
@@ -145,8 +145,8 @@ export default async () => {
 
 		/* * */
 
-		if (ENABLED_MODULES.includes('archives_parser')) {
-			await syncArchives();
+		if (ENABLED_MODULES.includes('plans_parser')) {
+			await syncPlans();
 			LOGGER.spacer(1);
 		}
 

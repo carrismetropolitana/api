@@ -1,11 +1,10 @@
 /* * */
 
-import type { Archive, Pattern } from '@carrismetropolitana/api-types/network';
-
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
 import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { type Pattern, type Plan } from '@carrismetropolitana/api-types/network';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import { DateTime } from 'luxon';
 
@@ -30,7 +29,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply
 		return reply.status(400).send([]);
 	}
 
-	const currentArchiveIds = await getCurrentArchiveIds();
+	const currentPlanIds = await getCurrentPlanIds();
 
 	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
 
@@ -52,7 +51,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply
 			scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
 			scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
 			stop_sequence: estimate.stopSequence,
-			trip_id: `${estimate.tripId}_${currentArchiveIds[estimate.agencyId]}`,
+			trip_id: `${estimate.tripId}_${currentPlanIds[estimate.agencyId]}`,
 			vehicle_id: estimate.observedVehicleId,
 		};
 	});
@@ -68,7 +67,7 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 	//
 
 	const todayDateString = DateTime.now().toFormat('yyyyMMdd');
-	const currentArchiveIds = await getCurrentArchiveIds();
+	const currentPlanIds = await getCurrentPlanIds();
 
 	const foundPatternTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PATTERNS.ID(request.params.id)) as string;
 	const foundPatternData: Pattern[] = await JSON.parse(foundPatternTxt);
@@ -102,7 +101,7 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
 				stop_id: item.stopId,
 				stop_sequence: item.stopSequence,
-				trip_id: `${item.tripId}_${currentArchiveIds[item.agencyId]}`,
+				trip_id: `${item.tripId}_${currentPlanIds[item.agencyId]}`,
 				vehicle_id: item.observedVehicleId,
 			};
 		});
@@ -115,16 +114,16 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 
 /* * */
 
-async function getCurrentArchiveIds() {
-	const currentArchiveIds = {};
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES) as string;
-	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
+async function getCurrentPlanIds() {
+	const currentPlanIds = {};
+	const allPlansTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PLANS) as string;
+	const allPlansData: Plan[] = JSON.parse(allPlansTxt);
 
-	for (const archiveData of allArchivesData) {
+	for (const planData of allPlansData) {
 		const todayOperationDate = getOperationalDay();
-		if (archiveData.valid_range.start > todayOperationDate || archiveData.valid_range.end < todayOperationDate) continue;
-		else currentArchiveIds[archiveData.agency_id] = archiveData.id;
+		if (planData.valid_range.start > todayOperationDate || planData.valid_range.end < todayOperationDate) continue;
+		else currentPlanIds[planData.agency_id] = planData.id;
 	}
 
-	return currentArchiveIds;
+	return currentPlanIds;
 }

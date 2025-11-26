@@ -2,7 +2,7 @@
 
 import { PCGIDB, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { Archive } from '@carrismetropolitana/api-types/network';
+import { type Plan } from '@carrismetropolitana/api-types/network';
 import { convertVehicleCurrentStatusCode, convertVehicleScheduleRelationshipCode, Vehicle, VehicleOccupancyStatus } from '@carrismetropolitana/api-types/vehicles';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
@@ -58,13 +58,13 @@ export const syncPositions = async () => {
 	LOGGER.title(`SYNC POSITIONS`);
 
 	//
-	// Get all archives from SERVERDB to set the active archive_id for each operator
+	// Get all plans from SERVERDB to set the active plan_id for each operator
 
-	const archivesTimer = new TIMETRACKER();
+	const plansTimer = new TIMETRACKER();
 
-	const currentArchiveIds = await getCurrentArchiveIds();
+	const currentPlanIds = await getCurrentPlanIds();
 
-	LOGGER.info(`Fetched Archives from SERVERDB (${archivesTimer.get()})`);
+	LOGGER.info(`Fetched Plans from SERVERDB (${plansTimer.get()})`);
 
 	//
 	// Fetch existing vehicles from SERVERDB
@@ -147,7 +147,7 @@ export const syncPositions = async () => {
 			block_id: pcgiVehicleEvent.content.entity[0].vehicle.vehicle.blockId,
 			current_status: convertVehicleCurrentStatusCode(String(pcgiVehicleEvent.content.entity[0].vehicle.currentStatus)),
 			direction_id: undefined, // patternDataJson.direction,
-			event_id: `${currentArchiveIds[agencyId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
+			event_id: `${currentPlanIds[agencyId]}-${vehicleId}-${vehicleTripId}`, // Event ID should be kept stable for the duration of a single trip
 			id: vehicleId, // The vehicle ID is composed of the agency_id and the vehicle_id
 			lat: pcgiVehicleEvent.content.entity[0].vehicle.position.latitude,
 			line_id: pcgiVehicleEvent.content.entity[0].vehicle.trip.lineId,
@@ -159,7 +159,7 @@ export const syncPositions = async () => {
 			speed: vehicleSpeed,
 			stop_id: pcgiVehicleEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
 			timestamp: vehicleTimestamp, // Timestamp is in UTC
-			trip_id: `${vehicleTripId}_${currentArchiveIds[agencyId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
+			trip_id: `${vehicleTripId}_${currentPlanIds[agencyId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
 		};
 
 		//
@@ -251,16 +251,16 @@ export const syncPositions = async () => {
 
 /* * */
 
-async function getCurrentArchiveIds() {
-	const currentArchiveIds = {};
-	const allArchivesTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ARCHIVES) as string;
-	const allArchivesData: Archive[] = JSON.parse(allArchivesTxt);
+async function getCurrentPlanIds() {
+	const currentPlanIds = {};
+	const allPlansTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.PLANS) as string;
+	const allPlansData: Plan[] = JSON.parse(allPlansTxt);
 
-	for (const archiveData of allArchivesData) {
+	for (const planData of allPlansData) {
 		const todayOperationDate = getOperationalDay();
-		if (archiveData.valid_range.start > todayOperationDate || archiveData.valid_range.end < todayOperationDate) continue;
-		else currentArchiveIds[archiveData.agency_id] = archiveData.id;
+		if (planData.valid_range.start > todayOperationDate || planData.valid_range.end < todayOperationDate) continue;
+		else currentPlanIds[planData.agency_id] = planData.id;
 	}
 
-	return currentArchiveIds;
+	return currentPlanIds;
 }

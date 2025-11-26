@@ -159,7 +159,7 @@ export interface Period {
 
 /* * */
 
-export interface Archive {
+export interface Plan {
 	agency_id: string
 	id: string
 	valid_range: DateRange
