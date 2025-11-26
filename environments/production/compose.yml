@@ -3,7 +3,6 @@
 name: api
 
 volumes:
-  certbotdata:
   serverdb:
 
 secrets:
@@ -19,7 +18,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   watchtower:
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     deploy:
       restart_policy:
         condition: on-failure
@@ -36,8 +35,11 @@ services:
     environment:
       - WATCHTOWER_POLL_INTERVAL=10
       - WATCHTOWER_CLEANUP=TRUE
+      - WATCHTOWER_REMOVE_VOLUMES=TRUE
+      - WATCHTOWER_INCLUDE_RESTARTING=TRUE
       - WATCHTOWER_INCLUDE_STOPPED=TRUE
       - WATCHTOWER_REVIVE_STOPPED=TRUE
+      - WATCHTOWER_TIMEOUT=30s
       - WATCHTOWER_ROLLING_RESTART=TRUE
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -58,33 +60,10 @@ services:
         max-file: '1'
     volumes:
       - ./secrets/uptime.conf:/etc/nginx/uptime.conf:ro
-      - ./letsencrypt:/etc/letsencrypt:ro
-      - certbotdata:/var/www/certbot:ro
     ports:
       - 80:80
       - 443:443
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
-  certbot:
-    image: certbot/certbot
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-      resources:
-        limits:
-          memory: 100mb
-    logging:
-      options:
-        max-size: '1m'
-        max-file: '1'
-    volumes:
-      - ./letsencrypt:/etc/letsencrypt
-      - certbotdata:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
