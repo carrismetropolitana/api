@@ -82,7 +82,7 @@ const allGtfsFiles: GtfsFile[] = [
 		extension: 'txt',
 		headers: [
 			'plan_id',
-			'operator_id',
+			'agency_id',
 			'plan_start_date',
 			'plan_end_date',
 		],
@@ -91,7 +91,7 @@ const allGtfsFiles: GtfsFile[] = [
 		],
 		table_query: `CREATE TABLE plans (
 			plan_id VARCHAR(10),
-			operator_id VARCHAR(2),
+			agency_id VARCHAR(2),
 			plan_start_date VARCHAR(8),
 			plan_end_date VARCHAR(8)
 		);`,

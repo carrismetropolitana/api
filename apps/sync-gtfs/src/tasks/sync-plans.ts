@@ -30,7 +30,7 @@ export const syncPlans = async () => {
 	for (const plan of allPlans.rows) {
 		//
 		const parsedPlan: Plan = {
-			agency_id: plan.operator_id,
+			agency_id: plan.agency_id,
 			id: plan.plan_id,
 			valid_range: {
 				end: plan.plan_end_date,
