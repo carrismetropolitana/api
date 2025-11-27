@@ -159,7 +159,7 @@ export const syncPositions = async () => {
 			speed: vehicleSpeed,
 			stop_id: pcgiVehicleEvent.content.entity[0].vehicle.stopId, // The stop the vehicle is serving at the moment
 			timestamp: vehicleTimestamp, // Timestamp is in UTC
-			trip_id: `${vehicleTripId}_${currentPlanIds[agencyId]}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
+			trip_id: `[${currentPlanIds[agencyId]}]${vehicleTripId}`, // Trip ID, Pattern ID, Route ID and Line ID should always be known entities in the scheduled GTFS
 		};
 
 		//
