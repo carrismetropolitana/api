@@ -51,7 +51,7 @@ FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply
 			scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
 			scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
 			stop_sequence: estimate.stopSequence,
-			trip_id: `${estimate.tripId}_${currentPlanIds[estimate.agencyId]}`,
+			trip_id: `[${currentPlanIds[estimate.agencyId]}]${estimate.tripId}`,
 			vehicle_id: estimate.observedVehicleId,
 		};
 	});
@@ -101,7 +101,7 @@ FASTIFY.GET<RequestSchema>('/arrivals/by_pattern/:id', async (request, reply) =>
 				scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(item.stopScheduledDepartureTime),
 				stop_id: item.stopId,
 				stop_sequence: item.stopSequence,
-				trip_id: `${item.tripId}_${currentPlanIds[item.agencyId]}`,
+				trip_id: `[${currentPlanIds[item.agencyId]}]${item.tripId}`,
 				vehicle_id: item.observedVehicleId,
 			};
 		});
