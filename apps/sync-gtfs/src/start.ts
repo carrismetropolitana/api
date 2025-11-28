@@ -62,22 +62,12 @@ export default async () => {
 		fs.mkdirSync(RAW_DIR_PATH, { recursive: true });
 
 		//
-		// Import GTFS from source
-		// Source can either be a URL or a local file
+		// Import GTFS from source URL
 
-		if (process.env.GTFS_URL.startsWith('file://')) {
-			// If the source is a local file
-			LOGGER.info(`Copying file from "${process.env.GTFS_URL}"...`);
-			const normalizedSourceFilePath = process.env.GTFS_URL.replace('file://', '');
-			fs.copyFileSync(normalizedSourceFilePath, RAW_FILE_PATH);
-		}
-		else {
-			// If the source is a URL
-			LOGGER.info(`Downloading file from "${process.env.GTFS_URL}"...`);
-			const downloadedCsvFile = await fetch(process.env.GTFS_URL);
-			const downloadedCsvArrayBuffer = await downloadedCsvFile.arrayBuffer();
-			fs.writeFileSync(RAW_FILE_PATH, Buffer.from(downloadedCsvArrayBuffer));
-		}
+		LOGGER.info(`Downloading file from "https://go.tmlmobilidade.pt/exporter/api/gtfs-merged/download"...`);
+		const downloadedCsvFile = await fetch('https://go.tmlmobilidade.pt/exporter/api/gtfs-merged/download');
+		const downloadedCsvArrayBuffer = await downloadedCsvFile.arrayBuffer();
+		fs.writeFileSync(RAW_FILE_PATH, Buffer.from(downloadedCsvArrayBuffer));
 
 		LOGGER.success(`Done fetching latest GTFS (${importGtfsTimer.get()})`);
 
