@@ -7,7 +7,17 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 /* * */
 
 FASTIFY.GET('/gtfs', async (_, reply) => {
-	return reply.code(302).redirect(new URL(process.env.GTFS_URL).href);
+	// Stream the file in the given URL to the client
+	const storageServiceResponse = await fetch('https://go.tmlmobilidade.pt/exporter/api/gtfs-merged/download');
+	if (!storageServiceResponse.ok || !storageServiceResponse.body) return reply.code(500).send('Could not fetch file.');
+	// Set headers and pipe the response body to the client
+	reply.header('Content-Disposition', `attachment; filename="CMET.zip"`);
+	reply.header('Content-Type', 'application/zip');
+	// Set content length if available
+	const contentLength = storageServiceResponse.headers.get('Content-Length');
+	if (contentLength) reply.header('Content-Length', contentLength);
+	// Pipe the response body to the client
+	return reply.send(storageServiceResponse.body);
 });
 
 FASTIFY.GET('/plans', async (_, reply) => {
