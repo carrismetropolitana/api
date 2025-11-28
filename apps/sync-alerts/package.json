@@ -21,9 +21,9 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/lib": "^20251021.1646.56",
-		"@tmlmobilidade/types": "^20251021.1646.56",
-		"@tmlmobilidade/utils": "^20251021.1646.56",
+		"@tmlmobilidade/lib": "20251021.1646.56",
+		"@tmlmobilidade/types": "20251021.1646.56",
+		"@tmlmobilidade/utils": "20251021.1646.56",
 		"firebase-admin": "13.5.0"
 	},
 	"devDependencies": {
