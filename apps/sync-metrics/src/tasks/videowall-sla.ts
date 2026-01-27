@@ -5,9 +5,9 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { Dates } from '@tmlmobilidade/dates';
 import { rides } from '@tmlmobilidade/interfaces';
 import { type Ride } from '@tmlmobilidade/types';
-import { Dates } from '@tmlmobilidade/utils';
 
 /* * */
 
@@ -84,6 +84,11 @@ export const videowallSla = async () => {
 		//
 
 		const rideData: Ride = currentRide as Ride;
+
+		//
+		// Skip non-CM rides
+
+		if (!rideData.agency_id || !['41', '42', '43', '44'].includes(rideData.agency_id)) continue;
 
 		responseResult._cm_scheduled_rides_total++;
 		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_total++;
