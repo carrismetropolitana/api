@@ -51,17 +51,17 @@
 		"@helperkits/timer": "20240627.34.23",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.7.2",
-		"mongodb": "6.20.0",
-		"pg": "8.16.3",
-		"redis": "5.8.3",
-		"trino-client": "0.2.8",
+		"mongodb": "7.0.0",
+		"pg": "8.17.2",
+		"redis": "5.10.0",
+		"trino-client": "0.2.9",
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20251021.1646.56",
-		"@types/node": "24.9.1",
+		"@tmlmobilidade/tsconfig": "20260126.1852.36",
+		"@types/node": "25.0.10",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.9.3"
 	}

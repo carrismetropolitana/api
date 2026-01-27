@@ -82,13 +82,13 @@
 	"dependencies": {
 		"@types/geojson": "7946.0.16",
 		"gtfs-types": "5.1.0",
-		"zod": "4.1.13"
+		"zod": "4.3.6"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20251211.1230.30",
-		"@tmlmobilidade/types": "20251211.1230.30",
-		"@types/node": "25.0.0",
+		"@tmlmobilidade/tsconfig": "20260126.1852.36",
+		"@tmlmobilidade/types": "20260126.1852.36",
+		"@types/node": "25.0.10",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.9.3"
 	}
