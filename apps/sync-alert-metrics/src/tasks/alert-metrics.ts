@@ -7,7 +7,7 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { alerts } from '@tmlmobilidade/interfaces';
 import { Alert, Cause, Effect } from '@tmlmobilidade/types';
-import { Dates } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/dates';
 
 /* * */
 

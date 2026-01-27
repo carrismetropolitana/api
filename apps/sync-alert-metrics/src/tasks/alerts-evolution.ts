@@ -7,7 +7,7 @@ import { type AlertsEvolution } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { alerts, simplifiedApexValidations } from '@tmlmobilidade/interfaces';
-import { Dates } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/dates';
 
 /* * */
 

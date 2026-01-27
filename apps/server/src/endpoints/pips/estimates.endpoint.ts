@@ -7,7 +7,7 @@ import { FASTIFY } from '@/services/FASTIFY.js';
 import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { Pattern } from '@carrismetropolitana/api-types/network';
-import { Dates } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/dates';
 import { DateTime } from 'luxon';
 
 /* * */

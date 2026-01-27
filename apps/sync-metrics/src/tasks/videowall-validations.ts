@@ -7,7 +7,7 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 import { ALLOWED_VALIDATION_STATUSES } from '@tmlmobilidade/types';
-import { Dates } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/dates';
 
 /* * */
 

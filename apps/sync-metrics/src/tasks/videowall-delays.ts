@@ -7,7 +7,7 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/interfaces';
 import { type Ride } from '@tmlmobilidade/types';
-import { Dates } from '@tmlmobilidade/utils';
+import { Dates } from '@tmlmobilidade/dates';
 import { DateTime } from 'luxon';
 
 /* * */
