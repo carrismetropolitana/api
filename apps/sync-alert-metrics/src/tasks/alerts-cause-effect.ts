@@ -6,9 +6,9 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import { type AlertsCauseEffect } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { alerts } from '@tmlmobilidade/interfaces';
-import { Cause, Effect } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/dates';
+import { alerts } from '@tmlmobilidade/interfaces';
+import { GtfsCause, GtfsEffect } from '@tmlmobilidade/types';
 
 /* * */
 
@@ -36,14 +36,13 @@ export const alertsCauseEffect = async () => {
 	//
 	// Group by cause and effect
 
-	const causeEffectMap = new Map<Cause, { effectMap: Map<Effect, number>, total: number }>();
+	const causeEffectMap = new Map<GtfsCause, { effectMap: Map<GtfsEffect, number>, total: number }>();
 
 	for await (const alert of alertsStream) {
-		const cause = alert.cause as Cause;
-		const effect = alert.effect as Effect;
-
+		const cause = alert.cause as GtfsCause;
+		const effect = alert.effect as GtfsEffect;
 		if (!causeEffectMap.has(cause)) {
-			causeEffectMap.set(cause, { effectMap: new Map<Effect, number>(), total: 0 });
+			causeEffectMap.set(cause, { effectMap: new Map<GtfsEffect, number>(), total: 0 });
 		}
 
 		const group = causeEffectMap.get(cause);

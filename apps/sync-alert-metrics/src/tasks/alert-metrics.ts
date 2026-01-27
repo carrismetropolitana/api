@@ -5,9 +5,9 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { alerts } from '@tmlmobilidade/interfaces';
-import { Alert, Cause, Effect } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/dates';
+import { alerts } from '@tmlmobilidade/interfaces';
+import { Alert, GtfsCause, GtfsEffect } from '@tmlmobilidade/types';
 
 /* * */
 
@@ -43,11 +43,11 @@ export const alertMetrics = async () => {
 		const alertData = alert as Alert;
 
 		// Cause
-		const cause = alertData.cause as Cause || 'UNKNOWN_CAUSE';
+		const cause = alertData.cause as GtfsCause || 'UNKNOWN_CAUSE';
 		causeCountMap.set(cause, (causeCountMap.get(cause) ?? 0) + 1);
 
 		// Effect
-		const effect = alertData.effect as Effect || 'UNKNOWN_EFFECT';
+		const effect = alertData.effect as GtfsEffect || 'UNKNOWN_EFFECT';
 		effectCountMap.set(effect, (effectCountMap.get(effect) ?? 0) + 1);
 
 		// Municipality

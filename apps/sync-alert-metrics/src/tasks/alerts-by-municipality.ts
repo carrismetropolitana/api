@@ -6,9 +6,9 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import { AlertsByMunicipality } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { alerts } from '@tmlmobilidade/interfaces';
-import { Cause } from '@tmlmobilidade/types';
 import { Dates } from '@tmlmobilidade/dates';
+import { alerts } from '@tmlmobilidade/interfaces';
+import { GtfsCause } from '@tmlmobilidade/types';
 
 /* * */
 
@@ -36,10 +36,10 @@ export const alertsByMunicipality = async () => {
 	//
 	// Group alerts by municipality and cause
 
-	const municipalityMap = new Map<string, Map<Cause, number>>();
+	const municipalityMap = new Map<string, Map<GtfsCause, number>>();
 
 	for await (const alert of alertsStream) {
-		const cause = alert.cause as Cause;
+		const cause = alert.cause as GtfsCause;
 
 		if (cause === 'OTHER_CAUSE' || cause === 'UNKNOWN_CAUSE') continue;
 
@@ -47,7 +47,7 @@ export const alertsByMunicipality = async () => {
 
 		for (const municipalityId of municipalityIds) {
 			if (!municipalityMap.has(municipalityId)) {
-				municipalityMap.set(municipalityId, new Map<Cause, number>());
+				municipalityMap.set(municipalityId, new Map<GtfsCause, number>());
 			}
 
 			const causeMap = municipalityMap.get(municipalityId);
@@ -61,7 +61,7 @@ export const alertsByMunicipality = async () => {
 	const response = Array.from(municipalityMap.entries()).map(([municipality_id, causeMap]) => {
 		const total = Array.from(causeMap.values()).reduce((sum, value) => sum + value, 0);
 		return {
-			causes: Array.from(causeMap.entries()).map(([type, value]) => ({ type: type as Cause, value: value })) as { type: Cause, value: number }[],
+			causes: Array.from(causeMap.entries()).map(([type, value]) => ({ type: type as GtfsCause, value: value })) as { type: GtfsCause, value: number }[],
 			municipality_id,
 			total,
 		} as AlertsByMunicipality;
