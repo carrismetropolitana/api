@@ -15,8 +15,8 @@ export default function parseAlertV2(item): Alert {
 		}
 		if (entity.trip) {
 			return {
-				route_id: entity.trip.trip_id.substring(0, 6),
-				line_id: entity.trip.trip_id.substring(0, 4),
+				line_id: entity.trip.trip_id.substring(6, 10),
+				route_id: entity.trip.trip_id.substring(6, 12),
 				...entity,
 			};
 		}
