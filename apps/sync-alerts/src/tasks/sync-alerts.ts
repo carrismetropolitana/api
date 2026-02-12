@@ -119,6 +119,10 @@ export const syncAlerts = async () => {
 						// Do the 'all' topic
 						notificationMessage.topic = `cm.everyone`;
 					}
+					// Include image
+					if (alertItem.image?.localized_image?.length > 0) {
+						notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
+					}
 					// await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
