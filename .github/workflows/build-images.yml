@@ -1,6 +1,7 @@
 name: Build & Publish Docker Images
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - v2
