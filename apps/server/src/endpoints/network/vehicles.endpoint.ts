@@ -22,6 +22,7 @@ FASTIFY.GET('/vehicles', async (_, reply) => {
 	if (!allItemsTxt) return reply.code(404).send([]);
 	return reply
 		.code(200)
+		.header('access-control-allow-origin', '*')
 		.header('cache-control', 'public, max-age=5')
 		.send(allItemsTxt);
 });
@@ -34,6 +35,7 @@ FASTIFY.GET('/vehicles.pb', async (_, reply) => {
 	const buffer = FeedMessage.encode(message).finish();
 	return reply
 		.code(200)
+		.header('access-control-allow-origin', '*')
 		.header('cache-control', 'public, max-age=5')
 		.type('application/octet-stream')
 		.send(buffer);
