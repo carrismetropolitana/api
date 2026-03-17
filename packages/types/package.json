@@ -82,7 +82,7 @@
 	"dependencies": {
 		"@types/geojson": "7946.0.16",
 		"gtfs-types": "5.1.0",
-		"zod": "4.3.6"
+		"zod": "3.25.76"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250622.1204.50",
