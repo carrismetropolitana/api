@@ -25,7 +25,7 @@
 		"@helperkits/timer": "20240627.34.23",
 		"@tmlmobilidade/dates": "20260126.1852.36",
 		"@tmlmobilidade/lib": "20251103.1255.55",
-		"fastify": "5.7.2",
+		"fastify": "5.7.3",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.7.2",
 		"protobufjs": "8.0.0"
