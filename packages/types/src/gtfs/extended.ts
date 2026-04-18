@@ -72,7 +72,8 @@ export interface Stop extends GtfsCore.Stop {
 	district_id: string
 	district_name: string
 	light_rail: boolean
-	locality: string
+	locality_id: string
+	locality_name: string
 	municipality_id: string
 	municipality_name: string
 	near_fire_station: boolean
@@ -87,8 +88,6 @@ export interface Stop extends GtfsCore.Stop {
 	operational_status: string
 	parish_id: null
 	parish_name: null
-	region_id: string
-	region_name: string
 	stop_id: string
 	stop_lat: number
 	stop_lon: number

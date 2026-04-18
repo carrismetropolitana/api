@@ -109,17 +109,21 @@ export interface ShapePoint {
 
 export interface Stop {
 	district_id: string
+	district_name: string
 	facilities: string[]
 	id: string
 	lat: number
 	line_ids: string[]
 	locality_id: string
+	locality_name: string
 	lon: number
 	long_name: string
 	municipality_id: string
+	municipality_name: string
 	operational_status: StopOperationalStatus
+	parish_id: string
+	parish_name: string
 	pattern_ids: string[]
-	region_id: string
 	route_ids: string[]
 	short_name: string
 	tts_name: string

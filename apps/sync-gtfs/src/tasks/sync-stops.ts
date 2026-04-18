@@ -1,7 +1,6 @@
 /* * */
 
 import type { Stop as GtfsStopsExtended } from '@carrismetropolitana/api-types/gtfs-extended';
-import type { Locality } from '@carrismetropolitana/api-types/locations';
 
 import { NETWORKDB } from '@carrismetropolitana/api-services/NETWORKDB';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
@@ -56,13 +55,6 @@ export const syncStops = async () => {
 	`);
 
 	//
-	// Fetch existing data from SERVERDB
-
-	const allLocalitiesTxt = await SERVERDB.get(SERVERDB_KEYS.LOCATIONS.LOCALITIES) as string;
-	const allLocalitiesData = allLocalitiesTxt ? JSON.parse(allLocalitiesTxt) : [];
-	const allLocalitiesMap = new Map<string, Locality>(allLocalitiesData.map((item: Locality) => [`${item.name}-${item.municipality_id}`, item]));
-
-	//
 	// For each item, update its entry in the database
 
 	const allStopsData: Stop[] = [];
@@ -115,26 +107,25 @@ export const syncStops = async () => {
 		}
 
 		//
-		// Find the locality object
-
-		const matchedLocalityData = allLocalitiesMap.get(`${stop.locality}-${stop.municipality_id}`);
-
-		//
 		// Build the final stop object
 
 		const parsedStop: Stop = {
 			district_id: stop.district_id,
+			district_name: stop.district_name,
 			facilities: facilities || [],
 			id: stop.stop_id,
 			lat: Number(stop.stop_lat),
 			line_ids: stop.line_ids || [],
-			locality_id: matchedLocalityData?.id,
+			locality_id: stop.locality_id,
+			locality_name: stop.locality_name,
 			lon: Number(stop.stop_lon),
 			long_name: stop.stop_name,
 			municipality_id: stop.municipality_id,
+			municipality_name: stop.municipality_name,
 			operational_status: parsedStopOperationalStatus,
+			parish_id: stop.parish_id,
+			parish_name: stop.parish_name,
 			pattern_ids: stop.pattern_ids || [],
-			region_id: stop.region_id,
 			route_ids: stop.route_ids || [],
 			short_name: stop.stop_short_name,
 			tts_name: stop.tts_stop_name,
