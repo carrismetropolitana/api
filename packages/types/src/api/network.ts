@@ -114,8 +114,8 @@ export interface Stop {
 	id: string
 	lat: number
 	line_ids: string[]
-	locality_id: string
-	locality_name: string
+	locality_id?: string
+	locality_name?: string
 	lon: number
 	long_name: string
 	municipality_id: string
