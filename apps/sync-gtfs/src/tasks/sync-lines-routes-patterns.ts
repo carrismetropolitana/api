@@ -212,7 +212,6 @@ export const syncLinesRoutesPatterns = async () => {
 				//
 				// Add the current stop location to the list
 
-				if (stopParsedData.region_id) regionIdsList.add(stopParsedData.region_id);
 				if (stopParsedData.district_id) districtIdsList.add(stopParsedData.district_id);
 				if (stopParsedData.municipality_id) municipalityIdsList.add(stopParsedData.municipality_id);
 				if (stopParsedData.locality_id) localityIdsList.add(stopParsedData.locality_id);
