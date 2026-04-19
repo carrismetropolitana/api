@@ -86,10 +86,10 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20260126.1852.36",
-		"@tmlmobilidade/types": "20260126.1852.36",
-		"@types/node": "25.0.10",
+		"@tmlmobilidade/tsconfig": "20260418.1237.24",
+		"@tmlmobilidade/types": "20260418.1237.24",
+		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.9.3"
+		"typescript": "6.0.3"
 	}
 }

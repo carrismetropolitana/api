@@ -1,5 +1,6 @@
 {
 	"reject": [
+		"zod",
 		"@carrismetropolitana/eslint"
 	]
 }

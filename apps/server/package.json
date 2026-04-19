@@ -23,22 +23,22 @@
 		"@fastify/cors": "11.2.0",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/dates": "20260126.1852.36",
+		"@tmlmobilidade/dates": "20260418.1237.24",
 		"@tmlmobilidade/lib": "20251103.1255.55",
-		"fastify": "5.7.2",
+		"fastify": "5.8.5",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.7.2",
-		"protobufjs": "8.0.0"
+		"protobufjs": "8.0.1"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20260126.1852.36",
-		"@tmlmobilidade/types": "20260126.1852.36",
+		"@tmlmobilidade/tsconfig": "20260418.1237.24",
+		"@tmlmobilidade/types": "20260418.1237.24",
 		"@types/luxon": "3.7.1",
-		"@types/node": "25.0.10",
+		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.21.0",
-		"typescript": "5.9.3"
+		"typescript": "6.0.3"
 	}
 }
