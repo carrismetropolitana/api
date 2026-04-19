@@ -8,7 +8,7 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { Dates } from '@tmlmobilidade/dates';
 import { alerts, simplifiedApexValidations } from '@tmlmobilidade/interfaces';
-import { GtfsCause } from '@tmlmobilidade/types';
+import { AlertCause } from '@tmlmobilidade/types';
 
 /* * */
 
@@ -44,18 +44,18 @@ export const alertsSummary = async () => {
 	// Group alerts by cause
 
 	let externalCausesCount = 0;
-	const alertsByLineAndDate = new Map<string, GtfsCause>();
+	const alertsByLineAndDate = new Map<string, AlertCause>();
 	const dailyStats = new Map<string, { lines: Set<string>, passengers: number }>();
 	const causeCountMap = new Map<string, number>();
 
 	for await (const alert of alertsStream) {
-		const cause = alert.cause as GtfsCause;
+		const cause = alert.cause as AlertCause;
 
 		// Count by cause
 		causeCountMap.set(cause, (causeCountMap.get(cause) ?? 0) + 1);
 
 		// Check if external
-		if (cause !== 'MAINTENANCE' && cause !== 'STRIKE' && cause !== 'TECHNICAL_PROBLEM') {
+		if (cause !== 'DRIVER_ABSENCE' && cause !== 'STRIKE' && cause !== 'TECHNICAL_ISSUE') {
 			externalCausesCount++;
 		}
 

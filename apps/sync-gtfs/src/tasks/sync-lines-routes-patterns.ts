@@ -64,7 +64,7 @@ export const syncLinesRoutesPatterns = async () => {
 
 	// For Routes
 	const allRoutesRaw = await NETWORKDB.client.query<GtfsRoute>('SELECT * FROM routes');
-	const allRoutesRawMap = new Map(allRoutesRaw.rows.map(item => [item.route_id, item]));
+	const allRoutesRawMap = new Map<string, GtfsRoute>(allRoutesRaw.rows.map(item => [item.route_id, item]));
 
 	// For Calendar Dates
 	const allCalendarDatesRaw = await NETWORKDB.client.query<CalendarDate>(`SELECT * FROM calendar_dates`);
