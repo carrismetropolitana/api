@@ -25,7 +25,7 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/alerts/api/gtfs/carris-metropolitana');
+	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs');
 
 	if (alertsFeedResponse.error) {
 		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedResponse.error}`);
