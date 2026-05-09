@@ -8,7 +8,7 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 
 FASTIFY.GET('/gtfs', async (_, reply) => {
 	// Stream the file in the given URL to the client
-	const storageServiceResponse = await fetch('https://go.tmlmobilidade.pt/exporter/api/gtfs-merged/download');
+	const storageServiceResponse = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/plans/gtfs/cm');
 	if (!storageServiceResponse.ok || !storageServiceResponse.body) return reply.code(500).send('Could not fetch file.');
 	// Set headers and pipe the response body to the client
 	reply.header('Content-Disposition', `attachment; filename="CMET.zip"`);
