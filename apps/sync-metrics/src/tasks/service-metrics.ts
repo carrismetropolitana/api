@@ -7,11 +7,13 @@ import { type ServiceMetrics } from '@carrismetropolitana/api-types/metrics';
 import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { Dates } from '@tmlmobilidade/dates';
 import { rides } from '@tmlmobilidade/interfaces';
 import { type Ride } from '@tmlmobilidade/types';
-import { Dates } from '@tmlmobilidade/dates';
 
 /* * */
+
+const CM_AGENCY_IDS = ['41', '42', '43', '44'];
 
 export const serviceMetrics = async () => {
 	//
@@ -31,7 +33,10 @@ export const serviceMetrics = async () => {
 		.minus({ days: 15 });
 
 	const ridesCollection = await rides.getCollection();
-	const ridesStream = ridesCollection.find({ operational_date: { $gte: fifteenDaysAgoDate.operational_date, $lte: yesterdayDate.operational_date } }).stream();
+	const ridesStream = ridesCollection.find({
+		agency_id: { $in: CM_AGENCY_IDS },
+		operational_date: { $gte: fifteenDaysAgoDate.operational_date, $lte: yesterdayDate.operational_date },
+	}).stream();
 
 	//
 	// Group rides by operational_date and line_id
