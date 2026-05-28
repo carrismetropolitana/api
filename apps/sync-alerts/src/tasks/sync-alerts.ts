@@ -25,7 +25,7 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs');
+	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/hub/api/v1/alerts');
 
 	if (alertsFeedResponse.error) {
 		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedResponse.error}`);
@@ -51,7 +51,8 @@ export const syncAlerts = async () => {
 
 	const jsonTimer = new TIMETRACKER();
 
-	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
+	const alertsFeedItems = Array.isArray(alertsFeedData) ? alertsFeedData : alertsFeedData?.entity ?? [];
+	const allAlertsParsedV2: Alert[] = alertsFeedItems.map(item => parseAlertV2(item));
 
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(allAlertsParsedV2));
 

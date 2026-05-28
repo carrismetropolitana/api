@@ -31,10 +31,12 @@ interface LocalizedImage {
 /**
  * An Alert is the JSON equivalent of a GTFS-RT Service Alert message.
  * Please use a SimplifiedAlert as many convenience operations are already correctly applied.
+ * Coordinates are optional and may not be present in all alerts. They are provided as a [longitude, latitude] pair.
  */
 export interface Alert {
 	active_period: TimeRange[]
 	cause: Cause
+	coordinates?: [number, number]
 	description_text: TranslatedString
 	effect: Effect
 	header_text: TranslatedString

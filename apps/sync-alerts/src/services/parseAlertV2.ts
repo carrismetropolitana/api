@@ -5,8 +5,10 @@ import type { Alert } from '@carrismetropolitana/api-types/gtfs-core';
 /* * */
 
 export default function parseAlertV2(item): Alert {
-	//
-	const parsedInformedEntity = item.alert.informed_entity.map((entity) => {
+
+	const alertData = item.alert ?? item;
+	const alertId = item.id ?? item.alert_id;
+	const parsedInformedEntity = alertData.informed_entity.map((entity) => {
 		if (entity.route_id) {
 			return {
 				line_id: entity.route_id.substring(0, 4),
@@ -24,8 +26,9 @@ export default function parseAlertV2(item): Alert {
 	});
 
 	return {
-		...item.alert,
-		alert_id: item.id,
+		...alertData,
+		alert_id: alertId,
+		coordinates: alertData.coordinates,
 		informed_entity: parsedInformedEntity,
 	};
 
