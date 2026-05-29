@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /* * */
 
-import parseAlertV2 from '@/services/parseAlertV2.js';
+import { type BackofficeAlertSource } from '@/types/sources.js';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { type Alert } from '@carrismetropolitana/api-types/alerts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { ServiceAlertResponse } from '@tmlmobilidade/types';
@@ -25,14 +22,22 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs');
+	const alertsGtfsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs');
 
-	if (alertsFeedResponse.error) {
-		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedResponse.error}`);
+	if (alertsGtfsFeedResponse.error || !alertsGtfsFeedResponse.data) {
+		LOGGER.error(`Failed to fetch Alerts GTFS feed from the backoffice: ${alertsGtfsFeedResponse.error}`);
 		return;
 	}
 
-	const alertsFeedData: any = alertsFeedResponse.data;
+	const alertsJsonFeedResponse = await fetchData<BackofficeAlertSource[]>('https://go.tmlmobilidade.pt/hub/api/v1/alerts');
+
+	if (alertsJsonFeedResponse.error || !alertsJsonFeedResponse.data) {
+		LOGGER.error(`Failed to fetch Alerts JSON feed from the backoffice: ${alertsJsonFeedResponse.error}`);
+		return;
+	}
+
+	const alertsGtfsFeedData = alertsGtfsFeedResponse.data;
+	const alertsJsonFeedData = alertsJsonFeedResponse.data;
 
 	LOGGER.info(`Fetched Alerts feed from the backoffice (${backofficeTimer.get()})`);
 
@@ -42,7 +47,7 @@ export const syncAlerts = async () => {
 
 	const protobufTimer = new TIMETRACKER();
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF, JSON.stringify(alertsFeedData));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF, JSON.stringify(alertsGtfsFeedData));
 
 	LOGGER.info(`Saved Protobuf Alerts to ServerDB (${protobufTimer.get()})`);
 
@@ -51,7 +56,7 @@ export const syncAlerts = async () => {
 
 	const jsonTimer = new TIMETRACKER();
 
-	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
+	const allAlertsParsedV2 = alertsJsonFeedData;
 
 	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(allAlertsParsedV2));
 
@@ -71,7 +76,7 @@ export const syncAlerts = async () => {
 	let sentNotificationCounter = 0;
 
 	for (const alertItem of allAlertsParsedV2) {
-		if (!allSentNotificationsSet.has(alertItem['_id'])) {
+		if (!allSentNotificationsSet.has(alertItem.alert_id)) {
 			try {
 				for (const entity of alertItem['informed_entity']) {
 					// Setup notification message
@@ -94,7 +99,7 @@ export const syncAlerts = async () => {
 						topic: '',
 					};
 					// Include alert id
-					notificationMessage.data.alertId = alertItem['_id'];
+					notificationMessage.data.alertId = alertItem.alert_id;
 					// Include title
 					if (alertItem.header_text?.translation?.length > 0) {
 						notificationMessage.notification.title = alertItem.header_text?.translation[0]?.text ?? '';
@@ -112,6 +117,9 @@ export const syncAlerts = async () => {
 					if (entity.route_id) {
 						notificationMessage.topic = `cm.realtime.alerts.line.${entity.route_id}`;
 					}
+					else if (entity.line_id) {
+						notificationMessage.topic = `cm.realtime.alerts.line.${entity.line_id}`;
+					}
 					else if (entity.stop_id) {
 						notificationMessage.topic = `cm.realtime.alerts.stop.${entity.stop_id}`;
 					}
@@ -126,11 +134,11 @@ export const syncAlerts = async () => {
 					// await firebaseAdmin.messaging().send(notificationMessage);
 					sentNotificationCounter++;
 				}
-				allSentNotificationsSet.add(alertItem['_id']);
-				LOGGER.success(`Sent notification for alert: ${alertItem['_id']}`);
+				allSentNotificationsSet.add(alertItem.alert_id);
+				LOGGER.success(`Sent notification for alert: ${alertItem.alert_id}`);
 			}
 			catch (error) {
-				LOGGER.error(`Failed to send notification for alert: ${alertItem['_id']}`);
+				LOGGER.error(`Failed to send notification for alert: ${alertItem.alert_id}`);
 				LOGGER.error(error);
 				continue;
 			}
