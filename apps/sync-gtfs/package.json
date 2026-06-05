@@ -25,11 +25,11 @@
 		"adm-zip": "0.5.17",
 		"csv-parse": "6.2.1",
 		"csv-stringify": "6.7.0",
-		"extract-zip": "2.0.1",
 		"luxon": "3.7.2",
 		"papaparse": "5.5.3",
 		"pg": "8.20.0",
-		"pg-copy-streams": "7.0.0"
+		"pg-copy-streams": "7.0.0",
+		"unzipper": "0.12.3"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",

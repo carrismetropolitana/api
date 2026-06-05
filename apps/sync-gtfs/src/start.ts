@@ -6,8 +6,8 @@ import normalizeDirectoryPermissions from '@/modules/normalizeDirectoryPermissio
 import prepareAndImportFile from '@/modules/prepareAndImportFile.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import extract from 'extract-zip';
 import fs from 'node:fs';
+import unzipper from 'unzipper';
 
 /* * */
 
@@ -95,7 +95,11 @@ export default async () => {
 			// Extract GTFS plan into prepared directory
 			// and normalize directory permissions
 
-			await extract(RAW_FILE_PATH, { dir: RAW_DIR_PATH });
+			await fs
+				.createReadStream(RAW_FILE_PATH)
+				.pipe(unzipper.Extract({ path: RAW_DIR_PATH }))
+				.promise();
+
 			normalizeDirectoryPermissions(RAW_DIR_PATH);
 
 			LOGGER.success('Done extracting GTFS plan and normalizing directory permissions');
