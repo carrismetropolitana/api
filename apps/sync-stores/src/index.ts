@@ -7,7 +7,7 @@ import 'dotenv/config';
 
 /* * */
 
-const RUN_INTERVAL = 20000; // 20 seconds
+const RUN_INTERVAL = 60_000; // 1 minute
 
 /* * */
 
@@ -22,7 +22,7 @@ const RUN_INTERVAL = 20000; // 20 seconds
 		LOGGER.terminate(`Sync iteration #${counter}`);
 
 		if (counter % 100 === 0) {
-			// Run on every 100th iteration
+			// Run on every 100th iteration (~ 1 hour)
 			await syncMetadata();
 		}
 
