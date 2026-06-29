@@ -5,9 +5,9 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { Dates } from '@tmlmobilidade/dates';
 import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 import { ALLOWED_VALIDATION_STATUSES } from '@tmlmobilidade/types';
-import { Dates } from '@tmlmobilidade/dates';
 
 /* * */
 
@@ -24,6 +24,7 @@ export const videowallValidations = async () => {
 
 	const currentOperationalDate = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.operational_date;
 
 	const currentOperationalDateAsUnixTimestamp = Dates
@@ -35,6 +36,7 @@ export const videowallValidations = async () => {
 	const previousOperationalDate = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 7 })
+		.minus({ days: 7 })
 		.operational_date;
 
 	const previousOperationalDateAsUnixTimestamp = Dates
@@ -45,6 +47,7 @@ export const videowallValidations = async () => {
 
 	const previousUntilNowAsUnixTimestamp = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.minus({ days: 7 })
 		.unix_timestamp;
 
