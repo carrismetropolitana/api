@@ -35,7 +35,7 @@ export const videowallValidations = async () => {
 
 	const currentOperationalDateAsUnixTimestampEnd = Dates
 		.now('Europe/Lisbon')
-		// .minus({ days: 7 })
+		// .minus({ days: 7, minutes: 20 })
 		.unix_timestamp;
 
 	const previousOperationalDate = Dates
