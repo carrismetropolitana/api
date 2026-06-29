@@ -27,8 +27,20 @@ export const videowallValidations = async () => {
 		.minus({ days: 7 })
 		.operational_date;
 
+	const currentOperationalDateEnd = Dates
+		.now('Europe/Lisbon')
+		.minus({ days: 7 })
+		.operational_date;
+
 	const currentOperationalDateAsUnixTimestamp = Dates
 		.fromOperationalDate(currentOperationalDate, 'Europe/Lisbon')
+		.startOf('day')
+		.set({ hour: 4 })
+		.unix_timestamp;
+
+	const currentOperationalDateAsUnixTimestampEnd = Dates
+		.fromOperationalDate(currentOperationalDateEnd, 'Europe/Lisbon')
+		.plus({ days: 1 })
 		.startOf('day')
 		.set({ hour: 4 })
 		.unix_timestamp;
@@ -85,7 +97,7 @@ export const videowallValidations = async () => {
 		// For Area 1
 		responseResult._41_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._41_last_week_valid_count = await simplifiedApexValidations.count({
@@ -96,7 +108,7 @@ export const videowallValidations = async () => {
 		// For Area 2
 		responseResult._42_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._42_last_week_valid_count = await simplifiedApexValidations.count({
@@ -107,7 +119,7 @@ export const videowallValidations = async () => {
 		// For Area 3
 		responseResult._43_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._43_last_week_valid_count = await simplifiedApexValidations.count({
@@ -118,7 +130,7 @@ export const videowallValidations = async () => {
 		// For Area 4
 		responseResult._44_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._44_last_week_valid_count = await simplifiedApexValidations.count({
@@ -129,7 +141,7 @@ export const videowallValidations = async () => {
 		// For the whole CM
 		responseResult._cm_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp },
+			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
 			validation_status: { $in: ALLOWED_VALIDATION_STATUSES },
 		});
 		responseResult._cm_last_week_valid_count = await simplifiedApexValidations.count({
