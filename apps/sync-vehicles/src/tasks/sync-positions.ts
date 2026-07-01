@@ -15,6 +15,7 @@ function convertToProtobuf(allEvents: Vehicle[]) {
 	return {
 		entity: allEvents
 			.filter(event => Boolean(event.trip_id))
+			.filter(event => event.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger())
 			.map(event => ({
 				id: event.event_id,
 				vehicle: {
