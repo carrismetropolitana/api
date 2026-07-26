@@ -6,7 +6,7 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { Dates } from '@tmlmobilidade/dates';
-import { alerts } from '@tmlmobilidade/interfaces';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { Alert, AlertCause, AlertEffect } from '@tmlmobilidade/types';
 
 /* * */
@@ -26,7 +26,7 @@ export const alertMetrics = async () => {
 
 	const startOfYear = Dates.now('Europe/Lisbon').startOf('year');
 
-	const alertsCollection = await alerts.getCollection();
+	const alertsCollection = await goDb.operation.alerts.getCollection();
 	const filter = { active_period_start_date: { $gte: startOfYear.unix_timestamp, $lte: yesterdayDate.unix_timestamp } };
 	const totalAlerts = await alertsCollection.countDocuments(filter);
 	const alertsStream = alertsCollection.find(filter).stream();

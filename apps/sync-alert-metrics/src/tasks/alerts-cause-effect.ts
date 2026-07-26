@@ -7,7 +7,7 @@ import { type AlertsCauseEffect } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { Dates } from '@tmlmobilidade/dates';
-import { alerts } from '@tmlmobilidade/interfaces';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { AlertCause, AlertEffect } from '@tmlmobilidade/types';
 
 /* * */
@@ -29,7 +29,7 @@ export const alertsCauseEffect = async () => {
 		.now('Europe/Lisbon')
 		.minus({ days: 15 });
 
-	const alertsCollection = await alerts.getCollection();
+	const alertsCollection = await goDb.operation.alerts.getCollection();
 	const filter = { active_period_start_date: { $gte: fifteenDaysAgoDate.unix_timestamp, $lte: yesterdayDate.unix_timestamp } };
 	const alertsStream = alertsCollection.find(filter).stream();
 

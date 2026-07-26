@@ -21,15 +21,16 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/interfaces": "20260418.1237.24",
-		"@tmlmobilidade/lib": "20251103.1255.55",
-		"@tmlmobilidade/types": "20260418.1237.24",
-		"@tmlmobilidade/utils": "20260418.1237.24"
+		"@tmlmobilidade/dates": "latest",
+		"@tmlmobilidade/go-interfaces-godb": "latest",
+		"@tmlmobilidade/interfaces": "latest",
+		"@tmlmobilidade/types": "latest",
+		"@tmlmobilidade/utils": "latest"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "20260418.1237.24",
+		"@tmlmobilidade/tsconfig": "latest",
 		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.21.0",

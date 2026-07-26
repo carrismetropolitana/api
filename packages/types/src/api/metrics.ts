@@ -4,7 +4,7 @@ import { AlertCause, AlertEffect, DemandByLineByDay } from '@tmlmobilidade/types
 
 export interface ServiceMetrics {
 	agency_id: string
-	line_id: number
+	line_id: string
 	operational_date: string
 	pass_trip_count: number
 	pass_trip_percentage: number
