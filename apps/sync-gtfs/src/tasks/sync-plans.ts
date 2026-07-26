@@ -10,6 +10,13 @@ import TIMETRACKER from '@helperkits/timer';
 
 /* * */
 
+const AGENCY_ID_MAP = {
+	A2L1N: '44',
+	BNA17: '42',
+	LA77N: '41',
+	YA15B: '43',
+};
+
 export const syncPlans = async () => {
 	//
 
@@ -30,7 +37,7 @@ export const syncPlans = async () => {
 	for (const plan of allPlans.rows) {
 		//
 		const parsedPlan: Plan = {
-			agency_id: plan.agency_id,
+			agency_id: AGENCY_ID_MAP[plan.agency_id],
 			id: plan.plan_id,
 			valid_range: {
 				end: plan.plan_end_date,
