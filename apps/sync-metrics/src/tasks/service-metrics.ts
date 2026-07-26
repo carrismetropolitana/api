@@ -8,12 +8,12 @@ import { sortCollator } from '@carrismetropolitana/api-utils';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { Dates } from '@tmlmobilidade/dates';
-import { rides } from '@tmlmobilidade/interfaces';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type Ride } from '@tmlmobilidade/types';
 
 /* * */
 
-const CM_AGENCY_IDS = ['41', '42', '43', '44'];
+const CM_AGENCY_IDS = ['LA77N', 'BNA17', 'YA15B', 'A2L1N'];
 
 export const serviceMetrics = async () => {
 	//
@@ -32,7 +32,7 @@ export const serviceMetrics = async () => {
 		.now('Europe/Lisbon')
 		.minus({ days: 15 });
 
-	const ridesCollection = await rides.getCollection();
+	const ridesCollection = await goDb.operation.rides.getCollection();
 	const ridesStream = ridesCollection.find({
 		agency_id: { $in: CM_AGENCY_IDS },
 		operational_date: { $gte: fifteenDaysAgoDate.operational_date, $lte: yesterdayDate.operational_date },

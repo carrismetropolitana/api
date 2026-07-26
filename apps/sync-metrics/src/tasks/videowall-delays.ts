@@ -6,7 +6,7 @@ import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { Dates } from '@tmlmobilidade/dates';
-import { rides } from '@tmlmobilidade/interfaces';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type Ride } from '@tmlmobilidade/types';
 import { DateTime } from 'luxon';
 
@@ -62,7 +62,7 @@ export const videowallDelays = async () => {
 	// Get all rides for today. Only consider rides that have already started
 	// (start_time_observed !== null) and that have already been processed.
 
-	const ridesCollection = await rides.getCollection();
+	const ridesCollection = await goDb.operation.rides.getCollection();
 	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: 'complete' }).stream();
 
 	//

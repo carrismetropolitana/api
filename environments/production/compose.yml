@@ -10,6 +10,8 @@ secrets:
     file: ./secrets/PCGIDB.key
   firebasekey:
     file: ./secrets/FIREBASE.json
+  gotunnelkey:
+    file: ./secrets/GO_TUNNEL_SSH_KEY.key
 
 services:
   #
@@ -229,6 +231,7 @@ services:
       - ./secrets/.env
     secrets:
       - pcgidbkey
+      - gotunnelkey
 
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
