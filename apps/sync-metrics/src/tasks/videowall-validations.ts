@@ -6,8 +6,11 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { Dates } from '@tmlmobilidade/dates';
-import { ValidApexValidationStatusValues } from '@tmlmobilidade/go-types-apex';
 import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
+
+/* * */
+
+const VALID_APEX_VALIDATION_STATUSES = [0, 4, 5, 6];
 
 /* * */
 
@@ -91,56 +94,56 @@ export const videowallValidations = async () => {
 		responseResult._41_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
 			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		responseResult._41_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '41',
 			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		// For Area 2
 		responseResult._42_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
 			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		responseResult._42_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '42',
 			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		// For Area 3
 		responseResult._43_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
 			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		responseResult._43_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '43',
 			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		// For Area 4
 		responseResult._44_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
 			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		responseResult._44_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: '44',
 			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		// For the whole CM
 		responseResult._cm_today_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
 			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 		responseResult._cm_last_week_valid_count = await simplifiedApexValidations.count({
 			agency_id: { $in: ['41', '42', '43', '44'] },
 			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: ValidApexValidationStatusValues },
+			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
 		});
 	}
 	catch (err) {
