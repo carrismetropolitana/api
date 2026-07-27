@@ -2,9 +2,6 @@
 
 name: api
 
-volumes:
-  serverdb:
-
 secrets:
   pcgidbkey:
     file: ./secrets/PCGIDB.key
@@ -84,7 +81,7 @@ services:
         max-size: '1m'
         max-file: '1'
     volumes:
-      - serverdb:/data
+      - ./data/serverdb:/data
     environment:
       - REDIS_ARGS=--save 5 1
 

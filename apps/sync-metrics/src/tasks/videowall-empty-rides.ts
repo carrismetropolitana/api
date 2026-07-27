@@ -88,16 +88,16 @@ export const videowallEmptyRides = async () => {
 		if (rideData.apex_validations_qty > 0) {
 			//
 			responseResult._cm_empty_rides_count++;
-			if (rideData.agency_id === '41') responseResult._41_empty_rides_count++;
-			if (rideData.agency_id === '42') responseResult._42_empty_rides_count++;
-			if (rideData.agency_id === '43') responseResult._43_empty_rides_count++;
-			if (rideData.agency_id === '44') responseResult._44_empty_rides_count++;
+			if (rideData.agency_id === 'LA77N') responseResult._41_empty_rides_count++;
+			if (rideData.agency_id === 'BNA17') responseResult._42_empty_rides_count++;
+			if (rideData.agency_id === 'YA15B') responseResult._43_empty_rides_count++;
+			if (rideData.agency_id === 'A2L1N') responseResult._44_empty_rides_count++;
 			//
 			responseResult._cm_empty_rides_vkm += rideData.extension_scheduled;
-			if (rideData.agency_id === '41') responseResult._41_empty_rides_vkm += rideData.extension_scheduled;
-			if (rideData.agency_id === '42') responseResult._42_empty_rides_vkm += rideData.extension_scheduled;
-			if (rideData.agency_id === '43') responseResult._43_empty_rides_vkm += rideData.extension_scheduled;
-			if (rideData.agency_id === '44') responseResult._44_empty_rides_vkm += rideData.extension_scheduled;
+			if (rideData.agency_id === 'LA77N') responseResult._41_empty_rides_vkm += rideData.extension_scheduled;
+			if (rideData.agency_id === 'BNA17') responseResult._42_empty_rides_vkm += rideData.extension_scheduled;
+			if (rideData.agency_id === 'YA15B') responseResult._43_empty_rides_vkm += rideData.extension_scheduled;
+			if (rideData.agency_id === 'A2L1N') responseResult._44_empty_rides_vkm += rideData.extension_scheduled;
 		}
 
 		//

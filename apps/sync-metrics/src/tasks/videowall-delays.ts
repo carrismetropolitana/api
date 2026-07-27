@@ -86,28 +86,28 @@ export const videowallDelays = async () => {
 
 		if (rideData.analysis.EXPECTED_START_TIME.reason === 'LATE_START') {
 			responseResult._cm_delayed_for_more_than_five_minutes_count++;
-			if (rideData.agency_id === '41') responseResult._41_delayed_for_more_than_five_minutes_count++;
-			if (rideData.agency_id === '42') responseResult._42_delayed_for_more_than_five_minutes_count++;
-			if (rideData.agency_id === '43') responseResult._43_delayed_for_more_than_five_minutes_count++;
-			if (rideData.agency_id === '44') responseResult._44_delayed_for_more_than_five_minutes_count++;
+			if (rideData.agency_id === 'LA77N') responseResult._41_delayed_for_more_than_five_minutes_count++;
+			if (rideData.agency_id === 'BNA17') responseResult._42_delayed_for_more_than_five_minutes_count++;
+			if (rideData.agency_id === 'YA15B') responseResult._43_delayed_for_more_than_five_minutes_count++;
+			if (rideData.agency_id === 'A2L1N') responseResult._44_delayed_for_more_than_five_minutes_count++;
 		}
 
 		if (rideData.analysis.EXPECTED_START_TIME.value >= 0) {
 			responseResult._cm_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 			responseResult._cm_total_until_now_count++;
-			if (rideData.agency_id === '41') {
+			if (rideData.agency_id === 'LA77N') {
 				responseResult._41_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._41_total_until_now_count++;
 			}
-			if (rideData.agency_id === '42') {
+			if (rideData.agency_id === 'BNA17') {
 				responseResult._42_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._42_total_until_now_count++;
 			}
-			if (rideData.agency_id === '43') {
+			if (rideData.agency_id === 'YA15B') {
 				responseResult._43_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._43_total_until_now_count++;
 			}
-			if (rideData.agency_id === '44') {
+			if (rideData.agency_id === 'A2L1N') {
 				responseResult._44_average_delay_minutes += rideData.analysis.EXPECTED_START_TIME.value;
 				responseResult._44_total_until_now_count++;
 			}

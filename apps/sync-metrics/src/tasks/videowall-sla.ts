@@ -88,13 +88,13 @@ export const videowallSla = async () => {
 		//
 		// Skip non-CM rides
 
-		if (!rideData.agency_id || !['41', '42', '43', '44'].includes(rideData.agency_id)) continue;
+		if (!rideData.agency_id || !['A2L1N', 'BNA17', 'LA77N', 'YA15B'].includes(rideData.agency_id)) continue;
 
 		responseResult._cm_scheduled_rides_total++;
-		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_total++;
-		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_total++;
-		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_total++;
-		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_total++;
+		if (rideData.agency_id === 'LA77N') responseResult._41_scheduled_rides_total++;
+		if (rideData.agency_id === 'BNA17') responseResult._42_scheduled_rides_total++;
+		if (rideData.agency_id === 'YA15B') responseResult._43_scheduled_rides_total++;
+		if (rideData.agency_id === 'A2L1N') responseResult._44_scheduled_rides_total++;
 
 		//
 		// Skip rides that are not yet processed
@@ -111,31 +111,31 @@ export const videowallSla = async () => {
 		// do not have any data about it, we should count it as FAIL.
 
 		responseResult._cm_scheduled_rides_until_now++;
-		if (rideData.agency_id === '41') responseResult._41_scheduled_rides_until_now++;
-		if (rideData.agency_id === '42') responseResult._42_scheduled_rides_until_now++;
-		if (rideData.agency_id === '43') responseResult._43_scheduled_rides_until_now++;
-		if (rideData.agency_id === '44') responseResult._44_scheduled_rides_until_now++;
+		if (rideData.agency_id === 'LA77N') responseResult._41_scheduled_rides_until_now++;
+		if (rideData.agency_id === 'BNA17') responseResult._42_scheduled_rides_until_now++;
+		if (rideData.agency_id === 'YA15B') responseResult._43_scheduled_rides_until_now++;
+		if (rideData.agency_id === 'A2L1N') responseResult._44_scheduled_rides_until_now++;
 
 		if (!rideData.seen_first_at) {
 			responseResult._cm_simple_three_events_fail_until_now++;
 			responseResult._cm_simple_one_validation_transaction_fail_until_now++;
 			responseResult._cm_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '41') {
+			if (rideData.agency_id === 'LA77N') {
 				responseResult._41_simple_three_events_fail_until_now++;
 				responseResult._41_simple_one_validation_transaction_fail_until_now++;
 				responseResult._41_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
 			}
-			if (rideData.agency_id === '42') {
+			if (rideData.agency_id === 'BNA17') {
 				responseResult._42_simple_three_events_fail_until_now++;
 				responseResult._42_simple_one_validation_transaction_fail_until_now++;
 				responseResult._42_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
 			}
-			if (rideData.agency_id === '43') {
+			if (rideData.agency_id === 'YA15B') {
 				responseResult._43_simple_three_events_fail_until_now++;
 				responseResult._43_simple_one_validation_transaction_fail_until_now++;
 				responseResult._43_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
 			}
-			if (rideData.agency_id === '44') {
+			if (rideData.agency_id === 'A2L1N') {
 				responseResult._44_simple_three_events_fail_until_now++;
 				responseResult._44_simple_one_validation_transaction_fail_until_now++;
 				responseResult._44_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
@@ -157,26 +157,26 @@ export const videowallSla = async () => {
 
 		if (simpleThreeVehicleEvents.grade !== 'pass') {
 			responseResult._cm_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_simple_three_events_fail_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === 'LA77N') responseResult._41_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === 'BNA17') responseResult._42_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === 'YA15B') responseResult._43_simple_three_events_fail_until_now++;
+			if (rideData.agency_id === 'A2L1N') responseResult._44_simple_three_events_fail_until_now++;
 		}
 
 		if (simpleOneValidationTransaction.grade !== 'pass') {
 			responseResult._cm_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'LA77N') responseResult._41_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'BNA17') responseResult._42_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'YA15B') responseResult._43_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'A2L1N') responseResult._44_simple_one_validation_transaction_fail_until_now++;
 		}
 
 		if (simpleThreeVehicleEvents.grade !== 'pass' && simpleOneValidationTransaction.grade !== 'pass') {
 			responseResult._cm_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '41') responseResult._41_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '42') responseResult._42_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '43') responseResult._43_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
-			if (rideData.agency_id === '44') responseResult._44_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'LA77N') responseResult._41_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'BNA17') responseResult._42_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'YA15B') responseResult._43_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
+			if (rideData.agency_id === 'A2L1N') responseResult._44_simple_three_events_or_simple_one_validation_transaction_fail_until_now++;
 		}
 
 		//
