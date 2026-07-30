@@ -10,7 +10,7 @@ The API provides detailed information about lines, routes, stops, schedules and 
 
 If you have any questions or suggestions for improving the API, please don't hesitate to get in touch. We hope you find this API to be a useful resource for your development needs.
 
----
+----
 
 ### Base URL: `https://api.carrismetropolitana.pt/v2/[endpoint]`
 
@@ -34,7 +34,7 @@ Returns the service alerts in JSON and Protobuf format, following the GTFS-RT Se
 
 #### `GET /vehicles`
 
-Returns information for ALL vehicles for Carris Metropolitana. This endpoint returns metadata (such as model, capacity, license_plate, contactless support, door status) for most vehicles and will also return a timestamp for the last known position is in milliseconds, with seconds precision, adjusted for Lisbon time (GMT+01 WEST). 
+Returns information for ALL vehicles for Carris Metropolitana. This endpoint returns metadata (such as model, capacity, license_plate, contactless support, door status) for most vehicles and will also return a timestamp for the last known position is in milliseconds, with seconds precision, adjusted for Lisbon time (GMT+01 WEST).
 Each vehicle also has speed, position and heading, as well as the current trip, pattern, stop and shift.
 
 <details>
@@ -335,8 +335,8 @@ Returns a single shape in GTFS and Geojson format. Extension is in meters.
 
 Returns the estimates OR an error/custom message depending on the stop IDs provided. You should provide a list of stop IDs as an array under request.body, as such:
 ```
-{ 
-    "stops": [ "121270", ... ] 
+{
+    "stops": [ "121270", ... ]
 }
 ```
 Sending "000000" as a stop ID will result in a testing/placeholder response being sent.
@@ -893,7 +893,7 @@ NOTE: Currently, the /facilities/helpdesks endpoint returns an empty array.
 
 **Example Response:**
 
-``` 
+```
 {
     "available_facilities": [
         "stores",
