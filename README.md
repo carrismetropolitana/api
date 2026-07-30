@@ -10,7 +10,7 @@ The API provides detailed information about lines, routes, stops, schedules and 
 
 If you have any questions or suggestions for improving the API, please don't hesitate to get in touch. We hope you find this API to be a useful resource for your development needs.
 
-----
+---
 
 ### Base URL: `https://api.carrismetropolitana.pt/v2/[endpoint]`
 
