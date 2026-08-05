@@ -360,7 +360,8 @@ Sending "000000" as a stop ID will result in a testing/placeholder response bein
         "operatorId": "", // Deprecated
         "patternId": "1607_0_2",
         "stopHeadsign": "Oeiras Parque",
-        "stopId": "", // Deprecated
+        "stopId": "121270",
+        "stopSequence": 30,
         "timetabledArrivalTime": "18:39:00",
         "timetabledDepartureTime": "18:39:00"
     },
@@ -1137,5 +1138,6 @@ Returns a list of PIPs (Passenger Information Screens) in the Lisbon metropolita
 # Contributing
 
 If you'd like to contribute new features or help fix any errors, please fork this repository and submit a pull request. We welcome contributions of all kinds, including bug fixes, documentation improvements, and new features.
+
 
 

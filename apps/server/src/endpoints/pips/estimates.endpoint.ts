@@ -76,7 +76,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
 					stopHeadsign: 'Olá :)',
-					stopId: '', // Deprecated
+					stopId: '000000',
+					stopSequence: -1,
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
 				},
@@ -94,7 +95,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
 					stopHeadsign: 'Olá :)',
-					stopId: '', // Deprecated
+					stopId: '000000',
+					stopSequence: -1,
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
 				},
@@ -125,7 +127,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
 					stopHeadsign: 'Sem estimativas. Consulte site para +info.',
-					stopId: '', // Deprecated
+					stopId: '000001',
+					stopSequence: -1,
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
 				},
@@ -156,7 +159,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
 					stopHeadsign: 'Paragem desativada.',
-					stopId: '', // Deprecated
+					stopId: '000002', // Ensures that stopId is always an integer | id #999999 is taken by an actual stop so this was the next logical id
+					stopSequence: -1,
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
 				},
@@ -174,7 +178,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: '0000_0_0',
 					stopHeadsign: 'Painel inativo.',
-					stopId: '', // Deprecated
+					stopId: '000002', // Ensures that stopId is always an integer | id #999999 is taken by an actual stop so this was the next logical id
+					stopSequence: -1,
 					timetabledArrivalTime: '23:59:59',
 					timetabledDepartureTime: '23:59:59',
 				},
@@ -283,7 +288,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: estimate.patternId,
 					stopHeadsign: estimate.tripHeadsign,
-					stopId: '', // Deprecated
+					stopId: estimate.stopId,
+					stopSequence: estimate.stopSequence,
 					timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 					timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				};
@@ -304,7 +310,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: estimate.patternId,
 					stopHeadsign: estimate.tripHeadsign,
-					stopId: '', // Deprecated
+					stopId: estimate.stopId,
+					stopSequence: estimate.stopSequence,
 					timetabledArrivalTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 					timetabledDepartureTime: estimate.stopArrivalEta || estimate.stopDepartureEta,
 				};
@@ -325,7 +332,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 					operatorId: '', // Deprecated
 					patternId: estimate.patternId,
 					stopHeadsign: estimate.tripHeadsign,
-					stopId: '', // Deprecated
+					stopId: estimate.stopId,
+					stopSequence: estimate.stopSequence,
 					timetabledArrivalTime: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartuteTime,
 					timetabledDepartureTime: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartuteTime,
 				};
@@ -355,7 +363,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				operatorId: '', // Deprecated
 				patternId: '0000_0_0',
 				stopHeadsign: 'Sem estimativas em tempo real.',
-				stopId: '', // Deprecated
+				stopId: '',
+				stopSequence: -1,
 				timetabledArrivalTime: '23:59:59',
 				timetabledDepartureTime: '23:59:59',
 			},
@@ -373,7 +382,8 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 				operatorId: '', // Deprecated
 				patternId: '0000_0_1',
 				stopHeadsign: 'Consulte o site para +info.',
-				stopId: '', // Deprecated
+				stopId: '',
+				stopSequence: -1,
 				timetabledArrivalTime: '23:59:59',
 				timetabledDepartureTime: '23:59:59',
 			},
