@@ -6,6 +6,10 @@ import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type Pattern, type Plan } from '@carrismetropolitana/api-types/network';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
+import { Dates } from '@tmlmobilidade/dates';
+import { HubPattern, HubStop } from '@tmlmobilidade/go-types-public-info';
+import { UnixTimestamp } from '@tmlmobilidade/types';
+import { fetchData } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -16,49 +20,119 @@ interface RequestSchema {
 	}
 }
 
+interface Arrival {
+	estimated_arrival: null | string
+	estimated_arrival_unix: null | number
+	headsign: string
+	line_id: string
+	observed_arrival: null | string
+	observed_arrival_unix: null | number
+	pattern_id: string
+	related_trip_ids?: string[]
+	route_id: string
+	scheduled_arrival: string
+	scheduled_arrival_unix: number
+	stop_sequence: number
+	trip_id: string
+	vehicle_id: null | string
+};
+
+interface HubEtaData {
+	eta_at: null | UnixTimestamp
+	eta_seconds: null | number
+	position_created_at: null | string
+	stop_id: string
+	trip_id: string
+	vehicle_id: null | string
+}
+
 /* * */
 
 const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
 
 /* * */
 
-FASTIFY.server.get<RequestSchema>('/arrivals/by_stop/:id', async (request, reply) => {
+const GO_BASE_URL = 'https://go.tmlmobilidade.pt/hub/api/v1';
+const STOPS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
+const STOPS_CACHE = { data: [], timestamp: 0 } as { data: HubStop[], timestamp: UnixTimestamp };
+
+FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (request, reply) => {
 	//
 
 	if (!regexPatternForStopId.test(request.params.id)) {
 		return reply.status(400).send([]);
 	}
 
-	const currentPlanIds = await getCurrentPlanIds();
-
-	const response = await PCGIAPI.request(`opcoreconsole/rt/stop-etas/${request.params.id}`);
-
-	if (!response || !Array.isArray(response)) {
-		return reply.status(200).send([]);
+	// 1. Get All stops
+	// 1.1 Cache is outdated, fetch new data
+	if (STOPS_CACHE.timestamp < Dates.now('utc').unix_timestamp - STOPS_CACHE_TTL) {
+		const response = await fetchData<HubStop[]>(GO_BASE_URL + '/network/stops');
+		if (response.error || !Array.isArray(response.data)) {
+			return reply.status(200).send([]);
+		}
+		STOPS_CACHE.data = response.data;
+		STOPS_CACHE.timestamp = Dates.now('utc').unix_timestamp;
 	}
 
-	const result = response?.map((estimate) => {
-		const compensatedEstimatedArrival = DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopArrivalEta) || DATES.compensate24HourRegularStringInto24HourPlusOperationTimeString(estimate.stopDepartureEta);
-		return {
-			estimated_arrival: compensatedEstimatedArrival,
-			estimated_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(compensatedEstimatedArrival),
-			headsign: estimate.tripHeadsign,
-			line_id: estimate.lineId,
-			observed_arrival: estimate.stopObservedArrivalTime || estimate.stopObservedDepartureTime,
-			observed_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopObservedDepartureTime),
-			pattern_id: estimate.patternId,
-			route_id: estimate.routeId,
-			scheduled_arrival: estimate.stopScheduledArrivalTime || estimate.stopScheduledDepartureTime,
-			scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledArrivalTime) || DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(estimate.stopScheduledDepartureTime),
-			stop_sequence: estimate.stopSequence,
-			trip_id: `[${currentPlanIds[estimate.agencyId]}]${estimate.tripId}`,
-			vehicle_id: estimate.observedVehicleId,
-		};
-	});
+	// 1.2 Get data from cache
+	const stops = STOPS_CACHE.data;
+
+	// 2. Get stop by id
+	const stop = stops.find(stop => stop._id === Number(request.params.id));
+	if (!stop) {
+		return reply.status(404).send([]);
+	}
+
+	// 3. Get All pattern data for this stop
+	const patternRequestPromises = stop.pattern_ids.map(patternId => fetchData<HubPattern[]>(GO_BASE_URL + `/network/patterns/${patternId}`));
+	const patternResponses = await Promise.all(patternRequestPromises);
+	const patternData = patternResponses.flatMap(response => response.data);
+
+	// 4. Fetch Eta data for this stop
+	const etaData = await fetchData<HubEtaData[]>(GO_BASE_URL + `/realtime/eta/by-stop/${stop._id}`);
+
+	const arrivals: Arrival[] = [];
+
+	// Loop through each valid pattern, and each trip of the pattern
+	for (const pattern of patternData) {
+		for (const tripData of pattern.trips) {
+			// Skip if this trip is not valid for the selected operational date
+			if (!tripData.valid_on.includes(Dates.now('Europe/Lisbon').operational_date)) continue;
+			// Loop through each stop time of the trip
+			for (const stopTime of tripData.schedule) {
+				// Skip if this stop time is not for the selected stop
+				if (String(stopTime.stop_id) !== String(stop._id)) continue;
+
+				// ETA
+				const eta = etaData?.data?.find(eta => eta.trip_id.substring(eta.trip_id.indexOf(']') + 1) === tripData.trip_ids.find(tripId => tripId.substring(tripId.indexOf(']') + 1) === eta.trip_id.substring(eta.trip_id.indexOf(']') + 1))?.substring(eta.trip_id.indexOf(']') + 1));
+				const etaUnixTimestamp = eta?.eta_at ? eta.eta_at / 1000 : null;
+
+				arrivals.push({
+					estimated_arrival: etaUnixTimestamp ? Dates.fromUnixTimestamp(etaUnixTimestamp).toFormat('HH:mm:ss') : null,
+					estimated_arrival_unix: etaUnixTimestamp,
+					headsign: pattern.headsign,
+					line_id: pattern.line_id,
+					observed_arrival: null,
+					observed_arrival_unix: null,
+					pattern_id: pattern._id,
+					related_trip_ids: null,
+					route_id: pattern.route_id,
+					scheduled_arrival: stopTime.arrival_time,
+					scheduled_arrival_unix: DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(stopTime.arrival_time),
+					stop_sequence: stopTime.stop_sequence,
+					trip_id: eta?.trip_id ?? null,
+					vehicle_id: eta?.vehicle_id ?? null,
+				});
+			}
+		}
+	}
+
+	arrivals.sort((a, b) => a.scheduled_arrival_unix - b.scheduled_arrival_unix);
+
 	return reply
 		.code(200)
 		.header('cache-control', 'public, max-age=20')
-		.send(result || []);
+		.send(arrivals || []);
 });
 
 /* * */

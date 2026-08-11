@@ -24,6 +24,8 @@
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
 		"@tmlmobilidade/dates": "latest",
+		"@tmlmobilidade/go-types-public-info": "^20260807.1153.57",
+		"@tmlmobilidade/utils": "^20260807.1153.57",
 		"fastify": "5.8.5",
 		"jwt-decode": "4.0.0",
 		"luxon": "3.7.2",
