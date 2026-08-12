@@ -10,7 +10,10 @@ import { Dates } from '@tmlmobilidade/dates';
 import { HubPattern, HubStop } from '@tmlmobilidade/go-types-public-info';
 import { UnixTimestamp } from '@tmlmobilidade/types';
 import { fetchData } from '@tmlmobilidade/utils';
+import fs from 'fs';
 import { DateTime } from 'luxon';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 /* * */
 
@@ -56,6 +59,12 @@ const GO_BASE_URL = 'https://go.tmlmobilidade.pt/hub/api/v1';
 const STOPS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
 const STOPS_CACHE = { data: [], timestamp: 0 } as { data: HubStop[], timestamp: UnixTimestamp };
 
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
+
+const STOPS_ID_MAP_FILE = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../assets/cm_stop_id_match.json'), 'utf8'));
+const STOPS_ID_MAP = new Map<string, number>(STOPS_ID_MAP_FILE.map(item => [item.stop_id, item._id]));
+
 FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (request, reply) => {
 	//
 
@@ -77,8 +86,8 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 	// 1.2 Get data from cache
 	const stops = STOPS_CACHE.data;
 
-	// 2. Get stop by id
-	const stop = stops.find(stop => stop._id === Number(request.params.id));
+	// 2. Get stop
+	const stop = stops.find(stop => stop._id === STOPS_ID_MAP.get(request.params.id));
 	if (!stop) {
 		return reply.status(404).send([]);
 	}
