@@ -6,7 +6,7 @@ import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type Pattern, type Plan } from '@carrismetropolitana/api-types/network';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
-import { Dates } from '@tmlmobilidade/dates';
+import { Dates, FORMATS } from '@tmlmobilidade/dates';
 import { HubPattern, HubStop } from '@tmlmobilidade/go-types-public-info';
 import { UnixTimestamp } from '@tmlmobilidade/types';
 import { fetchData } from '@tmlmobilidade/utils';
@@ -117,7 +117,7 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 				const etaUnixTimestamp = eta?.eta_at ? eta.eta_at / 1000 : null;
 
 				arrivals.push({
-					estimated_arrival: etaUnixTimestamp ? Dates.fromUnixTimestamp(etaUnixTimestamp).toFormat('HH:mm:ss') : null,
+					estimated_arrival: etaUnixTimestamp ? Dates.fromUnixTimestamp(etaUnixTimestamp * 1000).setZone('Europe/Lisbon', 'offset_only').toLocaleString(FORMATS.TIME_WITH_SECONDS, 'pt') : null,
 					estimated_arrival_unix: etaUnixTimestamp,
 					headsign: pattern.headsign,
 					line_id: pattern.line_id,
