@@ -261,13 +261,13 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 							estimatedTimeString: estimatedTimeInMinutes < 1 ? 'A chegar' : `• ${estimatedTimeInMinutes} min`,
 							estimatedTimeUnixSeconds: etaUnixSeconds,
 							journeyId: eta?.trip_id ?? null,
-							lineId: pattern.line_id,
+							lineId: pattern.line_id.split(']')[1],
 							observedArrivalTime: null,
 							observedDepartureTime: null,
 							observedDriverId: '', // Deprecated
 							observedVehicleId: eta?.vehicle_id ?? null,
 							operatorId: '', // Deprecated
-							patternId: pattern._id,
+							patternId: pattern._id.split(']')[1],
 							stopHeadsign: pattern.headsign,
 							stopId: '', // Deprecated
 							timetabledArrivalTime: stopTime.arrival_time,
@@ -287,13 +287,13 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 							estimatedTimeString: scheduledTimeInHumanDate,
 							estimatedTimeUnixSeconds: scheduledTimeInUnixSeconds,
 							journeyId: null,
-							lineId: pattern.line_id,
+							lineId: pattern.line_id.split(']')[1],
 							observedArrivalTime: null,
 							observedDepartureTime: null,
 							observedDriverId: '', // Deprecated
 							observedVehicleId: null,
 							operatorId: '', // Deprecated
-							patternId: pattern._id,
+							patternId: pattern._id.split(']')[1],
 							stopHeadsign: pattern.headsign,
 							stopId: '', // Deprecated
 							timetabledArrivalTime: stopTime.arrival_time,
