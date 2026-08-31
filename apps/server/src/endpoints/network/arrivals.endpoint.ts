@@ -2,18 +2,15 @@
 
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
+import { GO_BASE_URL, getStops, HubEtaData, STOPS_ID_MAP } from '@/services/GO.js';
 import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type Pattern, type Plan } from '@carrismetropolitana/api-types/network';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
 import { Dates, FORMATS } from '@tmlmobilidade/dates';
-import { HubPattern, HubStop } from '@tmlmobilidade/go-types-public-info';
-import { UnixTimestamp } from '@tmlmobilidade/types';
+import { HubPattern } from '@tmlmobilidade/go-types-public-info';
 import { fetchData } from '@tmlmobilidade/utils';
-import fs from 'fs';
 import { DateTime } from 'luxon';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 /* * */
 
@@ -40,30 +37,7 @@ interface Arrival {
 	vehicle_id: null | string
 };
 
-interface HubEtaData {
-	eta_at: null | UnixTimestamp
-	eta_seconds: null | number
-	position_created_at: null | string
-	stop_id: string
-	trip_id: string
-	vehicle_id: null | string
-}
-
-/* * */
-
 const regexPatternForStopId = /^\d{6}$/; // String with exactly 6 numeric digits
-
-/* * */
-
-const GO_BASE_URL = 'https://go.tmlmobilidade.pt/hub/api/v1';
-const STOPS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
-const STOPS_CACHE = { data: [], timestamp: 0 } as { data: HubStop[], timestamp: UnixTimestamp };
-
-const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-const __dirname = path.dirname(__filename); // get the name of the directory
-
-const STOPS_ID_MAP_FILE = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../assets/cm_stop_id_match.json'), 'utf8'));
-const STOPS_ID_MAP = new Map<string, number>(STOPS_ID_MAP_FILE.map(item => [item.stop_id, item._id]));
 
 FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (request, reply) => {
 	//
@@ -72,19 +46,10 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 		return reply.status(400).send([]);
 	}
 
-	// 1. Get All stops
-	// 1.1 Cache is outdated, fetch new data
-	if (STOPS_CACHE.timestamp < Dates.now('utc').unix_timestamp - STOPS_CACHE_TTL) {
-		const response = await fetchData<HubStop[]>(GO_BASE_URL + '/network/stops');
-		if (response.error || !Array.isArray(response.data)) {
-			return reply.status(200).send([]);
-		}
-		STOPS_CACHE.data = response.data;
-		STOPS_CACHE.timestamp = Dates.now('utc').unix_timestamp;
+	const stops = await getStops();
+	if (!stops) {
+		return reply.status(200).send([]);
 	}
-
-	// 1.2 Get data from cache
-	const stops = STOPS_CACHE.data;
 
 	// 2. Get stop
 	const stop = stops.find(stop => stop._id === STOPS_ID_MAP.get(request.params.id));
