@@ -2,42 +2,19 @@
 
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
-import { GO_BASE_URL, getStops, HubEtaData, STOPS_ID_MAP } from '@/services/GO.js';
-import { Dates, FORMATS } from '@tmlmobilidade/dates';
-import { HubPattern } from '@tmlmobilidade/go-types-public-info';
+import { findStopByFlagStopId, getStops, GO_BASE_URL, HubEtaData } from '@/services/GO.js';
+import { HubV1ApiPattern } from '@tmlmobilidade/go-types-hub';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { fetchData } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
-/* * */
-
-interface RequestSchema {
-	Body: {
-		stops: string[]
-	}
-}
-
-interface PipArrival {
-	estimatedArrivalTime: string
-	estimatedDepartureTime: string
-	estimatedTimeString: string
-	estimatedTimeUnixSeconds: number
-	journeyId: string
-	lineId: string
-	observedArrivalTime: string
-	observedDepartureTime: string
-	observedDriverId: string
-	observedVehicleId: string
-	operatorId: string
-	patternId: string
-	stopHeadsign: string
-	stopId: string
-	timetabledArrivalTime: string
-	timetabledDepartureTime: string
-}
+import { buildEstimatedArrival, buildScheduledArrival, findMatchingEta } from './build-arrivals.js';
+import { getSpecialCaseResponse } from './special-cases.js';
+import { createPipArrivalResponseItem, PipArrivalRequestSchema, PipArrivalResponseItem } from './types.js';
 
 /* * */
 
-FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => {
+FASTIFY.server.post<PipArrivalRequestSchema>('/pips/estimates', async (request, reply) => {
 	//
 
 	//
@@ -49,140 +26,18 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 	}
 
 	//
-	// Loop through each stop in the request to check for special cases
+	// Check for special-case stop IDs used in PIP testing
 
-	for (const stopId of request.body.stops) {
-		//
-
-		//
-		// Handle the special case for testing PIP connectivity
-		// If the stop ID is '000000', return a single test estimate
-
-		if (stopId === '000000') {
-			const response: PipArrival[] = [
-				{
-					estimatedArrivalTime: '23:59:59',
-					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: 'TEST',
-					estimatedTimeUnixSeconds: 0,
-					journeyId: '0000_0_0|teste',
-					lineId: '0000',
-					observedArrivalTime: null,
-					observedDepartureTime: null,
-					observedDriverId: '', // Deprecated
-					observedVehicleId: '0000',
-					operatorId: '', // Deprecated
-					patternId: '0000_0_0',
-					stopHeadsign: 'Olá :)',
-					stopId: '', // Deprecated
-					timetabledArrivalTime: '23:59:59',
-					timetabledDepartureTime: '23:59:59',
-				},
-				{
-					estimatedArrivalTime: '23:59:59',
-					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: '›››',
-					estimatedTimeUnixSeconds: 0,
-					journeyId: '0000_0_0|teste',
-					lineId: '0000',
-					observedArrivalTime: null,
-					observedDepartureTime: null,
-					observedDriverId: '', // Deprecated
-					observedVehicleId: '0000',
-					operatorId: '', // Deprecated
-					patternId: '0000_0_0',
-					stopHeadsign: 'Olá :)',
-					stopId: '', // Deprecated
-					timetabledArrivalTime: '23:59:59',
-					timetabledDepartureTime: '23:59:59',
-				},
-			];
-			return reply
-				.code(200)
-				.header('cache-control', 'public, no-cache')
-				.send(response);
-		}
-
-		//
-		// Handle the special case for testing PIP downtime
-		// If the stop ID is '000001', return an informational error message
-
-		if (stopId === '000001') {
-			const response: PipArrival[] = [
-				{
-					estimatedArrivalTime: '23:59:59',
-					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: '1 min',
-					estimatedTimeUnixSeconds: 0,
-					journeyId: '0000_0_0|teste',
-					lineId: 'INFO',
-					observedArrivalTime: null,
-					observedDepartureTime: null,
-					observedDriverId: '', // Deprecated
-					observedVehicleId: '0000',
-					operatorId: '', // Deprecated
-					patternId: '0000_0_0',
-					stopHeadsign: 'Sem estimativas. Consulte site para +info.',
-					stopId: '', // Deprecated
-					timetabledArrivalTime: '23:59:59',
-					timetabledDepartureTime: '23:59:59',
-				},
-			];
-			return reply
-				.code(200)
-				.header('cache-control', 'public, no-cache')
-				.send(response);
-		}
-
-		//
-		// Handle the special case for testing PIP connectivity
-		// If the stop ID is '000000', return a single test estimate
-
-		if (stopId === 'no-service') {
-			const response: PipArrival[] = [
-				{
-					estimatedArrivalTime: '23:59:59',
-					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: '',
-					estimatedTimeUnixSeconds: 0,
-					journeyId: '0000_0_0|teste',
-					lineId: 'INFO',
-					observedArrivalTime: null,
-					observedDepartureTime: null,
-					observedDriverId: '', // Deprecated
-					observedVehicleId: '0000',
-					operatorId: '', // Deprecated
-					patternId: '0000_0_0',
-					stopHeadsign: 'Paragem desativada.',
-					stopId: '', // Deprecated
-					timetabledArrivalTime: '23:59:59',
-					timetabledDepartureTime: '23:59:59',
-				},
-				{
-					estimatedArrivalTime: '23:59:59',
-					estimatedDepartureTime: '23:59:59',
-					estimatedTimeString: '',
-					estimatedTimeUnixSeconds: 0,
-					journeyId: '0000_0_0|teste',
-					lineId: 'INFO',
-					observedArrivalTime: null,
-					observedDepartureTime: null,
-					observedDriverId: '', // Deprecated
-					observedVehicleId: '0000',
-					operatorId: '', // Deprecated
-					patternId: '0000_0_0',
-					stopHeadsign: 'Painel inativo.',
-					stopId: '', // Deprecated
-					timetabledArrivalTime: '23:59:59',
-					timetabledDepartureTime: '23:59:59',
-				},
-			];
-			return reply
-				.code(200)
-				.header('cache-control', 'public, no-cache')
-				.send(response);
-		}
+	const specialCaseResponse = getSpecialCaseResponse(request.body.stops);
+	if (specialCaseResponse) {
+		return reply
+			.code(200)
+			.header('cache-control', 'public, no-cache')
+			.send(specialCaseResponse);
 	}
+
+	//
+	// Ensure that all stop IDs are valid 6-digit strings
 
 	const regexPatternForStopId = /^\d{6}$/;
 	const allStopIdsAreValid = request.body.stops.every(stopId => regexPatternForStopId.test(stopId));
@@ -202,17 +57,16 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 	// For each requested stop, fetch patterns and ETA data from GO
 
 	const nowUnix = DateTime.local({ zone: 'Europe/Lisbon' }).toUTC().toUnixInteger();
-	const operationalDate = Dates.now('Europe/Lisbon').operational_date;
-	const allEstimates: PipArrival[] = [];
+	const operationalDate = Dates.now('Europe/Lisbon').operational_date_int;
+	const allEstimates: PipArrivalResponseItem[] = [];
 
 	for (const stopId of request.body.stops) {
-		const goStopId = STOPS_ID_MAP.get(stopId);
-		const stop = allStops.find(s => s._id === goStopId);
+		const stop = findStopByFlagStopId(allStops, stopId);
 		if (!stop) continue;
 
 		// Fetch patterns and ETA in parallel
 		const [patternResponses, etaData] = await Promise.all([
-			Promise.all(stop.pattern_ids.map(pid => fetchData<HubPattern[]>(GO_BASE_URL + `/network/patterns/${pid}`))),
+			Promise.all(stop.pattern_ids.map(pid => fetchData<HubV1ApiPattern[]>(GO_BASE_URL + `/network/patterns/${pid}`))),
 			fetchData<HubEtaData[]>(GO_BASE_URL + `/realtime/eta/by-stop/${stop._id}`),
 		]);
 
@@ -226,79 +80,33 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 
 				for (const stopTime of tripData.schedule) {
 					if (String(stopTime.stop_id) !== String(stop._id)) continue;
-					// Skip if this is the last stop of the pattern
 					if (stopTime.stop_sequence === lastStopSequence) continue;
 
-					const scheduledTimeInUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(stopTime.arrival_time);
+					const scheduledUnixSeconds = DATES.convert24HourPlusOperationTimeStringToUnixTimestamp(stopTime.arrival_time);
+					const eta = findMatchingEta(etaData?.data, tripData.trip_ids);
 
-					// Match ETA
-					const eta = etaData?.data?.find(eta =>
-						eta.trip_id.substring(eta.trip_id.indexOf(']') + 1)
-						=== tripData.trip_ids.find(tripId =>
-							tripId.substring(tripId.indexOf(']') + 1)
-							=== eta.trip_id.substring(eta.trip_id.indexOf(']') + 1),
-						)?.substring(eta.trip_id.indexOf(']') + 1),
-					);
-					const etaUnixSeconds = eta?.eta_at ? eta.eta_at / 1000 : null;
+					if (eta?.eta_at != null) {
+						const etaUnixSeconds = eta.eta_at / 1000;
+						if (etaUnixSeconds < nowUnix) continue;
 
-					const hasEstimatedTime = etaUnixSeconds !== null;
-					const isEstimateInThePast = hasEstimatedTime && etaUnixSeconds < nowUnix;
-					const isScheduleInThePast = scheduledTimeInUnixSeconds < nowUnix;
-
-					// Skip past estimates
-					if (hasEstimatedTime && isEstimateInThePast) continue;
-					if (!hasEstimatedTime && isScheduleInThePast) continue;
-
-					// Build the PipArrival
-					if (hasEstimatedTime) {
-						const estimatedTimeInSeconds = etaUnixSeconds - nowUnix;
-						const estimatedTimeInMinutes = Math.floor(estimatedTimeInSeconds / 60);
-						const estimatedTimeString = Dates.fromUnixTimestamp(etaUnixSeconds * 1000).setZone('Europe/Lisbon', 'offset_only').toLocaleString(FORMATS.TIME_WITH_SECONDS, 'pt');
-
-						allEstimates.push({
-							estimatedArrivalTime: estimatedTimeString,
-							estimatedDepartureTime: estimatedTimeString,
-							estimatedTimeString: estimatedTimeInMinutes < 1 ? 'A chegar' : `• ${estimatedTimeInMinutes} min`,
-							estimatedTimeUnixSeconds: etaUnixSeconds,
-							journeyId: eta?.trip_id ?? null,
-							lineId: pattern.line_id.split(']')[1],
-							observedArrivalTime: null,
-							observedDepartureTime: null,
-							observedDriverId: '', // Deprecated
-							observedVehicleId: eta?.vehicle_id ?? null,
-							operatorId: '', // Deprecated
-							patternId: pattern._id.split(']')[1],
-							stopHeadsign: pattern.headsign,
-							stopId: '', // Deprecated
+						allEstimates.push(buildEstimatedArrival({
+							eta,
+							etaUnixSeconds,
+							nowUnix,
+							pattern,
 							timetabledArrivalTime: stopTime.arrival_time,
-							timetabledDepartureTime: stopTime.arrival_time,
-						});
+						}));
 					}
 					else {
-						const scheduledTimeInSeconds = scheduledTimeInUnixSeconds - nowUnix;
-						const scheduledTimeInMinutes = Math.floor(scheduledTimeInSeconds / 60);
-						if (scheduledTimeInMinutes <= 0) continue;
+						if (scheduledUnixSeconds < nowUnix) continue;
 
-						const scheduledTimeInHumanDate = DateTime.fromSeconds(scheduledTimeInUnixSeconds, { zone: 'Europe/Lisbon' }).toFormat('HH:mm');
-
-						allEstimates.push({
-							estimatedArrivalTime: stopTime.arrival_time,
-							estimatedDepartureTime: stopTime.arrival_time,
-							estimatedTimeString: scheduledTimeInHumanDate,
-							estimatedTimeUnixSeconds: scheduledTimeInUnixSeconds,
-							journeyId: null,
-							lineId: pattern.line_id.split(']')[1],
-							observedArrivalTime: null,
-							observedDepartureTime: null,
-							observedDriverId: '', // Deprecated
-							observedVehicleId: null,
-							operatorId: '', // Deprecated
-							patternId: pattern._id.split(']')[1],
-							stopHeadsign: pattern.headsign,
-							stopId: '', // Deprecated
+						const scheduled = buildScheduledArrival({
+							nowUnix,
+							pattern,
+							scheduledUnixSeconds,
 							timetabledArrivalTime: stopTime.arrival_time,
-							timetabledDepartureTime: stopTime.arrival_time,
 						});
+						if (scheduled) allEstimates.push(scheduled);
 					}
 				}
 			}
@@ -316,43 +124,21 @@ FASTIFY.server.post<RequestSchema>('/pips/estimates', async (request, reply) => 
 	// Handle the case where there are no estimates
 
 	if (!result.length) {
-		const response: PipArrival[] = [
-			{
-				estimatedArrivalTime: '23:59:59',
-				estimatedDepartureTime: '23:59:59',
+		const response: PipArrivalResponseItem[] = [
+			createPipArrivalResponseItem({
 				estimatedTimeString: '1 min',
-				estimatedTimeUnixSeconds: 0,
-				journeyId: '0000_0_0|teste',
 				lineId: 'INFO',
-				observedArrivalTime: null,
-				observedDepartureTime: null,
-				observedDriverId: '', // Deprecated
-				observedVehicleId: '0000',
-				operatorId: '', // Deprecated
-				patternId: '0000_0_0',
 				stopHeadsign: 'Sem estimativas em tempo real.',
-				stopId: '', // Deprecated
-				timetabledArrivalTime: '23:59:59',
-				timetabledDepartureTime: '23:59:59',
-			},
-			{
-				estimatedArrivalTime: '23:59:59',
-				estimatedDepartureTime: '23:59:59',
+			}),
+
+			createPipArrivalResponseItem({
 				estimatedTimeString: '1 min',
-				estimatedTimeUnixSeconds: 0,
 				journeyId: '0000_0_1|teste',
 				lineId: 'INFO',
-				observedArrivalTime: null,
-				observedDepartureTime: null,
-				observedDriverId: '', // Deprecated
 				observedVehicleId: '0001',
-				operatorId: '', // Deprecated
 				patternId: '0000_0_1',
 				stopHeadsign: 'Consulte o site para +info.',
-				stopId: '', // Deprecated
-				timetabledArrivalTime: '23:59:59',
-				timetabledDepartureTime: '23:59:59',
-			},
+			}),
 		];
 		return reply
 			.code(200)

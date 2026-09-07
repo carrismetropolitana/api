@@ -5,9 +5,9 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { Dates } from '@tmlmobilidade/dates';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { Alert, AlertCause, AlertEffect } from '@tmlmobilidade/types';
+import { HubV1ApiAlert } from '@tmlmobilidade/go-types-hub';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 
 /* * */
 
@@ -27,7 +27,7 @@ export const alertMetrics = async () => {
 	const startOfYear = Dates.now('Europe/Lisbon').startOf('year');
 
 	const alertsCollection = await goDb.operation.alerts.getCollection();
-	const filter = { active_period_start_date: { $gte: startOfYear.unix_timestamp, $lte: yesterdayDate.unix_timestamp } };
+	const filter = { active_period_start_date: { $gte: startOfYear.unix_milliseconds, $lte: yesterdayDate.unix_milliseconds } };
 	const totalAlerts = await alertsCollection.countDocuments(filter);
 	const alertsStream = alertsCollection.find(filter).stream();
 
@@ -40,14 +40,14 @@ export const alertMetrics = async () => {
 	const monthlyCountMap = new Map<string, number>();
 
 	for await (const alert of alertsStream) {
-		const alertData = alert as Alert;
+		const alertData = alert as HubV1ApiAlert;
 
 		// Cause
-		const cause = alertData.cause as AlertCause || 'UNKNOWN_CAUSE';
+		const cause = alertData.cause as HubV1ApiAlert['cause'] || 'UNKNOWN_CAUSE';
 		causeCountMap.set(cause, (causeCountMap.get(cause) ?? 0) + 1);
 
 		// Effect
-		const effect = alertData.effect as AlertEffect || 'UNKNOWN_EFFECT';
+		const effect = alertData.effect as HubV1ApiAlert['effect'] || 'UNKNOWN_EFFECT';
 		effectCountMap.set(effect, (effectCountMap.get(effect) ?? 0) + 1);
 
 		// Municipality
@@ -77,7 +77,7 @@ export const alertMetrics = async () => {
 
 	const cacheableResource: CachedResource<typeof response> = {
 		data: response,
-		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_milliseconds,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.ALERTS.ALL, JSON.stringify(cacheableResource));

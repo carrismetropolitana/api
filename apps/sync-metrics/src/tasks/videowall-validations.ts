@@ -5,7 +5,7 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { Dates } from '@tmlmobilidade/dates';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 
 /* * */

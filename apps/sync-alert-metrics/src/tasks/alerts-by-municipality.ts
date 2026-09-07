@@ -6,7 +6,7 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import { AlertsByMunicipality } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { Dates } from '@tmlmobilidade/dates';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { AlertCause } from '@tmlmobilidade/types';
 

@@ -1,6 +1,8 @@
 /* * */
 
-import { AlertCause, AlertEffect, DemandByLineByDay } from '@tmlmobilidade/types';
+import { HubV1ApiAlert } from '@tmlmobilidade/go-types-hub';
+
+/* * */
 
 export interface ServiceMetrics {
 	agency_id: string
@@ -88,8 +90,8 @@ export interface AlertsSummary {
 }
 
 export interface AlertsCauseEffect {
-	cause: AlertCause
-	effects: { type: AlertEffect, value: number }[]
+	cause: HubV1ApiAlert['cause']
+	effects: { type: HubV1ApiAlert['effect'], value: number }[]
 	total: number
 }
 
@@ -100,7 +102,7 @@ export interface AlertsEvolution {
 }
 
 export interface AlertsByMunicipality {
-	causes: { type: AlertCause, value: number }[]
+	causes: { type: HubV1ApiAlert['cause'], value: number }[]
 	municipality_id: string
 	total: number
 }
@@ -109,5 +111,5 @@ export interface AlertsByMunicipality {
 
 export interface TopDemandLinesByAgency {
 	lastUpdated: Date | null
-	topLinesByAgency: Record<string, { lines: DemandByLineByDay[], totalQty?: number }>
+	topLinesByAgency: Record<string, { lines: Record<string, number>[], totalQty?: number }>
 }

@@ -2,13 +2,13 @@
 
 import DATES from '@/services/DATES.js';
 import { FASTIFY } from '@/services/FASTIFY.js';
-import { GO_BASE_URL, getStops, HubEtaData, STOPS_ID_MAP } from '@/services/GO.js';
+import { findStopByFlagStopId, getStops, GO_BASE_URL, HubEtaData } from '@/services/GO.js';
 import { PCGIAPI, SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type Pattern, type Plan } from '@carrismetropolitana/api-types/network';
 import { getOperationalDay } from '@carrismetropolitana/api-utils';
-import { Dates, FORMATS } from '@tmlmobilidade/dates';
-import { HubPattern } from '@tmlmobilidade/go-types-public-info';
+import { HubV1ApiPattern } from '@tmlmobilidade/go-types-hub';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { fetchData } from '@tmlmobilidade/utils';
 import { DateTime } from 'luxon';
 
@@ -51,14 +51,14 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 		return reply.status(200).send([]);
 	}
 
-	// 2. Get stop
-	const stop = stops.find(stop => stop._id === STOPS_ID_MAP.get(request.params.id));
+	// 2. Get stop by flag stop_id (e.g. CM "020973")
+	const stop = findStopByFlagStopId(stops, request.params.id);
 	if (!stop) {
 		return reply.status(404).send([]);
 	}
 
 	// 3. Get All pattern data for this stop
-	const patternRequestPromises = stop.pattern_ids.map(patternId => fetchData<HubPattern[]>(GO_BASE_URL + `/network/patterns/${patternId}`));
+	const patternRequestPromises = stop.pattern_ids.map(patternId => fetchData<HubV1ApiPattern[]>(GO_BASE_URL + `/network/patterns/${patternId}`));
 	const patternResponses = await Promise.all(patternRequestPromises);
 	const patternData = patternResponses.flatMap(response => response.data);
 
@@ -71,7 +71,7 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 	for (const pattern of patternData) {
 		for (const tripData of pattern.trips) {
 			// Skip if this trip is not valid for the selected operational date
-			if (!tripData.valid_on.includes(Dates.now('Europe/Lisbon').operational_date)) continue;
+			if (!tripData.valid_on.includes(Dates.now('Europe/Lisbon').operational_date_int)) continue;
 			// Loop through each stop time of the trip
 			for (const stopTime of tripData.schedule) {
 				// Skip if this stop time is not for the selected stop
@@ -82,7 +82,7 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 				const etaUnixTimestamp = eta?.eta_at ? eta.eta_at / 1000 : null;
 
 				arrivals.push({
-					estimated_arrival: etaUnixTimestamp ? Dates.fromUnixTimestamp(etaUnixTimestamp * 1000).setZone('Europe/Lisbon', 'offset_only').toLocaleString(FORMATS.TIME_WITH_SECONDS, 'pt') : null,
+					estimated_arrival: etaUnixTimestamp ? Dates.fromUnixMilliseconds(etaUnixTimestamp * 1000).setZone('Europe/Lisbon', 'offset_only').toLocaleString('only_time_with_seconds', 'pt') : null,
 					estimated_arrival_unix: etaUnixTimestamp,
 					headsign: pattern.headsign,
 					line_id: pattern.line_id,

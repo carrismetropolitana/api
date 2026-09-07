@@ -5,7 +5,7 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { Dates } from '@tmlmobilidade/dates';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type Ride } from '@tmlmobilidade/types';
 import { DateTime } from 'luxon';

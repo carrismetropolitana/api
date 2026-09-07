@@ -19,7 +19,7 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/dates": "latest",
+		"@tmlmobilidade/go-utils-dates": "latest",
 		"@tmlmobilidade/go-interfaces-godb": "latest",
 		"@tmlmobilidade/interfaces": "latest",
 		"@tmlmobilidade/ssh": "latest",
