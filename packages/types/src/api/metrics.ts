@@ -1,6 +1,7 @@
 /* * */
 
 import { HubV1ApiAlert } from '@tmlmobilidade/go-types-hub';
+import { DemandByLineByDay } from '@tmlmobilidade/go-types-performance';
 
 /* * */
 
@@ -111,5 +112,5 @@ export interface AlertsByMunicipality {
 
 export interface TopDemandLinesByAgency {
 	lastUpdated: Date | null
-	topLinesByAgency: Record<string, { lines: Record<string, number>[], totalQty?: number }>
+	topLinesByAgency: Record<string, { lines: DemandByLineByDay[], totalQty?: number }>
 }

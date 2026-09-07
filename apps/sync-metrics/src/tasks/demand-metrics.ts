@@ -2,8 +2,8 @@ import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { Metric } from '@tmlmobilidade/go-types-performance';
 import { metrics } from '@tmlmobilidade/interfaces';
-import { Metric } from '@tmlmobilidade/types';
 
 /* * */
 

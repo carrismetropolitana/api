@@ -28,36 +28,36 @@ export const videowallValidations = async () => {
 	const currentOperationalDate = Dates
 		.now('Europe/Lisbon')
 		// .minus({ days: 7 })
-		.operational_date;
+		.operational_date_int;
 
 	const currentOperationalDateAsUnixTimestamp = Dates
-		.fromOperationalDate(currentOperationalDate, 'Europe/Lisbon')
+		.fromOperationalDateInt(currentOperationalDate, 'Europe/Lisbon')
 		.startOf('day')
 		.set({ hour: 4 })
-		.unix_timestamp;
+		.unix_milliseconds;
 
 	const currentOperationalDateAsUnixTimestampEnd = Dates
 		.now('Europe/Lisbon')
 		// .minus({ days: 7, minutes: 20 })
-		.unix_timestamp;
+		.unix_milliseconds;
 
 	const previousOperationalDate = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 7 })
 		// .minus({ days: 7 })
-		.operational_date;
+		.operational_date_int;
 
 	const previousOperationalDateAsUnixTimestamp = Dates
-		.fromOperationalDate(previousOperationalDate, 'Europe/Lisbon')
+		.fromOperationalDateInt(previousOperationalDate, 'Europe/Lisbon')
 		.startOf('day')
 		.set({ hour: 4 })
-		.unix_timestamp;
+		.unix_milliseconds;
 
 	const previousUntilNowAsUnixTimestamp = Dates
 		.now('Europe/Lisbon')
 		.minus({ days: 7 })
 		// .minus({ days: 7 })
-		.unix_timestamp;
+		.unix_milliseconds;
 
 	//
 	// Setup the response JSON object
@@ -155,7 +155,7 @@ export const videowallValidations = async () => {
 
 	const chacheableResource: CachedResource<typeof responseResult> = {
 		data: responseResult,
-		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_milliseconds,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VALIDATIONS, JSON.stringify(chacheableResource));

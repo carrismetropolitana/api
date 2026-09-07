@@ -6,13 +6,13 @@ import 'dotenv/config';
 /* * */
 
 import { complaintsMetrics } from '@/tasks/complaints-metrics.js';
-import { demandMetrics } from '@/tasks/demand-metrics.js';
-import { serviceMetrics } from '@/tasks/service-metrics.js';
-import { videowallDelays } from '@/tasks/videowall-delays.js';
-import { videowallEmptyRides } from '@/tasks/videowall-empty-rides.js';
-import { videowallSla } from '@/tasks/videowall-sla.js';
+// import { demandMetrics } from '@/tasks/demand-metrics.js';
+// import { serviceMetrics } from '@/tasks/service-metrics.js';
+// import { videowallDelays } from '@/tasks/videowall-delays.js';
+// import { videowallEmptyRides } from '@/tasks/videowall-empty-rides.js';
+// import { videowallSla } from '@/tasks/videowall-sla.js';
 import { videowallValidations } from '@/tasks/videowall-validations.js';
-import { videowallVkm } from '@/tasks/videowall-vkm.js';
+// import { videowallVkm } from '@/tasks/videowall-vkm.js';
 
 /* * */
 
@@ -33,18 +33,18 @@ const RUN_INTERVAL = 60000; // 1 minute
 		//
 		// Run on all iterations
 		await complaintsMetrics();
-		await videowallDelays();
-		await videowallEmptyRides();
-		await videowallSla();
+		// await videowallDelays();
+		// await videowallEmptyRides();
+		// await videowallSla();
 		await videowallValidations();
-		await videowallVkm();
-		await demandMetrics();
+		// await videowallVkm();
+		// await demandMetrics();
 
 		//
 		// Run on every 500th iteration (~ 8 hours)
 
 		if (counter % 100 === 0) {
-			await serviceMetrics();
+			// await serviceMetrics();
 		}
 
 		//

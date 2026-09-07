@@ -1,7 +1,7 @@
 import { SERVERDB } from '@carrismetropolitana/api-services';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { TopDemandLinesByAgency } from '@carrismetropolitana/api-types/metrics';
-import { DemandByLineByDay } from '@tmlmobilidade/types';
+import { DemandByLineByDay } from '@tmlmobilidade/go-types-performance';
 
 export async function getDemandByLine(lineId: string) {
 	const allItemsTxt = await SERVERDB.get(SERVERDB_KEYS.METRICS.DEMAND.BY_LINE) as string;
@@ -35,7 +35,7 @@ export async function getTopDemandLinesByAgency() {
 
 		const withTotals: { line: DemandByLineByDay, totalQty: number }[] = agencyLines.map((line) => {
 			const entries = Object.values(line.data || {});
-			const totalQty = entries.reduce((sum, info: { qty: number }) => sum + (info.qty || 0), 0);
+			const totalQty = entries.reduce((sum, info: { qty: number }) => sum + (info.qty ?? 0), 0);
 			return { line, totalQty };
 		});
 

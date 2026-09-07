@@ -6,9 +6,9 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import { AlertsByMunicipality } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { AlertCause } from '@tmlmobilidade/types';
+import { HubV1ApiAlert } from '@tmlmobilidade/go-types-hub';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 
 /* * */
 
@@ -30,22 +30,22 @@ export const alertsByMunicipality = async () => {
 		.startOf('year');
 
 	const alertsCollection = await goDb.operation.alerts.getCollection();
-	const filter = { active_period_start_date: { $gte: startOfYear.unix_timestamp, $lte: yesterdayDate.unix_timestamp } };
+	const filter = { active_period_start_date: { $gte: startOfYear.unix_milliseconds, $lte: yesterdayDate.unix_milliseconds } };
 	const alertsStream = alertsCollection.find(filter).stream();
 
 	//
 	// Group alerts by municipality and cause
 
-	const municipalityMap = new Map<string, Map<AlertCause, number>>();
+	const municipalityMap = new Map<string, Map<HubV1ApiAlert['cause'], number>>();
 
 	for await (const alert of alertsStream) {
-		const cause = alert.cause as AlertCause;
+		const cause = alert.cause;
 
 		const municipalityIds = Array.isArray(alert.municipality_ids) ? alert.municipality_ids : [];
 
 		for (const municipalityId of municipalityIds) {
 			if (!municipalityMap.has(municipalityId)) {
-				municipalityMap.set(municipalityId, new Map<AlertCause, number>());
+				municipalityMap.set(municipalityId, new Map<HubV1ApiAlert['cause'], number>());
 			}
 
 			const causeMap = municipalityMap.get(municipalityId);
@@ -59,7 +59,7 @@ export const alertsByMunicipality = async () => {
 	const response = Array.from(municipalityMap.entries()).map(([municipality_id, causeMap]) => {
 		const total = Array.from(causeMap.values()).reduce((sum, value) => sum + value, 0);
 		return {
-			causes: Array.from(causeMap.entries()).map(([type, value]) => ({ type: type as AlertCause, value: value })) as { type: AlertCause, value: number }[],
+			causes: Array.from(causeMap.entries()).map(([type, value]) => ({ type: type as HubV1ApiAlert['cause'], value: value })) as { type: HubV1ApiAlert['cause'], value: number }[],
 			municipality_id,
 			total,
 		} as AlertsByMunicipality;
@@ -72,7 +72,7 @@ export const alertsByMunicipality = async () => {
 
 	const cacheableResource: CachedResource<typeof response> = {
 		data: response,
-		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_milliseconds,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.ALERTS.BY_MUNICIPALITY, JSON.stringify(cacheableResource));

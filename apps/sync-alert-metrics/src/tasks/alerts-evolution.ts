@@ -6,8 +6,8 @@ import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import { type AlertsEvolution } from '@carrismetropolitana/api-types/metrics';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 
 /* * */
@@ -30,7 +30,7 @@ export const alertsEvolution = async () => {
 		.minus({ days: 15 });
 
 	const alertsCollection = await goDb.operation.alerts.getCollection();
-	const alertsStream = alertsCollection.find({ active_period_start_date: { $gte: fifteenDaysAgoDate.unix_timestamp, $lte: yesterdayDate.unix_timestamp } }).stream();
+	const alertsStream = alertsCollection.find({ active_period_start_date: { $gte: fifteenDaysAgoDate.unix_milliseconds, $lte: yesterdayDate.unix_milliseconds } }).stream();
 
 	//
 	// Group alerts by day and collect unique line IDs
@@ -68,8 +68,8 @@ export const alertsEvolution = async () => {
 			continue;
 		}
 
-		const startOfDayTimestamp = Dates.fromISO(day_group).startOf('day').unix_timestamp;
-		const endOfDayTimestamp = Dates.fromISO(day_group).endOf('day').unix_timestamp;
+		const startOfDayTimestamp = Dates.fromISO(day_group).startOf('day').unix_milliseconds;
+		const endOfDayTimestamp = Dates.fromISO(day_group).endOf('day').unix_milliseconds;
 
 		const qty = await simplifiedApexValidations.count({
 			created_at: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp },
@@ -94,7 +94,7 @@ export const alertsEvolution = async () => {
 
 	const cacheableResource: CachedResource<typeof response> = {
 		data: response,
-		timestamp_resource: Dates.now('Europe/Lisbon').unix_timestamp,
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_milliseconds,
 	};
 
 	await SERVERDB.set(SERVERDB_KEYS.METRICS.ALERTS.EVOLUTION, JSON.stringify(cacheableResource));

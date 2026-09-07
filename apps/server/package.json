@@ -24,6 +24,7 @@
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
 		"@tmlmobilidade/go-types-hub": "^20260906.2355.3",
+		"@tmlmobilidade/go-types-performance": "latest",
 		"@tmlmobilidade/go-utils-dates": "latest",
 		"@tmlmobilidade/utils": "^20260906.2355.3",
 		"fastify": "5.8.5",
