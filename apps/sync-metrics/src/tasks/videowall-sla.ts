@@ -354,8 +354,6 @@ export const videowallSla = async () => {
 		FROM rides;
 	`;
 
-	console.log(query);
-
 	const queryResult = await labDb.queryFromString<VideowallSla>(query);
 
 	//
