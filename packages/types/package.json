@@ -88,7 +88,7 @@
 		"@carrismetropolitana/eslint": "20250622.1204.50",
 		"@tmlmobilidade/go-types-hub": "latest",
 		"@tmlmobilidade/go-types-performance": "latest",
-		"@tmlmobilidade/tsconfig": "latest",
+		"@tmlmobilidade/go-utils-tsconfig": "latest",
 		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "6.0.3"

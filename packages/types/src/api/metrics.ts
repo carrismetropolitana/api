@@ -7,10 +7,10 @@ import { DemandByLineByDay } from '@tmlmobilidade/go-types-performance';
 
 export interface ServiceMetrics {
 	agency_id: string
-	line_id: string
-	operational_date: string
+	operational_date: number
 	pass_trip_count: number
 	pass_trip_percentage: number
+	route_short_name: string
 	total_trip_count: number
 }
 

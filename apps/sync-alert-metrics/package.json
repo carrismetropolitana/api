@@ -30,7 +30,7 @@
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/tsconfig": "latest",
+		"@tmlmobilidade/go-utils-tsconfig": "latest",
 		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.21.0",
