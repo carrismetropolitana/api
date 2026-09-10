@@ -15,7 +15,7 @@ function convertToProtobuf(allEvents: Vehicle[]) {
 	return {
 		entity: allEvents
 			.filter(event => Boolean(event.trip_id))
-			.filter(event => event.timestamp > DateTime.now().minus({ seconds: 90 }).toUnixInteger())
+			.filter(event => Math.floor(event.timestamp / 1000) > DateTime.now().minus({ seconds: 90 }).toUnixInteger())
 			.map(event => ({
 				id: event.event_id,
 				vehicle: {
@@ -37,7 +37,7 @@ function convertToProtobuf(allEvents: Vehicle[]) {
 					},
 					vehicle: {
 						id: event.id,
-						label: event.id,
+						label: event.license_plate,
 						license_plate: event.license_plate,
 						wheelchair_accessible: event.wheelchair_accessible ? 'WHEELCHAIR_ACCESSIBLE' : 'NO_VALUE',
 					},
