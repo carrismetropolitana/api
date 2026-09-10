@@ -28,7 +28,7 @@ function convertToProtobuf(allEvents: Vehicle[]) {
 						speed: event.speed,
 					},
 					stop_id: event.stop_id,
-					timestamp: event.timestamp,
+					timestamp: Math.floor(event.timestamp / 1000),
 					trip: {
 						direction_id: event.direction_id,
 						route_id: event.route_id,
