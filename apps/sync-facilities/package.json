@@ -20,17 +20,17 @@
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
 		"luxon": "3.7.2",
-		"papaparse": "5.5.3"
+		"papaparse": "5.7.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/go-utils-tsconfig": "latest",
-		"@types/luxon": "3.7.1",
+		"@tmlmobilidade/go-utils-tsconfig": "20260910.2253.54",
+		"@types/luxon": "3.7.5",
 		"@types/node": "25.6.0",
 		"@types/papaparse": "5.5.2",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.21.0",
+		"tsx": "4.23.13",
 		"typescript": "6.0.3"
 	}
 }

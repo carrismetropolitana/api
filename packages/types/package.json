@@ -86,9 +86,9 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/go-types-hub": "latest",
-		"@tmlmobilidade/go-types-performance": "latest",
-		"@tmlmobilidade/go-utils-tsconfig": "latest",
+		"@tmlmobilidade/go-types-hub": "20260910.2253.54",
+		"@tmlmobilidade/go-types-performance": "20260910.2253.54",
+		"@tmlmobilidade/go-utils-tsconfig": "20260910.2253.54",
 		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "6.0.3"

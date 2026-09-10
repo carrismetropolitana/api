@@ -21,17 +21,17 @@
 		"@carrismetropolitana/api-utils": "*",
 		"@helperkits/logger": "20250628.901.58",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/types": "latest",
-		"@tmlmobilidade/utils": "latest",
-		"firebase-admin": "13.8.0"
+		"@tmlmobilidade/types": "20260910.2253.54",
+		"@tmlmobilidade/utils": "20260910.2253.54",
+		"firebase-admin": "14.4.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "*",
 		"@carrismetropolitana/eslint": "20250622.1204.50",
-		"@tmlmobilidade/go-utils-tsconfig": "latest",
+		"@tmlmobilidade/go-utils-tsconfig": "20260910.2253.54",
 		"@types/node": "25.6.0",
 		"resolve-tspaths": "0.8.23",
-		"tsx": "4.21.0",
+		"tsx": "4.23.13",
 		"typescript": "6.0.3"
 	}
 }
