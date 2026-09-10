@@ -1,6 +1,6 @@
 /* * */
 
-import { syncMetadata } from '@/tasks/sync-metadata.js';
+// import { syncMetadata } from '@/tasks/sync-metadata.js';
 import { syncPositions } from '@/tasks/sync-positions.js';
 import { PCGIDB } from '@carrismetropolitana/api-services';
 import LOGGER from '@helperkits/logger';
@@ -26,10 +26,10 @@ const RUN_INTERVAL = 3000; // 3 seconds
 
 		LOGGER.terminate(`Sync iteration #${counter}`);
 
-		if (counter % 100 === 0) {
-			// Run on every 100th iteration
-			await syncMetadata();
-		}
+		// if (counter % 100 === 0) {
+		// 	// Run on every 100th iteration
+		// 	await syncMetadata();
+		// }
 
 		await syncPositions();
 
