@@ -109,9 +109,9 @@ export const videowallSla = async () => {
 				WHERE
 					r.operational_date = ${operationalDate}
 					AND r.agency_id IN ('A2L1N', 'BNA17', 'LA77N', 'YA15B')
-					AND r.processing_status = 'complete'
-					AND a1.grade_status IS NOT NULL
-					AND a3.grade_status IS NOT NULL
+					-- AND r.processing_status = 'complete'
+					-- AND a1.grade_status IS NOT NULL
+					-- AND a3.grade_status IS NOT NULL
 			)
 
 		SELECT
