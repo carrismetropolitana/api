@@ -1,16 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /* * */
 
-import parseAlertV2 from '@/services/parseAlertV2.js';
 import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
 import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-import { type Alert } from '@carrismetropolitana/api-types/alerts';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { ServiceAlertResponse } from '@tmlmobilidade/types';
-import { fetchData } from '@tmlmobilidade/utils';
-import { type TopicMessage } from 'firebase-admin/messaging';
+import { type GtfsRtFeedMessage } from '@tmlmobilidade/go-types-gtfs-rt';
+import { type HubV1ApiAlert } from '@tmlmobilidade/go-types-hub';
+import { type ApiResponse } from '@tmlmobilidade/go-types-shared';
 
 /* * */
 
@@ -25,14 +21,19 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedResponse = await fetchData<ServiceAlertResponse>('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs-cm');
+	const alertsFeedData = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs')
+		.then(response => response.json())
+		.then(data => data as ApiResponse<GtfsRtFeedMessage>);
 
-	if (alertsFeedResponse.error) {
-		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedResponse.error}`);
+	if (!alertsFeedData?.data) {
+		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedData.error}`);
 		return;
 	}
 
-	const alertsFeedData: any = alertsFeedResponse.data;
+	const filteredAlertsFeedData: GtfsRtFeedMessage = {
+		...alertsFeedData.data,
+		entity: alertsFeedData.data.entity.filter(item => item.alert.informed_entity.some(entity => ['A2L1N', 'BNA17', 'LA77N', 'YA15B'].includes(entity.agency_id))),
+	};
 
 	LOGGER.info(`Fetched Alerts feed from the backoffice (${backofficeTimer.get()})`);
 
@@ -51,95 +52,104 @@ export const syncAlerts = async () => {
 
 	const jsonTimer = new TIMETRACKER();
 
-	const allAlertsParsedV2: Alert[] = alertsFeedData?.entity.map(item => parseAlertV2(item));
+	const alertsApiDataJson = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/alerts')
+		.then(response => response.json())
+		.then(data => data as ApiResponse<HubV1ApiAlert[]>);
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(allAlertsParsedV2));
-
-	LOGGER.info(`Saved ${allAlertsParsedV2.length} JSON Alerts to ServerDB (${jsonTimer.get()})`);
-
-	//
-	// Send notifications for new alerts
-
-	const notificationsTimer = new TIMETRACKER();
-
-	const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS) as string;
-	const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
-	const allSentNotificationsSet = new Set(allSentNotifications);
-
-	// Send the notifications
-
-	let sentNotificationCounter = 0;
-
-	for (const alertItem of allAlertsParsedV2) {
-		if (!allSentNotificationsSet.has(alertItem['_id'])) {
-			try {
-				for (const entity of alertItem['informed_entity']) {
-					// Setup notification message
-					const notificationMessage: TopicMessage = {
-						apns: {
-							payload: {
-								aps: {
-									mutableContent: true, // to go through the NSE for badge increment
-								},
-							},
-						},
-						data: {
-							alertId: '',
-						},
-						notification: {
-							body: '',
-							imageUrl: '',
-							title: '',
-						},
-						topic: '',
-					};
-					// Include alert id
-					notificationMessage.data.alertId = alertItem['_id'];
-					// Include title
-					if (alertItem.header_text?.translation?.length > 0) {
-						notificationMessage.notification.title = alertItem.header_text?.translation[0]?.text ?? '';
-					}
-					// Include description
-					if (alertItem.description_text?.translation?.length > 0) {
-						const messageDescription = alertItem.description_text?.translation[0]?.text ?? '';
-						notificationMessage.notification.body = messageDescription?.length > 200 ? messageDescription.substring(0, 200) + '...' : messageDescription;
-					}
-					// Include image
-					if (alertItem.image?.localized_image?.length > 0) {
-						notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
-					}
-					// Include topics
-					if (entity.route_id) {
-						notificationMessage.topic = `cm.realtime.alerts.line.${entity.route_id}`;
-					}
-					else if (entity.stop_id) {
-						notificationMessage.topic = `cm.realtime.alerts.stop.${entity.stop_id}`;
-					}
-					else {
-						// Do the 'all' topic
-						notificationMessage.topic = `cm.everyone`;
-					}
-					// Include image
-					if (alertItem.image?.localized_image?.length > 0) {
-						notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
-					}
-					// await firebaseAdmin.messaging().send(notificationMessage);
-					sentNotificationCounter++;
-				}
-				allSentNotificationsSet.add(alertItem['_id']);
-				LOGGER.success(`Sent notification for alert: ${alertItem['_id']}`);
-			}
-			catch (error) {
-				LOGGER.error(`Failed to send notification for alert: ${alertItem['_id']}`);
-				LOGGER.error(error);
-				continue;
-			}
-		}
+	if (!alertsApiDataJson?.data) {
+		LOGGER.error(`Failed to fetch Alerts API data: ${alertsApiDataJson.error}`);
+		return;
 	}
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS, JSON.stringify(Array.from(allSentNotificationsSet)));
+	const filteredAlertsApiDataJson = alertsApiDataJson.data.filter(item => ['A2L1N', 'BNA17', 'LA77N', 'YA15B'].includes(item.agency_id));
 
-	LOGGER.info(`Sent ${sentNotificationCounter} Notifications (${notificationsTimer.get()})`);
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(filteredAlertsApiDataJson));
+
+	LOGGER.info(`Saved ${filteredAlertsApiDataJson.length} JSON Alerts to ServerDB (${jsonTimer.get()})`);
+
+	// //
+	// // Send notifications for new alerts
+
+	// const notificationsTimer = new TIMETRACKER();
+
+	// const allSentNotificationsTxt = await SERVERDB.get(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS) as string;
+	// const allSentNotifications = await JSON.parse(allSentNotificationsTxt) || [];
+	// const allSentNotificationsSet = new Set(allSentNotifications);
+
+	// // Send the notifications
+
+	// let sentNotificationCounter = 0;
+
+	// for (const alertItem of allAlertsParsedV2) {
+	// 	if (!allSentNotificationsSet.has(alertItem['_id'])) {
+	// 		try {
+	// 			for (const entity of alertItem['informed_entity']) {
+	// 				// Setup notification message
+	// 				const notificationMessage: TopicMessage = {
+	// 					apns: {
+	// 						payload: {
+	// 							aps: {
+	// 								mutableContent: true, // to go through the NSE for badge increment
+	// 							},
+	// 						},
+	// 					},
+	// 					data: {
+	// 						alertId: '',
+	// 					},
+	// 					notification: {
+	// 						body: '',
+	// 						imageUrl: '',
+	// 						title: '',
+	// 					},
+	// 					topic: '',
+	// 				};
+	// 				// Include alert id
+	// 				notificationMessage.data.alertId = alertItem['_id'];
+	// 				// Include title
+	// 				if (alertItem.header_text?.translation?.length > 0) {
+	// 					notificationMessage.notification.title = alertItem.header_text?.translation[0]?.text ?? '';
+	// 				}
+	// 				// Include description
+	// 				if (alertItem.description_text?.translation?.length > 0) {
+	// 					const messageDescription = alertItem.description_text?.translation[0]?.text ?? '';
+	// 					notificationMessage.notification.body = messageDescription?.length > 200 ? messageDescription.substring(0, 200) + '...' : messageDescription;
+	// 				}
+	// 				// Include image
+	// 				if (alertItem.image?.localized_image?.length > 0) {
+	// 					notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
+	// 				}
+	// 				// Include topics
+	// 				if (entity.route_id) {
+	// 					notificationMessage.topic = `cm.realtime.alerts.line.${entity.route_id}`;
+	// 				}
+	// 				else if (entity.stop_id) {
+	// 					notificationMessage.topic = `cm.realtime.alerts.stop.${entity.stop_id}`;
+	// 				}
+	// 				else {
+	// 					// Do the 'all' topic
+	// 					notificationMessage.topic = `cm.everyone`;
+	// 				}
+	// 				// Include image
+	// 				if (alertItem.image?.localized_image?.length > 0) {
+	// 					notificationMessage.notification.imageUrl = alertItem.image?.localized_image[0]?.url || undefined;
+	// 				}
+	// 				// await firebaseAdmin.messaging().send(notificationMessage);
+	// 				sentNotificationCounter++;
+	// 			}
+	// 			allSentNotificationsSet.add(alertItem['_id']);
+	// 			LOGGER.success(`Sent notification for alert: ${alertItem['_id']}`);
+	// 		}
+	// 		catch (error) {
+	// 			LOGGER.error(`Failed to send notification for alert: ${alertItem['_id']}`);
+	// 			LOGGER.error(error);
+	// 			continue;
+	// 		}
+	// 	}
+	// }
+
+	// await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.SENT_NOTIFICATIONS, JSON.stringify(Array.from(allSentNotificationsSet)));
+
+	// LOGGER.info(`Sent ${sentNotificationCounter} Notifications (${notificationsTimer.get()})`);
 
 	//
 
