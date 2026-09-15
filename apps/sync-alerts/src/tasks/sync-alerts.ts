@@ -26,7 +26,7 @@ export const syncAlerts = async () => {
 		.then(data => data as ApiResponse<GtfsRtFeedMessage>);
 
 	if (!alertsFeedData?.data) {
-		LOGGER.error(`Failed to fetch Alerts feed from the backoffice: ${alertsFeedData.error}`);
+		LOGGER.error(`Failed to fetch Alerts Feed: ${alertsFeedData.error}`);
 		return;
 	}
 
@@ -35,7 +35,7 @@ export const syncAlerts = async () => {
 		entity: alertsFeedData.data.entity.filter(item => item.alert.informed_entity.some(entity => ['A2L1N', 'BNA17', 'LA77N', 'YA15B'].includes(entity.agency_id))),
 	};
 
-	LOGGER.info(`Fetched Alerts feed from the backoffice (${backofficeTimer.get()})`);
+	LOGGER.info(`Fetched Alerts Feed (${backofficeTimer.get()})`);
 
 	//
 	// Prepare the alerts data in Protobuf format
@@ -43,7 +43,7 @@ export const syncAlerts = async () => {
 
 	const protobufTimer = new TIMETRACKER();
 
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF, JSON.stringify(alertsFeedData));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.PROTOBUF, JSON.stringify(filteredAlertsFeedData));
 
 	LOGGER.info(`Saved Protobuf Alerts to ServerDB (${protobufTimer.get()})`);
 
@@ -57,7 +57,7 @@ export const syncAlerts = async () => {
 		.then(data => data as ApiResponse<HubV1ApiAlert[]>);
 
 	if (!alertsApiDataJson?.data) {
-		LOGGER.error(`Failed to fetch Alerts API data: ${alertsApiDataJson.error}`);
+		LOGGER.error(`Failed to fetch Alerts API: ${alertsApiDataJson.error}`);
 		return;
 	}
 

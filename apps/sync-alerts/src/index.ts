@@ -1,7 +1,7 @@
 /* * */
 
 import { syncAlerts } from '@/tasks/sync-alerts.js';
-import firebase from 'firebase-admin';
+// import firebase from 'firebase-admin';
 
 /* * */
 
@@ -12,9 +12,9 @@ const RUN_INTERVAL = 20000; // 20 seconds
 (async function init() {
 	//
 
-	firebase.initializeApp({
-		credential: firebase.credential.cert(process.env.FIREBASE_SERVICE_ACCOUNT_PATH),
-	});
+	// firebase.initializeApp({
+	// 	credential: firebase.credential.cert(process.env.FIREBASE_SERVICE_ACCOUNT_PATH),
+	// });
 
 	const runOnInterval = async () => {
 		await syncAlerts();
