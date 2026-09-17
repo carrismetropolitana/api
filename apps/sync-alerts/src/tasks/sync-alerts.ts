@@ -64,7 +64,7 @@ export const syncAlerts = async () => {
 	const filteredAlertsApiDataJson = alertsApiDataJson.data.filter(item => ['A2L1N', 'BNA17', 'LA77N', 'YA15B'].includes(item.agency_id));
 
 	// await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(filteredAlertsApiDataJson));
-	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(filteredAlertsFeedData.entity));
+	await SERVERDB.set(SERVERDB_KEYS.NETWORK.ALERTS.ALL, JSON.stringify(filteredAlertsFeedData.entity.map(item => item.alert)));
 
 	LOGGER.info(`Saved ${filteredAlertsApiDataJson.length} JSON Alerts to ServerDB (${jsonTimer.get()})`);
 
