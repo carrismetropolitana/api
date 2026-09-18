@@ -181,14 +181,14 @@ export const videowallValidations = async () => {
 				) AS _44_last_week_valid_count,
 
 				countIf(
-					agency_id IN ('LA77N', 'BNA17', 'YA15B, 'A2L1N')
+					agency_id IN ('LA77N', 'BNA17', 'YA15B', 'A2L1N')
 					AND created_at >= ${currentOperationalDateAsUnixTimestamp}
 					AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
 					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
 				) AS _cm_today_valid_count,
 
 				countIf(
-					agency_id IN ('LA77N', 'BNA17', 'YA15B, 'A2L1N')
+					agency_id IN ('LA77N', 'BNA17', 'YA15B', 'A2L1N')
 					AND created_at >= ${previousOperationalDateAsUnixTimestamp}
 					AND created_at <= ${previousUntilNowAsUnixTimestamp}
 					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
@@ -197,7 +197,7 @@ export const videowallValidations = async () => {
 			FROM simplified_apex.validations FINAL
 
 			WHERE
-				agency_id IN ('LA77N', 'BNA17', 'YA15B, '44')
+				agency_id IN ('LA77N', 'BNA17', 'YA15B', 'A2L1N')
 				AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
 				AND (
 					(
