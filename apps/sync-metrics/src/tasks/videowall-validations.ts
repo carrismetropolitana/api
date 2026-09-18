@@ -5,12 +5,44 @@ import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
 import { type CachedResource } from '@carrismetropolitana/api-types/common';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
-import { simplifiedApexValidations } from '@tmlmobilidade/interfaces';
 
 /* * */
 
 const VALID_APEX_VALIDATION_STATUSES = [0, 4, 5, 6];
+
+const VALID_APEX_VALIDATION_STATUSES_SQL = VALID_APEX_VALIDATION_STATUSES
+	.map(String)
+	.map(status => `'${status}'`)
+	.join(', ');
+
+/* * */
+
+interface VideowallValidations {
+
+	// For Area 1
+	_41_last_week_valid_count: number
+	_41_today_valid_count: number
+
+	// For Area 2
+	_42_last_week_valid_count: number
+	_42_today_valid_count: number
+
+	// For Area 3
+	_43_last_week_valid_count: number
+	_43_today_valid_count: number
+
+	// For Area 4
+	_44_last_week_valid_count: number
+	_44_today_valid_count: number
+
+	// For the whole CM
+	_cm_last_week_valid_count: number
+	_cm_today_valid_count: number
+
+	//
+}
 
 /* * */
 
@@ -90,61 +122,98 @@ export const videowallValidations = async () => {
 	// Perform database searches
 
 	try {
-		// For Area 1
-		responseResult._41_today_valid_count = await simplifiedApexValidations.count({
-			agency_id: '41',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		responseResult._41_last_week_valid_count = await simplifiedApexValidations.count({
-			agency_id: '41',
-			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		// For Area 2
-		responseResult._42_today_valid_count = await simplifiedApexValidations.count({
-			agency_id: '42',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		responseResult._42_last_week_valid_count = await simplifiedApexValidations.count({
-			agency_id: '42',
-			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		// For Area 3
-		responseResult._43_today_valid_count = await simplifiedApexValidations.count({
-			agency_id: '43',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		responseResult._43_last_week_valid_count = await simplifiedApexValidations.count({
-			agency_id: '43',
-			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		// For Area 4
-		responseResult._44_today_valid_count = await simplifiedApexValidations.count({
-			agency_id: '44',
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		responseResult._44_last_week_valid_count = await simplifiedApexValidations.count({
-			agency_id: '44',
-			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		// For the whole CM
-		responseResult._cm_today_valid_count = await simplifiedApexValidations.count({
-			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $gte: currentOperationalDateAsUnixTimestamp, $lte: currentOperationalDateAsUnixTimestampEnd },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
-		responseResult._cm_last_week_valid_count = await simplifiedApexValidations.count({
-			agency_id: { $in: ['41', '42', '43', '44'] },
-			created_at: { $gte: previousOperationalDateAsUnixTimestamp, $lte: previousUntilNowAsUnixTimestamp },
-			validation_status: { $in: VALID_APEX_VALIDATION_STATUSES as unknown as readonly ('0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15')[] },
-		});
+		const query = `
+			SELECT
+				countIf(
+					agency_id = 'LA77N'
+					AND created_at >= ${currentOperationalDateAsUnixTimestamp}
+					AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _41_today_valid_count,
+
+				countIf(
+					agency_id = 'LA77N'
+					AND created_at >= ${previousOperationalDateAsUnixTimestamp}
+					AND created_at <= ${previousUntilNowAsUnixTimestamp}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _41_last_week_valid_count,
+
+				countIf(
+					agency_id = 'BNA17'
+					AND created_at >= ${currentOperationalDateAsUnixTimestamp}
+					AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _42_today_valid_count,
+
+				countIf(
+					agency_id = 'BNA17'
+					AND created_at >= ${previousOperationalDateAsUnixTimestamp}
+					AND created_at <= ${previousUntilNowAsUnixTimestamp}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _42_last_week_valid_count,
+
+				countIf(
+					agency_id = 'YA15B'
+					AND created_at >= ${currentOperationalDateAsUnixTimestamp}
+					AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _43_today_valid_count,
+
+				countIf(
+					agency_id = 'YA15B'
+					AND created_at >= ${previousOperationalDateAsUnixTimestamp}
+					AND created_at <= ${previousUntilNowAsUnixTimestamp}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _43_last_week_valid_count,
+
+				countIf(
+					agency_id = 'A2L1N'
+					AND created_at >= ${currentOperationalDateAsUnixTimestamp}
+					AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _44_today_valid_count,
+
+				countIf(
+					agency_id = 'A2L1N'
+					AND created_at >= ${previousOperationalDateAsUnixTimestamp}
+					AND created_at <= ${previousUntilNowAsUnixTimestamp}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _44_last_week_valid_count,
+
+				countIf(
+					agency_id IN ('LA77N', 'BNA17', 'YA15B, 'A2L1N')
+					AND created_at >= ${currentOperationalDateAsUnixTimestamp}
+					AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _cm_today_valid_count,
+
+				countIf(
+					agency_id IN ('LA77N', 'BNA17', 'YA15B, 'A2L1N')
+					AND created_at >= ${previousOperationalDateAsUnixTimestamp}
+					AND created_at <= ${previousUntilNowAsUnixTimestamp}
+					AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				) AS _cm_last_week_valid_count
+
+			FROM simplified_apex.validations FINAL
+
+			WHERE
+				agency_id IN ('LA77N', 'BNA17', 'YA15B, '44')
+				AND validation_status IN (${VALID_APEX_VALIDATION_STATUSES_SQL})
+				AND (
+					(
+						created_at >= ${currentOperationalDateAsUnixTimestamp}
+						AND created_at <= ${currentOperationalDateAsUnixTimestampEnd}
+					)
+					OR (
+						created_at >= ${previousOperationalDateAsUnixTimestamp}
+						AND created_at <= ${previousUntilNowAsUnixTimestamp}
+					)
+				);
+		`;
+
+		const queryResult = await labDb.queryFromString<VideowallValidations>(query);
+
+		Object.assign(responseResult, queryResult[0]);
 	}
 	catch (err) {
 		console.log(err);
