@@ -67,7 +67,7 @@ FASTIFY.server.post<PipArrivalRequestSchema>('/pips/estimates', async (request, 
 		// Fetch patterns and ETA in parallel
 		const [patternResponses, etaData] = await Promise.all([
 			Promise.all(stop.pattern_ids.map(pid => fetchData<HubV1ApiPattern[]>(GO_BASE_URL + `/network/patterns/${pid}`))),
-			fetchData<HubEtaData[]>(GO_BASE_URL + `/realtime/eta/by-stop/${stop._id}`),
+			fetchData<HubEtaData[]>(GO_BASE_URL + `/eta/by-stop/${stop._id}`),
 		]);
 
 		const patternData = patternResponses.flatMap(r => r.data);

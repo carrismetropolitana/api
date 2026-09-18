@@ -63,7 +63,7 @@ FASTIFY.server.get<RequestSchema, Arrival[]>('/arrivals/by_stop/:id', async (req
 	const patternData = patternResponses.flatMap(response => response.data);
 
 	// 4. Fetch Eta data for this stop
-	const etaData = await fetchData<HubEtaData[]>(GO_BASE_URL + `/realtime/eta/by-stop/${stop._id}`);
+	const etaData = await fetchData<HubEtaData[]>(GO_BASE_URL + `/eta/by-stop/${stop._id}`);
 
 	const arrivals: Arrival[] = [];
 
