@@ -1,157 +1,330 @@
-// /* * */
+/* * */
 
-// import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
-// import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
-// import { CachedResource } from '@carrismetropolitana/api-types/common';
-// import LOGGER from '@helperkits/logger';
-// import TIMETRACKER from '@helperkits/timer';
-// import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-// import { HubV1ApiRide } from '@tmlmobilidade/go-types-hub';
-// import { Dates } from '@tmlmobilidade/go-utils-dates';
+import { SERVERDB } from '@carrismetropolitana/api-services/SERVERDB';
+import { SERVERDB_KEYS } from '@carrismetropolitana/api-settings';
+import { CachedResource } from '@carrismetropolitana/api-types/common';
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
+import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 
-// /* * */
+/* * */
 
-// export const videowallVkm = async () => {
-// 	//
+interface VideowallVkm {
 
-// 	LOGGER.title(`Videowall - VKM`);
-// 	const globalTimer = new TIMETRACKER();
+	// For Area 1
+	_41_scheduled_vkm_until_now: number
+	_41_simple_one_validation_transaction_vkm_until_now: number
+	_41_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: number
+	_41_simple_three_events_vkm_until_now: number
 
-// 	//
-// 	// Setup timestamp boundaries
+	// For Area 2
+	_42_scheduled_vkm_until_now: number
+	_42_simple_one_validation_transaction_vkm_until_now: number
+	_42_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: number
+	_42_simple_three_events_vkm_until_now: number
 
-// 	const operationalDate = Dates
-// 		.now('Europe/Lisbon')
-// 		.operational_date_int;
+	// For Area 3
+	_43_scheduled_vkm_until_now: number
+	_43_simple_one_validation_transaction_vkm_until_now: number
+	_43_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: number
+	_43_simple_three_events_vkm_until_now: number
 
-// 	const nowInUnixTimestamp = Dates
-// 		.now('Europe/Lisbon')
-// 		.unix_milliseconds - 300_000; // 5 minutes ago
+	// For Area 4
+	_44_scheduled_vkm_until_now: number
+	_44_simple_one_validation_transaction_vkm_until_now: number
+	_44_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: number
+	_44_simple_three_events_vkm_until_now: number
 
-// 	//
-// 	// Setup the response JSON object
+	// For the whole CM
+	_cm_scheduled_vkm_until_now: number
+	_cm_simple_one_validation_transaction_vkm_until_now: number
+	_cm_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: number
+	_cm_simple_three_events_vkm_until_now: number
 
-// 	const responseResult = {
+	//
+};
 
-// 		// For Area 1
-// 		_41_scheduled_vkm_until_now: 0,
-// 		_41_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_41_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_41_simple_three_events_vkm_until_now: 0,
+export const videowallVkm = async () => {
+	//
 
-// 		// For Area 2
-// 		_42_scheduled_vkm_until_now: 0,
-// 		_42_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_42_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_42_simple_three_events_vkm_until_now: 0,
+	LOGGER.title(`Videowall - VKM`);
+	const globalTimer = new TIMETRACKER();
 
-// 		// For Area 3
-// 		_43_scheduled_vkm_until_now: 0,
-// 		_43_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_43_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_43_simple_three_events_vkm_until_now: 0,
+	//
+	// Setup timestamp boundaries
 
-// 		// For Area 4
-// 		_44_scheduled_vkm_until_now: 0,
-// 		_44_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_44_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_44_simple_three_events_vkm_until_now: 0,
+	const operationalDate = Dates
+		.now('Europe/Lisbon')
+		.operational_date_int;
 
-// 		// For the whole CM
-// 		_cm_scheduled_vkm_until_now: 0,
-// 		_cm_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_cm_simple_three_events_or_simple_one_validation_transaction_vkm_until_now: 0,
-// 		_cm_simple_three_events_vkm_until_now: 0,
+	const nowInUnixTimestamp = Dates
+		.now('Europe/Lisbon')
+		.unix_milliseconds - 300_000; // 5 minutes ago
 
-// 		//
-// 	};
+	const rideEndedThreshold = Dates
+		.now('Europe/Lisbon')
+		.unix_milliseconds - 120_000; // 2 minutes ago
 
-// 	//
-// 	// Get all rides for today
+	//
+	// Query labdb for videowall VKM
 
-// 	const ridesCollection = await goDb.operation.rides.getCollection();
-// 	const allRidesForTodayStream = ridesCollection.find({ operational_date: operationalDate, system_status: 'complete' }).stream();
+	const query = `
+		WITH
 
-// 	//
-// 	// Iterate on all rides for today
+			rides AS
+			(
+				SELECT
+					r._id,
+					r.agency_id,
+					r.start_time_scheduled,
+					r.seen_first_at,
+					r.seen_last_at,
+					r.extension_scheduled,
+					a1.grade_status AS simple_one_grade,
+					a3.grade_status AS simple_three_grade
+				FROM operation.rides AS r FINAL
 
-// 	for await (const currentRide of allRidesForTodayStream) {
-// 		//
+				LEFT JOIN
+				(
+					SELECT
+						ride_id,
+						argMax(grade_status, updated_at) AS grade_status
+					FROM operation.ride_analysis_simple_one_apex_validation
+					WHERE operational_date = ${operationalDate}
+					GROUP BY ride_id
+				) AS a1
+					ON a1.ride_id = r._id
 
-// 		const rideData: Ride = currentRide as Ride;
+				LEFT JOIN
+				(
+					SELECT
+						ride_id,
+						argMax(grade_status, updated_at) AS grade_status
+					FROM operation.ride_analysis_simple_three_vehicle_events
+					WHERE operational_date = ${operationalDate}
+					GROUP BY ride_id
+				) AS a3
+					ON a3.ride_id = r._id
 
-// 		//
-// 		// Skip rides that are not yet processed
+				WHERE
+					r.operational_date = ${operationalDate}
+					AND r.agency_id IN ('A2L1N', 'BNA17', 'LA77N', 'YA15B')
+			)
 
-// 		if (rideData.analysis === null) continue;
+		SELECT
+			/* Area 1 */
+			sumIf(
+				extension_scheduled,
+				agency_id = 'LA77N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+			) AS _41_scheduled_vkm_until_now,
 
-// 		//
-// 		// Skip rides that should not have started yet (scheduled for the future)
+			sumIf(
+				extension_scheduled,
+				agency_id = 'LA77N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_one_grade = 'pass'
+			) AS _41_simple_one_validation_transaction_vkm_until_now,
 
-// 		if (nowInUnixTimestamp - rideData.start_time_scheduled < 0) continue;
+			sumIf(
+				extension_scheduled,
+				agency_id = 'LA77N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_three_grade = 'pass'
+			) AS _41_simple_three_events_vkm_until_now,
 
-// 		//
-// 		// If a ride should have already started, but we still
-// 		// do not have any data about it, we should count it as FAIL.
+			sumIf(
+				extension_scheduled,
+				agency_id = 'LA77N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND (
+					simple_three_grade = 'pass'
+					OR simple_one_grade = 'pass'
+				)
+			) AS _41_simple_three_events_or_simple_one_validation_transaction_vkm_until_now,
 
-// 		responseResult._cm_scheduled_vkm_until_now += rideData.extension_scheduled;
-// 		if (rideData.agency_id === 'LA77N') responseResult._41_scheduled_vkm_until_now += rideData.extension_scheduled;
-// 		if (rideData.agency_id === 'BNA17') responseResult._42_scheduled_vkm_until_now += rideData.extension_scheduled;
-// 		if (rideData.agency_id === 'YA15B') responseResult._43_scheduled_vkm_until_now += rideData.extension_scheduled;
-// 		if (rideData.agency_id === 'A2L1N') responseResult._44_scheduled_vkm_until_now += rideData.extension_scheduled;
+			/* Area 2 */
+			sumIf(
+				extension_scheduled,
+				agency_id = 'BNA17'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+			) AS _42_scheduled_vkm_until_now,
 
-// 		if (!rideData.seen_first_at) continue;
+			sumIf(
+				extension_scheduled,
+				agency_id = 'BNA17'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_one_grade = 'pass'
+			) AS _42_simple_one_validation_transaction_vkm_until_now,
 
-// 		//
-// 		// If a ride should have already started and has already ended,
-// 		// and failed the SIMPLE_THREE_VEHICLE_EVENTS test, then we should count it as FAIL.
+			sumIf(
+				extension_scheduled,
+				agency_id = 'BNA17'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_three_grade = 'pass'
+			) AS _42_simple_three_events_vkm_until_now,
 
-// 		const rideHasAlreadyEnded = rideData.seen_last_at && Dates.fromUnixTimestamp(rideData.seen_last_at).unix_milliseconds - Dates.now('Europe/Lisbon').unix_milliseconds < -120_000;
-// 		const simpleThreeVehicleEvents = rideData.analysis.SIMPLE_THREE_VEHICLE_EVENTS;
-// 		const simpleOneValidationTransaction = rideData.analysis.SIMPLE_ONE_APEX_VALIDATION;
+			sumIf(
+				extension_scheduled,
+				agency_id = 'BNA17'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND (
+					simple_three_grade = 'pass'
+					OR simple_one_grade = 'pass'
+				)
+			) AS _42_simple_three_events_or_simple_one_validation_transaction_vkm_until_now,
 
-// 		// Skip if ride has not yet ended
+			/* Area 3 */
+			sumIf(
+				extension_scheduled,
+				agency_id = 'YA15B'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+			) AS _43_scheduled_vkm_until_now,
 
-// 		if (!rideHasAlreadyEnded) continue;
+			sumIf(
+				extension_scheduled,
+				agency_id = 'YA15B'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_one_grade = 'pass'
+			) AS _43_simple_one_validation_transaction_vkm_until_now,
 
-// 		if (simpleThreeVehicleEvents.grade === 'pass') {
-// 			responseResult._cm_simple_three_events_vkm_until_now += rideData.extension_scheduled;
-// 			if (rideData.agency_id === 'LA77N') responseResult._41_simple_three_events_vkm_until_now += rideData.extension_scheduled;
-// 			if (rideData.agency_id === 'BNA17') responseResult._42_simple_three_events_vkm_until_now += rideData.extension_scheduled;
-// 			if (rideData.agency_id === 'YA15B') responseResult._43_simple_three_events_vkm_until_now += rideData.extension_scheduled;
-// 			if (rideData.agency_id === 'A2L1N') responseResult._44_simple_three_events_vkm_until_now += rideData.extension_scheduled;
-// 		}
+			sumIf(
+				extension_scheduled,
+				agency_id = 'YA15B'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_three_grade = 'pass'
+			) AS _43_simple_three_events_vkm_until_now,
 
-// 		if (simpleOneValidationTransaction.grade === 'pass') {
-// 			responseResult._cm_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled;
-// 			if (rideData.agency_id === 'LA77N') responseResult._41_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 			if (rideData.agency_id === 'BNA17') responseResult._42_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 			if (rideData.agency_id === 'YA15B') responseResult._43_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 			if (rideData.agency_id === 'A2L1N') responseResult._44_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 		}
+			sumIf(
+				extension_scheduled,
+				agency_id = 'YA15B'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND (
+					simple_three_grade = 'pass'
+					OR simple_one_grade = 'pass'
+				)
+			) AS _43_simple_three_events_or_simple_one_validation_transaction_vkm_until_now,
 
-// 		if (simpleThreeVehicleEvents.grade === 'pass' || simpleOneValidationTransaction.grade === 'pass') {
-// 			responseResult._cm_simple_three_events_or_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled;
-// 			if (rideData.agency_id === 'LA77N') responseResult._41_simple_three_events_or_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 			if (rideData.agency_id === 'BNA17') responseResult._42_simple_three_events_or_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 			if (rideData.agency_id === 'YA15B') responseResult._43_simple_three_events_or_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 			if (rideData.agency_id === 'A2L1N') responseResult._44_simple_three_events_or_simple_one_validation_transaction_vkm_until_now += rideData.extension_scheduled; ;
-// 		}
+			/* Area 4 */
+			sumIf(
+				extension_scheduled,
+				agency_id = 'A2L1N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+			) AS _44_scheduled_vkm_until_now,
 
-// 		//
-// 	}
+			sumIf(
+				extension_scheduled,
+				agency_id = 'A2L1N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_one_grade = 'pass'
+			) AS _44_simple_one_validation_transaction_vkm_until_now,
 
-// 	//
-// 	// Save items to the database
+			sumIf(
+				extension_scheduled,
+				agency_id = 'A2L1N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_three_grade = 'pass'
+			) AS _44_simple_three_events_vkm_until_now,
 
-// 	const chacheableResource: CachedResource<typeof responseResult> = {
-// 		data: responseResult,
-// 		timestamp_resource: Dates.now('Europe/Lisbon').unix_milliseconds,
-// 	};
+			sumIf(
+				extension_scheduled,
+				agency_id = 'A2L1N'
+				AND start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND (
+					simple_three_grade = 'pass'
+					OR simple_one_grade = 'pass'
+				)
+			) AS _44_simple_three_events_or_simple_one_validation_transaction_vkm_until_now,
 
-// 	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VKM, JSON.stringify(chacheableResource));
+			/* Whole CM */
+			sumIf(
+				extension_scheduled,
+				start_time_scheduled <= ${nowInUnixTimestamp}
+			) AS _cm_scheduled_vkm_until_now,
 
-// 	LOGGER.success(`Done updating items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.VKM} (${globalTimer.get()}).`);
+			sumIf(
+				extension_scheduled,
+				start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_one_grade = 'pass'
+			) AS _cm_simple_one_validation_transaction_vkm_until_now,
 
-// 	//
-// };
+			sumIf(
+				extension_scheduled,
+				start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND simple_three_grade = 'pass'
+			) AS _cm_simple_three_events_vkm_until_now,
+
+			sumIf(
+				extension_scheduled,
+				start_time_scheduled <= ${nowInUnixTimestamp}
+				AND seen_first_at IS NOT NULL
+				AND seen_last_at IS NOT NULL
+				AND seen_last_at <= ${rideEndedThreshold}
+				AND (
+					simple_three_grade = 'pass'
+					OR simple_one_grade = 'pass'
+				)
+			) AS _cm_simple_three_events_or_simple_one_validation_transaction_vkm_until_now
+
+		FROM rides;
+	`;
+
+	const queryResult = await labDb.queryFromString<VideowallVkm>(query);
+
+	//
+	// Save items to the database
+
+	const chacheableResource: CachedResource<VideowallVkm> = {
+		data: queryResult[0],
+		timestamp_resource: Dates.now('Europe/Lisbon').unix_milliseconds,
+	};
+
+	await SERVERDB.set(SERVERDB_KEYS.METRICS.VIDEOWALL.VKM, JSON.stringify(chacheableResource));
+
+	LOGGER.success(`Done updating items to ${SERVERDB_KEYS.METRICS.VIDEOWALL.VKM} (${globalTimer.get()}).`);
+
+	//
+};
