@@ -61,10 +61,12 @@ export const videowallSla = async () => {
 
 	const operationalDate = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.operational_date_int;
 
 	const nowInUnixTimestamp = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.unix_milliseconds - 300_000; // 5 minutes ago
 
 	//

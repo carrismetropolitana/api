@@ -56,14 +56,17 @@ export const videowallVkm = async () => {
 
 	const operationalDate = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.operational_date_int;
 
 	const nowInUnixTimestamp = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.unix_milliseconds - 300_000; // 5 minutes ago
 
 	const rideEndedThreshold = Dates
 		.now('Europe/Lisbon')
+		.minus({ days: 7 })
 		.unix_milliseconds - 120_000; // 2 minutes ago
 
 	//
@@ -80,7 +83,7 @@ export const videowallVkm = async () => {
 					r.start_time_scheduled,
 					r.seen_first_at,
 					r.seen_last_at,
-					r.extension_scheduled,
+					if(r.agency_id = 'BNA17', toInt32(round(r.extension_scheduled / 1000)), r.extension_scheduled) AS extension_scheduled,
 					a1.grade_status AS simple_one_grade,
 					a3.grade_status AS simple_three_grade
 				FROM operation.rides AS r FINAL
@@ -153,7 +156,7 @@ export const videowallVkm = async () => {
 				)
 			) AS _41_simple_three_events_or_simple_one_validation_transaction_vkm_until_now,
 
-			/* Area 2 */
+			/* Area 2 — extension_scheduled converted from meters to km in CTE */
 			sumIf(
 				extension_scheduled,
 				agency_id = 'BNA17'
