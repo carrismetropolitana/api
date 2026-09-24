@@ -56,17 +56,17 @@ export const videowallVkm = async () => {
 
 	const operationalDate = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 7 })
+		// .minus({ days: 7 })
 		.operational_date_int;
 
 	const nowInUnixTimestamp = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 7 })
+		// .minus({ days: 7 })
 		.unix_milliseconds - 300_000; // 5 minutes ago
 
 	const rideEndedThreshold = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 7 })
+		// .minus({ days: 7 })
 		.unix_milliseconds - 120_000; // 2 minutes ago
 
 	//

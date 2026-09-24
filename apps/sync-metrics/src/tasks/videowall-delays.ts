@@ -51,7 +51,7 @@ export const videowallDelays = async () => {
 
 	const operationalDate = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 7 })
+		// .minus({ days: 7 })
 		.operational_date_int;
 
 	//
