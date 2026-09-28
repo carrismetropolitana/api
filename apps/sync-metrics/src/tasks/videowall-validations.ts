@@ -59,7 +59,7 @@ export const videowallValidations = async () => {
 
 	const currentOperationalDate = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 7 })
+		// .minus({ days: 7 })
 		.operational_date_int;
 
 	const currentOperationalDateAsUnixTimestamp = Dates
@@ -70,12 +70,12 @@ export const videowallValidations = async () => {
 
 	const currentOperationalDateAsUnixTimestampEnd = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 7 })
+		// .minus({ days: 7 })
 		.unix_milliseconds;
 
 	const previousOperationalDate = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 14 })
+		.minus({ days: 7 })
 		.operational_date_int;
 
 	const previousOperationalDateAsUnixTimestamp = Dates
@@ -86,7 +86,7 @@ export const videowallValidations = async () => {
 
 	const previousUntilNowAsUnixTimestamp = Dates
 		.now('Europe/Lisbon')
-		.minus({ days: 14 })
+		.minus({ days: 7 })
 		.unix_milliseconds;
 
 	//
