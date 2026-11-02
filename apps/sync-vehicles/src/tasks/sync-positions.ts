@@ -69,7 +69,7 @@ export const syncPositions = async () => {
 
 	const globalTimer = new TIMETRACKER();
 
-	const goResponse = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/LA3SO/realtime/vehicles/positions');
+	const goResponse = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/LA3SO/vehicles/positions');
 	const goResponseJson = await goResponse.json() as ApiResponse<HubV1ApiVehiclePosition[]>;
 
 	const cmVehiclePositions = goResponseJson.data.filter(vp => ['A2L1N', 'BNA17', 'LA77N', 'YA15B'].includes(vp.agency_id));
