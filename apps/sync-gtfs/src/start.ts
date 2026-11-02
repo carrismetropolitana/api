@@ -64,8 +64,8 @@ export default async () => {
 		//
 		// Import GTFS from source URL
 
-		LOGGER.info(`Downloading file from "https://go.tmlmobilidade.pt/hub/api/v1/plans/gtfs/cm"...`);
-		const downloadedCsvFile = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/plans/gtfs/cm');
+		LOGGER.info(`Downloading file from "https://go.tmlmobilidade.pt/hub/api/v1/LA3SO/plans/gtfs"...`);
+		const downloadedCsvFile = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/LA3SO/plans/gtfs');
 		const downloadedCsvArrayBuffer = await downloadedCsvFile.arrayBuffer();
 		fs.writeFileSync(RAW_FILE_PATH, Buffer.from(downloadedCsvArrayBuffer));
 

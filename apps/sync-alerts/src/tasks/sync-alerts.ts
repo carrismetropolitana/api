@@ -21,7 +21,7 @@ export const syncAlerts = async () => {
 
 	const backofficeTimer = new TIMETRACKER();
 
-	const alertsFeedData = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/alerts/gtfs')
+	const alertsFeedData = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/LA3SO/alerts/gtfs')
 		.then(response => response.json())
 		.then(data => data as ApiResponse<GtfsRtFeedMessage>);
 
@@ -52,7 +52,7 @@ export const syncAlerts = async () => {
 
 	const jsonTimer = new TIMETRACKER();
 
-	const alertsApiDataJson = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/alerts')
+	const alertsApiDataJson = await fetch('https://go.tmlmobilidade.pt/hub/api/v1/LA3SO/alerts')
 		.then(response => response.json())
 		.then(data => data as ApiResponse<HubV1ApiAlert[]>);
 
