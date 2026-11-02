@@ -7,7 +7,7 @@ import 'dotenv/config';
 
 import { complaintsMetrics } from '@/tasks/complaints-metrics.js';
 import { demandMetrics } from '@/tasks/demand-metrics.js';
-// import { serviceMetrics } from '@/tasks/service-metrics.js';
+import { serviceMetrics } from '@/tasks/service-metrics.js';
 import { videowallDelays } from '@/tasks/videowall-delays.js';
 import { videowallEmptyRides } from '@/tasks/videowall-empty-rides.js';
 import { videowallSla } from '@/tasks/videowall-sla.js';
@@ -41,10 +41,10 @@ const RUN_INTERVAL = 60000; // 1 minute
 		await demandMetrics();
 
 		//
-		// Run on every 500th iteration (~ 8 hours)
+		// Run on every 100th iteration (~ 100 minutes)
 
 		if (counter % 100 === 0) {
-			// await serviceMetrics();
+			await serviceMetrics();
 		}
 
 		//

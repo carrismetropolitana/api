@@ -21,21 +21,31 @@ export const serviceMetrics = async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Query labdb for ride analysis
+	// Query labdb for ride analysis.
+	// A ride is graded once at least one of the two analyses has passed or failed it.
+	// Rides that were not analysed yet (or were skipped) are counted apart, so the
+	// most recent days do not read as failed while the examiner catches up.
+	// line_id and a string operational_date keep the shape the website reads.
 
 	const query = `
 		SELECT
 			r.agency_id,
-			r.operational_date,
+			toString(r.operational_date) AS operational_date,
 			countIf(
 				a1.grade_status = 'pass'
 				OR a3.grade_status = 'pass'
 			) AS pass_trip_count,
 			countIf(
-				a1.grade_status = 'pass'
-				OR a3.grade_status = 'pass'
-			) / count() AS pass_trip_percentage,
-			r.route_short_name,
+				a1.grade_status IN ('pass', 'fail')
+				OR a3.grade_status IN ('pass', 'fail')
+			) AS graded_trip_count,
+			count() - graded_trip_count AS ungraded_trip_count,
+			if(
+				graded_trip_count = 0,
+				NULL,
+				pass_trip_count / graded_trip_count
+			) AS pass_trip_percentage,
+			r.route_short_name AS line_id,
 			count() AS total_trip_count
 		FROM operation.rides AS r FINAL
 
