@@ -6,7 +6,7 @@ import { fetchData } from '@tmlmobilidade/utils';
 
 /* * */
 
-export const GO_BASE_URL = 'https://go.tmlmobilidade.pt/hub/api/v1';
+export const GO_BASE_URL = 'https://go.tmlmobilidade.pt/hub/api/v1/LA3SO';
 
 const STOPS_CACHE_TTL = 1000 * 60 * 15; // 15 minutes
 const STOPS_CACHE = { data: [], timestamp: 0 } as { data: HubV1ApiStop[], timestamp: number };
