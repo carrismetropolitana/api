@@ -21,39 +21,28 @@ export const serviceMetrics = async () => {
 	const globalTimer = new TIMETRACKER();
 
 	//
-	// Query labdb for ride analysis
+	// Match GO Performance supply_by_agency_by_day: vehicle-event analysis passes
+	// or the ride records validations, sales, or observed passengers.
 
 	const query = `
 		SELECT
 			r.agency_id,
 			r.operational_date,
 			countIf(
-				a1.grade_status = 'pass'
-				OR a3.grade_status = 'pass'
+				ifNull(a3.grade_status = 'pass', false)
+				OR ifNull(r.apex_validations_qty, 0) > 0
+				OR ifNull(r.apex_sales_qty, 0) > 0
+				OR ifNull(r.passengers_observed, 0) > 0
 			) AS pass_trip_count,
 			countIf(
-				a1.grade_status = 'pass'
-				OR a3.grade_status = 'pass'
+				ifNull(a3.grade_status = 'pass', false)
+				OR ifNull(r.apex_validations_qty, 0) > 0
+				OR ifNull(r.apex_sales_qty, 0) > 0
+				OR ifNull(r.passengers_observed, 0) > 0
 			) / count() AS pass_trip_percentage,
 			r.route_short_name,
 			count() AS total_trip_count
 		FROM operation.rides AS r FINAL
-
-		LEFT JOIN
-		(
-			SELECT
-				ride_id,
-				argMax(grade_status, updated_at) AS grade_status
-			FROM operation.ride_analysis_simple_one_apex_validation
-			WHERE operational_date >= toYYYYMMDD(
-				toDate(now('Europe/Lisbon')) - INTERVAL 15 DAY
-			)
-			AND operational_date <= toYYYYMMDD(
-				toDate(now('Europe/Lisbon')) - INTERVAL 1 DAY
-			)
-			GROUP BY ride_id
-		) AS a1
-			ON a1.ride_id = r._id
 
 		LEFT JOIN
 		(
